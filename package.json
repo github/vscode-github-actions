@@ -10,21 +10,30 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onView:actionsExplorer"
+		"onView:actionsExplorer",
+		"onCommand:explorer.refresh"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.helloWorld",
-				"title": "Hello World"
+				"command": "explorer.refresh",
+				"title": "Refresh",
+				"icon": {
+					"dark": "resources/icons/dark/refresh.svg",
+					"light": "resources/icons/light/refresh.svg"
+				}
+			},
+			{
+				"command": "explorer.openRun",
+				"title": "Open workflow run"
 			}
 		],
 		"views": {
 			"actions-explorer": [
 				{
 					"id": "actionsExplorer",
-					"name": "GitHub Actions"
+					"name": "Workflows"
 				}
 			]
 		},
@@ -33,7 +42,15 @@
 				{
 					"id": "actions-explorer",
 					"title": "GitHub Actions",
-					"icon": "media/dep.svg"
+					"icon": "resources/icons/light/explorer.svg"
+				}
+			]
+		},
+		"menus": {
+			"view/title": [
+				{
+					"command": "explorer.refresh",
+					"group": "navigation"
 				}
 			]
 		}
