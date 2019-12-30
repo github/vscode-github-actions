@@ -10,12 +10,17 @@
 		"Other"
 	],
 	"activationEvents": [
+		"onCommand:auth.login",
 		"onView:actionsExplorer",
 		"onCommand:explorer.refresh"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
+			{
+				"command": "auth.login",
+				"title": "Login"
+			},
 			{
 				"command": "explorer.refresh",
 				"title": "Refresh",
