@@ -7,6 +7,8 @@ import { getIconForWorkflowRun } from "./icons";
 class WorkflowNode extends vscode.TreeItem {
     constructor(public readonly wf: Workflow, private client: Octokit) {
         super(wf.name, vscode.TreeItemCollapsibleState.Collapsed);
+
+        this.contextValue = "workflow";
     }
 
     async getRuns(): Promise<WorkflowRunNode[]> {
