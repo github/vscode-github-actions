@@ -2,7 +2,7 @@
 	"name": "vscode-github-actions",
 	"displayName": "vscode-github-actions",
 	"description": "",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"engines": {
 		"vscode": "^1.41.0"
 	},
@@ -15,6 +15,9 @@
 		"onCommand:explorer.refresh"
 	],
 	"main": "./out/extension.js",
+	"extensionDependencies": [
+		"vscode.git"
+	],
 	"contributes": {
 		"commands": [
 			{
@@ -96,6 +99,7 @@
 	"dependencies": {
 		"@octokit/rest": "^16.35.2",
 		"keytar": "^5.0.0",
+		"ssh-config": "^3.0.0",
 		"tunnel": "0.0.6",
 		"uuid": "^3.3.3",
 		"yaml": "^1.7.2"

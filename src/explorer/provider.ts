@@ -1,16 +1,44 @@
 import * as vscode from "vscode";
-import Octokit = require("@octokit/rest");
-import {
-  WorkflowsResponse,
-  Workflow,
-  RunsResponse,
-  WorkflowRun
-} from "../model";
-import { getIconForWorkflowRun } from "./icons";
 import { getPAT } from "../auth/pat";
+import { getGitHubProtocol } from "../git/repository";
+import {
+  RunsResponse,
+  Workflow,
+  WorkflowRun,
+  WorkflowsResponse
+} from "../model";
+import { OctokitWithActions } from "../typings/api";
+import { getIconForWorkflowRun } from "./icons";
+import { getClient } from "../api/api";
+
+class NoGitHubRepositoryNode extends vscode.TreeItem {
+  constructor() {
+    super("Current workspace does not contain a github.com repository");
+  }
+}
+
+class AuthenticationNode extends vscode.TreeItem {
+  constructor() {
+    super("No PAT for GitHub found. Click here to login.");
+
+    this.command = {
+      title: "Login",
+      command: "auth.login"
+    };
+  }
+}
+
+class ErrorNode extends vscode.TreeItem {
+  constructor(message: string) {
+    super(message);
+  }
+}
 
 class WorkflowNode extends vscode.TreeItem {
-  constructor(public readonly wf: Workflow, private client: Octokit) {
+  constructor(
+    public readonly wf: Workflow,
+    private client: OctokitWithActions
+  ) {
     super(wf.name, vscode.TreeItemCollapsibleState.Collapsed);
 
     this.contextValue = "workflow";
@@ -42,33 +70,16 @@ class WorkflowRunNode extends vscode.TreeItem {
   }
 }
 
-type ActionsExplorerNode = WorkflowNode | WorkflowRunNode;
+type ActionsExplorerNode =
+  | AuthenticationNode
+  | NoGitHubRepositoryNode
+  | WorkflowNode
+  | WorkflowRunNode;
 
 export class ActionsExplorerProvider
   implements vscode.TreeDataProvider<ActionsExplorerNode> {
   private _onDidChangeTreeData = new vscode.EventEmitter<ActionsExplorerNode>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
-
-  private client: Octokit | undefined;
-
-  private async getClient(): Promise<Octokit> {
-    if (this.client) {
-      return this.client;
-    }
-
-    const token = await getPAT();
-    if (!token) {
-      throw new Error("Could not get token");
-    }
-
-    this.client = new Octokit({
-      auth: token,
-      userAgent: "VS Code GitHub Actions",
-      previews: ["jane-hopper"]
-    });
-
-    return this.client;
-  }
 
   refresh(): void {
     this._onDidChangeTreeData.fire();
@@ -86,12 +97,33 @@ export class ActionsExplorerProvider
     if (element && element instanceof WorkflowNode) {
       return element.getRuns();
     } else {
-      const client = await this.getClient();
-      const result = await client.request(
-        "http://api.github.com/repos/bbq-beets/cschleiden-test/actions/workflows"
-      );
-      const response = result.data as WorkflowsResponse;
-      return response.workflows.map(wf => new WorkflowNode(wf, client));
+      // Root nodes
+      const repo = await getGitHubProtocol();
+      if (!repo) {
+        return [new NoGitHubRepositoryNode()];
+      }
+
+      // Get token
+      const token = await getPAT();
+      if (!token) {
+        return [new AuthenticationNode()];
+      }
+
+      try {
+        const client = getClient(token);
+        const result = await client.actions.listWorkflows({
+          owner: repo.owner,
+          repo: repo.repositoryName
+        });
+        const response = result.data as WorkflowsResponse;
+        return response.workflows.map(wf => new WorkflowNode(wf, client));
+      } catch (e) {
+        vscode.window.showErrorMessage(
+          `:( An error has occured while retrieving workflows:\n\n${e.message}`
+        );
+
+        return [new ErrorNode("An error has occured :(")];
+      }
     }
   }
 }

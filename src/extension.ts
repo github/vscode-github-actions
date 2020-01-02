@@ -65,6 +65,7 @@ export function activate(context: vscode.ExtensionContext) {
           });
           if (token) {
             await setPAT(token);
+            explorerTreeProvider.refresh();
           }
           break;
       }
