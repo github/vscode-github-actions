@@ -10,6 +10,8 @@ import {
 import { OctokitWithActions } from "../typings/api";
 import { getIconForWorkflowRun } from "./icons";
 import { getClient } from "../api/api";
+import { usesRepositoryDispatch, getWorkflowUri } from "../workflow/workflow";
+import { Protocol } from "../external/protocol";
 
 class NoGitHubRepositoryNode extends vscode.TreeItem {
   constructor() {
@@ -36,19 +38,37 @@ class ErrorNode extends vscode.TreeItem {
 
 class WorkflowNode extends vscode.TreeItem {
   constructor(
+    public readonly repo: Protocol,
     public readonly wf: Workflow,
-    private client: OctokitWithActions
+    public readonly client: OctokitWithActions
   ) {
     super(wf.name, vscode.TreeItemCollapsibleState.Collapsed);
 
     this.contextValue = "workflow";
+
+    const workflowUri = getWorkflowUri(wf.path);
+    if (workflowUri) {
+      if (usesRepositoryDispatch(workflowUri.fsPath)) {
+        this.contextValue += "rdispatch";
+      }
+    }
   }
 
   async getRuns(): Promise<WorkflowRunNode[]> {
-    const result = await this.client.request(`${this.wf.url}/runs`);
+    // TODO: Implement pagination
+    const result = await this.client.request(
+      `${this.wf.url}/runs?per_page=100`
+    );
     const resp = result.data as RunsResponse;
 
-    return resp.workflow_runs.map(wr => new WorkflowRunNode(wr));
+    // Show most recent ones first
+    const runs = resp.workflow_runs;
+    runs.sort(
+      (a, b) =>
+        new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf()
+    );
+
+    return runs.map(wr => new WorkflowRunNode(wr));
   }
 }
 
@@ -116,7 +136,11 @@ export class ActionsExplorerProvider
           repo: repo.repositoryName
         });
         const response = result.data as WorkflowsResponse;
-        return response.workflows.map(wf => new WorkflowNode(wf, client));
+
+        const workflows = response.workflows;
+        workflows.sort((a, b) => a.name.localeCompare(b.name));
+
+        return workflows.map(wf => new WorkflowNode(repo, wf, client));
       } catch (e) {
         vscode.window.showErrorMessage(
           `:( An error has occured while retrieving workflows:\n\n${e.message}`

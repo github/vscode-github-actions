@@ -1,107 +1,118 @@
 {
-	"name": "vscode-github-actions",
-	"displayName": "vscode-github-actions",
-	"description": "",
-	"version": "0.0.2",
-	"engines": {
-		"vscode": "^1.41.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onCommand:auth.login",
-		"onView:actionsExplorer",
-		"onCommand:explorer.refresh"
-	],
-	"main": "./out/extension.js",
-	"extensionDependencies": [
-		"vscode.git"
-	],
-	"contributes": {
-		"commands": [
-			{
-				"command": "auth.login",
-				"title": "Login"
-			},
-			{
-				"command": "explorer.refresh",
-				"title": "Refresh",
-				"icon": {
-					"dark": "resources/icons/dark/refresh.svg",
-					"light": "resources/icons/light/refresh.svg"
-				}
-			},
-			{
-				"command": "explorer.openRun",
-				"title": "Open workflow run"
-			},
-			{
-				"command": "explorer.openWorkflowFile",
-				"title": "Open workflow",
-				"when": "viewItem == workflow"
-			}
-		],
-		"views": {
-			"actions-explorer": [
-				{
-					"id": "actionsExplorer",
-					"name": "Workflows"
-				}
-			]
-		},
-		"viewsContainers": {
-			"activitybar": [
-				{
-					"id": "actions-explorer",
-					"title": "GitHub Actions",
-					"icon": "resources/icons/light/explorer.svg"
-				}
-			]
-		},
-		"menus": {
-			"view/title": [
-				{
-					"command": "explorer.refresh",
-					"group": "navigation"
-				}
-			],
-			"view/item/context": [
-				{
-					"command": "explorer.openWorkflowFile",
-					"when": "viewItem == workflow"
-				}
-			]
-		}
-	},
-	"enableProposedApi": true,
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile",
-		"test": "node ./out/test/runTest.js"
-	},
-	"devDependencies": {
-		"@types/glob": "^7.1.1",
-		"@types/keytar": "^4.4.2",
-		"@types/mocha": "^5.2.7",
-		"@types/node": "^12.11.7",
-		"@types/uuid": "^3.4.6",
-		"@types/vscode": "^1.41.0",
-		"@types/yaml": "^1.2.0",
-		"glob": "^7.1.5",
-		"mocha": "^6.2.2",
-		"tslint": "^5.20.0",
-		"typescript": "^3.6.4",
-		"vscode-test": "^1.2.2"
-	},
-	"dependencies": {
-		"@octokit/rest": "^16.35.2",
-		"keytar": "^5.0.0",
-		"ssh-config": "^3.0.0",
-		"tunnel": "0.0.6",
-		"uuid": "^3.3.3",
-		"yaml": "^1.7.2"
-	}
+  "name": "vscode-github-actions",
+  "displayName": "vscode-github-actions",
+  "description": "",
+  "version": "0.0.2",
+  "engines": {
+    "vscode": "^1.41.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:auth.login",
+    "onView:actionsExplorer",
+    "onCommand:explorer.refresh"
+  ],
+  "main": "./out/extension.js",
+  "extensionDependencies": [
+    "vscode.git"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "auth.login",
+        "title": "Login"
+      },
+      {
+        "command": "explorer.refresh",
+        "title": "Refresh",
+        "icon": {
+          "dark": "resources/icons/dark/refresh.svg",
+          "light": "resources/icons/light/refresh.svg"
+        }
+      },
+      {
+        "command": "explorer.openRun",
+        "title": "Open workflow run"
+      },
+      {
+        "command": "explorer.openWorkflowFile",
+        "title": "Open workflow",
+        "when": "viewItem =~ /workflow/"
+      },
+      {
+        "command": "explorer.triggerRun",
+        "title": "Trigger workflow",
+        "when": "viewItem =~ /workflow/ && viewItem =~ /rdispatch/"
+      }
+    ],
+    "views": {
+      "actions-explorer": [
+        {
+          "id": "actionsExplorer",
+          "name": "Workflows"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "actions-explorer",
+          "title": "GitHub Actions",
+          "icon": "resources/icons/light/explorer.svg"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "explorer.refresh",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "explorer.openWorkflowFile",
+          "when": "viewItem =~ /workflow/"
+        },
+        {
+          "command": "explorer.triggerRun",
+          "when": "viewItem =~ /rdispatch/"
+        }
+      ]
+    }
+  },
+  "enableProposedApi": true,
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.1",
+    "@types/js-yaml": "^3.12.1",
+    "@types/keytar": "^4.4.2",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.11.7",
+    "@types/uuid": "^3.4.6",
+    "@types/vscode": "^1.41.0",
+    "@types/yaml": "^1.2.0",
+    "glob": "^7.1.5",
+    "mocha": "^6.2.2",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.4",
+    "vscode-test": "^1.2.2"
+  },
+  "dependencies": {
+    "@octokit/rest": "^16.35.2",
+    "js-yaml": "^3.13.1",
+    "keytar": "^5.0.0",
+    "ssh-config": "^3.0.0",
+    "tunnel": "0.0.6",
+    "uuid": "^3.3.3",
+    "yaml": "^1.7.2"
+  }
 }

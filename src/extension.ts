@@ -4,6 +4,9 @@ import { initResources } from "./explorer/icons";
 import { Workflow } from "./model";
 import { join } from "path";
 import { setPAT } from "./auth/pat";
+import { getWorkflowUri } from "./workflow/workflow";
+import { OctokitWithActions } from "./typings/api";
+import { Protocol } from "./external/protocol";
 
 export function activate(context: vscode.ExtensionContext) {
   initResources(context);
@@ -33,21 +36,41 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("explorer.openWorkflowFile", async args => {
       const wf: Workflow = args.wf;
 
-      for (const workspaceFolder of vscode.workspace.workspaceFolders || []) {
-        const fileUri = vscode.Uri.file(
-          join(workspaceFolder.uri.fsPath, wf.path)
-        );
-        if (vscode.workspace.getWorkspaceFolder(fileUri)) {
-          const textDocument = await vscode.workspace.openTextDocument(fileUri);
-          vscode.window.showTextDocument(textDocument);
-          return;
-        }
+      const fileUri = getWorkflowUri(wf.path);
+      if (fileUri) {
+        const textDocument = await vscode.workspace.openTextDocument(fileUri);
+        vscode.window.showTextDocument(textDocument);
+        return;
       }
 
       // File not found in workspace
       vscode.window.showErrorMessage(
         `Workflow ${wf.path} not found in current workspace`
       );
+    })
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("explorer.triggerRun", async args => {
+      const event_type = await vscode.window.showInputBox({
+        prompt: "Enter `event_type` to dispatch to the repository",
+        value: "default"
+      });
+      if (event_type) {
+        const repo: Protocol = args.repo;
+        const client: OctokitWithActions = args.client;
+
+        await client.repos.createDispatchEvent({
+          owner: repo.owner,
+          repo: repo.repositoryName,
+          event_type,
+          client_payload: {}
+        });
+
+        vscode.window.setStatusBarMessage(
+          `GitHub Actions: Repository event '${event_type}' dispatched`,
+          2000
+        );
+      }
     })
   );
 
