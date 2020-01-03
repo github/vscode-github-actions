@@ -1,3 +1,5 @@
 src/token.ts
 node_modules
 out
+
+*.vsix

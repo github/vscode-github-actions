@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { ActionsExplorerProvider } from "./explorer/provider";
 import { initResources } from "./explorer/icons";
-import { Workflow } from "./model";
+import { Workflow, WorkflowRun } from "./model";
 import { join } from "path";
 import { setPAT } from "./auth/pat";
 import { getWorkflowUri } from "./workflow/workflow";
@@ -70,6 +70,8 @@ export function activate(context: vscode.ExtensionContext) {
           `GitHub Actions: Repository event '${event_type}' dispatched`,
           2000
         );
+
+        explorerTreeProvider.refresh();
       }
     })
   );
@@ -92,6 +94,62 @@ export function activate(context: vscode.ExtensionContext) {
           }
           break;
       }
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("workflow.run.open", async args => {
+      const repo: Protocol = args.repo;
+      const run: WorkflowRun = args.run;
+
+      // TODO: use `html_url` once available
+      const url = `https://${repo.host}/${repo.nameWithOwner}/commit/${run.head_sha}/checks`;
+
+      vscode.env.openExternal(vscode.Uri.parse(url));
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("workflow.run.rerun", async args => {
+      const repo: Protocol = args.repo;
+      const run: WorkflowRun = args.run;
+      const client: OctokitWithActions = args.client;
+
+      try {
+        await client.actions.rerunWorkflow({
+          owner: repo.owner,
+          repo: repo.repositoryName,
+          run: run.id
+        });
+      } catch (e) {
+        vscode.window.showErrorMessage(
+          `Could not rerun workflow: '${e.message}'`
+        );
+      }
+
+      explorerTreeProvider.refresh();
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("workflow.run.cancel", async args => {
+      const repo: Protocol = args.repo;
+      const run: WorkflowRun = args.run;
+      const client: OctokitWithActions = args.client;
+
+      try {
+        await client.actions.cancelWorkflow({
+          owner: repo.owner,
+          repo: repo.repositoryName,
+          run: run.id
+        });
+      } catch (e) {
+        vscode.window.showErrorMessage(
+          `Could not cancel workflow: '${e.message}'`
+        );
+      }
+
+      explorerTreeProvider.refresh();
     })
   );
 }

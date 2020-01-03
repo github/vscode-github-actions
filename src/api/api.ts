@@ -21,6 +21,32 @@ export function getClient(token: string): OctokitWithActions {
           accept: "application/vnd.github.jane-hopper-preview+json"
         },
         url: "/repos/:owner/:repo/actions/workflows"
+      },
+
+      cancelWorkflow: {
+        method: "POST",
+        params: {
+          owner: { required: true, type: "string" },
+          repo: { required: true, type: "string" },
+          run: { required: true, type: "integer" },
+        },
+        headers: {
+          accept: "application/vnd.github.jane-hopper-preview+json"
+        },
+        url: "/repos/:owner/:repo/actions/runs/:run/cancel"
+      },
+
+      rerunWorkflow: {
+        method: "POST",
+        params: {
+          owner: { required: true, type: "string" },
+          repo: { required: true, type: "string" },
+          run: { required: true, type: "integer" },
+        },
+        headers: {
+          accept: "application/vnd.github.jane-hopper-preview+json"
+        },
+        url: "/repos/:owner/:repo/actions/runs/:run/rerun"
       }
     }
   });

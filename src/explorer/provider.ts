@@ -68,21 +68,38 @@ class WorkflowNode extends vscode.TreeItem {
         new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf()
     );
 
-    return runs.map(wr => new WorkflowRunNode(wr));
+    return runs.map(wr => new WorkflowRunNode(this.repo, this.wf, wr, this.client));
   }
 }
 
 class WorkflowRunNode extends vscode.TreeItem {
-  constructor(public readonly run: WorkflowRun) {
+  constructor(
+    public readonly repo: Protocol,
+    public readonly workflow: Workflow,
+    public readonly run: WorkflowRun,
+    public readonly client: OctokitWithActions
+  ) {
     super(`#${run.id}`);
 
     this.description = `${run.event} (${(run.after || "").substr(0, 7)})`;
 
+    this.contextValue = "run";
+    if (this.run.status !== "completed") {
+      this.contextValue += " cancelable";
+    }
+
+    if (this.run.status === "completed" && this.run.conclusion !== "success") {
+      this.contextValue += " rerunnable";
+    }
+
     this.command = {
       title: "Open run",
-      command: "explorer.openRun"
-      // arguments: run.url // TODO: use `html_url` once run has it
+      command: "workflow.run.open"
     };
+  }
+
+  get tooltip(): string {
+    return `${this.run.status} - ${this.run.conclusion}`;
   }
 
   get iconPath(): string {

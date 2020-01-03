@@ -1,8 +1,12 @@
 {
   "name": "vscode-github-actions",
   "displayName": "vscode-github-actions",
+  "publisher": "cschleiden",
+  "repository": {
+    "url": "https://github.com/cschleiden/vscode-github-actions"
+  },
   "description": "",
-  "version": "0.0.2",
+  "version": "0.0.6",
   "engines": {
     "vscode": "^1.41.0"
   },
@@ -45,6 +49,21 @@
         "command": "explorer.triggerRun",
         "title": "Trigger workflow",
         "when": "viewItem =~ /workflow/ && viewItem =~ /rdispatch/"
+      },
+      {
+        "command": "workflow.run.open",
+        "title": "Open workflow run",
+        "when": "viewItem =~ /run/"
+      },
+      {
+        "command": "workflow.run.rerun",
+        "title": "Rerun workflow run",
+        "when": "viewItem =~ /run/ && viewItem =~ /rerunnable/"
+      },
+      {
+        "command": "workflow.run.cancel",
+        "title": "Cancel workflow run",
+        "when": "viewItem =~ /run/ && viewItem =~ /cancelable/"
       }
     ],
     "views": {
@@ -79,6 +98,18 @@
         {
           "command": "explorer.triggerRun",
           "when": "viewItem =~ /rdispatch/"
+        },
+        {
+          "command": "workflow.run.open",
+          "when": "viewItem =~ /run/"
+        },
+        {
+          "command": "workflow.run.cancel",
+          "when": "viewItem =~ /run/ && viewItem =~ /cancelable/"
+        },
+        {
+          "command": "workflow.run.rerun",
+          "when": "viewItem =~ /run/ && viewItem =~ /rerunnable/"
         }
       ]
     }
@@ -88,6 +119,7 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
+    "package": "npm version patch --no-git-tag-version && vsce package",
     "pretest": "npm run compile",
     "test": "node ./out/test/runTest.js"
   },
@@ -104,6 +136,7 @@
     "mocha": "^6.2.2",
     "tslint": "^5.20.0",
     "typescript": "^3.6.4",
+    "vsce": "^1.71.0",
     "vscode-test": "^1.2.2"
   },
   "dependencies": {
