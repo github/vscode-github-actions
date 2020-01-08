@@ -13,12 +13,16 @@ export type WorkflowRunParams = {
   run: number;
 };
 
+export type SecretParams = {
+  name: string;
+  key_id: string;
+  encrypted_value: string;
+};
+
 declare class OctokitWithActions extends Octokit {
   actions: {
     listWorkflows: {
-      (params?: Octokit.RequestOptions & Params): Promise<
-        Octokit.AnyResponse
-      >;
+      (params?: Octokit.RequestOptions & Params): Promise<Octokit.AnyResponse>;
 
       endpoint: Octokit.Endpoint;
     };
@@ -35,6 +39,26 @@ declare class OctokitWithActions extends Octokit {
       (params?: Octokit.RequestOptions & Params & WorkflowRunParams): Promise<
         Octokit.AnyResponse
       >;
+
+      endpoint: Octokit.Endpoint;
+    };
+
+    getSecrets: {
+      (params?: Octokit.RequestOptions & Params): Promise<Octokit.AnyResponse>;
+
+      endpoint: Octokit.Endpoint;
+    };
+
+    setSecret: {
+      (params?: Octokit.RequestOptions & Params & SecretParams): Promise<
+        Octokit.AnyResponse
+      >;
+
+      endpoint: Octokit.Endpoint;
+    };
+
+    getPublicKey: {
+      (params?: Octokit.RequestOptions & Params): Promise<Octokit.AnyResponse>;
 
       endpoint: Octokit.Endpoint;
     };

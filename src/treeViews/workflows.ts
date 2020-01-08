@@ -68,7 +68,9 @@ class WorkflowNode extends vscode.TreeItem {
         new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf()
     );
 
-    return runs.map(wr => new WorkflowRunNode(this.repo, this.wf, wr, this.client));
+    return runs.map(
+      wr => new WorkflowRunNode(this.repo, this.wf, wr, this.client)
+    );
   }
 }
 

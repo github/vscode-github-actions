@@ -64,20 +64,29 @@
         "command": "workflow.run.cancel",
         "title": "Cancel workflow run",
         "when": "viewItem =~ /run/ && viewItem =~ /cancelable/"
+      },
+      {
+        "command": "settings.secret.update",
+        "title": "Update secret",
+        "when": "viewItem == 'secret'"
       }
     ],
     "views": {
-      "actions-explorer": [
+      "actions": [
         {
-          "id": "actionsExplorer",
+          "id": "workflows",
           "name": "Workflows"
+        },
+        {
+          "id": "settings",
+          "name": "Settings"
         }
       ]
     },
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "actions-explorer",
+          "id": "actions",
           "title": "GitHub Actions",
           "icon": "resources/icons/light/explorer.svg"
         }
@@ -87,7 +96,8 @@
       "view/title": [
         {
           "command": "explorer.refresh",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "view == workflows"
         }
       ],
       "view/item/context": [
@@ -110,6 +120,10 @@
         {
           "command": "workflow.run.rerun",
           "when": "viewItem =~ /run/ && viewItem =~ /rerunnable/"
+        },
+        {
+          "command": "settings.secret.update",
+          "when": "viewItem == 'secret'"
         }
       ]
     }
@@ -141,10 +155,14 @@
   },
   "dependencies": {
     "@octokit/rest": "^16.35.2",
+    "atob": "^2.1.2",
+    "btoa": "^1.2.1",
     "js-yaml": "^3.13.1",
     "keytar": "^5.0.0",
     "ssh-config": "^3.0.0",
     "tunnel": "0.0.6",
+    "tweetsodium": "0.0.4",
+    "util": "^0.12.1",
     "uuid": "^3.3.3",
     "yaml": "^1.7.2"
   }

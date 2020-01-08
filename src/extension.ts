@@ -1,29 +1,32 @@
 import * as vscode from "vscode";
-import { ActionsExplorerProvider } from "./explorer/provider";
-import { initResources } from "./explorer/icons";
-import { Workflow, WorkflowRun } from "./model";
+import { ActionsExplorerProvider as WorkflowsTreeProvider } from "./treeViews/workflows";
+import { initResources } from "./treeViews/icons";
+import { Workflow, WorkflowRun, Secret } from "./model";
 import { join } from "path";
 import { setPAT } from "./auth/pat";
 import { getWorkflowUri } from "./workflow/workflow";
 import { OctokitWithActions } from "./typings/api";
 import { Protocol } from "./external/protocol";
+import { SettingsTreeProvider } from "./treeViews/settings";
+import { encodeSecret } from "./secrets";
 
 export function activate(context: vscode.ExtensionContext) {
   initResources(context);
 
   // Actions Explorer
-  const explorerTreeProvider = new ActionsExplorerProvider();
-
+  const workflowTreeProvider = new WorkflowsTreeProvider();
   context.subscriptions.push(
-    vscode.window.registerTreeDataProvider(
-      "actionsExplorer",
-      explorerTreeProvider
-    )
+    vscode.window.registerTreeDataProvider("workflows", workflowTreeProvider)
+  );
+
+  const settingsTreeProvider = new SettingsTreeProvider();
+  context.subscriptions.push(
+    vscode.window.registerTreeDataProvider("settings", settingsTreeProvider)
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand("explorer.refresh", () => {
-      explorerTreeProvider.refresh();
+      workflowTreeProvider.refresh();
     })
   );
   context.subscriptions.push(
@@ -71,7 +74,7 @@ export function activate(context: vscode.ExtensionContext) {
           2000
         );
 
-        explorerTreeProvider.refresh();
+        workflowTreeProvider.refresh();
       }
     })
   );
@@ -90,7 +93,7 @@ export function activate(context: vscode.ExtensionContext) {
           });
           if (token) {
             await setPAT(token);
-            explorerTreeProvider.refresh();
+            workflowTreeProvider.refresh();
           }
           break;
       }
@@ -127,7 +130,7 @@ export function activate(context: vscode.ExtensionContext) {
         );
       }
 
-      explorerTreeProvider.refresh();
+      workflowTreeProvider.refresh();
     })
   );
 
@@ -149,7 +152,41 @@ export function activate(context: vscode.ExtensionContext) {
         );
       }
 
-      explorerTreeProvider.refresh();
+      workflowTreeProvider.refresh();
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("settings.secret.update", async args => {
+      const repo: Protocol = args.repo;
+      const secret: Secret = args.secret;
+      const client: OctokitWithActions = args.client;
+
+      const value = await vscode.window.showInputBox({
+        prompt: "Enter the new secret value"
+      });
+
+      if (value) {
+        try {
+          const keyResponse = await client.actions.getPublicKey({
+            owner: repo.owner,
+            repo: repo.repositoryName
+          });
+
+          const key_id: string = keyResponse.data.key_id;
+          const key: string = keyResponse.data.key;
+
+          await client.actions.setSecret({
+            owner: repo.owner,
+            repo: repo.repositoryName,
+            name: secret.name,
+            key_id: key_id,
+            encrypted_value: encodeSecret(key, value)
+          });
+        } catch (e) {
+          vscode.window.showErrorMessage(e.message);
+        }
+      }
     })
   );
 }

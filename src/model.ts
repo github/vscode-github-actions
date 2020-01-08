@@ -46,3 +46,9 @@ export interface WorkflowRun {
   // repository:      Repository;
   // head_repository: Repository;
 }
+
+export interface Secret {
+  name: string;
+  created_at: string;
+  updated_at: string;
+}
