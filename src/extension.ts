@@ -157,6 +157,68 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
+    vscode.commands.registerCommand("settings.secret.add", async args => {
+      const repo: Protocol = args.repo;
+      const client: OctokitWithActions = args.client;
+
+      const name = await vscode.window.showInputBox({
+        prompt: "Enter name for new secret"
+      });
+
+      if (!name) {
+        return;
+      }
+
+      const value = await vscode.window.showInputBox({
+        prompt: "Enter the new secret value"
+      });
+
+      if (value) {
+        try {
+          const keyResponse = await client.actions.getPublicKey({
+            owner: repo.owner,
+            repo: repo.repositoryName
+          });
+
+          const key_id: string = keyResponse.data.key_id;
+          const key: string = keyResponse.data.key;
+
+          await client.actions.setSecret({
+            owner: repo.owner,
+            repo: repo.repositoryName,
+            name: name,
+            key_id: key_id,
+            encrypted_value: encodeSecret(key, value)
+          });
+        } catch (e) {
+          vscode.window.showErrorMessage(e.message);
+        }
+      }
+
+      settingsTreeProvider.refresh();
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("settings.secret.delete", async args => {
+      const repo: Protocol = args.repo;
+      const secret: Secret = args.secret;
+      const client: OctokitWithActions = args.client;
+
+      // TODO: Make API call
+      // await client.actions.setSecret({
+      //   owner: repo.owner,
+      //   repo: repo.repositoryName,
+      //   name: name,
+      //   key_id: key_id,
+      //   encrypted_value: encodeSecret(key, value)
+      // });
+
+      settingsTreeProvider.refresh();
+    })
+  );
+
+  context.subscriptions.push(
     vscode.commands.registerCommand("settings.secret.update", async args => {
       const repo: Protocol = args.repo;
       const secret: Secret = args.secret;

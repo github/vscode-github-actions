@@ -14,8 +14,13 @@ class SelfHostedRunnersNode extends vscode.TreeItem {
 }
 
 class SecretsNode extends vscode.TreeItem {
-  constructor(public client: OctokitWithActions) {
+  constructor(
+    public readonly repo: Protocol,
+    public readonly client: OctokitWithActions
+  ) {
     super("Secrets", vscode.TreeItemCollapsibleState.Collapsed);
+
+    this.contextValue = "secrets";
   }
 }
 
@@ -69,7 +74,7 @@ export class SettingsTreeProvider
 
     if (!element) {
       // Root
-      return [new SelfHostedRunnersNode(), new SecretsNode(client)];
+      return [new SelfHostedRunnersNode(), new SecretsNode(repo, client)];
     }
 
     if (element instanceof SecretsNode) {

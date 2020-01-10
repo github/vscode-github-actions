@@ -66,9 +66,20 @@
         "when": "viewItem =~ /run/ && viewItem =~ /cancelable/"
       },
       {
+        "command": "settings.secret.add",
+        "title": "Add new secret",
+        "icon": {
+          "dark": "resources/icons/dark/add.svg",
+          "light": "resources/icons/light/add.svg"
+        }
+      },
+      {
         "command": "settings.secret.update",
-        "title": "Update secret",
-        "when": "viewItem == 'secret'"
+        "title": "Update secret"
+      },
+      {
+        "command": "settings.secret.delete",
+        "title": "Delete secret"
       }
     ],
     "views": {
@@ -122,7 +133,16 @@
           "when": "viewItem =~ /run/ && viewItem =~ /rerunnable/"
         },
         {
+          "command": "settings.secret.add",
+          "group": "inline",
+          "when": "viewItem == 'secrets'"
+        },
+        {
           "command": "settings.secret.update",
+          "when": "viewItem == 'secret'"
+        },
+        {
+          "command": "settings.secret.delete",
           "when": "viewItem == 'secret'"
         }
       ]
