@@ -1,6 +1,6 @@
-src/token.ts
 node_modules
 out
+dist
 
 *.vsix
 .DS_Store
