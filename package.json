@@ -27,7 +27,8 @@
     "commands": [
       {
         "command": "auth.login",
-        "title": "Login"
+        "title": "Login",
+        "category": "GitHub Actions"
       },
       {
         "command": "explorer.refresh",
@@ -39,7 +40,8 @@
       },
       {
         "command": "explorer.openRun",
-        "title": "Open workflow run"
+        "title": "Open workflow run",
+        "when": "viewItem =~ /workflow/"
       },
       {
         "command": "explorer.openWorkflowFile",
@@ -155,6 +157,40 @@
           "command": "settings.secret.delete",
           "when": "viewItem == 'secret'",
           "group": "inline@2"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "explorer.openWorkflowFile",
+          "when": "false"
+        },
+        {
+          "command": "explorer.triggerRun",
+          "when": "false"
+        },
+        {
+          "command": "workflow.run.open",
+          "when": "false"
+        },
+        {
+          "command": "workflow.run.cancel",
+          "when": "false"
+        },
+        {
+          "command": "workflow.run.rerun",
+          "when": "false"
+        },
+        {
+          "command": "settings.secret.add",
+          "when": "false"
+        },
+        {
+          "command": "settings.secret.update",
+          "when": "false"
+        },
+        {
+          "command": "settings.secret.delete",
+          "when": "false"
         }
       ]
     }
