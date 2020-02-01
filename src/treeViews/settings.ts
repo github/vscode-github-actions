@@ -2,10 +2,10 @@ import * as vscode from "vscode";
 import { getGitHubProtocol } from "../git/repository";
 import { getPAT } from "../auth/pat";
 import { getClient } from "../api/api";
-import { OctokitWithActions } from "../typings/api";
-import { createInterface } from "readline";
 import { Secret } from "../model";
 import { Protocol } from "../external/protocol";
+import Octokit = require("@octokit/rest");
+import { ActionsListSecretsForRepoResponseItem } from "@octokit/rest";
 
 class SelfHostedRunnersNode extends vscode.TreeItem {
   constructor() {
@@ -14,10 +14,7 @@ class SelfHostedRunnersNode extends vscode.TreeItem {
 }
 
 class SecretsNode extends vscode.TreeItem {
-  constructor(
-    public readonly repo: Protocol,
-    public readonly client: OctokitWithActions
-  ) {
+  constructor(public readonly repo: Protocol, public readonly client: Octokit) {
     super("Secrets", vscode.TreeItemCollapsibleState.Collapsed);
 
     this.contextValue = "secrets";
@@ -28,7 +25,7 @@ class SecretNode extends vscode.TreeItem {
   constructor(
     public readonly repo: Protocol,
     public readonly secret: Secret,
-    public readonly client: OctokitWithActions
+    public readonly client: Octokit
   ) {
     super(secret.name);
 
@@ -78,11 +75,12 @@ export class SettingsTreeProvider
     }
 
     if (element instanceof SecretsNode) {
-      const result = await client.actions.getSecrets({
+      const result = await client.actions.listSecretsForRepo({
         owner: repo.owner,
         repo: repo.repositoryName
       });
-      const secrets = result.data.secrets as Secret[];
+      const data = (result.data as any) as ActionsListSecretsForRepoResponseItem;
+      const secrets = data.secrets;
       return secrets.map(s => new SecretNode(repo, s, client));
     }
 

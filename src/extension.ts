@@ -1,14 +1,13 @@
 import * as vscode from "vscode";
-import { ActionsExplorerProvider as WorkflowsTreeProvider } from "./treeViews/workflows";
-import { initResources } from "./treeViews/icons";
-import { Workflow, WorkflowRun, Secret } from "./model";
-import { join } from "path";
 import { setPAT } from "./auth/pat";
-import { getWorkflowUri } from "./workflow/workflow";
-import { OctokitWithActions } from "./typings/api";
 import { Protocol } from "./external/protocol";
-import { SettingsTreeProvider } from "./treeViews/settings";
 import { encodeSecret } from "./secrets";
+import { initResources } from "./treeViews/icons";
+import { SettingsTreeProvider } from "./treeViews/settings";
+import { ActionsExplorerProvider as WorkflowsTreeProvider } from "./treeViews/workflows";
+import { getWorkflowUri } from "./workflow/workflow";
+import Octokit = require("@octokit/rest");
+import { Workflow, WorkflowRun, Secret } from "./model";
 
 export function activate(context: vscode.ExtensionContext) {
   initResources(context);
@@ -60,7 +59,7 @@ export function activate(context: vscode.ExtensionContext) {
       });
       if (event_type) {
         const repo: Protocol = args.repo;
-        const client: OctokitWithActions = args.client;
+        const client: Octokit = args.client;
 
         await client.repos.createDispatchEvent({
           owner: repo.owner,
@@ -116,13 +115,13 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("workflow.run.rerun", async args => {
       const repo: Protocol = args.repo;
       const run: WorkflowRun = args.run;
-      const client: OctokitWithActions = args.client;
+      const client: Octokit = args.client;
 
       try {
-        await client.actions.rerunWorkflow({
+        await client.actions.reRunWorkflow({
           owner: repo.owner,
           repo: repo.repositoryName,
-          run: run.id
+          run_id: run.id
         });
       } catch (e) {
         vscode.window.showErrorMessage(
@@ -138,13 +137,13 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("workflow.run.cancel", async args => {
       const repo: Protocol = args.repo;
       const run: WorkflowRun = args.run;
-      const client: OctokitWithActions = args.client;
+      const client: Octokit = args.client;
 
       try {
-        await client.actions.cancelWorkflow({
+        await client.actions.cancelWorkflowRun({
           owner: repo.owner,
           repo: repo.repositoryName,
-          run: run.id
+          run_id: run.id
         });
       } catch (e) {
         vscode.window.showErrorMessage(
@@ -159,7 +158,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("settings.secret.add", async args => {
       const repo: Protocol = args.repo;
-      const client: OctokitWithActions = args.client;
+      const client: Octokit = args.client;
 
       const name = await vscode.window.showInputBox({
         prompt: "Enter name for new secret"
@@ -180,10 +179,10 @@ export function activate(context: vscode.ExtensionContext) {
             repo: repo.repositoryName
           });
 
-          const key_id: string = keyResponse.data.key_id;
-          const key: string = keyResponse.data.key;
+          const key_id = keyResponse.data.key_id;
+          const key = keyResponse.data.key;
 
-          await client.actions.setSecret({
+          await client.actions.createOrUpdateSecretForRepo({
             owner: repo.owner,
             repo: repo.repositoryName,
             name: name,
@@ -203,16 +202,13 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("settings.secret.delete", async args => {
       const repo: Protocol = args.repo;
       const secret: Secret = args.secret;
-      const client: OctokitWithActions = args.client;
+      const client: Octokit = args.client;
 
-      // TODO: Make API call
-      // await client.actions.setSecret({
-      //   owner: repo.owner,
-      //   repo: repo.repositoryName,
-      //   name: name,
-      //   key_id: key_id,
-      //   encrypted_value: encodeSecret(key, value)
-      // });
+      await client.actions.deleteSecretFromRepo({
+        owner: repo.owner,
+        repo: repo.repositoryName,
+        name: secret.name
+      });
 
       settingsTreeProvider.refresh();
     })
@@ -222,7 +218,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("settings.secret.update", async args => {
       const repo: Protocol = args.repo;
       const secret: Secret = args.secret;
-      const client: OctokitWithActions = args.client;
+      const client: Octokit = args.client;
 
       const value = await vscode.window.showInputBox({
         prompt: "Enter the new secret value"
@@ -235,10 +231,10 @@ export function activate(context: vscode.ExtensionContext) {
             repo: repo.repositoryName
           });
 
-          const key_id: string = keyResponse.data.key_id;
-          const key: string = keyResponse.data.key;
+          const key_id = keyResponse.data.key_id;
+          const key = keyResponse.data.key;
 
-          await client.actions.setSecret({
+          await client.actions.createOrUpdateSecretForRepo({
             owner: repo.owner,
             repo: repo.repositoryName,
             name: secret.name,

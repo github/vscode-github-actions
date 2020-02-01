@@ -174,7 +174,7 @@
     "vscode-test": "^1.2.2"
   },
   "dependencies": {
-    "@octokit/rest": "^16.35.2",
+    "@octokit/rest": "github:octokit/rest.js#master",
     "atob": "^2.1.2",
     "btoa": "^1.2.1",
     "js-yaml": "^3.13.1",

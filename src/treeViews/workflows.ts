@@ -1,17 +1,12 @@
 import * as vscode from "vscode";
-import { getPAT } from "../auth/pat";
-import { getGitHubProtocol } from "../git/repository";
-import {
-  RunsResponse,
-  Workflow,
-  WorkflowRun,
-  WorkflowsResponse
-} from "../model";
-import { OctokitWithActions } from "../typings/api";
-import { getIconForWorkflowRun } from "./icons";
 import { getClient } from "../api/api";
-import { usesRepositoryDispatch, getWorkflowUri } from "../workflow/workflow";
+import { getPAT } from "../auth/pat";
 import { Protocol } from "../external/protocol";
+import { getGitHubProtocol } from "../git/repository";
+import { Workflow, WorkflowRun } from "../model";
+import { getWorkflowUri, usesRepositoryDispatch } from "../workflow/workflow";
+import { getIconForWorkflowRun } from "./icons";
+import Octokit = require("@octokit/rest");
 
 class NoGitHubRepositoryNode extends vscode.TreeItem {
   constructor() {
@@ -40,7 +35,7 @@ class WorkflowNode extends vscode.TreeItem {
   constructor(
     public readonly repo: Protocol,
     public readonly wf: Workflow,
-    public readonly client: OctokitWithActions
+    public readonly client: Octokit
   ) {
     super(wf.name, vscode.TreeItemCollapsibleState.Collapsed);
 
@@ -55,21 +50,17 @@ class WorkflowNode extends vscode.TreeItem {
   }
 
   async getRuns(): Promise<WorkflowRunNode[]> {
-    // TODO: Implement pagination
-    const result = await this.client.request(
-      `${this.wf.url}/runs?per_page=100`
-    );
-    const resp = result.data as RunsResponse;
+    const result = await this.client.actions.listWorkflowRuns({
+      owner: this.repo.owner,
+      repo: this.repo.repositoryName,
+      workflow_id: this.wf.id
+    });
 
-    // Show most recent ones first
+    const resp = result.data;
     const runs = resp.workflow_runs;
-    runs.sort(
-      (a, b) =>
-        new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf()
-    );
 
     return runs.map(
-      wr => new WorkflowRunNode(this.repo, this.wf, wr, this.client)
+      wr => new WorkflowRunNode(this.repo, this.wf, wr as any, this.client)
     );
   }
 }
@@ -79,11 +70,11 @@ class WorkflowRunNode extends vscode.TreeItem {
     public readonly repo: Protocol,
     public readonly workflow: Workflow,
     public readonly run: WorkflowRun,
-    public readonly client: OctokitWithActions
+    public readonly client: Octokit
   ) {
     super(`#${run.id}`);
 
-    this.description = `${run.event} (${(run.after || "").substr(0, 7)})`;
+    this.description = `${run.event} (${(run.head_sha || "").substr(0, 7)})`;
 
     this.contextValue = "run";
     if (this.run.status !== "completed") {
@@ -150,11 +141,11 @@ export class ActionsExplorerProvider
 
       try {
         const client = getClient(token);
-        const result = await client.actions.listWorkflows({
+        const result = await client.actions.listRepoWorkflows({
           owner: repo.owner,
           repo: repo.repositoryName
         });
-        const response = result.data as WorkflowsResponse;
+        const response = result.data;
 
         const workflows = response.workflows;
         workflows.sort((a, b) => a.name.localeCompare(b.name));
