@@ -8,12 +8,18 @@ import { getWorkflowUri, usesRepositoryDispatch } from "../workflow/workflow";
 import { getIconForWorkflowRun } from "./icons";
 import Octokit = require("@octokit/rest");
 
+/**
+ * When no github.com remote can be found in the current workspace.
+ */
 class NoGitHubRepositoryNode extends vscode.TreeItem {
   constructor() {
-    super("Current workspace does not contain a github.com repository");
+    super("Did not find a github.com repository");
   }
 }
 
+/**
+ * If there's no PAT set
+ */
 class AuthenticationNode extends vscode.TreeItem {
   constructor() {
     super("No PAT for GitHub found. Click here to login.");
@@ -95,7 +101,7 @@ class WorkflowRunNode extends vscode.TreeItem {
     return `${this.run.status} - ${this.run.conclusion}`;
   }
 
-  get iconPath(): string {
+  get iconPath() {
     return getIconForWorkflowRun(this.run);
   }
 }

@@ -6,8 +6,17 @@ export function initResources(context: vscode.ExtensionContext) {
   _context = context;
 }
 
-export function getIconForWorkflowRun(run: WorkflowRun): string {
-  return _context.asAbsolutePath(_getIconForWorkflowrun(run));
+export function getAbsoluteIconPath(
+  relativeIconPath: string
+): { light: string | vscode.Uri; dark: string | vscode.Uri } {
+  return {
+    light: _context.asAbsolutePath(`resources/icons/light/${relativeIconPath}`),
+    dark: _context.asAbsolutePath(`resources/icons/dark/${relativeIconPath}`)
+  };
+}
+
+export function getIconForWorkflowRun(run: WorkflowRun) {
+  return getAbsoluteIconPath(_getIconForWorkflowrun(run));
 }
 
 function _getIconForWorkflowrun(run: WorkflowRun): string {
@@ -15,19 +24,22 @@ function _getIconForWorkflowrun(run: WorkflowRun): string {
     case "completed": {
       switch (run.conclusion) {
         case "success":
-          return "resources/icons/dark/conclusions/success.svg";
+          return "conclusions/success.svg";
 
         case "failure":
-          return "resources/icons/dark/conclusions/failure.svg";
+          return "conclusions/failure.svg";
+
+        case "cancelled":
+          return "conclusions/cancelled.svg";
       }
     }
 
     case "queued":
-      return "resources/icons/dark/statuses/queued.svg";
+      return "statuses/queued.svg";
 
     case "inprogress":
     case "in_progress":
-      return "resources/icons/dark/statuses/in-progress.svg";
+      return "statuses/in-progress.svg";
   }
 
   return "";

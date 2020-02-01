@@ -2,14 +2,42 @@ import * as vscode from "vscode";
 import { getGitHubProtocol } from "../git/repository";
 import { getPAT } from "../auth/pat";
 import { getClient } from "../api/api";
-import { Secret } from "../model";
+import { Secret, SelfHostedRunner } from "../model";
 import { Protocol } from "../external/protocol";
 import Octokit = require("@octokit/rest");
 import { ActionsListSecretsForRepoResponseItem } from "@octokit/rest";
+import { getAbsoluteIconPath } from "./icons";
 
 class SelfHostedRunnersNode extends vscode.TreeItem {
-  constructor() {
+  constructor(public readonly repo: Protocol, public readonly client: Octokit) {
     super("Self-hosted runners", vscode.TreeItemCollapsibleState.Collapsed);
+
+    this.contextValue = "runners";
+  }
+}
+
+class SelfHostedRunnerNode extends vscode.TreeItem {
+  constructor(
+    public readonly repo: Protocol,
+    public readonly selfHostedRunner: SelfHostedRunner,
+    public readonly client: Octokit
+  ) {
+    super(selfHostedRunner.name);
+
+    this.contextValue = "runner";
+  }
+
+  get tooltip(): string {
+    return this.selfHostedRunner.status;
+  }
+
+  get iconPath() {
+    const iconPath =
+      this.selfHostedRunner.status == "online"
+        ? "runner-online.svg"
+        : "runner-offline.svg";
+
+    return getAbsoluteIconPath(iconPath);
   }
 }
 
@@ -71,7 +99,10 @@ export class SettingsTreeProvider
 
     if (!element) {
       // Root
-      return [new SelfHostedRunnersNode(), new SecretsNode(repo, client)];
+      return [
+        new SelfHostedRunnersNode(repo, client),
+        new SecretsNode(repo, client)
+      ];
     }
 
     if (element instanceof SecretsNode) {
@@ -79,9 +110,20 @@ export class SettingsTreeProvider
         owner: repo.owner,
         repo: repo.repositoryName
       });
+      // Work around bad typings/docs
       const data = (result.data as any) as ActionsListSecretsForRepoResponseItem;
       const secrets = data.secrets;
       return secrets.map(s => new SecretNode(repo, s, client));
+    }
+
+    if (element instanceof SelfHostedRunnersNode) {
+      const result = await client.actions.listSelfHostedRunnersForRepo({
+        owner: repo.owner,
+        repo: repo.repositoryName
+      });
+      const data = (result.data as any) as Octokit.ActionsListSelfHostedRunnersForRepoResponseItemItem[];
+
+      return data.map(r => new SelfHostedRunnerNode(repo, r, client));
     }
 
     return [];

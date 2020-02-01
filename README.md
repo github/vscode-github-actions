@@ -1,6 +1,6 @@
 # GitHub Actions for VS Code
 
-Simple extension to interact with GitHub Actions from within VS Code.
+Very simple, unofficial extension to interact with GitHub Actions from within VS Code.
 
 # View workflows for the currently opened repository
 

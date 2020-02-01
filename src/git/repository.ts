@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import { GitExtension, Remote } from "../typings/git";
-import { flatten } from "../utils/array";
 import { Protocol } from "../external/protocol";
+import { GitExtension } from "../typings/git";
+import { flatten } from "../utils/array";
 
 export async function getGitHubUrl(): Promise<string | null> {
   const gitExtension = vscode.extensions.getExtension<GitExtension>(
@@ -11,8 +11,23 @@ export async function getGitHubUrl(): Promise<string | null> {
     if (!gitExtension.isActive) {
       await gitExtension.activate();
     }
-
     const git = gitExtension.exports.getAPI(1);
+
+    if (git.state !== "initialized") {
+      // Wait for the plugin to be initialized
+      await new Promise(resolve => {
+        if (git.state === "initialized") {
+          resolve();
+        } else {
+          const listener = git.onDidChangeState(state => {
+            if (state === "initialized") {
+              resolve();
+            }
+            listener.dispose();
+          });
+        }
+      });
+    }
 
     if (git.repositories.length > 0) {
       // To keep it very simple for now, look for the first remote in the current workspace that is a

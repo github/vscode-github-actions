@@ -1,7 +1,8 @@
 import {
   ActionsListRepoWorkflowsResponseWorkflowsItem,
   ActionsListSecretsForRepoResponseItemSecretsItem,
-  ActionsListWorkflowRunsResponseWorkflowRunsItem
+  ActionsListWorkflowRunsResponseWorkflowRunsItem,
+  ActionsListSelfHostedRunnersForRepoResponseItemItem
 } from "@octokit/rest";
 
 type Modify<T, R> = Omit<T, keyof R> & R;
@@ -14,3 +15,5 @@ export interface WorkflowRun
   > {}
 
 export type Secret = ActionsListSecretsForRepoResponseItemSecretsItem;
+
+export type SelfHostedRunner = ActionsListSelfHostedRunnersForRepoResponseItemItem;

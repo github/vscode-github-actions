@@ -15,7 +15,8 @@
   ],
   "activationEvents": [
     "onCommand:auth.login",
-    "onView:actionsExplorer",
+    "onView:workflows",
+    "onView:settings",
     "onCommand:explorer.refresh"
   ],
   "main": "./out/extension.js",
@@ -75,11 +76,19 @@
       },
       {
         "command": "settings.secret.update",
-        "title": "Update secret"
+        "title": "Update secret",
+        "icon": {
+          "dark": "resources/icons/dark/edit.svg",
+          "light": "resources/icons/light/edit.svg"
+        }
       },
       {
         "command": "settings.secret.delete",
-        "title": "Delete secret"
+        "title": "Delete secret",
+        "icon": {
+          "dark": "resources/icons/dark/remove.svg",
+          "light": "resources/icons/light/remove.svg"
+        }
       }
     ],
     "views": {
@@ -108,7 +117,7 @@
         {
           "command": "explorer.refresh",
           "group": "navigation",
-          "when": "view == workflows"
+          "when": "view == workflows || view == settings"
         }
       ],
       "view/item/context": [
@@ -139,11 +148,13 @@
         },
         {
           "command": "settings.secret.update",
-          "when": "viewItem == 'secret'"
+          "when": "viewItem == 'secret'",
+          "group": "inline@1"
         },
         {
           "command": "settings.secret.delete",
-          "when": "viewItem == 'secret'"
+          "when": "viewItem == 'secret'",
+          "group": "inline@2"
         }
       ]
     }

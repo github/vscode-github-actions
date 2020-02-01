@@ -8,8 +8,12 @@ import { ActionsExplorerProvider as WorkflowsTreeProvider } from "./treeViews/wo
 import { getWorkflowUri } from "./workflow/workflow";
 import Octokit = require("@octokit/rest");
 import { Workflow, WorkflowRun, Secret } from "./model";
+import { getGitHubUrl } from "./git/repository";
 
 export function activate(context: vscode.ExtensionContext) {
+  // TODO: Remove
+  getGitHubUrl();
+
   initResources(context);
 
   // Actions Explorer
@@ -101,12 +105,8 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("workflow.run.open", async args => {
-      const repo: Protocol = args.repo;
       const run: WorkflowRun = args.run;
-
-      // TODO: use `html_url` once available
-      const url = `https://${repo.host}/${repo.nameWithOwner}/commit/${run.head_sha}/checks`;
-
+      const url = run.html_url;
       vscode.env.openExternal(vscode.Uri.parse(url));
     })
   );
