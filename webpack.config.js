@@ -34,6 +34,10 @@ const config = {
             loader: "ts-loader"
           }
         ]
+      },
+      {
+        test: /\.node$/,
+        use: 'node-loader'
       }
     ]
   }
