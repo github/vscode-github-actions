@@ -1,12 +1,12 @@
 {
   "name": "vscode-github-actions",
-  "displayName": "vscode-github-actions",
+  "displayName": "GitHub Actions",
   "publisher": "cschleiden",
   "repository": {
     "url": "https://github.com/cschleiden/vscode-github-actions"
   },
-  "description": "",
-  "version": "0.1.9",
+  "description": "See GitHub Actions workflows and runs for github.com hosted repositories in VS Code",
+  "version": "0.1.10",
   "engines": {
     "vscode": "^1.41.0"
   },
@@ -197,9 +197,10 @@
   },
   "enableProposedApi": true,
   "scripts": {
+    "clean": "rimraf ./dist ./out",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "package": "npm version patch --no-git-tag-version && vsce package",
+    "package": "npm run clean && npm version patch --no-git-tag-version && vsce package",
     "vscode:prepublish": "webpack --mode production",
     "webpack": "webpack --mode development",
     "webpack-dev": "webpack --mode development --watch",
@@ -217,6 +218,7 @@
     "glob": "^7.1.5",
     "mocha": "^6.2.2",
     "node-loader": "^0.6.0",
+    "rimraf": "^3.0.1",
     "ts-loader": "^6.2.1",
     "tslint": "^5.20.0",
     "typescript": "^3.6.4",
