@@ -2,11 +2,12 @@
   "name": "vscode-github-actions",
   "displayName": "GitHub Actions",
   "publisher": "cschleiden",
+  "icon": "resources/logo.png",
   "repository": {
     "url": "https://github.com/cschleiden/vscode-github-actions"
   },
   "description": "See GitHub Actions workflows and runs for github.com hosted repositories in VS Code",
-  "version": "0.1.10",
+  "version": "0.1.12",
   "engines": {
     "vscode": "^1.41.0"
   },
