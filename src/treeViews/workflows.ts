@@ -3,7 +3,7 @@ import { getClient } from "../api/api";
 import { getPAT } from "../auth/pat";
 import { Protocol } from "../external/protocol";
 import { getGitHubProtocol } from "../git/repository";
-import { Workflow, WorkflowRun } from "../model";
+import { Workflow, WorkflowRun, WorkflowJob, WorkflowStep } from "../model";
 import { getWorkflowUri, usesRepositoryDispatch } from "../workflow/workflow";
 import { getIconForWorkflowRun } from "./icons";
 import Octokit = require("@octokit/rest");
@@ -78,7 +78,12 @@ class WorkflowRunNode extends vscode.TreeItem {
     public readonly run: WorkflowRun,
     public readonly client: Octokit
   ) {
-    super(`#${run.id}`);
+    super(
+      `#${run.id}`,
+      (run.status === "completed" &&
+        vscode.TreeItemCollapsibleState.Collapsed) ||
+        undefined
+    );
 
     this.description = `${run.event} (${(run.head_sha || "").substr(0, 7)})`;
 
@@ -91,10 +96,31 @@ class WorkflowRunNode extends vscode.TreeItem {
       this.contextValue += " rerunnable";
     }
 
+    if (this.run.status === "completed") {
+      this.contextValue += "completed";
+    }
+
     this.command = {
       title: "Open run",
       command: "workflow.run.open"
     };
+  }
+
+  hasJobs(): boolean {
+    return this.run.status === "completed";
+  }
+
+  async getJobs(): Promise<WorkflowJobNode[]> {
+    const result = await this.client.actions.listJobsForWorkflowRun({
+      owner: this.repo.owner,
+      repo: this.repo.repositoryName,
+      run_id: this.run.id
+    });
+
+    const resp = result.data;
+    const jobs: WorkflowJob[] = (resp as any).jobs;
+
+    return jobs.map(job => new WorkflowJobNode(this.repo, job, this.client));
   }
 
   get tooltip(): string {
@@ -106,11 +132,54 @@ class WorkflowRunNode extends vscode.TreeItem {
   }
 }
 
+class WorkflowJobNode extends vscode.TreeItem {
+  constructor(
+    public readonly repo: Protocol,
+    public readonly job: WorkflowJob,
+    public readonly client: Octokit
+  ) {
+    super(
+      job.name,
+      (job.steps &&
+        job.steps.length > 0 &&
+        vscode.TreeItemCollapsibleState.Collapsed) ||
+        undefined
+    );
+  }
+
+  hasSteps(): boolean {
+    return this.job.steps && this.job.steps.length > 0;
+  }
+
+  async getSteps(): Promise<WorkflowStepNode[]> {
+    return this.job.steps.map(
+      s => new WorkflowStepNode(this.repo, s, this.client)
+    );
+  }
+
+  get iconPath() {
+    return getIconForWorkflowRun(this.job);
+  }
+}
+
+class WorkflowStepNode extends vscode.TreeItem {
+  constructor(
+    public readonly repo: Protocol,
+    public readonly step: WorkflowStep,
+    public readonly client: Octokit
+  ) {
+    super(step.name);
+
+    this.contextValue = "step";
+  }
+}
+
 type ActionsExplorerNode =
   | AuthenticationNode
   | NoGitHubRepositoryNode
   | WorkflowNode
-  | WorkflowRunNode;
+  | WorkflowRunNode
+  | WorkflowStepNode;
 
 export class ActionsExplorerProvider
   implements vscode.TreeDataProvider<ActionsExplorerNode> {
@@ -132,6 +201,18 @@ export class ActionsExplorerProvider
   ): Promise<ActionsExplorerNode[]> {
     if (element && element instanceof WorkflowNode) {
       return element.getRuns();
+    } else if (
+      element &&
+      element instanceof WorkflowRunNode &&
+      element.hasJobs()
+    ) {
+      return element.getJobs();
+    } else if (
+      element &&
+      element instanceof WorkflowJobNode &&
+      element.hasSteps()
+    ) {
+      return element.getSteps();
     } else {
       // Root nodes
       const repo = await getGitHubProtocol();

@@ -2,7 +2,9 @@ import {
   ActionsListRepoWorkflowsResponseWorkflowsItem,
   ActionsListSecretsForRepoResponseItemSecretsItem,
   ActionsListWorkflowRunsResponseWorkflowRunsItem,
-  ActionsListSelfHostedRunnersForRepoResponseItemItem
+  ActionsListSelfHostedRunnersForRepoResponseItemItem,
+  ActionsListJobsForWorkflowRunResponseItemWorkflowJobsItem,
+  ActionsListJobsForWorkflowRunResponseItemWorkflowJobsItemStepsItem
 } from "@octokit/rest";
 
 type Modify<T, R> = Omit<T, keyof R> & R;
@@ -13,6 +15,10 @@ export interface WorkflowRun
     ActionsListWorkflowRunsResponseWorkflowRunsItem,
     { conclusion: string }
   > {}
+
+export type WorkflowJob = ActionsListJobsForWorkflowRunResponseItemWorkflowJobsItem;
+
+export type WorkflowStep = ActionsListJobsForWorkflowRunResponseItemWorkflowJobsItemStepsItem;
 
 export type Secret = ActionsListSecretsForRepoResponseItemSecretsItem;
 
