@@ -16,11 +16,15 @@ Very simple, **unofficial** extension to interact with GitHub Actions from withi
 
 ### View workflows for the currently opened repository
 
-![](./media/runs.png)
+![See workflows and runs for the current repository](./media/runs.png)
 
-### View workflow runs and conclusions
+### View workflow runs and their status
 
-![](./media/runs2.png)
+![View workflows and their status](./media/runs2.png)
+
+### Inspect logs to see failures
+
+![Display logs for workflow runs](./media/logs.gif)
 
 ### Trigger runs
 
