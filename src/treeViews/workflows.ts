@@ -145,6 +145,8 @@ class WorkflowJobNode extends vscode.TreeItem {
         vscode.TreeItemCollapsibleState.Collapsed) ||
         undefined
     );
+
+    this.contextValue = "job completed";
   }
 
   hasSteps(): boolean {

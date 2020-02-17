@@ -60,6 +60,15 @@
         "when": "viewItem =~ /run/"
       },
       {
+        "command": "workflow.step.logs",
+        "title": "View logs",
+        "when": "viewItem =~ /job/ && viewItem =~ /completed/",
+        "icon": {
+          "dark": "resources/icons/dark/add.svg",
+          "light": "resources/icons/light/add.svg"
+        }
+      },
+      {
         "command": "workflow.run.rerun",
         "title": "Rerun workflow run",
         "when": "viewItem =~ /run/ && viewItem =~ /rerunnable/"
@@ -135,6 +144,11 @@
         {
           "command": "workflow.run.open",
           "when": "viewItem =~ /run/"
+        },
+        {
+          "command": "workflow.step.logs",
+          "group": "inline",
+          "when": "viewItem =~ /job/ && viewItem =~ /completed/"
         },
         {
           "command": "workflow.run.cancel",

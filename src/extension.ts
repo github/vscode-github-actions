@@ -1,14 +1,18 @@
 import * as vscode from "vscode";
 import { setPAT } from "./auth/pat";
 import { Protocol } from "./external/protocol";
+import { getGitHubUrl } from "./git/repository";
+import { LogScheme } from "./logs/constants";
+import { WorkflowStepLogProvider } from "./logs/fileProvider";
+import { WorkflowStepLogFoldingProvider } from "./logs/foldingProvider";
+import { Secret, Workflow, WorkflowJob, WorkflowRun } from "./model";
 import { encodeSecret } from "./secrets";
 import { initResources } from "./treeViews/icons";
 import { SettingsTreeProvider } from "./treeViews/settings";
 import { ActionsExplorerProvider as WorkflowsTreeProvider } from "./treeViews/workflows";
 import { getWorkflowUri } from "./workflow/workflow";
 import Octokit = require("@octokit/rest");
-import { Workflow, WorkflowRun, Secret } from "./model";
-import { getGitHubUrl } from "./git/repository";
+import { buildLogURI } from "./logs/scheme";
 
 export function activate(context: vscode.ExtensionContext) {
   // TODO: Remove
@@ -110,6 +114,18 @@ export function activate(context: vscode.ExtensionContext) {
       const run: WorkflowRun = args.run;
       const url = run.html_url;
       vscode.env.openExternal(vscode.Uri.parse(url));
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("workflow.step.logs", async args => {
+      const repo: Protocol = args.repo;
+      const job: WorkflowJob = args.job;
+      const uri = buildLogURI(repo.owner, repo.repositoryName, job.id);
+      const doc = await vscode.workspace.openTextDocument(uri);
+      await vscode.window.showTextDocument(doc, {
+        preview: true
+      });
     })
   );
 
@@ -248,6 +264,20 @@ export function activate(context: vscode.ExtensionContext) {
         }
       }
     })
+  );
+
+  context.subscriptions.push(
+    vscode.workspace.registerTextDocumentContentProvider(
+      LogScheme,
+      new WorkflowStepLogProvider()
+    )
+  );
+
+  context.subscriptions.push(
+    vscode.languages.registerFoldingRangeProvider(
+      { scheme: LogScheme },
+      new WorkflowStepLogFoldingProvider()
+    )
   );
 }
 
