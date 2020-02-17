@@ -1,9 +1,13 @@
 import * as vscode from "vscode";
-import { WorkflowRun, WorkflowJob } from "../model";
 
 let _context: vscode.ExtensionContext;
 export function initResources(context: vscode.ExtensionContext) {
   _context = context;
+}
+
+export interface IStatusAndConclusion {
+  status: string;
+  conclusion: string;
 }
 
 export function getAbsoluteIconPath(
@@ -15,11 +19,11 @@ export function getAbsoluteIconPath(
   };
 }
 
-export function getIconForWorkflowRun(runOrJob: WorkflowRun | WorkflowJob) {
+export function getIconForWorkflowRun(runOrJob: IStatusAndConclusion) {
   return getAbsoluteIconPath(_getIconForWorkflowrun(runOrJob));
 }
 
-function _getIconForWorkflowrun(runOrJob: WorkflowRun | WorkflowJob): string {
+function _getIconForWorkflowrun(runOrJob: IStatusAndConclusion): string {
   switch (runOrJob.status) {
     case "completed": {
       switch (runOrJob.conclusion) {

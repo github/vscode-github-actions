@@ -172,6 +172,10 @@ class WorkflowStepNode extends vscode.TreeItem {
 
     this.contextValue = "step";
   }
+
+  get iconPath() {
+    return getIconForWorkflowRun(this.step);
+  }
 }
 
 type ActionsExplorerNode =
