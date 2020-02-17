@@ -5,7 +5,13 @@ import { getGitHubUrl } from "./git/repository";
 import { LogScheme } from "./logs/constants";
 import { WorkflowStepLogProvider } from "./logs/fileProvider";
 import { WorkflowStepLogFoldingProvider } from "./logs/foldingProvider";
-import { Secret, Workflow, WorkflowJob, WorkflowRun } from "./model";
+import {
+  Secret,
+  Workflow,
+  WorkflowJob,
+  WorkflowRun,
+  WorkflowStep
+} from "./model";
 import { encodeSecret } from "./secrets";
 import { initResources } from "./treeViews/icons";
 import { SettingsTreeProvider } from "./treeViews/settings";
@@ -13,6 +19,9 @@ import { ActionsExplorerProvider as WorkflowsTreeProvider } from "./treeViews/wo
 import { getWorkflowUri } from "./workflow/workflow";
 import Octokit = require("@octokit/rest");
 import { buildLogURI } from "./logs/scheme";
+import { WorkflowStepLogSymbolProvider } from "./logs/symbolProvider";
+import { registerFormatProvider } from "./logs/formatProvider";
+import { parseLog } from "./logs/model";
 
 export function activate(context: vscode.ExtensionContext) {
   // TODO: Remove
@@ -118,14 +127,43 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("workflow.step.logs", async args => {
+    vscode.commands.registerCommand("workflow.logs", async args => {
       const repo: Protocol = args.repo;
       const job: WorkflowJob = args.job;
-      const uri = buildLogURI(repo.owner, repo.repositoryName, job.id);
+      const step: WorkflowStep | undefined = args.step;
+      const uri = buildLogURI(
+        repo.owner,
+        repo.repositoryName,
+        job.id,
+        step?.name
+      );
       const doc = await vscode.workspace.openTextDocument(uri);
-      await vscode.window.showTextDocument(doc, {
-        preview: true
+      const editor = await vscode.window.showTextDocument(doc, {
+        preview: false
       });
+      if (step) {
+        // This parses the log - again - as a future optimization this should be done only once.
+        const logInfo = parseLog(editor.document.getText());
+        let matchingSection = logInfo.sections.find(
+          s => s.name && s.name === step.name
+        );
+        if (!matchingSection) {
+          // If we cannot match by name, see if we can try to match by number
+          matchingSection = logInfo.sections[step.number - 1];
+        }
+
+        if (matchingSection) {
+          editor.revealRange(
+            new vscode.Range(
+              matchingSection.start,
+              0,
+              matchingSection.start,
+              0
+            ),
+            vscode.TextEditorRevealType.InCenter
+          );
+        }
+      }
     })
   );
 
@@ -266,6 +304,9 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
+  //
+  // Log providers
+  //
   context.subscriptions.push(
     vscode.workspace.registerTextDocumentContentProvider(
       LogScheme,
@@ -279,6 +320,17 @@ export function activate(context: vscode.ExtensionContext) {
       new WorkflowStepLogFoldingProvider()
     )
   );
+
+  context.subscriptions.push(
+    vscode.languages.registerDocumentSymbolProvider(
+      {
+        scheme: LogScheme
+      },
+      new WorkflowStepLogSymbolProvider()
+    )
+  );
+
+  registerFormatProvider(context);
 }
 
 // this method is called when your extension is deactivated

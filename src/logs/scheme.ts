@@ -4,14 +4,17 @@ import { LogScheme } from "./constants";
 export function buildLogURI(
   owner: string,
   repo: string,
-  jobId: number
+  jobId: number,
+  stepName?: string
 ): vscode.Uri {
-  return vscode.Uri.parse(`${LogScheme}://${owner}/${repo}#${jobId}`);
+  return vscode.Uri.parse(
+    `${LogScheme}://${owner}/${repo}?${jobId}#${stepName}`
+  );
 }
 
 export function parseUri(
   uri: vscode.Uri
-): { owner: string; repo: string; jobId: number } {
+): { owner: string; repo: string; jobId: number; stepName?: string } {
   if (uri.scheme != LogScheme) {
     throw new Error("Uri is not of log scheme");
   }
@@ -19,6 +22,7 @@ export function parseUri(
   return {
     owner: uri.authority,
     repo: uri.path.replace("/", ""),
-    jobId: parseInt(uri.fragment, 10)
+    jobId: parseInt(uri.query, 10),
+    stepName: uri.fragment
   };
 }

@@ -60,12 +60,12 @@
         "when": "viewItem =~ /run/"
       },
       {
-        "command": "workflow.step.logs",
+        "command": "workflow.logs",
         "title": "View logs",
-        "when": "viewItem =~ /job/ && viewItem =~ /completed/",
+        "when": "viewItem =~ /job/ || viewItem =~ /step/",
         "icon": {
-          "dark": "resources/icons/dark/add.svg",
-          "light": "resources/icons/light/add.svg"
+          "dark": "resources/icons/dark/logs.svg",
+          "light": "resources/icons/light/logs.svg"
         }
       },
       {
@@ -146,7 +146,7 @@
           "when": "viewItem =~ /run/"
         },
         {
-          "command": "workflow.step.logs",
+          "command": "workflow.logs",
           "group": "inline",
           "when": "viewItem =~ /job/ && viewItem =~ /completed/"
         },

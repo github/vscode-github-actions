@@ -102,7 +102,8 @@ class WorkflowRunNode extends vscode.TreeItem {
 
     this.command = {
       title: "Open run",
-      command: "workflow.run.open"
+      command: "workflow.run.open",
+      arguments: [this]
     };
   }
 
@@ -146,7 +147,10 @@ class WorkflowJobNode extends vscode.TreeItem {
         undefined
     );
 
-    this.contextValue = "job completed";
+    this.contextValue = "job";
+    if (this.job.status === "completed") {
+      this.contextValue += " completed";
+    }
   }
 
   hasSteps(): boolean {
@@ -155,7 +159,7 @@ class WorkflowJobNode extends vscode.TreeItem {
 
   async getSteps(): Promise<WorkflowStepNode[]> {
     return this.job.steps.map(
-      s => new WorkflowStepNode(this.repo, s, this.client)
+      s => new WorkflowStepNode(this.repo, this.job, s, this.client)
     );
   }
 
@@ -167,12 +171,22 @@ class WorkflowJobNode extends vscode.TreeItem {
 class WorkflowStepNode extends vscode.TreeItem {
   constructor(
     public readonly repo: Protocol,
+    public readonly job: WorkflowJob,
     public readonly step: WorkflowStep,
     public readonly client: Octokit
   ) {
     super(step.name);
 
     this.contextValue = "step";
+    if (this.step.status === "completed") {
+      this.contextValue += " completed";
+    }
+
+    this.command = {
+      title: "Open run",
+      command: "workflow.logs",
+      arguments: [this]
+    };
   }
 
   get iconPath() {
