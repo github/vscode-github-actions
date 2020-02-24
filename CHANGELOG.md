@@ -4,6 +4,9 @@ All notable changes to the "vscode-github-actions" extension will be documented 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [v0.1.15]
+- Support colored logs
+
 ## [v0.1.14]
 - Support displaying logs for workflows
 

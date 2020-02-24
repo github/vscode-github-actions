@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { parseLog } from "./model";
+import { getLogInfo } from "./logInfoProvider";
 
 export class WorkflowStepLogFoldingProvider
   implements vscode.FoldingRangeProvider {
@@ -8,8 +8,10 @@ export class WorkflowStepLogFoldingProvider
     context: vscode.FoldingContext,
     token: vscode.CancellationToken
   ): vscode.ProviderResult<vscode.FoldingRange[]> {
-    const log = document.getText();
-    const logInfo = parseLog(log);
+    const logInfo = getLogInfo(document.uri);
+    if (!logInfo) {
+      return [];
+    }
 
     return logInfo.sections.map(
       s =>

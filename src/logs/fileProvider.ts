@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import { getClient } from "../client/client";
 import { parseUri } from "./scheme";
+import { parseLog } from "./model";
+import { cacheLogInfo } from "./logInfoProvider";
 
 export class WorkflowStepLogProvider
   implements vscode.TextDocumentContentProvider {
@@ -17,6 +19,11 @@ export class WorkflowStepLogProvider
       job_id: jobId
     });
 
-    return result.data;
+    const log = result.data;
+
+    const logInfo = parseLog(log);
+    cacheLogInfo(uri, logInfo);
+
+    return logInfo.updatedLog;
   }
 }

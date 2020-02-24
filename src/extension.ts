@@ -5,6 +5,10 @@ import { getGitHubUrl } from "./git/repository";
 import { LogScheme } from "./logs/constants";
 import { WorkflowStepLogProvider } from "./logs/fileProvider";
 import { WorkflowStepLogFoldingProvider } from "./logs/foldingProvider";
+import { updateDecorations } from "./logs/formatProvider";
+import { getLogInfo } from "./logs/logInfoProvider";
+import { buildLogURI } from "./logs/scheme";
+import { WorkflowStepLogSymbolProvider } from "./logs/symbolProvider";
 import {
   Secret,
   Workflow,
@@ -18,10 +22,6 @@ import { SettingsTreeProvider } from "./treeViews/settings";
 import { ActionsExplorerProvider as WorkflowsTreeProvider } from "./treeViews/workflows";
 import { getWorkflowUri } from "./workflow/workflow";
 import Octokit = require("@octokit/rest");
-import { buildLogURI } from "./logs/scheme";
-import { WorkflowStepLogSymbolProvider } from "./logs/symbolProvider";
-import { registerFormatProvider } from "./logs/formatProvider";
-import { parseLog } from "./logs/model";
 
 export function activate(context: vscode.ExtensionContext) {
   // TODO: Remove
@@ -141,9 +141,17 @@ export function activate(context: vscode.ExtensionContext) {
       const editor = await vscode.window.showTextDocument(doc, {
         preview: false
       });
+
+      const logInfo = getLogInfo(uri);
+      if (!logInfo) {
+        throw new Error("Could not get log info");
+      }
+
+      // Custom formatting after the editor has been opened
+      updateDecorations(editor, logInfo);
+
+      // Deep linking
       if (step) {
-        // This parses the log - again - as a future optimization this should be done only once.
-        const logInfo = parseLog(editor.document.getText());
         let matchingSection = logInfo.sections.find(
           s => s.name && s.name === step.name
         );
@@ -329,8 +337,6 @@ export function activate(context: vscode.ExtensionContext) {
       new WorkflowStepLogSymbolProvider()
     )
   );
-
-  registerFormatProvider(context);
 }
 
 // this method is called when your extension is deactivated

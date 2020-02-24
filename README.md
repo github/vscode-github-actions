@@ -1,10 +1,8 @@
 # GitHub Actions for VS Code
 
-**This is pre-release software, use at your own risk**
-
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cschleiden/vscode-github-actions/Build)
 
-Very simple, **unofficial** extension to interact with GitHub Actions from within VS Code. 
+Simple, **unofficial** extension to interact with GitHub Actions from within VS Code. 
 
 ## Installation 
 
@@ -25,6 +23,8 @@ Very simple, **unofficial** extension to interact with GitHub Actions from withi
 ### Inspect logs to see failures
 
 ![Display logs for workflow runs](./media/logs.gif)
+
+![Colored logs](./media/colored-logs.png)
 
 ### Trigger runs
 

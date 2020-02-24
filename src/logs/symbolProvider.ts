@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { parseLog } from "./model";
+import { getLogInfo } from "./logInfoProvider";
 
 export class WorkflowStepLogSymbolProvider
   implements vscode.DocumentSymbolProvider {
@@ -9,8 +9,10 @@ export class WorkflowStepLogSymbolProvider
   ): vscode.ProviderResult<
     vscode.SymbolInformation[] | vscode.DocumentSymbol[]
   > {
-    const log = document.getText();
-    const logInfo = parseLog(log);
+    const logInfo = getLogInfo(document.uri);
+    if (!logInfo) {
+      return [];
+    }
 
     return logInfo.sections.map(
       s =>
