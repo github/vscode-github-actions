@@ -23,6 +23,7 @@ import { initWorkflowDocumentTracking } from "./tracker/workflowDocumentTracker"
 import { initResources } from "./treeViews/icons";
 import { SettingsTreeProvider } from "./treeViews/settings";
 import { ActionsExplorerProvider as WorkflowsTreeProvider } from "./treeViews/workflows";
+import { SecretsCompletionItemProvider } from "./workflow/secretsCompletionProvider";
 import {
   getRepositoryDispatchTypes,
   getWorkflowUri,
@@ -434,7 +435,17 @@ export function activate(context: vscode.ExtensionContext) {
       new WorkflowStepLogSymbolProvider()
     )
   );
-}
 
-// this method is called when your extension is deactivated
-export function deactivate() {}
+  //
+  // Editing
+  //
+  context.subscriptions.push(
+    vscode.languages.registerCompletionItemProvider(
+      {
+        pattern: "**/.github/workflows/*.{yaml,yml}",
+      },
+      new SecretsCompletionItemProvider(),
+      "."
+    )
+  );
+}
