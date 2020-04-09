@@ -243,7 +243,7 @@
     "webpack-cli": "^3.3.10"
   },
   "dependencies": {
-    "@octokit/rest": "github:octokit/rest.js#master",
+    "@octokit/rest": "github:octokit/rest.js#c657eee641777cc5b55d23587674a2ce46358251",
     "atob": "^2.1.2",
     "btoa": "^1.2.1",
     "js-yaml": "^3.13.1",

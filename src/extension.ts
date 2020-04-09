@@ -14,13 +14,16 @@ import {
   Workflow,
   WorkflowJob,
   WorkflowRun,
-  WorkflowStep
+  WorkflowStep,
 } from "./model";
 import { encodeSecret } from "./secrets";
 import { initResources } from "./treeViews/icons";
 import { SettingsTreeProvider } from "./treeViews/settings";
 import { ActionsExplorerProvider as WorkflowsTreeProvider } from "./treeViews/workflows";
-import { getWorkflowUri } from "./workflow/workflow";
+import {
+  getRepositoryDispatchTypes,
+  getWorkflowUri,
+} from "./workflow/workflow";
 import Octokit = require("@octokit/rest");
 
 export function activate(context: vscode.ExtensionContext) {
@@ -46,34 +49,63 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("explorer.openRun", args => {
+    vscode.commands.registerCommand("explorer.openRun", (args) => {
       const url = args.url || args;
       vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(url));
     })
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("explorer.openWorkflowFile", async args => {
-      const wf: Workflow = args.wf;
+    vscode.commands.registerCommand(
+      "explorer.openWorkflowFile",
+      async (args) => {
+        const wf: Workflow = args.wf;
 
-      const fileUri = getWorkflowUri(wf.path);
-      if (fileUri) {
-        const textDocument = await vscode.workspace.openTextDocument(fileUri);
-        vscode.window.showTextDocument(textDocument);
+        const fileUri = getWorkflowUri(wf.path);
+        if (fileUri) {
+          const textDocument = await vscode.workspace.openTextDocument(fileUri);
+          vscode.window.showTextDocument(textDocument);
+          return;
+        }
+
+        // File not found in workspace
+        vscode.window.showErrorMessage(
+          `Workflow ${wf.path} not found in current workspace`
+        );
+      }
+    )
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("explorer.triggerRun", async (args) => {
+      let event_type: string | undefined;
+
+      const wf: Workflow = args.wf;
+      const workflowUri = getWorkflowUri(wf.path);
+      if (!workflowUri) {
         return;
       }
 
-      // File not found in workspace
-      vscode.window.showErrorMessage(
-        `Workflow ${wf.path} not found in current workspace`
-      );
-    })
-  );
-  context.subscriptions.push(
-    vscode.commands.registerCommand("explorer.triggerRun", async args => {
-      const event_type = await vscode.window.showInputBox({
-        prompt: "Enter `event_type` to dispatch to the repository",
-        value: "default"
-      });
+      const event_types = getRepositoryDispatchTypes(workflowUri.fsPath);
+      if (event_types?.length > 0) {
+        const custom_type = "✐ Enter custom type";
+        const selection = await vscode.window.showQuickPick(
+          [custom_type, ...event_types],
+          {
+            placeHolder: "Select an event_type to dispatch",
+          }
+        );
+
+        if (selection != custom_type) {
+          event_type = selection;
+        }
+      }
+
+      if (event_type === undefined) {
+        event_type = await vscode.window.showInputBox({
+          prompt: "Enter `event_type` to dispatch to the repository",
+          value: "default",
+        });
+      }
+
       if (event_type) {
         const repo: Protocol = args.repo;
         const client: Octokit = args.client;
@@ -82,7 +114,7 @@ export function activate(context: vscode.ExtensionContext) {
           owner: repo.owner,
           repo: repo.repositoryName,
           event_type,
-          client_payload: {}
+          client_payload: {},
         });
 
         vscode.window.setStatusBarMessage(
@@ -107,7 +139,7 @@ export function activate(context: vscode.ExtensionContext) {
       switch (selection) {
         case "Enter PAT":
           const token = await vscode.window.showInputBox({
-            prompt: "Enter a GitHub PAT with `workflow` and `repo` scope:"
+            prompt: "Enter a GitHub PAT with `workflow` and `repo` scope:",
           });
           if (token) {
             await setPAT(token);
@@ -119,7 +151,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("workflow.run.open", async args => {
+    vscode.commands.registerCommand("workflow.run.open", async (args) => {
       const run: WorkflowRun = args.run;
       const url = run.html_url;
       vscode.env.openExternal(vscode.Uri.parse(url));
@@ -127,7 +159,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("workflow.logs", async args => {
+    vscode.commands.registerCommand("workflow.logs", async (args) => {
       const repo: Protocol = args.repo;
       const job: WorkflowJob = args.job;
       const step: WorkflowStep | undefined = args.step;
@@ -139,7 +171,7 @@ export function activate(context: vscode.ExtensionContext) {
       );
       const doc = await vscode.workspace.openTextDocument(uri);
       const editor = await vscode.window.showTextDocument(doc, {
-        preview: false
+        preview: false,
       });
 
       const logInfo = getLogInfo(uri);
@@ -153,7 +185,7 @@ export function activate(context: vscode.ExtensionContext) {
       // Deep linking
       if (step) {
         let matchingSection = logInfo.sections.find(
-          s => s.name && s.name === step.name
+          (s) => s.name && s.name === step.name
         );
         if (!matchingSection) {
           // If we cannot match by name, see if we can try to match by number
@@ -176,7 +208,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("workflow.run.rerun", async args => {
+    vscode.commands.registerCommand("workflow.run.rerun", async (args) => {
       const repo: Protocol = args.repo;
       const run: WorkflowRun = args.run;
       const client: Octokit = args.client;
@@ -185,7 +217,7 @@ export function activate(context: vscode.ExtensionContext) {
         await client.actions.reRunWorkflow({
           owner: repo.owner,
           repo: repo.repositoryName,
-          run_id: run.id
+          run_id: run.id,
         });
       } catch (e) {
         vscode.window.showErrorMessage(
@@ -198,7 +230,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("workflow.run.cancel", async args => {
+    vscode.commands.registerCommand("workflow.run.cancel", async (args) => {
       const repo: Protocol = args.repo;
       const run: WorkflowRun = args.run;
       const client: Octokit = args.client;
@@ -207,7 +239,7 @@ export function activate(context: vscode.ExtensionContext) {
         await client.actions.cancelWorkflowRun({
           owner: repo.owner,
           repo: repo.repositoryName,
-          run_id: run.id
+          run_id: run.id,
         });
       } catch (e) {
         vscode.window.showErrorMessage(
@@ -220,12 +252,12 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("settings.secret.add", async args => {
+    vscode.commands.registerCommand("settings.secret.add", async (args) => {
       const repo: Protocol = args.repo;
       const client: Octokit = args.client;
 
       const name = await vscode.window.showInputBox({
-        prompt: "Enter name for new secret"
+        prompt: "Enter name for new secret",
       });
 
       if (!name) {
@@ -233,14 +265,14 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       const value = await vscode.window.showInputBox({
-        prompt: "Enter the new secret value"
+        prompt: "Enter the new secret value",
       });
 
       if (value) {
         try {
           const keyResponse = await client.actions.getPublicKey({
             owner: repo.owner,
-            repo: repo.repositoryName
+            repo: repo.repositoryName,
           });
 
           const key_id = keyResponse.data.key_id;
@@ -251,7 +283,7 @@ export function activate(context: vscode.ExtensionContext) {
             repo: repo.repositoryName,
             name: name,
             key_id: key_id,
-            encrypted_value: encodeSecret(key, value)
+            encrypted_value: encodeSecret(key, value),
           });
         } catch (e) {
           vscode.window.showErrorMessage(e.message);
@@ -263,7 +295,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("settings.secret.delete", async args => {
+    vscode.commands.registerCommand("settings.secret.delete", async (args) => {
       const repo: Protocol = args.repo;
       const secret: Secret = args.secret;
       const client: Octokit = args.client;
@@ -271,7 +303,7 @@ export function activate(context: vscode.ExtensionContext) {
       await client.actions.deleteSecretFromRepo({
         owner: repo.owner,
         repo: repo.repositoryName,
-        name: secret.name
+        name: secret.name,
       });
 
       settingsTreeProvider.refresh();
@@ -279,20 +311,20 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("settings.secret.update", async args => {
+    vscode.commands.registerCommand("settings.secret.update", async (args) => {
       const repo: Protocol = args.repo;
       const secret: Secret = args.secret;
       const client: Octokit = args.client;
 
       const value = await vscode.window.showInputBox({
-        prompt: "Enter the new secret value"
+        prompt: "Enter the new secret value",
       });
 
       if (value) {
         try {
           const keyResponse = await client.actions.getPublicKey({
             owner: repo.owner,
-            repo: repo.repositoryName
+            repo: repo.repositoryName,
           });
 
           const key_id = keyResponse.data.key_id;
@@ -303,7 +335,7 @@ export function activate(context: vscode.ExtensionContext) {
             repo: repo.repositoryName,
             name: secret.name,
             key_id: key_id,
-            encrypted_value: encodeSecret(key, value)
+            encrypted_value: encodeSecret(key, value),
           });
         } catch (e) {
           vscode.window.showErrorMessage(e.message);
@@ -332,7 +364,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.languages.registerDocumentSymbolProvider(
       {
-        scheme: LogScheme
+        scheme: LogScheme,
       },
       new WorkflowStepLogSymbolProvider()
     )
