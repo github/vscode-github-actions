@@ -1,12 +1,12 @@
-import * as vscode from "vscode";
-import { getGitHubProtocol } from "../git/repository";
-import { getPAT } from "../auth/pat";
-import { getClient } from "../api/api";
-import { Secret, SelfHostedRunner } from "../model";
-import { Protocol } from "../external/protocol";
-import Octokit = require("@octokit/rest");
 import { ActionsListSecretsForRepoResponseItem } from "@octokit/rest";
+import * as vscode from "vscode";
+import { getClient } from "../api/api";
+import { getPAT } from "../auth/pat";
+import { Protocol } from "../external/protocol";
+import { getGitHubProtocol } from "../git/repository";
+import { Secret, SelfHostedRunner } from "../model";
 import { getAbsoluteIconPath } from "./icons";
+import Octokit = require("@octokit/rest");
 
 class SelfHostedRunnersNode extends vscode.TreeItem {
   constructor(public readonly repo: Protocol, public readonly client: Octokit) {
@@ -101,29 +101,32 @@ export class SettingsTreeProvider
       // Root
       return [
         new SelfHostedRunnersNode(repo, client),
-        new SecretsNode(repo, client)
+        new SecretsNode(repo, client),
       ];
     }
 
     if (element instanceof SecretsNode) {
       const result = await client.actions.listSecretsForRepo({
         owner: repo.owner,
-        repo: repo.repositoryName
+        repo: repo.repositoryName,
       });
       // Work around bad typings/docs
       const data = (result.data as any) as ActionsListSecretsForRepoResponseItem;
       const secrets = data.secrets;
-      return secrets.map(s => new SecretNode(repo, s, client));
+      return secrets.map((s) => new SecretNode(repo, s, client));
     }
 
     if (element instanceof SelfHostedRunnersNode) {
       const result = await client.actions.listSelfHostedRunnersForRepo({
         owner: repo.owner,
-        repo: repo.repositoryName
+        repo: repo.repositoryName,
       });
-      const data = (result.data as any) as Octokit.ActionsListSelfHostedRunnersForRepoResponseItemItem[];
 
-      return data.map(r => new SelfHostedRunnerNode(repo, r, client));
+      result.data;
+
+      // Work around typing issues with the consumed octokit version
+      const data: any[] = (result.data as any).runners || [];
+      return data.map((r) => new SelfHostedRunnerNode(repo, r, client));
     }
 
     return [];

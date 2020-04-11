@@ -7,7 +7,7 @@
     "url": "https://github.com/cschleiden/vscode-github-actions"
   },
   "description": "See GitHub Actions workflows and runs for github.com hosted repositories in VS Code",
-  "version": "0.1.16",
+  "version": "0.2.0",
   "engines": {
     "vscode": "^1.41.0"
   },

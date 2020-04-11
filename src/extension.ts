@@ -94,7 +94,9 @@ export function activate(context: vscode.ExtensionContext) {
           }
         );
 
-        if (selection != custom_type) {
+        if (selection === undefined) {
+          return;
+        } else if (selection != custom_type) {
           event_type = selection;
         }
       }
