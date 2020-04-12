@@ -1,12 +1,12 @@
+import { Octokit } from "@octokit/rest";
 import * as vscode from "vscode";
 import { getClient } from "../api/api";
 import { getPAT } from "../auth/pat";
 import { Protocol } from "../external/protocol";
 import { getGitHubProtocol } from "../git/repository";
-import { Workflow, WorkflowRun, WorkflowJob, WorkflowStep } from "../model";
+import { Workflow, WorkflowJob, WorkflowRun, WorkflowStep } from "../model";
 import { getWorkflowUri, usesRepositoryDispatch } from "../workflow/workflow";
 import { getIconForWorkflowRun } from "./icons";
-import Octokit = require("@octokit/rest");
 
 /**
  * When no github.com remote can be found in the current workspace.
@@ -26,7 +26,7 @@ class AuthenticationNode extends vscode.TreeItem {
 
     this.command = {
       title: "Login",
-      command: "auth.login"
+      command: "auth.login",
     };
   }
 }
@@ -59,14 +59,14 @@ class WorkflowNode extends vscode.TreeItem {
     const result = await this.client.actions.listWorkflowRuns({
       owner: this.repo.owner,
       repo: this.repo.repositoryName,
-      workflow_id: this.wf.id
+      workflow_id: this.wf.id,
     });
 
     const resp = result.data;
     const runs = resp.workflow_runs;
 
     return runs.map(
-      wr => new WorkflowRunNode(this.repo, this.wf, wr as any, this.client)
+      (wr) => new WorkflowRunNode(this.repo, this.wf, wr as any, this.client)
     );
   }
 }
@@ -103,7 +103,7 @@ class WorkflowRunNode extends vscode.TreeItem {
     this.command = {
       title: "Open run",
       command: "workflow.run.open",
-      arguments: [this]
+      arguments: [this],
     };
   }
 
@@ -115,13 +115,13 @@ class WorkflowRunNode extends vscode.TreeItem {
     const result = await this.client.actions.listJobsForWorkflowRun({
       owner: this.repo.owner,
       repo: this.repo.repositoryName,
-      run_id: this.run.id
+      run_id: this.run.id,
     });
 
     const resp = result.data;
     const jobs: WorkflowJob[] = (resp as any).jobs;
 
-    return jobs.map(job => new WorkflowJobNode(this.repo, job, this.client));
+    return jobs.map((job) => new WorkflowJobNode(this.repo, job, this.client));
   }
 
   get tooltip(): string {
@@ -159,7 +159,7 @@ class WorkflowJobNode extends vscode.TreeItem {
 
   async getSteps(): Promise<WorkflowStepNode[]> {
     return this.job.steps.map(
-      s => new WorkflowStepNode(this.repo, this.job, s, this.client)
+      (s) => new WorkflowStepNode(this.repo, this.job, s, this.client)
     );
   }
 
@@ -185,7 +185,7 @@ class WorkflowStepNode extends vscode.TreeItem {
     this.command = {
       title: "Open run",
       command: "workflow.logs",
-      arguments: [this]
+      arguments: [this],
     };
   }
 
@@ -250,14 +250,14 @@ export class ActionsExplorerProvider
         const client = getClient(token);
         const result = await client.actions.listRepoWorkflows({
           owner: repo.owner,
-          repo: repo.repositoryName
+          repo: repo.repositoryName,
         });
         const response = result.data;
 
         const workflows = response.workflows;
         workflows.sort((a, b) => a.name.localeCompare(b.name));
 
-        return workflows.map(wf => new WorkflowNode(repo, wf, client));
+        return workflows.map((wf) => new WorkflowNode(repo, wf, client));
       } catch (e) {
         vscode.window.showErrorMessage(
           `:( An error has occured while retrieving workflows:\n\n${e.message}`

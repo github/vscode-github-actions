@@ -1,25 +1,41 @@
-import {
-  ActionsListRepoWorkflowsResponseWorkflowsItem,
-  ActionsListSecretsForRepoResponseItemSecretsItem,
-  ActionsListWorkflowRunsResponseWorkflowRunsItem,
-  ActionsListSelfHostedRunnersForRepoResponseItemItem,
-  ActionsListJobsForWorkflowRunResponseItemWorkflowJobsItem,
-  ActionsListJobsForWorkflowRunResponseItemWorkflowJobsItemStepsItem
-} from "@octokit/rest";
+import { Octokit } from "@octokit/rest";
 
+// Type helpers
 type Modify<T, R> = Omit<T, keyof R> & R;
 
-export type Workflow = ActionsListRepoWorkflowsResponseWorkflowsItem;
-export interface WorkflowRun
-  extends Modify<
-    ActionsListWorkflowRunsResponseWorkflowRunsItem,
-    { conclusion: string }
-  > {}
+type Await<T> = T extends {
+  then(onfulfilled?: (value: infer U) => unknown): unknown;
+}
+  ? U
+  : T;
 
-export type WorkflowJob = ActionsListJobsForWorkflowRunResponseItemWorkflowJobsItem;
+type GetElementType<T extends Array<any>> = T extends (infer U)[] ? U : never;
 
-export type WorkflowStep = ActionsListJobsForWorkflowRunResponseItemWorkflowJobsItemStepsItem;
+type OctokitData<
+  Operation extends keyof Octokit["actions"],
+  ResultProperty extends keyof Await<
+    ReturnType<Octokit["actions"][Operation]>
+  >["data"]
+> = GetElementType<
+  Await<ReturnType<Octokit["actions"][Operation]>>["data"][ResultProperty]
+>;
 
-export type Secret = ActionsListSecretsForRepoResponseItemSecretsItem;
+//
+// Domain types
+//
 
-export type SelfHostedRunner = ActionsListSelfHostedRunnersForRepoResponseItemItem;
+export type Workflow = OctokitData<"listRepoWorkflows", "workflows">;
+export type WorkflowRun = OctokitData<"listWorkflowRuns", "workflow_runs"> & {
+  conclusion: string;
+};
+
+export type WorkflowJob = OctokitData<"listJobsForWorkflowRun", "jobs">;
+
+export type WorkflowStep = GetElementType<WorkflowJob["steps"]>;
+
+export type Secret = OctokitData<"listSecretsForRepo", "secrets">;
+
+export type SelfHostedRunner = OctokitData<
+  "listSelfHostedRunnersForRepo",
+  "runners"
+>;

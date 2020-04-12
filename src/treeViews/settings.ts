@@ -1,4 +1,4 @@
-import { ActionsListSecretsForRepoResponseItem } from "@octokit/rest";
+import { Octokit } from "@octokit/rest";
 import * as vscode from "vscode";
 import { getClient } from "../api/api";
 import { getPAT } from "../auth/pat";
@@ -6,7 +6,6 @@ import { Protocol } from "../external/protocol";
 import { getGitHubProtocol } from "../git/repository";
 import { Secret, SelfHostedRunner } from "../model";
 import { getAbsoluteIconPath } from "./icons";
-import Octokit = require("@octokit/rest");
 
 class SelfHostedRunnersNode extends vscode.TreeItem {
   constructor(public readonly repo: Protocol, public readonly client: Octokit) {
@@ -111,7 +110,7 @@ export class SettingsTreeProvider
         repo: repo.repositoryName,
       });
       // Work around bad typings/docs
-      const data = (result.data as any) as ActionsListSecretsForRepoResponseItem;
+      const data = result.data;
       const secrets = data.secrets;
       return secrets.map((s) => new SecretNode(repo, s, client));
     }

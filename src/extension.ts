@@ -1,3 +1,4 @@
+import { Octokit } from "@octokit/rest";
 import * as vscode from "vscode";
 import { setPAT } from "./auth/pat";
 import { Protocol } from "./external/protocol";
@@ -24,7 +25,6 @@ import {
   getRepositoryDispatchTypes,
   getWorkflowUri,
 } from "./workflow/workflow";
-import Octokit = require("@octokit/rest");
 
 export function activate(context: vscode.ExtensionContext) {
   // TODO: Remove
