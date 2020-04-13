@@ -7,9 +7,9 @@
     "url": "https://github.com/cschleiden/vscode-github-actions"
   },
   "description": "See GitHub Actions workflows and runs for github.com hosted repositories in VS Code",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "engines": {
-    "vscode": "^1.41.0"
+    "vscode": "^1.44.0"
   },
   "categories": [
     "Other"
@@ -18,13 +18,35 @@
     "onCommand:auth.login",
     "onView:workflows",
     "onView:settings",
-    "onCommand:explorer.refresh"
+    "workspaceContains:**/.github/workflows/**"
   ],
   "main": "./dist/extension",
   "extensionDependencies": [
     "vscode.git"
   ],
   "contributes": {
+    "configuration": {
+      "title": "GitHub Actions",
+      "properties": {
+        "github-actions.workflows.pinned.workflows": {
+          "description": "Workflows to show in the status bar, identified by their paths",
+          "type": "array",
+          "scope": "window"
+        },
+        "github-actions.workflows.pinned.refresh.enabled": {
+          "type": "boolean",
+          "description": "Auto-refresh pinned workflows. Note: this uses polling and counts against your GitHub API rate limit",
+          "default": false,
+          "scope": "window"
+        },
+        "github-actions.workflows.pinned.refresh.interval": {
+          "type": "number",
+          "description": "Time to wait between calls to update pinned workflows in seconds",
+          "default": 30,
+          "scope": "window"
+        }
+      }
+    },
     "commands": [
       {
         "command": "auth.login",
@@ -210,7 +232,6 @@
       ]
     }
   },
-  "enableProposedApi": true,
   "scripts": {
     "clean": "rimraf ./dist ./out",
     "compile": "tsc -p ./",
@@ -228,7 +249,7 @@
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.11.7",
     "@types/uuid": "^3.4.6",
-    "@types/vscode": "^1.41.0",
+    "@types/vscode": "1.44.0",
     "@types/yaml": "^1.2.0",
     "glob": "^7.1.5",
     "mocha": "^6.2.2",
@@ -237,7 +258,7 @@
     "ts-loader": "^6.2.1",
     "tslint": "^5.20.0",
     "typescript": "^3.6.4",
-    "vsce": "^1.71.0",
+    "vsce": "1.75.0",
     "vscode-test": "^1.2.2",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"

@@ -1,6 +1,7 @@
 import { Octokit } from "@octokit/rest";
 import * as vscode from "vscode";
 import { setPAT } from "./auth/pat";
+import { initConfiguration } from "./configuration/configuration";
 import { Protocol } from "./external/protocol";
 import { getGitHubUrl } from "./git/repository";
 import { LogScheme } from "./logs/constants";
@@ -17,6 +18,7 @@ import {
   WorkflowRun,
   WorkflowStep,
 } from "./model";
+import { initPinnedWorkflows } from "./pinnedWorkflows/pinnedWorkflows";
 import { encodeSecret } from "./secrets";
 import { initResources } from "./treeViews/icons";
 import { SettingsTreeProvider } from "./treeViews/settings";
@@ -27,10 +29,13 @@ import {
 } from "./workflow/workflow";
 
 export function activate(context: vscode.ExtensionContext) {
-  // TODO: Remove
+  // Prefetch git repository origin url
   getGitHubUrl();
 
   initResources(context);
+
+  initConfiguration(context);
+  initPinnedWorkflows(context);
 
   // Actions Explorer
   const workflowTreeProvider = new WorkflowsTreeProvider();

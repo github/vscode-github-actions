@@ -4,6 +4,9 @@ All notable changes to the "vscode-github-actions" extension will be documented 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [v0.3.0]
+- Enable pinning workflows
+
 ## [v0.2.0]
 - Bugfix for displaying self-hosted runners
 

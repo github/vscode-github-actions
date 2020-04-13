@@ -32,5 +32,29 @@ If a workflow uses `repository_dispatch` as a trigger, you can start a new workf
 
 ![](./media/rdispatch.gif)
 
+### Pin workflows and see their status updated automatically
+
+You can pin workflows to the status bar per workspace, and automatically see the status of the most recent run. For example, to see if the change you just pushed passes the CI Build:
+![](./media/pin-workflows.gif)
+
+1. To setup, configure the `"github-actions.workflows.pinned.workflows"` property on a global level, or per workspace (`.vscode/settings.json`):
+
+```json
+{
+    "github-actions.workflows.pinned.workflows": [".github/workflows/build.yml", ".github/workflows/create.yml"],
+}
+```
+
+2. To enable auto-refresh via polling, set `refresh.enabled` to `true`. This works by polling the workflow runs API with a default interval of `30` seconds. You can customized the interal via `refresh.interval`:
+
+```json
+{
+    "github-actions.workflows.pinned.workflows": [".github/workflows/build.yml", ".github/workflows/create.yml"],
+    "github-actions.workflows.pinned.refresh.enabled": true,
+    "github-actions.workflows.pinned.refresh.interval": 65,
+}
+```
+
+
 ## Known issues
 

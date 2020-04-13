@@ -15,35 +15,70 @@ export function getAbsoluteIconPath(
 ): { light: string | vscode.Uri; dark: string | vscode.Uri } {
   return {
     light: _context.asAbsolutePath(`resources/icons/light/${relativeIconPath}`),
-    dark: _context.asAbsolutePath(`resources/icons/dark/${relativeIconPath}`)
+    dark: _context.asAbsolutePath(`resources/icons/dark/${relativeIconPath}`),
   };
 }
 
 export function getIconForWorkflowRun(runOrJob: IStatusAndConclusion) {
-  return getAbsoluteIconPath(_getIconForWorkflowrun(runOrJob));
+  return _getIconForWorkflowrun(runOrJob);
 }
 
-function _getIconForWorkflowrun(runOrJob: IStatusAndConclusion): string {
+function _getIconForWorkflowrun(
+  runOrJob: IStatusAndConclusion
+): string | vscode.ThemeIcon {
   switch (runOrJob.status) {
     case "completed": {
       switch (runOrJob.conclusion) {
         case "success":
-          return "conclusions/success.svg";
+          return getAbsoluteIconPath("conclusions/success.svg");
 
         case "failure":
-          return "conclusions/failure.svg";
+          return getAbsoluteIconPath("conclusions/failure.svg");
 
         case "cancelled":
-          return "conclusions/cancelled.svg";
+          return getAbsoluteIconPath("conclusions/cancelled.svg");
       }
     }
 
     case "queued":
-      return "statuses/queued.svg";
+      return getAbsoluteIconPath("statuses/queued.svg");
 
     case "inprogress":
     case "in_progress":
-      return "statuses/in-progress.svg";
+      return new vscode.ThemeIcon("sync~spin");
+  }
+
+  return "";
+}
+
+/** Get one of the built-in VS Code icons */
+export function getCodIconForWorkflowrun(
+  runOrJob?: IStatusAndConclusion
+): string {
+  if (!runOrJob) {
+    return "circle-outline";
+  }
+
+  switch (runOrJob.status) {
+    case "completed": {
+      switch (runOrJob.conclusion) {
+        case "success":
+          return "verified";
+
+        case "failure":
+          return "error";
+
+        case "cancelled":
+          return "circle-slash";
+      }
+    }
+
+    case "queued":
+      return "primitive-dot";
+
+    case "inprogress":
+    case "in_progress":
+      return "sync~spin";
   }
 
   return "";
