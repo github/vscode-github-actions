@@ -74,7 +74,11 @@
       {
         "command": "explorer.triggerRun",
         "title": "Trigger workflow",
-        "when": "viewItem =~ /workflow/ && viewItem =~ /rdispatch/"
+        "when": "viewItem =~ /workflow/ && viewItem =~ /rdispatch/",
+        "icon": {
+          "dark": "resources/icons/dark/run.svg",
+          "light": "resources/icons/light/run.svg"
+        }
       },
       {
         "command": "workflow.run.open",
@@ -152,6 +156,13 @@
           "command": "explorer.refresh",
           "group": "navigation",
           "when": "view == workflows || view == settings"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "explorer.triggerRun",
+          "when": "githubActions:activeFile =~ /rdispatch/ && resourceExtname =~ /\\.ya?ml/",
+          "group": "navigation"
         }
       ],
       "view/item/context": [

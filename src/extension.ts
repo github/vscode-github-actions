@@ -1,9 +1,10 @@
 import { Octokit } from "@octokit/rest";
 import * as vscode from "vscode";
 import { setPAT } from "./auth/pat";
+import { getClient } from "./client/client";
 import { initConfiguration } from "./configuration/configuration";
 import { Protocol } from "./external/protocol";
-import { getGitHubUrl } from "./git/repository";
+import { getGitHubProtocol, getGitHubUrl } from "./git/repository";
 import { LogScheme } from "./logs/constants";
 import { WorkflowStepLogProvider } from "./logs/fileProvider";
 import { WorkflowStepLogFoldingProvider } from "./logs/foldingProvider";
@@ -20,6 +21,7 @@ import {
 } from "./model";
 import { initPinnedWorkflows } from "./pinnedWorkflows/pinnedWorkflows";
 import { encodeSecret } from "./secrets";
+import { initWorkflowDocumentTracking } from "./tracker/workflowDocumentTracker";
 import { initResources } from "./treeViews/icons";
 import { SettingsTreeProvider } from "./treeViews/settings";
 import { ActionsExplorerProvider as WorkflowsTreeProvider } from "./treeViews/workflows";
@@ -36,6 +38,9 @@ export function activate(context: vscode.ExtensionContext) {
 
   initConfiguration(context);
   initPinnedWorkflows(context);
+
+  // Track workflow
+  initWorkflowDocumentTracking(context);
 
   // Actions Explorer
   const workflowTreeProvider = new WorkflowsTreeProvider();
@@ -83,8 +88,15 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("explorer.triggerRun", async (args) => {
       let event_type: string | undefined;
 
+      let workflowUri: vscode.Uri | null = null;
+
       const wf: Workflow = args.wf;
-      const workflowUri = getWorkflowUri(wf.path);
+      if (wf) {
+        workflowUri = getWorkflowUri(wf.path);
+      } else if (args.fsPath) {
+        workflowUri = args;
+      }
+
       if (!workflowUri) {
         return;
       }
@@ -114,8 +126,8 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       if (event_type) {
-        const repo: Protocol = args.repo;
-        const client: Octokit = args.client;
+        const repo: Protocol = args.repo || (await getGitHubProtocol());
+        const client: Octokit = args.client || (await getClient());
 
         await client.repos.createDispatchEvent({
           owner: repo.owner,
