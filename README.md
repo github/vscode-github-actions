@@ -2,9 +2,9 @@
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cschleiden/vscode-github-actions/Build)
 
-Simple, **unofficial** extension to interact with GitHub Actions from within VS Code. 
+Simple, **unofficial** extension to interact with GitHub Actions from within VS Code.
 
-## Installation 
+## Installation
 
 1. Install extension
 2. Open a repository with a `github.com` origin
@@ -28,9 +28,17 @@ Simple, **unofficial** extension to interact with GitHub Actions from within VS 
 
 ### Trigger runs
 
-If a workflow uses `repository_dispatch` as a trigger, you can start a new workflow run from the VS Code view:
+If a workflow uses `repository_dispatch` as a trigger, you can start a new workflow run from the workflow context menu:
 
 ![](./media/rdispatch.gif)
+
+Or from the workflow list:
+
+![](./media/inline-dispatch.png)
+
+Or from the editor when editing a workflow:
+
+![](./media/inline-dispatch-editor.png)
 
 ### Pin workflows and see their status updated automatically
 

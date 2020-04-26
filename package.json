@@ -7,7 +7,7 @@
     "url": "https://github.com/cschleiden/vscode-github-actions"
   },
   "description": "See GitHub Actions workflows and runs for github.com hosted repositories in VS Code",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "engines": {
     "vscode": "^1.44.0"
   },
@@ -205,6 +205,11 @@
           "command": "settings.secret.delete",
           "when": "viewItem == 'secret'",
           "group": "inline@2"
+        },
+        {
+          "command": "explorer.triggerRun",
+          "when": "viewItem =~ /workflow/ && viewItem =~ /rdispatch/",
+          "group": "inline@1"
         }
       ],
       "commandPalette": [

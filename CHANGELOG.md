@@ -2,7 +2,8 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## [v0.4.1]
+- Add inline run button to workflow list
 
 ## [v0.4.0]
 - Bugfixes for remote development
