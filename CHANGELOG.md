@@ -4,6 +4,10 @@ All notable changes to the "vscode-github-actions" extension will be documented 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [v0.4.0]
+- Bugfixes for remote development
+- Show run button for workflows using `repository_dispatch` in editor title bar
+
 ## [v0.3.0]
 - Enable pinning workflows
 
