@@ -7,7 +7,7 @@
     "url": "https://github.com/cschleiden/vscode-github-actions"
   },
   "description": "See GitHub Actions workflows and runs for github.com hosted repositories in VS Code",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "engines": {
     "vscode": "^1.44.0"
   },
@@ -15,15 +15,16 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:auth.login",
     "onView:workflows",
     "onView:settings",
     "workspaceContains:**/.github/workflows/**"
   ],
   "main": "./dist/extension",
   "extensionDependencies": [
-    "vscode.git"
+    "vscode.git",
+    "vscode.github-authentication"
   ],
+  "enableProposedApi": true,
   "contributes": {
     "configuration": {
       "title": "GitHub Actions",
@@ -48,11 +49,6 @@
       }
     },
     "commands": [
-      {
-        "command": "auth.login",
-        "title": "Login",
-        "category": "GitHub Actions"
-      },
       {
         "command": "explorer.refresh",
         "title": "Refresh",
@@ -252,7 +248,7 @@
     "clean": "rimraf ./dist ./out",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "package": "npm run clean && npm version patch --no-git-tag-version && vsce package",
+    "package": "npm run clean && vsce package",
     "vscode:prepublish": "webpack --mode production",
     "webpack": "webpack --mode development",
     "webpack-dev": "webpack --mode development --watch",

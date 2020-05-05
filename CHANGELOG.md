@@ -2,6 +2,9 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
+## [v0.5.0]
+- Support the VS Code authentication API. This replaces the previous, manual PAT-based authentication flow.
+
 ## [v0.4.1]
 - Add inline run button to workflow list
 

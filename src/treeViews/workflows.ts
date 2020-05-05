@@ -203,11 +203,11 @@ type ActionsExplorerNode =
 
 export class ActionsExplorerProvider
   implements vscode.TreeDataProvider<ActionsExplorerNode> {
-  private _onDidChangeTreeData = new vscode.EventEmitter<ActionsExplorerNode>();
+  private _onDidChangeTreeData = new vscode.EventEmitter<ActionsExplorerNode | null>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   refresh(): void {
-    this._onDidChangeTreeData.fire();
+    this._onDidChangeTreeData.fire(null);
   }
 
   getTreeItem(
