@@ -252,7 +252,7 @@
     "clean": "rimraf ./dist ./out",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "package": "npm run clean && && vsce package",
+    "package": "npm run clean && vsce package",
     "vscode:prepublish": "webpack --mode production",
     "webpack": "webpack --mode development",
     "webpack-dev": "webpack --mode development --watch",
