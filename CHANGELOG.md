@@ -2,6 +2,9 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
+## [v0.5.1]
+- Roll back VS Code authentication API change for now. Wait until it becomes stable to remove need for manual enabling.
+
 ## [v0.5.0]
 - Support the VS Code authentication API. This replaces the previous, manual PAT-based authentication flow.
 
