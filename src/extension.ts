@@ -1,5 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import * as vscode from "vscode";
+import { setPAT } from "./auth/pat";
 import { getClient } from "./client/client";
 import { initConfiguration } from "./configuration/configuration";
 import { Protocol } from "./external/protocol";
@@ -141,6 +142,29 @@ export function activate(context: vscode.ExtensionContext) {
         );
 
         workflowTreeProvider.refresh();
+      }
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("auth.login", async () => {
+      // Disable this until service setup
+      // const selection = await vscode.window.showQuickPick([
+      //   "Enter PAT",
+      //   "Use OAuth flow (coming soon)"
+      // ]);
+
+      const selection = "Enter PAT";
+      switch (selection) {
+        case "Enter PAT":
+          const token = await vscode.window.showInputBox({
+            prompt: "Enter a GitHub PAT with `workflow` and `repo` scope:",
+          });
+          if (token) {
+            await setPAT(token);
+            workflowTreeProvider.refresh();
+          }
+          break;
       }
     })
   );

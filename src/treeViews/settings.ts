@@ -64,11 +64,13 @@ type SettingsExplorerNode = SelfHostedRunnersNode | SecretsNode | SecretNode;
 
 export class SettingsTreeProvider
   implements vscode.TreeDataProvider<SettingsExplorerNode> {
-  private _onDidChangeTreeData = new vscode.EventEmitter<SettingsExplorerNode | null>();
+  private _onDidChangeTreeData = new vscode.EventEmitter<
+    SettingsExplorerNode
+  >();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   refresh(): void {
-    this._onDidChangeTreeData.fire(null);
+    this._onDidChangeTreeData.fire();
   }
 
   getTreeItem(
