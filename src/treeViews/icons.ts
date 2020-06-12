@@ -63,7 +63,7 @@ export function getCodIconForWorkflowrun(
     case "completed": {
       switch (runOrJob.conclusion) {
         case "success":
-          return "verified";
+          return "pass";
 
         case "failure":
           return "error";
