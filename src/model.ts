@@ -33,7 +33,7 @@ export type WorkflowJob = OctokitData<"listJobsForWorkflowRun", "jobs">;
 
 export type WorkflowStep = GetElementType<WorkflowJob["steps"]>;
 
-export type Secret = OctokitData<"listSecretsForRepo", "secrets">;
+export type RepoSecret = OctokitData<"listRepoSecrets", "secrets">;
 
 export type SelfHostedRunner = OctokitData<
   "listSelfHostedRunnersForRepo",

@@ -280,7 +280,7 @@
     "webpack-cli": "^3.3.10"
   },
   "dependencies": {
-    "@octokit/rest": "17.2.1",
+    "@octokit/rest": "^18.0.0",
     "atob": "^2.1.2",
     "btoa": "^1.2.1",
     "js-yaml": "^3.13.1",

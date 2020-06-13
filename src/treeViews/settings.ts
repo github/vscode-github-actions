@@ -4,7 +4,7 @@ import { getClient } from "../api/api";
 import { getPAT } from "../auth/pat";
 import { Protocol } from "../external/protocol";
 import { getGitHubProtocol } from "../git/repository";
-import { Secret, SelfHostedRunner } from "../model";
+import { RepoSecret, SelfHostedRunner } from "../model";
 import { getAbsoluteIconPath } from "./icons";
 
 class SelfHostedRunnersNode extends vscode.TreeItem {
@@ -51,7 +51,7 @@ class SecretsNode extends vscode.TreeItem {
 class SecretNode extends vscode.TreeItem {
   constructor(
     public readonly repo: Protocol,
-    public readonly secret: Secret,
+    public readonly secret: RepoSecret,
     public readonly client: Octokit
   ) {
     super(secret.name);
@@ -105,7 +105,7 @@ export class SettingsTreeProvider
     }
 
     if (element instanceof SecretsNode) {
-      const result = await client.actions.listSecretsForRepo({
+      const result = await client.actions.listRepoSecrets({
         owner: repo.owner,
         repo: repo.repositoryName,
       });

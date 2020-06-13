@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 import { getClient } from "../client/client";
-import { parseUri } from "./scheme";
-import { parseLog } from "./model";
 import { cacheLogInfo } from "./logInfoProvider";
+import { parseLog } from "./model";
+import { parseUri } from "./scheme";
 
 export class WorkflowStepLogProvider
   implements vscode.TextDocumentContentProvider {
@@ -13,10 +13,10 @@ export class WorkflowStepLogProvider
     const { owner, repo, jobId } = parseUri(uri);
 
     const client = await getClient();
-    const result = await client.actions.listWorkflowJobLogs({
+    const result = await client.actions.downloadJobLogsForWorkflowRun({
       owner: owner,
       repo: repo,
-      job_id: jobId
+      job_id: jobId,
     });
 
     const log = result.data;
