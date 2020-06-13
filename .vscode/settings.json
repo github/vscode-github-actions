@@ -1,0 +1,3 @@
+{
+  "github-actions.workflows.pinned.workflows": [".github/workflows/build.yml"]
+}

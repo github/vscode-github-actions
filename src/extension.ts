@@ -1,10 +1,7 @@
-import { Octokit } from "@octokit/rest";
 import * as vscode from "vscode";
 import { setPAT } from "./auth/pat";
-import { getClient } from "./client/client";
 import { initConfiguration } from "./configuration/configuration";
-import { Protocol } from "./external/protocol";
-import { getGitHubProtocol, getGitHubUrl } from "./git/repository";
+import { getGitHubContext, GitHubContext } from "./git/repository";
 import { LogScheme } from "./logs/constants";
 import { WorkflowStepLogProvider } from "./logs/fileProvider";
 import { WorkflowStepLogFoldingProvider } from "./logs/foldingProvider";
@@ -13,6 +10,7 @@ import { getLogInfo } from "./logs/logInfoProvider";
 import { buildLogURI } from "./logs/scheme";
 import { WorkflowStepLogSymbolProvider } from "./logs/symbolProvider";
 import {
+  OrgSecret,
   RepoSecret,
   Workflow,
   WorkflowJob,
@@ -32,7 +30,7 @@ import {
 
 export function activate(context: vscode.ExtensionContext) {
   // Prefetch git repository origin url
-  getGitHubUrl();
+  getGitHubContext();
 
   initResources(context);
 
@@ -126,12 +124,11 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       if (event_type) {
-        const repo: Protocol = args.repo || (await getGitHubProtocol());
-        const client: Octokit = args.client || (await getClient());
-
-        await client.repos.createDispatchEvent({
-          owner: repo.owner,
-          repo: repo.repositoryName,
+        const gitHubContext: GitHubContext =
+          args.gitHubContext || (await getGitHubContext());
+        await gitHubContext.client.repos.createDispatchEvent({
+          owner: gitHubContext.owner,
+          repo: gitHubContext.name,
           event_type,
           client_payload: {},
         });
@@ -148,17 +145,12 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("auth.login", async () => {
-      // Disable this until service setup
-      // const selection = await vscode.window.showQuickPick([
-      //   "Enter PAT",
-      //   "Use OAuth flow (coming soon)"
-      // ]);
-
       const selection = "Enter PAT";
       switch (selection) {
         case "Enter PAT":
           const token = await vscode.window.showInputBox({
-            prompt: "Enter a GitHub PAT with `workflow` and `repo` scope:",
+            prompt:
+              "Enter a GitHub PAT with `workflow` and `repo` scope. For org-level features, you also need `admin:org`",
           });
           if (token) {
             await setPAT(token);
@@ -179,12 +171,12 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("workflow.logs", async (args) => {
-      const repo: Protocol = args.repo;
+      const gitHubContext: GitHubContext = args.gitHubContext;
       const job: WorkflowJob = args.job;
       const step: WorkflowStep | undefined = args.step;
       const uri = buildLogURI(
-        repo.owner,
-        repo.repositoryName,
+        gitHubContext.owner,
+        gitHubContext.name,
         job.id,
         step?.name
       );
@@ -228,14 +220,13 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("workflow.run.rerun", async (args) => {
-      const repo: Protocol = args.repo;
+      const gitHubContext: GitHubContext = args.gitHubContext;
       const run: WorkflowRun = args.run;
-      const client: Octokit = args.client;
 
       try {
-        await client.actions.reRunWorkflow({
-          owner: repo.owner,
-          repo: repo.repositoryName,
+        await gitHubContext.client.actions.reRunWorkflow({
+          owner: gitHubContext.owner,
+          repo: gitHubContext.name,
           run_id: run.id,
         });
       } catch (e) {
@@ -250,14 +241,13 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("workflow.run.cancel", async (args) => {
-      const repo: Protocol = args.repo;
+      const gitHubContext: GitHubContext = args.gitHubContext;
       const run: WorkflowRun = args.run;
-      const client: Octokit = args.client;
 
       try {
-        await client.actions.cancelWorkflowRun({
-          owner: repo.owner,
-          repo: repo.repositoryName,
+        await gitHubContext.client.actions.cancelWorkflowRun({
+          owner: gitHubContext.owner,
+          repo: gitHubContext.name,
           run_id: run.id,
         });
       } catch (e) {
@@ -271,9 +261,22 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
+    vscode.commands.registerCommand("settings.secrets.manage", async (args) => {
+      const gitHubContext: GitHubContext = args.gitHubContext;
+
+      // Open link to manage org-secrets
+      vscode.commands.executeCommand(
+        "vscode.open",
+        vscode.Uri.parse(
+          `https://github.com/organizations/${gitHubContext.owner}/settings/secrets`
+        )
+      );
+    })
+  );
+
+  context.subscriptions.push(
     vscode.commands.registerCommand("settings.secret.add", async (args) => {
-      const repo: Protocol = args.repo;
-      const client: Octokit = args.client;
+      const gitHubContext: GitHubContext = args.gitHubContext;
 
       const name = await vscode.window.showInputBox({
         prompt: "Enter name for new secret",
@@ -289,17 +292,19 @@ export function activate(context: vscode.ExtensionContext) {
 
       if (value) {
         try {
-          const keyResponse = await client.actions.getRepoPublicKey({
-            owner: repo.owner,
-            repo: repo.repositoryName,
-          });
+          const keyResponse = await gitHubContext.client.actions.getRepoPublicKey(
+            {
+              owner: gitHubContext.owner,
+              repo: gitHubContext.name,
+            }
+          );
 
           const key_id = keyResponse.data.key_id;
           const key = keyResponse.data.key;
 
-          await client.actions.createOrUpdateRepoSecret({
-            owner: repo.owner,
-            repo: repo.repositoryName,
+          await gitHubContext.client.actions.createOrUpdateRepoSecret({
+            owner: gitHubContext.owner,
+            repo: gitHubContext.name,
             secret_name: name,
             key_id: key_id,
             encrypted_value: encodeSecret(key, value),
@@ -315,13 +320,12 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("settings.secret.delete", async (args) => {
-      const repo: Protocol = args.repo;
+      const gitHubContext: GitHubContext = args.gitHubContext;
       const secret: RepoSecret = args.secret;
-      const client: Octokit = args.client;
 
-      await client.actions.deleteRepoSecret({
-        owner: repo.owner,
-        repo: repo.repositoryName,
+      await gitHubContext.client.actions.deleteRepoSecret({
+        owner: gitHubContext.owner,
+        repo: gitHubContext.name,
         secret_name: secret.name,
       });
 
@@ -330,10 +334,19 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
+    vscode.commands.registerCommand("settings.secret.copy", async (args) => {
+      const secret: RepoSecret | OrgSecret = args.secret;
+
+      vscode.env.clipboard.writeText(secret.name);
+
+      vscode.window.setStatusBarMessage(`Copied ${secret.name}`, 2000);
+    })
+  );
+
+  context.subscriptions.push(
     vscode.commands.registerCommand("settings.secret.update", async (args) => {
-      const repo: Protocol = args.repo;
+      const gitHubContext: GitHubContext = args.gitHubContext;
       const secret: RepoSecret = args.secret;
-      const client: Octokit = args.client;
 
       const value = await vscode.window.showInputBox({
         prompt: "Enter the new secret value",
@@ -341,17 +354,19 @@ export function activate(context: vscode.ExtensionContext) {
 
       if (value) {
         try {
-          const keyResponse = await client.actions.getRepoPublicKey({
-            owner: repo.owner,
-            repo: repo.repositoryName,
-          });
+          const keyResponse = await gitHubContext.client.actions.getRepoPublicKey(
+            {
+              owner: gitHubContext.owner,
+              repo: gitHubContext.name,
+            }
+          );
 
           const key_id = keyResponse.data.key_id;
           const key = keyResponse.data.key;
 
-          await client.actions.createOrUpdateRepoSecret({
-            owner: repo.owner,
-            repo: repo.repositoryName,
+          await gitHubContext.client.actions.createOrUpdateRepoSecret({
+            owner: gitHubContext.owner,
+            repo: gitHubContext.name,
             secret_name: secret.name,
             key_id: key_id,
             encrypted_value: encodeSecret(key, value),

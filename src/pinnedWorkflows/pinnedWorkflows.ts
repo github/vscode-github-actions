@@ -1,14 +1,11 @@
-import { Octokit } from "@octokit/rest";
 import * as vscode from "vscode";
-import { getClient } from "../client/client";
 import {
   getPinnedWorkflows,
   isPinnedWorkflowsRefreshEnabled,
   onPinnedWorkflowsChange,
   pinnedWorkflowsRefreshInterval,
 } from "../configuration/configuration";
-import { Protocol } from "../external/protocol";
-import { getGitHubProtocol } from "../git/repository";
+import { getGitHubContext, GitHubContext } from "../git/repository";
 import { WorkflowRun } from "../model";
 import { getCodIconForWorkflowrun } from "../treeViews/icons";
 
@@ -55,16 +52,15 @@ async function updatePinnedWorkflows() {
     return;
   }
 
-  const client = await getClient();
-  const repo = await getGitHubProtocol();
-  if (!repo) {
+  const gitHubContext = await getGitHubContext();
+  if (!gitHubContext) {
     return;
   }
 
   // Get all workflows to resolve names. We could do this locally, but for now, let's make the API call.
-  const workflows = await client.actions.listRepoWorkflows({
-    owner: repo.owner,
-    repo: repo.repositoryName,
+  const workflows = await gitHubContext.client.actions.listRepoWorkflows({
+    owner: gitHubContext.owner,
+    repo: gitHubContext.name,
   });
   const workflowNameByPath: { [id: string]: string } = {};
   workflows.data.workflows.forEach(
@@ -77,19 +73,18 @@ async function updatePinnedWorkflows() {
       workflowNameByPath[pinnedWorkflow]
     );
 
-    await updatePinnedWorkflow(client, repo, pW);
+    await updatePinnedWorkflow(gitHubContext, pW);
   }
 }
 
 async function refreshPinnedWorkflows() {
-  const client = await getClient();
-  const repo = await getGitHubProtocol();
-  if (!repo) {
+  const gitHubContext = await getGitHubContext();
+  if (!gitHubContext) {
     return;
   }
 
   for (const pinnedWorkflow of pinnedWorkflows) {
-    await updatePinnedWorkflow(client, repo, pinnedWorkflow);
+    await updatePinnedWorkflow(gitHubContext, pinnedWorkflow);
   }
 }
 
@@ -120,14 +115,13 @@ function createPinnedWorkflow(id: string, name: string): PinnedWorkflow {
 }
 
 async function updatePinnedWorkflow(
-  client: Octokit,
-  repo: Protocol,
+  gitHubContext: GitHubContext,
   pinnedWorkflow: PinnedWorkflow
 ) {
   try {
-    const runs = await client.actions.listWorkflowRuns({
-      owner: repo.owner,
-      repo: repo.repositoryName,
+    const runs = await gitHubContext.client.actions.listWorkflowRuns({
+      owner: gitHubContext.owner,
+      repo: gitHubContext.name,
       workflow_id: pinnedWorkflow.workflowId as any, // Workflow can also be a file name
     });
 

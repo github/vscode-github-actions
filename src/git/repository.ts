@@ -1,4 +1,7 @@
+import { Octokit } from "@octokit/rest";
 import * as vscode from "vscode";
+import { getClient } from "../api/api";
+import { getPAT } from "../auth/pat";
 import { Protocol } from "../external/protocol";
 import { GitExtension } from "../typings/git";
 import { flatten } from "../utils/array";
@@ -15,11 +18,11 @@ export async function getGitHubUrl(): Promise<string | null> {
 
     if (git.state !== "initialized") {
       // Wait for the plugin to be initialized
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         if (git.state === "initialized") {
           resolve();
         } else {
-          const listener = git.onDidChangeState(state => {
+          const listener = git.onDidChangeState((state) => {
             if (state === "initialized") {
               resolve();
             }
@@ -33,13 +36,13 @@ export async function getGitHubUrl(): Promise<string | null> {
       // To keep it very simple for now, look for the first remote in the current workspace that is a
       // github.com remote. This will be the repository for the workflow explorer.
       const originRemotes = flatten(
-        git.repositories.map(r =>
-          r.state.remotes.filter(remote => remote.name === "origin")
+        git.repositories.map((r) =>
+          r.state.remotes.filter((remote) => remote.name === "origin")
         )
       );
 
       const githubRemotes = originRemotes.filter(
-        x => x.pushUrl?.indexOf("github.com") !== -1
+        (x) => x.pushUrl?.indexOf("github.com") !== -1
       );
       if (githubRemotes.length > 0) {
         return githubRemotes[0].pushUrl!;
@@ -58,4 +61,46 @@ export async function getGitHubProtocol(): Promise<Protocol | null> {
   }
 
   return null;
+}
+
+export interface GitHubContext {
+  client: Octokit;
+
+  owner: string;
+  name: string;
+
+  ownerIsOrg: boolean;
+}
+
+let gitHubContext: Promise<GitHubContext | undefined> | undefined;
+
+export async function getGitHubContext(): Promise<GitHubContext | undefined> {
+  if (!gitHubContext) {
+    gitHubContext = (async (): Promise<GitHubContext | undefined> => {
+      const token = await getPAT();
+      if (!token) {
+        throw new Error("Token required");
+      }
+
+      const protocolInfo = await getGitHubProtocol();
+      if (!protocolInfo) {
+        return undefined;
+      }
+
+      const client = getClient(token);
+      const repoInfo = await client.repos.get({
+        repo: protocolInfo.repositoryName,
+        owner: protocolInfo.owner,
+      });
+
+      return {
+        client,
+        name: protocolInfo.repositoryName,
+        owner: protocolInfo.owner,
+        ownerIsOrg: repoInfo.data.owner.type === "Organization",
+      };
+    })();
+  }
+
+  return gitHubContext;
 }

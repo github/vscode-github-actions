@@ -1,25 +1,21 @@
-import { Octokit } from "@octokit/rest";
 import * as vscode from "vscode";
-import { getClient } from "../api/api";
-import { getPAT } from "../auth/pat";
-import { Protocol } from "../external/protocol";
-import { getGitHubProtocol } from "../git/repository";
-import { RepoSecret, SelfHostedRunner } from "../model";
+import { getGitHubContext, GitHubContext } from "../git/repository";
+import { OrgSecret, RepoSecret, SelfHostedRunner } from "../model";
 import { getAbsoluteIconPath } from "./icons";
 
 class SelfHostedRunnersNode extends vscode.TreeItem {
-  constructor(public readonly repo: Protocol, public readonly client: Octokit) {
+  constructor(public readonly gitHubContext: GitHubContext) {
     super("Self-hosted runners", vscode.TreeItemCollapsibleState.Collapsed);
 
     this.contextValue = "runners";
+    this.iconPath = new vscode.ThemeIcon("server");
   }
 }
 
 class SelfHostedRunnerNode extends vscode.TreeItem {
   constructor(
-    public readonly repo: Protocol,
-    public readonly selfHostedRunner: SelfHostedRunner,
-    public readonly client: Octokit
+    public readonly gitHubContext: GitHubContext,
+    public readonly selfHostedRunner: SelfHostedRunner
   ) {
     super(selfHostedRunner.name);
 
@@ -41,18 +37,25 @@ class SelfHostedRunnerNode extends vscode.TreeItem {
 }
 
 class SecretsNode extends vscode.TreeItem {
-  constructor(public readonly repo: Protocol, public readonly client: Octokit) {
+  constructor(public readonly gitHubContext: GitHubContext) {
     super("Secrets", vscode.TreeItemCollapsibleState.Collapsed);
+
+    this.iconPath = new vscode.ThemeIcon("lock");
+  }
+}
+
+class RepoSecretsNode extends vscode.TreeItem {
+  constructor(public readonly gitHubContext: GitHubContext) {
+    super("Repository Secrets", vscode.TreeItemCollapsibleState.Collapsed);
 
     this.contextValue = "secrets";
   }
 }
 
-class SecretNode extends vscode.TreeItem {
+class RepoSecretNode extends vscode.TreeItem {
   constructor(
-    public readonly repo: Protocol,
-    public readonly secret: RepoSecret,
-    public readonly client: Octokit
+    public readonly gitHubContext: GitHubContext,
+    public readonly secret: RepoSecret
   ) {
     super(secret.name);
 
@@ -60,7 +63,31 @@ class SecretNode extends vscode.TreeItem {
   }
 }
 
-type SettingsExplorerNode = SelfHostedRunnersNode | SecretsNode | SecretNode;
+class OrgSecretsNode extends vscode.TreeItem {
+  constructor(public readonly gitHubContext: GitHubContext) {
+    super("Organization Secrets", vscode.TreeItemCollapsibleState.Collapsed);
+
+    this.contextValue = "org-secrets";
+  }
+}
+
+class OrgSecretNode extends vscode.TreeItem {
+  constructor(
+    public readonly gitHubContext: GitHubContext,
+    public readonly secret: OrgSecret
+  ) {
+    super(secret.name);
+
+    this.description = this.secret.visibility;
+    this.contextValue = "org-secret";
+  }
+}
+
+type SettingsExplorerNode =
+  | SelfHostedRunnersNode
+  | SecretsNode
+  | RepoSecretNode
+  | OrgSecretNode;
 
 export class SettingsTreeProvider
   implements vscode.TreeDataProvider<SettingsExplorerNode> {
@@ -82,50 +109,60 @@ export class SettingsTreeProvider
   async getChildren(
     element?: SettingsExplorerNode | undefined
   ): Promise<SettingsExplorerNode[]> {
-    // TODO: Extract this common code
-    const repo = await getGitHubProtocol();
-    if (!repo) {
+    const gitHubContext = await getGitHubContext();
+    if (!gitHubContext) {
       return [];
     }
-
-    // Get token
-    const token = await getPAT();
-    if (!token) {
-      return [];
-    }
-
-    const client = getClient(token);
 
     if (!element) {
       // Root
       return [
-        new SelfHostedRunnersNode(repo, client),
-        new SecretsNode(repo, client),
+        new SelfHostedRunnersNode(gitHubContext),
+        new SecretsNode(gitHubContext),
       ];
     }
 
     if (element instanceof SecretsNode) {
-      const result = await client.actions.listRepoSecrets({
-        owner: repo.owner,
-        repo: repo.repositoryName,
+      const nodes = [new RepoSecretsNode(gitHubContext)];
+
+      if (gitHubContext.ownerIsOrg) {
+        nodes.push(new OrgSecretsNode(gitHubContext));
+      }
+
+      return nodes;
+    }
+
+    if (element instanceof RepoSecretsNode) {
+      const result = await gitHubContext.client.actions.listRepoSecrets({
+        owner: gitHubContext.owner,
+        repo: gitHubContext.name,
       });
-      // Work around bad typings/docs
-      const data = result.data;
-      const secrets = data.secrets;
-      return secrets.map((s) => new SecretNode(repo, s, client));
+
+      return result.data.secrets.map(
+        (s) => new RepoSecretNode(gitHubContext, s)
+      );
+    }
+
+    if (element instanceof OrgSecretsNode) {
+      const result = await gitHubContext.client.actions.listOrgSecrets({
+        org: gitHubContext.owner,
+      });
+
+      return result.data.secrets.map(
+        (s) => new OrgSecretNode(gitHubContext, s)
+      );
     }
 
     if (element instanceof SelfHostedRunnersNode) {
-      const result = await client.actions.listSelfHostedRunnersForRepo({
-        owner: repo.owner,
-        repo: repo.repositoryName,
-      });
+      const result = await gitHubContext.client.actions.listSelfHostedRunnersForRepo(
+        {
+          owner: gitHubContext.owner,
+          repo: gitHubContext.name,
+        }
+      );
 
-      result.data;
-
-      // Work around typing issues with the consumed octokit version
-      const data: any[] = (result.data as any).runners || [];
-      return data.map((r) => new SelfHostedRunnerNode(repo, r, client));
+      const data = result.data.runners || [];
+      return data.map((r) => new SelfHostedRunnerNode(gitHubContext, r));
     }
 
     return [];

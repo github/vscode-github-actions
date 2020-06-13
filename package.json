@@ -105,12 +105,21 @@
         "when": "viewItem =~ /run/ && viewItem =~ /cancelable/"
       },
       {
+        "command": "settings.secrets.manage",
+        "title": "Add new secret",
+        "icon": "$(globe)"
+      },
+      {
         "command": "settings.secret.add",
         "title": "Add new secret",
         "icon": {
           "dark": "resources/icons/dark/add.svg",
           "light": "resources/icons/light/add.svg"
         }
+      },
+      {
+        "command": "settings.secret.copy",
+        "title": "Copy secret name"
       },
       {
         "command": "settings.secret.update",
@@ -197,9 +206,19 @@
           "when": "viewItem == 'secrets'"
         },
         {
+          "command": "settings.secrets.manage",
+          "group": "inline",
+          "when": "viewItem == 'org-secrets'"
+        },
+        {
           "command": "settings.secret.update",
           "when": "viewItem == 'secret'",
           "group": "inline@1"
+        },
+        {
+          "command": "settings.secret.copy",
+          "when": "viewItem == 'secret' || viewItem == 'org-secret'",
+          "group": "context"
         },
         {
           "command": "settings.secret.delete",
@@ -231,6 +250,10 @@
         },
         {
           "command": "workflow.run.rerun",
+          "when": "false"
+        },
+        {
+          "command": "settings.secrets.manage",
           "when": "false"
         },
         {

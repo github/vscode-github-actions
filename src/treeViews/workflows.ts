@@ -1,9 +1,6 @@
-import { Octokit } from "@octokit/rest";
 import * as vscode from "vscode";
-import { getClient } from "../api/api";
 import { getPAT } from "../auth/pat";
-import { Protocol } from "../external/protocol";
-import { getGitHubProtocol } from "../git/repository";
+import { getGitHubContext, GitHubContext } from "../git/repository";
 import { Workflow, WorkflowJob, WorkflowRun, WorkflowStep } from "../model";
 import { getWorkflowUri, usesRepositoryDispatch } from "../workflow/workflow";
 import { getIconForWorkflowRun } from "./icons";
@@ -39,9 +36,8 @@ class ErrorNode extends vscode.TreeItem {
 
 class WorkflowNode extends vscode.TreeItem {
   constructor(
-    public readonly repo: Protocol,
-    public readonly wf: Workflow,
-    public readonly client: Octokit
+    public readonly gitHubContext: GitHubContext,
+    public readonly wf: Workflow
   ) {
     super(wf.name, vscode.TreeItemCollapsibleState.Collapsed);
 
@@ -56,9 +52,9 @@ class WorkflowNode extends vscode.TreeItem {
   }
 
   async getRuns(): Promise<WorkflowRunNode[]> {
-    const result = await this.client.actions.listWorkflowRuns({
-      owner: this.repo.owner,
-      repo: this.repo.repositoryName,
+    const result = await this.gitHubContext.client.actions.listWorkflowRuns({
+      owner: this.gitHubContext.owner,
+      repo: this.gitHubContext.name,
       workflow_id: this.wf.id,
     });
 
@@ -66,17 +62,16 @@ class WorkflowNode extends vscode.TreeItem {
     const runs = resp.workflow_runs;
 
     return runs.map(
-      (wr) => new WorkflowRunNode(this.repo, this.wf, wr as any, this.client)
+      (wr) => new WorkflowRunNode(this.gitHubContext, this.wf, wr)
     );
   }
 }
 
 class WorkflowRunNode extends vscode.TreeItem {
   constructor(
-    public readonly repo: Protocol,
+    public readonly gitHubContext: GitHubContext,
     public readonly workflow: Workflow,
-    public readonly run: WorkflowRun,
-    public readonly client: Octokit
+    public readonly run: WorkflowRun
   ) {
     super(
       `#${run.id}`,
@@ -112,16 +107,18 @@ class WorkflowRunNode extends vscode.TreeItem {
   }
 
   async getJobs(): Promise<WorkflowJobNode[]> {
-    const result = await this.client.actions.listJobsForWorkflowRun({
-      owner: this.repo.owner,
-      repo: this.repo.repositoryName,
-      run_id: this.run.id,
-    });
+    const result = await this.gitHubContext.client.actions.listJobsForWorkflowRun(
+      {
+        owner: this.gitHubContext.owner,
+        repo: this.gitHubContext.name,
+        run_id: this.run.id,
+      }
+    );
 
     const resp = result.data;
     const jobs: WorkflowJob[] = (resp as any).jobs;
 
-    return jobs.map((job) => new WorkflowJobNode(this.repo, job, this.client));
+    return jobs.map((job) => new WorkflowJobNode(this.gitHubContext, job));
   }
 
   get tooltip(): string {
@@ -135,9 +132,8 @@ class WorkflowRunNode extends vscode.TreeItem {
 
 class WorkflowJobNode extends vscode.TreeItem {
   constructor(
-    public readonly repo: Protocol,
-    public readonly job: WorkflowJob,
-    public readonly client: Octokit
+    public readonly gitHubContext: GitHubContext,
+    public readonly job: WorkflowJob
   ) {
     super(
       job.name,
@@ -159,7 +155,7 @@ class WorkflowJobNode extends vscode.TreeItem {
 
   async getSteps(): Promise<WorkflowStepNode[]> {
     return this.job.steps.map(
-      (s) => new WorkflowStepNode(this.repo, this.job, s, this.client)
+      (s) => new WorkflowStepNode(this.gitHubContext, this.job, s)
     );
   }
 
@@ -170,10 +166,9 @@ class WorkflowJobNode extends vscode.TreeItem {
 
 class WorkflowStepNode extends vscode.TreeItem {
   constructor(
-    public readonly repo: Protocol,
+    public readonly gitHubContext: GitHubContext,
     public readonly job: WorkflowJob,
-    public readonly step: WorkflowStep,
-    public readonly client: Octokit
+    public readonly step: WorkflowStep
   ) {
     super(step.name);
 
@@ -234,12 +229,6 @@ export class ActionsExplorerProvider
     ) {
       return element.getSteps();
     } else {
-      // Root nodes
-      const repo = await getGitHubProtocol();
-      if (!repo) {
-        return [new NoGitHubRepositoryNode()];
-      }
-
       // Get token
       const token = await getPAT();
       if (!token) {
@@ -247,17 +236,21 @@ export class ActionsExplorerProvider
       }
 
       try {
-        const client = getClient(token);
-        const result = await client.actions.listRepoWorkflows({
-          owner: repo.owner,
-          repo: repo.repositoryName,
+        const gitHubContext = await getGitHubContext();
+        if (!gitHubContext) {
+          throw new Error();
+        }
+
+        const result = await gitHubContext.client.actions.listRepoWorkflows({
+          owner: gitHubContext.owner,
+          repo: gitHubContext.name,
         });
         const response = result.data;
 
         const workflows = response.workflows;
         workflows.sort((a, b) => a.name.localeCompare(b.name));
 
-        return workflows.map((wf) => new WorkflowNode(repo, wf, client));
+        return workflows.map((wf) => new WorkflowNode(gitHubContext, wf));
       } catch (e) {
         vscode.window.showErrorMessage(
           `:( An error has occured while retrieving workflows:\n\n${e.message}`

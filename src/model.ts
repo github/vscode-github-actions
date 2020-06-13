@@ -35,6 +35,8 @@ export type WorkflowStep = GetElementType<WorkflowJob["steps"]>;
 
 export type RepoSecret = OctokitData<"listRepoSecrets", "secrets">;
 
+export type OrgSecret = OctokitData<"listOrgSecrets", "secrets">;
+
 export type SelfHostedRunner = OctokitData<
   "listSelfHostedRunnersForRepo",
   "runners"
