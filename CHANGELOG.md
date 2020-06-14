@@ -2,6 +2,10 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
+## [v0.6.0]
+- Update success icon
+- Support org secrets
+
 ## [v0.5.1]
 - Roll back VS Code authentication API change for now. Wait until it becomes stable to remove need for manual enabling.
 
