@@ -4,3 +4,4 @@ dist
 *.vsix
 .DS_Store
 runners
+.yalc

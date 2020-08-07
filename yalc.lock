@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "packages": {
+    "github-actions-interpreter": {
+      "signature": "d48dbb2656f32f2b28e10a6600e20323",
+      "file": true
+    }
+  }
+}
