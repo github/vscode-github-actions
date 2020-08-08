@@ -4,6 +4,10 @@
     "github-actions-interpreter": {
       "signature": "d48dbb2656f32f2b28e10a6600e20323",
       "file": true
+    },
+    "github-actions-parser": {
+      "signature": "8ce6e8fe8a52b2b29c259d56901542ae",
+      "file": true
     }
   }
 }

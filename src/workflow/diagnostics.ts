@@ -1,4 +1,4 @@
-import { complete, hover, parse } from "github-actions-interpreter/dist";
+import { complete, hover, parse } from "github-actions-parser";
 import * as vscode from "vscode";
 import { getGitHubContext } from "../git/repository";
 
