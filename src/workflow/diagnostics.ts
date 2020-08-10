@@ -67,6 +67,7 @@ async function updateDiagnostics(
         ...githubContext,
         repository: githubContext.name,
       },
+      vscode.workspace.asRelativePath(document.uri),
       document.getText()
     );
 
@@ -105,6 +106,7 @@ export class WorkflowHoverProvider implements vscode.HoverProvider {
           ...githubContext,
           repository: githubContext.name,
         },
+        vscode.workspace.asRelativePath(document.uri),
         document.getText(),
         document.offsetAt(position)
       );
@@ -145,6 +147,7 @@ export class WorkflowCompletionItemProvider
           ...githubContext,
           repository: githubContext.name,
         },
+        vscode.workspace.asRelativePath(document.uri),
         document.getText(),
         document.offsetAt(position)
       );
