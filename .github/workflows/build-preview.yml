@@ -1,4 +1,4 @@
-name: Build preview release
+name: Build nightly release
 
 on:
   workflow_dispatch:
@@ -22,7 +22,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: Pre-release ${{ github.run_number }}
+          release_name: Nightly Build ${{ github.run_number }}
           draft: false
           prerelease: true
       - name: Upload Release Asset
