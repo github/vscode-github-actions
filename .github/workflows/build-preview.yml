@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '12'
-      - run: npm install
+      - run: npm ci
       - run: npm --no-git-tag-version version 1.0.${{ github.run_number }}
       - run: npm run package
       - name: Create Release
