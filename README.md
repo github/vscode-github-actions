@@ -10,6 +10,30 @@ Simple, **unofficial** extension to interact with GitHub Actions from within VS 
 2. Open a repository with a `github.com` origin
 3. When prompted, allow `GitHub Actions` to access your `github` account
 
+## Preview features
+
+Enable the `github-actions.preview-features` setting to test the new workflow editor features.
+
+### Auto-complete actions parameters
+
+Auto-completion and validation for every action you reference in `uses`:
+
+![Actions auto-complete](./media/actions-auto-complete.gif)
+
+### Auto-complete runner label
+
+![Auto-complete runner label](./media/runs-on-auto-complete.gif)
+
+### Smart auto-complete and evaluation of expressions
+
+![Auto-complete runner label](./media/runs/env-auto-complete.gif)
+
+### Auto-complete and validate `github` event expressions
+
+The extension knows about all the webhook payloads and suggests and auto-completes event payload fields
+
+![Auto-complete runner label](./media/runs/github-auto-complete.gif)
+
 ## Features
 
 ### View workflows for the currently opened repository
