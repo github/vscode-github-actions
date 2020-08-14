@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest";
 import * as vscode from "vscode";
 import { getClient } from "../api/api";
-import { getPAT } from "../auth/pat";
+import { getSession } from "../auth/auth";
 import { Protocol } from "../external/protocol";
 import { GitExtension } from "../typings/git";
 import { flatten } from "../utils/array";
@@ -70,6 +70,7 @@ export interface GitHubContext {
   name: string;
 
   ownerIsOrg: boolean;
+  orgFeaturesEnabled?: boolean;
 }
 
 let gitHubContext: Promise<GitHubContext | undefined> | undefined;
@@ -77,30 +78,43 @@ let gitHubContext: Promise<GitHubContext | undefined> | undefined;
 export async function getGitHubContext(): Promise<GitHubContext | undefined> {
   if (!gitHubContext) {
     gitHubContext = (async (): Promise<GitHubContext | undefined> => {
-      const token = await getPAT();
-      if (!token) {
-        throw new Error("Token required");
+      try {
+        const session = await getSession();
+
+        const protocolInfo = await getGitHubProtocol();
+        if (!protocolInfo) {
+          return undefined;
+        }
+
+        const client = getClient(session.accessToken);
+        const repoInfo = await client.repos.get({
+          repo: protocolInfo.repositoryName,
+          owner: protocolInfo.owner,
+        });
+
+        return {
+          client,
+          name: protocolInfo.repositoryName,
+          owner: protocolInfo.owner,
+          ownerIsOrg: repoInfo.data.owner.type === "Organization",
+          orgFeaturesEnabled:
+            session.scopes.find((x) => x.toLocaleLowerCase() === "admin:org") !=
+            null,
+        };
+      } catch (e) {
+        // Reset the context so the next attempt will try this flow again
+        gitHubContext = undefined;
+
+        // Rethrow original error
+        throw e;
       }
-
-      const protocolInfo = await getGitHubProtocol();
-      if (!protocolInfo) {
-        return undefined;
-      }
-
-      const client = getClient(token);
-      const repoInfo = await client.repos.get({
-        repo: protocolInfo.repositoryName,
-        owner: protocolInfo.owner,
-      });
-
-      return {
-        client,
-        name: protocolInfo.repositoryName,
-        owner: protocolInfo.owner,
-        ownerIsOrg: repoInfo.data.owner.type === "Organization",
-      };
     })();
   }
 
   return gitHubContext;
+}
+
+export async function resetGitHubContext() {
+  gitHubContext = undefined;
+  await getGitHubContext();
 }

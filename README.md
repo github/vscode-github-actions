@@ -8,7 +8,7 @@ Simple, **unofficial** extension to interact with GitHub Actions from within VS 
 
 1. Install extension
 2. Open a repository with a `github.com` origin
-3. When prompted, enter a PAT with `repo` scope to authenticate against the API
+3. When prompted, allow `GitHub Actions` to access your `github` account
 
 ## Features
 

@@ -7,22 +7,22 @@
     "url": "https://github.com/cschleiden/vscode-github-actions"
   },
   "description": "See GitHub Actions workflows and runs for github.com hosted repositories in VS Code",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "engines": {
-    "vscode": "^1.44.0"
+    "vscode": "^1.48.0"
   },
   "categories": [
     "Other"
   ],
   "activationEvents": [
-    "onCommand:auth.login",
     "onView:workflows",
     "onView:settings",
     "workspaceContains:**/.github/workflows/**"
   ],
   "main": "./dist/extension",
   "extensionDependencies": [
-    "vscode.git"
+    "vscode.git",
+    "vscode.github-authentication"
   ],
   "contributes": {
     "configuration": {
@@ -44,17 +44,25 @@
           "description": "Time to wait between calls to update pinned workflows in seconds",
           "default": 30,
           "scope": "window"
+        },
+        "github-actions.org-features": {
+          "type": "boolean",
+          "description": "Whether org features should be enabled. Requires the `admin:org` scope",
+          "default": false,
+          "scope": "machine"
         }
       }
     },
     "commands": [
       {
-        "command": "auth.login",
+        "command": "github-actions.auth.org-login",
+        "category": "GitHub Actions",
         "title": "Login",
-        "category": "GitHub Actions"
+        "when": "false"
       },
       {
-        "command": "explorer.refresh",
+        "command": "github-actions.explorer.refresh",
+        "category": "GitHub Actions",
         "title": "Refresh",
         "icon": {
           "dark": "resources/icons/dark/refresh.svg",
@@ -62,17 +70,20 @@
         }
       },
       {
-        "command": "explorer.openRun",
+        "command": "github-actions.explorer.openRun",
+        "category": "GitHub Actions",
         "title": "Open workflow run",
         "when": "viewItem =~ /workflow/"
       },
       {
-        "command": "explorer.openWorkflowFile",
+        "command": "github-actions.explorer.openWorkflowFile",
+        "category": "GitHub Actions",
         "title": "Open workflow",
         "when": "viewItem =~ /workflow/"
       },
       {
-        "command": "explorer.triggerRun",
+        "command": "github-actions.explorer.triggerRun",
+        "category": "GitHub Actions",
         "title": "Trigger workflow",
         "when": "viewItem =~ /workflow/ && viewItem =~ /rdispatch/",
         "icon": {
@@ -81,12 +92,14 @@
         }
       },
       {
-        "command": "workflow.run.open",
+        "command": "github-actions.workflow.run.open",
+        "category": "GitHub Actions",
         "title": "Open workflow run",
         "when": "viewItem =~ /run/"
       },
       {
-        "command": "workflow.logs",
+        "command": "github-actions.workflow.logs",
+        "category": "GitHub Actions",
         "title": "View logs",
         "when": "viewItem =~ /job/ || viewItem =~ /step/",
         "icon": {
@@ -95,22 +108,26 @@
         }
       },
       {
-        "command": "workflow.run.rerun",
+        "command": "github-actions.workflow.run.rerun",
+        "category": "GitHub Actions",
         "title": "Rerun workflow run",
         "when": "viewItem =~ /run/ && viewItem =~ /rerunnable/"
       },
       {
-        "command": "workflow.run.cancel",
+        "command": "github-actions.workflow.run.cancel",
+        "category": "GitHub Actions",
         "title": "Cancel workflow run",
         "when": "viewItem =~ /run/ && viewItem =~ /cancelable/"
       },
       {
-        "command": "settings.secrets.manage",
+        "command": "github-actions.settings.secrets.manage",
+        "category": "GitHub Actions",
         "title": "Add new secret",
         "icon": "$(globe)"
       },
       {
-        "command": "settings.secret.add",
+        "command": "github-actions.settings.secret.add",
+        "category": "GitHub Actions",
         "title": "Add new secret",
         "icon": {
           "dark": "resources/icons/dark/add.svg",
@@ -118,11 +135,13 @@
         }
       },
       {
-        "command": "settings.secret.copy",
+        "command": "github-actions.settings.secret.copy",
+        "category": "GitHub Actions",
         "title": "Copy secret name"
       },
       {
-        "command": "settings.secret.update",
+        "command": "github-actions.settings.secret.update",
+        "category": "GitHub Actions",
         "title": "Update secret",
         "icon": {
           "dark": "resources/icons/dark/edit.svg",
@@ -130,7 +149,8 @@
         }
       },
       {
-        "command": "settings.secret.delete",
+        "command": "github-actions.settings.secret.delete",
+        "category": "GitHub Actions",
         "title": "Delete secret",
         "icon": {
           "dark": "resources/icons/dark/remove.svg",
@@ -139,13 +159,13 @@
       }
     ],
     "views": {
-      "actions": [
+      "github-actions": [
         {
-          "id": "workflows",
+          "id": "github-actions.workflows",
           "name": "Workflows"
         },
         {
-          "id": "settings",
+          "id": "github-actions.settings",
           "name": "Settings"
         }
       ]
@@ -153,7 +173,7 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "actions",
+          "id": "github-actions",
           "title": "GitHub Actions",
           "icon": "resources/icons/light/explorer.svg"
         }
@@ -162,110 +182,110 @@
     "menus": {
       "view/title": [
         {
-          "command": "explorer.refresh",
+          "command": "github-actions.explorer.refresh",
           "group": "navigation",
-          "when": "view == workflows || view == settings"
+          "when": "view == github-actions.workflows || view == github-actions.settings"
         }
       ],
       "editor/title": [
         {
-          "command": "explorer.triggerRun",
+          "command": "github-actions.explorer.triggerRun",
           "when": "githubActions:activeFile =~ /rdispatch/ && resourceExtname =~ /\\.ya?ml/",
           "group": "navigation"
         }
       ],
       "view/item/context": [
         {
-          "command": "explorer.openWorkflowFile",
+          "command": "github-actions.explorer.openWorkflowFile",
           "when": "viewItem =~ /workflow/"
         },
         {
-          "command": "explorer.triggerRun",
+          "command": "github-actions.explorer.triggerRun",
           "when": "viewItem =~ /rdispatch/"
         },
         {
-          "command": "workflow.run.open",
+          "command": "github-actions.workflow.run.open",
           "when": "viewItem =~ /run/"
         },
         {
-          "command": "workflow.logs",
+          "command": "github-actions.workflow.logs",
           "group": "inline",
           "when": "viewItem =~ /job/ && viewItem =~ /completed/"
         },
         {
-          "command": "workflow.run.cancel",
+          "command": "github-actions.workflow.run.cancel",
           "when": "viewItem =~ /run/ && viewItem =~ /cancelable/"
         },
         {
-          "command": "workflow.run.rerun",
+          "command": "github-actions.workflow.run.rerun",
           "when": "viewItem =~ /run/ && viewItem =~ /rerunnable/"
         },
         {
-          "command": "settings.secret.add",
+          "command": "github-actions.settings.secret.add",
           "group": "inline",
           "when": "viewItem == 'secrets'"
         },
         {
-          "command": "settings.secrets.manage",
+          "command": "github-actions.settings.secrets.manage",
           "group": "inline",
           "when": "viewItem == 'org-secrets'"
         },
         {
-          "command": "settings.secret.update",
+          "command": "github-actions.settings.secret.update",
           "when": "viewItem == 'secret'",
           "group": "inline@1"
         },
         {
-          "command": "settings.secret.copy",
+          "command": "github-actions.settings.secret.copy",
           "when": "viewItem == 'secret' || viewItem == 'org-secret'",
           "group": "context"
         },
         {
-          "command": "settings.secret.delete",
+          "command": "github-actions.settings.secret.delete",
           "when": "viewItem == 'secret'",
           "group": "inline@2"
         },
         {
-          "command": "explorer.triggerRun",
+          "command": "github-actions.explorer.triggerRun",
           "when": "viewItem =~ /workflow/ && viewItem =~ /rdispatch/",
           "group": "inline@1"
         }
       ],
       "commandPalette": [
         {
-          "command": "explorer.openWorkflowFile",
+          "command": "github-actions.explorer.openWorkflowFile",
           "when": "false"
         },
         {
-          "command": "explorer.triggerRun",
+          "command": "github-actions.explorer.triggerRun",
           "when": "false"
         },
         {
-          "command": "workflow.run.open",
+          "command": "github-actions.workflow.run.open",
           "when": "false"
         },
         {
-          "command": "workflow.run.cancel",
+          "command": "github-actions.workflow.run.cancel",
           "when": "false"
         },
         {
-          "command": "workflow.run.rerun",
+          "command": "github-actions.workflow.run.rerun",
           "when": "false"
         },
         {
-          "command": "settings.secrets.manage",
+          "command": "github-actions.settings.secrets.manage",
           "when": "false"
         },
         {
-          "command": "settings.secret.add",
+          "command": "github-actions.settings.secret.add",
           "when": "false"
         },
         {
-          "command": "settings.secret.update",
+          "command": "github-actions.settings.secret.update",
           "when": "false"
         },
         {
-          "command": "settings.secret.delete",
+          "command": "github-actions.settings.secret.delete",
           "when": "false"
         }
       ]
@@ -284,11 +304,10 @@
   "devDependencies": {
     "@types/glob": "^7.1.1",
     "@types/js-yaml": "^3.12.1",
-    "@types/keytar": "^4.4.2",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.11.7",
     "@types/uuid": "^3.4.6",
-    "@types/vscode": "1.44.0",
+    "@types/vscode": "1.48.0",
     "@types/yaml": "^1.2.0",
     "glob": "^7.1.5",
     "mocha": "^6.2.2",
@@ -299,7 +318,7 @@
     "typescript": "^3.6.4",
     "vsce": "1.75.0",
     "vscode-test": "^1.2.2",
-    "webpack": "^4.41.5",
+    "webpack": "^4.44.1",
     "webpack-cli": "^3.3.10"
   },
   "dependencies": {
@@ -307,7 +326,6 @@
     "atob": "^2.1.2",
     "btoa": "^1.2.1",
     "js-yaml": "^3.13.1",
-    "keytar": "^5.0.0",
     "ssh-config": "^3.0.0",
     "tunnel": "0.0.6",
     "tweetsodium": "0.0.4",

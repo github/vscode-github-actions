@@ -142,7 +142,7 @@ async function updatePinnedWorkflow(
     )}) ${pinnedWorkflow.workflowName}`;
     pinnedWorkflow.statusBarItem.command = {
       title: "Open workflow run",
-      command: "workflow.run.open",
+      command: "github-actions.workflow.run.open",
       arguments: [
         {
           run: mostRecentRun,

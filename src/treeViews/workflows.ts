@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import { getPAT } from "../auth/pat";
 import { getGitHubContext, GitHubContext } from "../git/repository";
 import { Workflow, WorkflowJob, WorkflowRun, WorkflowStep } from "../model";
 import { getWorkflowUri, usesRepositoryDispatch } from "../workflow/workflow";
@@ -19,12 +18,7 @@ class NoGitHubRepositoryNode extends vscode.TreeItem {
  */
 class AuthenticationNode extends vscode.TreeItem {
   constructor() {
-    super("No PAT for GitHub found. Click here to login.");
-
-    this.command = {
-      title: "Login",
-      command: "auth.login",
-    };
+    super("Please sign-in in the Accounts menu.");
   }
 }
 
@@ -97,7 +91,7 @@ class WorkflowRunNode extends vscode.TreeItem {
 
     this.command = {
       title: "Open run",
-      command: "workflow.run.open",
+      command: "github-actions.workflow.run.open",
       arguments: [this],
     };
   }
@@ -179,7 +173,7 @@ class WorkflowStepNode extends vscode.TreeItem {
 
     this.command = {
       title: "Open run",
-      command: "workflow.logs",
+      command: "github-actions.workflow.logs",
       arguments: [this],
     };
   }
@@ -198,11 +192,11 @@ type ActionsExplorerNode =
 
 export class ActionsExplorerProvider
   implements vscode.TreeDataProvider<ActionsExplorerNode> {
-  private _onDidChangeTreeData = new vscode.EventEmitter<ActionsExplorerNode>();
+  private _onDidChangeTreeData = new vscode.EventEmitter<ActionsExplorerNode | null>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   refresh(): void {
-    this._onDidChangeTreeData.fire();
+    this._onDidChangeTreeData.fire(null);
   }
 
   getTreeItem(
@@ -229,16 +223,10 @@ export class ActionsExplorerProvider
     ) {
       return element.getSteps();
     } else {
-      // Get token
-      const token = await getPAT();
-      if (!token) {
-        return [new AuthenticationNode()];
-      }
-
       try {
         const gitHubContext = await getGitHubContext();
         if (!gitHubContext) {
-          throw new Error();
+          return [];
         }
 
         const result = await gitHubContext.client.actions.listRepoWorkflows({
@@ -252,11 +240,15 @@ export class ActionsExplorerProvider
 
         return workflows.map((wf) => new WorkflowNode(gitHubContext, wf));
       } catch (e) {
-        vscode.window.showErrorMessage(
-          `:( An error has occured while retrieving workflows:\n\n${e.message}`
-        );
+        if (
+          `${e?.message}`.startsWith(
+            "Could not get token from the GitHub provider."
+          )
+        ) {
+          return [new AuthenticationNode()];
+        }
 
-        return [new ErrorNode("An error has occured :(")];
+        return [new ErrorNode(`An error has occured: ${e.message}`)];
       }
     }
   }

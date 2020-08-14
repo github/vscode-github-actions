@@ -45,3 +45,15 @@ export function pinnedWorkflowsRefreshInterval(): number {
     60
   );
 }
+
+export function orgFeaturesEnabled(): boolean {
+  return getConfiguration().get<boolean>(getSettingsKey("org-features"), false);
+}
+
+export async function updateOrgFeaturesEnabled(enabled: boolean) {
+  await getConfiguration().update(
+    getSettingsKey("org-features"),
+    enabled,
+    true
+  );
+}

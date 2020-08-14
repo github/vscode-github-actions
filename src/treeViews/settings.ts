@@ -3,6 +3,18 @@ import { getGitHubContext, GitHubContext } from "../git/repository";
 import { OrgSecret, RepoSecret, SelfHostedRunner } from "../model";
 import { getAbsoluteIconPath } from "./icons";
 
+class OrgFeaturesNode extends vscode.TreeItem {
+  constructor() {
+    super("GitHub token does not have `admin:org` scope");
+    this.description = "Click here to authorize";
+
+    this.command = {
+      title: "Login",
+      command: "github-actions.auth.org-login",
+    };
+  }
+}
+
 class SelfHostedRunnersNode extends vscode.TreeItem {
   constructor(public readonly gitHubContext: GitHubContext) {
     super("Self-hosted runners", vscode.TreeItemCollapsibleState.Collapsed);
@@ -84,6 +96,7 @@ class OrgSecretNode extends vscode.TreeItem {
 }
 
 type SettingsExplorerNode =
+  | OrgFeaturesNode
   | SelfHostedRunnersNode
   | SecretsNode
   | RepoSecretNode
@@ -91,13 +104,11 @@ type SettingsExplorerNode =
 
 export class SettingsTreeProvider
   implements vscode.TreeDataProvider<SettingsExplorerNode> {
-  private _onDidChangeTreeData = new vscode.EventEmitter<
-    SettingsExplorerNode
-  >();
+  private _onDidChangeTreeData = new vscode.EventEmitter<SettingsExplorerNode | null>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   refresh(): void {
-    this._onDidChangeTreeData.fire();
+    this._onDidChangeTreeData.fire(null);
   }
 
   getTreeItem(
@@ -144,6 +155,10 @@ export class SettingsTreeProvider
     }
 
     if (element instanceof OrgSecretsNode) {
+      if (!gitHubContext.orgFeaturesEnabled) {
+        return [new OrgFeaturesNode()];
+      }
+
       const result = await gitHubContext.client.actions.listOrgSecrets({
         org: gitHubContext.owner,
       });
