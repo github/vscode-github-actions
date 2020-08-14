@@ -26,13 +26,13 @@ Auto-completion and validation for every action you reference in `uses`:
 
 ### Smart auto-complete and evaluation of expressions
 
-![Auto-complete runner label](./media/runs/env-auto-complete.gif)
+![Auto-complete and evaluation of expressions](./media/env-auto-complete.gif)
 
 ### Auto-complete and validate `github` event expressions
 
 The extension knows about all the webhook payloads and suggests and auto-completes event payload fields
 
-![Auto-complete runner label](./media/runs/github-auto-complete.gif)
+![Auto-complete github event expressions](./media/github-auto-complete.gif)
 
 ## Features
 
