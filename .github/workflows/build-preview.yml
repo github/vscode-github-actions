@@ -12,6 +12,7 @@ jobs:
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '12'
+      - run: rm package-lock.json
       - run: npm --no-git-tag-version version 1.0.${{ github.run_number }}
       - run: npm install
       - run: npm run package
