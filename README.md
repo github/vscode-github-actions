@@ -14,6 +14,13 @@ Simple, **unofficial** extension to interact with GitHub Actions from within VS 
 
 Enable the `github-actions.preview-features` setting to test the new workflow editor features.
 
+### Auto-complete
+
+No additional YAML extension needed, this extension includes a built-in language server with full support for the workflow schema.
+
+![Workflow auto-complete](./media/workflow-auto-complete.gif)
+
+
 ### Auto-complete actions parameters
 
 Auto-completion and validation for every action you reference in `uses`:
