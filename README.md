@@ -12,6 +12,8 @@ Simple, **unofficial** extension to interact with GitHub Actions from within VS 
 
 ## Preview features
 
+**Only in the nightly builds so far!**
+
 Enable the `github-actions.preview-features` setting to test the new workflow editor features (reload after enabling the setting).
 
 ### Auto-complete and documentation
