@@ -131,17 +131,12 @@ export class WorkflowCompletionItemProvider
     position: vscode.Position,
     cancellationToken: vscode.CancellationToken
   ): Promise<vscode.CompletionItem[]> {
-    const linePrefix = document
-      .lineAt(position)
-      .text.substr(0, position.character);
-
     try {
       const githubContext = await getGitHubContext();
       if (!githubContext) {
         return [];
       }
 
-      const start = Date.now();
       const completionResult = await complete(
         {
           ...githubContext,
@@ -151,8 +146,6 @@ export class WorkflowCompletionItemProvider
         document.getText(),
         document.offsetAt(position)
       );
-      const time = Date.now() - start;
-      console.log("Time", time);
 
       if (completionResult.length > 0) {
         return completionResult.map((x) => {
