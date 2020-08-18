@@ -6,7 +6,7 @@ import {
 import { resetGitHubContext } from "../git/repository";
 
 const AUTH_PROVIDER_ID = "github";
-const DEFAULT_SCOPES = ["repo", "workflows"];
+const DEFAULT_SCOPES = ["repo"];
 const ORG_SCOPES = [...DEFAULT_SCOPES, "admin:org"];
 
 export function registerListeners(context: vscode.ExtensionContext): void {
