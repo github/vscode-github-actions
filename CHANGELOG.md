@@ -2,6 +2,9 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
+## [v0.8.0] The one with the auto-completion
+- Enable the `github-actions.preview-features` setting to start using smart auto-complete and validation.
+
 ## [v0.7.0]
 - Support the VS Code authentication API with the VS Code July release (1.48). This replaces the previous, manual PAT-based authentication flow.
 

@@ -7,7 +7,7 @@
     "url": "https://github.com/cschleiden/vscode-github-actions"
   },
   "description": "GitHub Actions workflows and runs for github.com hosted repositories in VS Code",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "engines": {
     "vscode": "^1.48.0"
   },
@@ -331,7 +331,7 @@
     "@octokit/rest": "^18.0.0",
     "atob": "^2.1.2",
     "btoa": "^1.2.1",
-    "github-actions-parser": "^0.7.7",
+    "github-actions-parser": "^0.8.3",
     "js-yaml": "^3.14.0",
     "ssh-config": "^3.0.0",
     "tunnel": "0.0.6",
