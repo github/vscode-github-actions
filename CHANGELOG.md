@@ -2,6 +2,9 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
+## [v0.8.1]
+- Fixes expression auto-completion in YAML multi-line strings
+
 ## [v0.8.0] The one with the auto-completion
 - Enable the `github-actions.preview-features` setting to start using smart auto-complete and validation.
 
