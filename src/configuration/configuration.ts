@@ -57,10 +57,3 @@ export async function updateOrgFeaturesEnabled(enabled: boolean) {
     true
   );
 }
-
-export function previewFeaturesEnabled(): boolean {
-  return getConfiguration().get<boolean>(
-    getSettingsKey("preview-features"),
-    false
-  );
-}

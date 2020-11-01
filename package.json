@@ -50,12 +50,6 @@
           "description": "Whether org features should be enabled. Requires the `admin:org` scope",
           "default": false,
           "scope": "machine"
-        },
-        "github-actions.preview-features": {
-          "type": "boolean",
-          "description": "Whether preview features should be enabled",
-          "default": false,
-          "scope": "machine"
         }
       }
     },

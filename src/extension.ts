@@ -1,9 +1,6 @@
 import * as vscode from "vscode";
 import { enableOrgFeatures } from "./auth/auth";
-import {
-  initConfiguration,
-  previewFeaturesEnabled,
-} from "./configuration/configuration";
+import { initConfiguration } from "./configuration/configuration";
 import { getGitHubContext, GitHubContext } from "./git/repository";
 import { LogScheme } from "./logs/constants";
 import { WorkflowStepLogProvider } from "./logs/fileProvider";
@@ -442,7 +439,5 @@ export function activate(context: vscode.ExtensionContext) {
   //
   // Editing features
   //
-  if (previewFeaturesEnabled()) {
-    init(context);
-  }
+  init(context);
 }
