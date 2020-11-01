@@ -14,10 +14,11 @@
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
 			"outFiles": [
-				"${workspaceFolder}/dist/**/*.js"
+				"${workspaceFolder}/dist/**/*.js",
+				"${workspaceFolder}/node_modules/**/*.js"
 			],
 			"preLaunchTask": "${defaultBuildTask}",
-			"sourceMaps": false
+			"sourceMaps": true,
 		},
 		{
 			"name": "Extension Tests",
