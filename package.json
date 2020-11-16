@@ -55,12 +55,6 @@
     },
     "commands": [
       {
-        "command": "github-actions.auth.org-login",
-        "category": "GitHub Actions",
-        "title": "Login",
-        "when": "false"
-      },
-      {
         "command": "github-actions.explorer.refresh",
         "category": "GitHub Actions",
         "title": "Refresh",
