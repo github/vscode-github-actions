@@ -20,10 +20,6 @@
     "workspaceContains:**/.github/workflows/**"
   ],
   "main": "./dist/extension",
-  "extensionDependencies": [
-    "vscode.git",
-    "vscode.github-authentication"
-  ],
   "contributes": {
     "configuration": {
       "title": "GitHub Actions",
