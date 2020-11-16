@@ -2,6 +2,10 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
+## [vNext] - not yet released
+
+- Fixes error when trying to open expired logs (#19)
+
 ## [v0.9.0]
 - Updated `github-actions-parser` dependency to fix a number of auto-complete and validation bugs
 - Removed edit preview features, they are now enabled by default
