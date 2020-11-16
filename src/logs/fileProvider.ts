@@ -17,19 +17,34 @@ export class WorkflowStepLogProvider
       throw new Error("Could not load logs");
     }
 
-    const result = await githubContext?.client.actions.downloadJobLogsForWorkflowRun(
-      {
-        owner: owner,
-        repo: repo,
-        job_id: jobId,
+    try {
+      const result = await githubContext?.client.actions.downloadJobLogsForWorkflowRun(
+        {
+          owner: owner,
+          repo: repo,
+          job_id: jobId,
+        }
+      );
+
+      const log = result.data;
+
+      const logInfo = parseLog(log);
+      cacheLogInfo(uri, logInfo);
+
+      return logInfo.updatedLog;
+    } catch (e) {
+      if ("status" in e && e.status === 410) {
+        cacheLogInfo(uri, {
+          colorFormats: [],
+          sections: [],
+          updatedLog: "",
+        });
+
+        return "Could not open logs, they are expired.";
       }
-    );
 
-    const log = result.data;
-
-    const logInfo = parseLog(log);
-    cacheLogInfo(uri, logInfo);
-
-    return logInfo.updatedLog;
+      console.error("Error loading logs", e);
+      return `Could not open logs, unhandled error: ${e?.message || e}`;
+    }
   }
 }
