@@ -1,8 +1,11 @@
 import * as vscode from "vscode";
-import { getGitHubContext, GitHubContext } from "../git/repository";
+
+import { GitHubContext, getGitHubContext } from "../git/repository";
 import { Workflow, WorkflowJob, WorkflowRun, WorkflowStep } from "../model";
 import { getWorkflowUri, usesRepositoryDispatch } from "../workflow/workflow";
+
 import { getIconForWorkflowRun } from "./icons";
+import { parse } from "github-actions-parser";
 
 /**
  * When no github.com remote can be found in the current workspace.
@@ -42,6 +45,8 @@ class WorkflowNode extends vscode.TreeItem {
       if (usesRepositoryDispatch(workflowUri.fsPath)) {
         this.contextValue += "rdispatch";
       }
+
+      const workflow = parse(filename, input, schema, contextProviderFactory);
     }
   }
 
