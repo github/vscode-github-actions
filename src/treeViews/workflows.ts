@@ -2,10 +2,10 @@ import * as vscode from "vscode";
 
 import { GitHubContext, getGitHubContext } from "../git/repository";
 import { Workflow, WorkflowJob, WorkflowRun, WorkflowStep } from "../model";
-import { getWorkflowUri, usesRepositoryDispatch } from "../workflow/workflow";
+import { getWorkflowUri, parseWorkflow } from "../workflow/workflow";
 
+import { Workflow as ParsedWorkflow } from "github-actions-parser/dist/lib/workflow";
 import { getIconForWorkflowRun } from "./icons";
-import { parse } from "github-actions-parser";
 
 /**
  * When no github.com remote can be found in the current workspace.
@@ -34,19 +34,21 @@ class ErrorNode extends vscode.TreeItem {
 class WorkflowNode extends vscode.TreeItem {
   constructor(
     public readonly gitHubContext: GitHubContext,
-    public readonly wf: Workflow
+    public readonly wf: Workflow,
+    public readonly parsed?: ParsedWorkflow
   ) {
     super(wf.name, vscode.TreeItemCollapsibleState.Collapsed);
 
     this.contextValue = "workflow";
 
-    const workflowUri = getWorkflowUri(wf.path);
-    if (workflowUri) {
-      if (usesRepositoryDispatch(workflowUri.fsPath)) {
-        this.contextValue += "rdispatch";
+    if (this.parsed) {
+      if (this.parsed.on.repository_dispatch !== undefined) {
+        this.contextValue += " rdispatch";
       }
 
-      const workflow = parse(filename, input, schema, contextProviderFactory);
+      if (this.parsed.on.workflow_dispatch !== undefined) {
+        this.contextValue += " wdispatch";
+      }
     }
   }
 
@@ -99,6 +101,9 @@ class WorkflowRunNode extends vscode.TreeItem {
       command: "github-actions.workflow.run.open",
       arguments: [this],
     };
+
+    this.iconPath = getIconForWorkflowRun(this.run);
+    this.tooltip = `${this.run.status} ${this.run.conclusion || ""}`;
   }
 
   hasJobs(): boolean {
@@ -119,14 +124,6 @@ class WorkflowRunNode extends vscode.TreeItem {
 
     return jobs.map((job) => new WorkflowJobNode(this.gitHubContext, job));
   }
-
-  get tooltip(): string {
-    return `${this.run.status} - ${this.run.conclusion}`;
-  }
-
-  get iconPath() {
-    return getIconForWorkflowRun(this.run);
-  }
 }
 
 class WorkflowJobNode extends vscode.TreeItem {
@@ -146,6 +143,8 @@ class WorkflowJobNode extends vscode.TreeItem {
     if (this.job.status === "completed") {
       this.contextValue += " completed";
     }
+
+    this.iconPath = getIconForWorkflowRun(this.job);
   }
 
   hasSteps(): boolean {
@@ -156,10 +155,6 @@ class WorkflowJobNode extends vscode.TreeItem {
     return this.job.steps.map(
       (s) => new WorkflowStepNode(this.gitHubContext, this.job, s)
     );
-  }
-
-  get iconPath() {
-    return getIconForWorkflowRun(this.job);
   }
 }
 
@@ -181,10 +176,8 @@ class WorkflowStepNode extends vscode.TreeItem {
       command: "github-actions.workflow.logs",
       arguments: [this],
     };
-  }
 
-  get iconPath() {
-    return getIconForWorkflowRun(this.step);
+    this.iconPath = getIconForWorkflowRun(this.step);
   }
 }
 
@@ -243,7 +236,18 @@ export class ActionsExplorerProvider
         const workflows = response.workflows;
         workflows.sort((a, b) => a.name.localeCompare(b.name));
 
-        return workflows.map((wf) => new WorkflowNode(gitHubContext, wf));
+        return await Promise.all(
+          workflows.map(async (wf) => {
+            let parsedWorkflow: ParsedWorkflow | undefined;
+
+            const workflowUri = getWorkflowUri(wf.path);
+            if (workflowUri) {
+              parsedWorkflow = await parseWorkflow(workflowUri, gitHubContext);
+            }
+
+            return new WorkflowNode(gitHubContext, wf, parsedWorkflow);
+          })
+        );
       } catch (e) {
         if (
           `${e?.message}`.startsWith(

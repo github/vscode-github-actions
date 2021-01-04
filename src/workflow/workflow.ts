@@ -1,7 +1,12 @@
+import * as vscode from "vscode";
+
+import { basename, join } from "path";
+
+import { GitHubContext } from "../git/repository";
+import { Workflow } from "github-actions-parser/dist/lib/workflow";
+import { parse } from "github-actions-parser";
 import { readFileSync } from "fs";
 import { safeLoad } from "js-yaml";
-import { join } from "path";
-import * as vscode from "vscode";
 
 interface On {
   event: string;
@@ -97,4 +102,27 @@ export function getWorkflowUri(path: string): vscode.Uri | null {
   }
 
   return null;
+}
+
+export async function parseWorkflow(
+  uri: vscode.Uri,
+  gitHubContext: GitHubContext
+): Promise<Workflow | undefined> {
+  try {
+    const b = await vscode.workspace.fs.readFile(uri);
+    const workflowInput = Buffer.from(b).toString("utf-8");
+    const doc = await parse(
+      {
+        ...gitHubContext,
+        repository: gitHubContext.name,
+      },
+      basename(uri.fsPath),
+      workflowInput
+    );
+    return doc.workflow;
+  } catch {
+    // Ignore error here
+  }
+
+  return undefined;
 }

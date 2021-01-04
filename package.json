@@ -3,11 +3,12 @@
   "displayName": "GitHub Actions",
   "publisher": "cschleiden",
   "icon": "resources/logo.png",
+  "license": "MIT",
   "repository": {
     "url": "https://github.com/cschleiden/vscode-github-actions"
   },
   "description": "GitHub Actions workflows and runs for github.com hosted repositories in VS Code",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "engines": {
     "vscode": "^1.48.0"
   },
@@ -75,7 +76,7 @@
         "command": "github-actions.explorer.triggerRun",
         "category": "GitHub Actions",
         "title": "Trigger workflow",
-        "when": "viewItem =~ /workflow/ && viewItem =~ /rdispatch/",
+        "when": "viewItem =~ /workflow/ && viewItem =~ /dispatch/",
         "icon": {
           "dark": "resources/icons/dark/run.svg",
           "light": "resources/icons/light/run.svg"
@@ -305,7 +306,7 @@
     "rimraf": "^3.0.1",
     "ts-loader": "^6.2.1",
     "tslint": "^5.20.0",
-    "typescript": "^3.6.4",
+    "typescript": "4.1.3",
     "vsce": "1.75.0",
     "vscode-test": "^1.2.2",
     "webpack": "^4.44.1",
@@ -315,7 +316,7 @@
     "@octokit/rest": "^18.0.0",
     "atob": "^2.1.2",
     "btoa": "^1.2.1",
-    "github-actions-parser": "^0.9.0",
+    "github-actions-parser": "0.10.1",
     "js-yaml": "^3.14.0",
     "ssh-config": "^3.0.0",
     "tunnel": "0.0.6",

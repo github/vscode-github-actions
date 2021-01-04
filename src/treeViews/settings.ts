@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
-import { getGitHubContext, GitHubContext } from "../git/repository";
+
+import { GitHubContext, getGitHubContext } from "../git/repository";
 import { OrgSecret, RepoSecret, SelfHostedRunner } from "../model";
+
 import { getAbsoluteIconPath } from "./icons";
 
 class OrgFeaturesNode extends vscode.TreeItem {
@@ -32,19 +34,12 @@ class SelfHostedRunnerNode extends vscode.TreeItem {
     super(selfHostedRunner.name);
 
     this.contextValue = "runner";
-  }
-
-  get tooltip(): string {
-    return this.selfHostedRunner.status;
-  }
-
-  get iconPath() {
-    const iconPath =
+    this.tooltip = this.selfHostedRunner.status;
+    this.iconPath = getAbsoluteIconPath(
       this.selfHostedRunner.status == "online"
         ? "runner-online.svg"
-        : "runner-offline.svg";
-
-    return getAbsoluteIconPath(iconPath);
+        : "runner-offline.svg"
+    );
   }
 }
 

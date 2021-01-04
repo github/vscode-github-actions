@@ -1,12 +1,14 @@
-import { Octokit } from "@octokit/rest";
 import * as vscode from "vscode";
+
+import { API, GitExtension, RefType } from "../typings/git";
+
+import { Octokit } from "@octokit/rest";
+import { Protocol } from "../external/protocol";
+import { flatten } from "../utils/array";
 import { getClient } from "../api/api";
 import { getSession } from "../auth/auth";
-import { Protocol } from "../external/protocol";
-import { GitExtension } from "../typings/git";
-import { flatten } from "../utils/array";
 
-export async function getGitHubUrl(): Promise<string | null> {
+async function getGitExtension(): Promise<API | undefined> {
   const gitExtension = vscode.extensions.getExtension<GitExtension>(
     "vscode.git"
   );
@@ -18,7 +20,7 @@ export async function getGitHubUrl(): Promise<string | null> {
 
     if (git.state !== "initialized") {
       // Wait for the plugin to be initialized
-      await new Promise((resolve) => {
+      await new Promise<void>((resolve) => {
         if (git.state === "initialized") {
           resolve();
         } else {
@@ -32,21 +34,37 @@ export async function getGitHubUrl(): Promise<string | null> {
       });
     }
 
-    if (git.repositories.length > 0) {
-      // To keep it very simple for now, look for the first remote in the current workspace that is a
-      // github.com remote. This will be the repository for the workflow explorer.
-      const originRemotes = flatten(
-        git.repositories.map((r) =>
-          r.state.remotes.filter((remote) => remote.name === "origin")
-        )
-      );
+    return git;
+  }
+}
 
-      const githubRemotes = originRemotes.filter(
-        (x) => x.pushUrl?.indexOf("github.com") !== -1
-      );
-      if (githubRemotes.length > 0) {
-        return githubRemotes[0].pushUrl!;
-      }
+export async function getGitHead(): Promise<string | undefined> {
+  const git = await getGitExtension();
+  if (git && git.repositories.length > 0) {
+    const head = git.repositories[0].state.HEAD;
+    if (head && head.name && head.type === RefType.Head) {
+      return `refs/heads/${head.name}`;
+    }
+  }
+}
+
+export async function getGitHubUrl(): Promise<string | null> {
+  const git = await getGitExtension();
+
+  if (git && git.repositories.length > 0) {
+    // To keep it very simple for now, look for the first remote in the current workspace that is a
+    // github.com remote. This will be the repository for the workflow explorer.
+    const originRemotes = flatten(
+      git.repositories.map((r) =>
+        r.state.remotes.filter((remote) => remote.name === "origin")
+      )
+    );
+
+    const githubRemotes = originRemotes.filter(
+      (x) => x.pushUrl?.indexOf("github.com") !== -1
+    );
+    if (githubRemotes.length > 0) {
+      return githubRemotes[0].pushUrl!;
     }
   }
 
@@ -68,6 +86,8 @@ export interface GitHubContext {
 
   owner: string;
   name: string;
+
+  defaultBranch: string;
 
   ownerIsOrg: boolean;
   orgFeaturesEnabled?: boolean;
@@ -96,6 +116,7 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
           client,
           name: protocolInfo.repositoryName,
           owner: protocolInfo.owner,
+          defaultBranch: `refs/heads/${repoInfo.data.default_branch}`,
           ownerIsOrg: repoInfo.data.owner.type === "Organization",
           orgFeaturesEnabled:
             session.scopes.find((x) => x.toLocaleLowerCase() === "admin:org") !=

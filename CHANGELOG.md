@@ -2,11 +2,13 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
-## [vNext] - not yet released
+## [v.10.0]
 
 - Fixes error when trying to open expired logs (#19)
 - Removed login command, authorization is now handled via the GitHub authentication provider (#50)
 - Fixes error where extension can not be enabled/disabled per workspace (#50)
+- Support for validating `workflow_dispatch` events
+- Support for triggering `workflow_dispatch` workflows
 
 ## [v0.9.0]
 - Updated `github-actions-parser` dependency to fix a number of auto-complete and validation bugs
