@@ -2,7 +2,7 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
-## [v.10.0]
+## [v0.10.0]
 
 - Fixes error when trying to open expired logs (#19)
 - Removed login command, authorization is now handled via the GitHub authentication provider (#50)
