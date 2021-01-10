@@ -2,6 +2,10 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
+## [v.11.0]
+
+- Basic support for `environment` in jobs
+
 ## [v0.10.0]
 
 - Fixes error when trying to open expired logs (#19)
