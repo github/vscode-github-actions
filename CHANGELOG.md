@@ -2,7 +2,13 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
-## [v.11.0]
+## [v0.12.0]
+
+- Various bugfixes for expression validation
+- Added missing `pull_request_target` event
+- Improved error reporting for unknown keys
+
+## [v0.11.0]
 
 - Basic support for `environment` in jobs
 
