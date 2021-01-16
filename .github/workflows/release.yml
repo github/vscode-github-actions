@@ -13,6 +13,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - run: |
+          git config --global user.email "cschleiden@live.de"
+          git config --global user.name "Christopher Schleiden"
       - uses: actions/setup-node@v2
         with:
           node-version: '12'
