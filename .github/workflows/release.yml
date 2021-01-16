@@ -1,0 +1,48 @@
+name: Release new version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        description: Version to bump `package.json` to
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+      - run: npm version ${{ github.event.inputs.version }}
+      - run: npm install
+      - run: npm run package
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: 'release-v${{ github.event.inputs.version }}'
+          release_name: 'v${{ github.event.inputs.version }}'
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./vscode-github-actions-${{ github.event.inputs.version }}.vsix
+          asset_name: vscode-github-actions-${{ github.event.inputs.version }}.vsix
+          asset_content_type: application/vsix
+      - name: Publish to marketplace
+        uses: HaaLeo/publish-vscode-extension@v0
+        with:
+          pat: ${{ secrets.PUBLISHER_KEY }}
+          registryUrl: https://marketplace.visualstudio.com
+          extensionFile: ./vscode-github-actions-${{ github.event.inputs.version }}.vsix
+      - run: git push
