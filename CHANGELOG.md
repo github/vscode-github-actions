@@ -7,6 +7,7 @@ All notable changes to the "vscode-github-actions" extension will be documented 
 - Various bugfixes for expression validation
 - Added missing `pull_request_target` event
 - Improved error reporting for unknown keys
+- Bugfix: show "Run workflow" in context menu when workflow has _only_ `workflow_dispatch`, do not require also `repository_dispatch`
 
 ## [v0.11.0]
 

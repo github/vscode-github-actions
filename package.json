@@ -192,7 +192,7 @@
         },
         {
           "command": "github-actions.explorer.triggerRun",
-          "when": "viewItem =~ /rdispatch/"
+          "when": "viewItem =~ /rdispatch/ || viewItem =~ /wdispatch/"
         },
         {
           "command": "github-actions.workflow.run.open",
