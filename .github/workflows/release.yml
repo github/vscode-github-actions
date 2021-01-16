@@ -48,4 +48,5 @@ jobs:
           pat: ${{ secrets.PUBLISHER_KEY }}
           registryUrl: https://marketplace.visualstudio.com
           extensionFile: ./vscode-github-actions-${{ github.event.inputs.version }}.vsix
+          packagePath: ''
       - run: git push
