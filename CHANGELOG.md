@@ -2,6 +2,10 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
+## [v0.13.0]
+
+- Fixed: https://github.com/cschleiden/vscode-github-actions/issues/42
+
 ## [v0.12.0]
 
 - Various bugfixes for expression validation
