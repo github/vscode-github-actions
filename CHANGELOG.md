@@ -2,6 +2,12 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
+## [v0.14.0]
+
+- Consume updated parser
+ - Fixes issues with `!` in expressions
+ - Fixes issues with using `step.<id>.outputs` in expressions
+
 ## [v0.13.0]
 
 - Fixed: https://github.com/cschleiden/vscode-github-actions/issues/42
