@@ -117,7 +117,7 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
           name: protocolInfo.repositoryName,
           owner: protocolInfo.owner,
           defaultBranch: `refs/heads/${repoInfo.data.default_branch}`,
-          ownerIsOrg: repoInfo.data.owner.type === "Organization",
+          ownerIsOrg: repoInfo.data.owner?.type === "Organization",
           orgFeaturesEnabled:
             session.scopes.find((x) => x.toLocaleLowerCase() === "admin:org") !=
             null,

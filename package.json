@@ -313,7 +313,7 @@
     "webpack-cli": "^3.3.10"
   },
   "dependencies": {
-    "@octokit/rest": "^18.0.0",
+    "@octokit/rest": "18.0.14",
     "atob": "^2.1.2",
     "btoa": "^1.2.1",
     "github-actions-parser": "0.17.0",

@@ -1,23 +1,23 @@
-import { Octokit } from "@octokit/rest";
+import { RestEndpointMethods } from "@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types";
 
 // Type helpers
-type Modify<T, R> = Omit<T, keyof R> & R;
-
 type Await<T> = T extends {
   then(onfulfilled?: (value: infer U) => unknown): unknown;
 }
   ? U
   : T;
 
-type GetElementType<T extends Array<any>> = T extends (infer U)[] ? U : never;
+type GetElementType<T> = T extends (infer U)[] ? U : never;
 
 type OctokitData<
-  Operation extends keyof Octokit["actions"],
+  Operation extends keyof RestEndpointMethods["actions"],
   ResultProperty extends keyof Await<
-    ReturnType<Octokit["actions"][Operation]>
+    ReturnType<RestEndpointMethods["actions"][Operation]>
   >["data"]
 > = GetElementType<
-  Await<ReturnType<Octokit["actions"][Operation]>>["data"][ResultProperty]
+  Await<
+    ReturnType<RestEndpointMethods["actions"][Operation]>
+  >["data"][ResultProperty]
 >;
 
 //

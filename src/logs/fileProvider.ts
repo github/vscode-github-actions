@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
-import { getGitHubContext } from "../git/repository";
+
 import { cacheLogInfo } from "./logInfoProvider";
+import { getGitHubContext } from "../git/repository";
 import { parseLog } from "./model";
 import { parseUri } from "./scheme";
 
@@ -26,7 +27,7 @@ export class WorkflowStepLogProvider
         }
       );
 
-      const log = result.data;
+      const log = result.data as any;
 
       const logInfo = parseLog(log);
       cacheLogInfo(uri, logInfo);
