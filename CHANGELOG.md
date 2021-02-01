@@ -2,6 +2,10 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
+## [v0.15.0]
+
+- Support `include`/`exclude` for matrix strategies
+
 ## [v0.14.0]
 
 - Consume updated parser
