@@ -298,7 +298,7 @@
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.11.7",
     "@types/uuid": "^3.4.6",
-    "@types/vscode": "1.48.0",
+    "@types/vscode": "1.53.0",
     "@types/yaml": "^1.2.0",
     "glob": "^7.1.5",
     "mocha": "^6.2.2",
