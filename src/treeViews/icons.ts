@@ -25,7 +25,10 @@ export function getIconForWorkflowRun(runOrJob: IStatusAndConclusion) {
 
 function _getIconForWorkflowrun(
   runOrJob: IStatusAndConclusion
-): string | vscode.ThemeIcon {
+):
+  | string
+  | vscode.ThemeIcon
+  | { light: string | vscode.Uri; dark: string | vscode.Uri } {
   switch (runOrJob.status) {
     case "completed": {
       switch (runOrJob.conclusion) {

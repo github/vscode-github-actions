@@ -1,11 +1,13 @@
 import * as vscode from "vscode";
+
+import { GitHubContext, getGitHubContext } from "../git/repository";
 import {
   getPinnedWorkflows,
   isPinnedWorkflowsRefreshEnabled,
   onPinnedWorkflowsChange,
   pinnedWorkflowsRefreshInterval,
 } from "../configuration/configuration";
-import { getGitHubContext, GitHubContext } from "../git/repository";
+
 import { WorkflowRun } from "../model";
 import { getCodIconForWorkflowrun } from "../treeViews/icons";
 
@@ -140,6 +142,15 @@ async function updatePinnedWorkflow(
     pinnedWorkflow.statusBarItem.text = `$(${getCodIconForWorkflowrun(
       mostRecentRun
     )}) ${pinnedWorkflow.workflowName}`;
+
+    if (mostRecentRun.conclusion === "failure") {
+      pinnedWorkflow.statusBarItem.backgroundColor = new vscode.ThemeColor(
+        "statusBarItem.errorBackground"
+      );
+    } else {
+      pinnedWorkflow.statusBarItem.backgroundColor = undefined;
+    }
+
     pinnedWorkflow.statusBarItem.command = {
       title: "Open workflow run",
       command: "github-actions.workflow.run.open",
