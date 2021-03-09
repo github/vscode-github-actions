@@ -2,10 +2,14 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
+
 ## [vnext]
+
+## [v0.17.0]
 
 - Support error background for pinned workflows - https://github.com/cschleiden/vscode-github-actions/issues/69
   ![](https://user-images.githubusercontent.com/2201819/107904773-9592ac00-6f01-11eb-89c6-7322a5912853.png)
+- Basic support for environment auto-completion
 
 ## [v0.15.0]
 
