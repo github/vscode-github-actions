@@ -1,17 +1,14 @@
-import * as vscode from "vscode";
-
-import { API, GitExtension, RefType } from "../typings/git";
-
 import { Octokit } from "@octokit/rest";
-import { Protocol } from "../external/protocol";
-import { flatten } from "../utils/array";
+import * as vscode from "vscode";
 import { getClient } from "../api/api";
 import { getSession } from "../auth/auth";
+import { Protocol } from "../external/protocol";
+import { API, GitExtension, RefType } from "../typings/git";
+import { flatten } from "../utils/array";
 
 async function getGitExtension(): Promise<API | undefined> {
-  const gitExtension = vscode.extensions.getExtension<GitExtension>(
-    "vscode.git"
-  );
+  const gitExtension =
+    vscode.extensions.getExtension<GitExtension>("vscode.git");
   if (gitExtension) {
     if (!gitExtension.isActive) {
       await gitExtension.activate();
@@ -84,6 +81,7 @@ export async function getGitHubProtocol(): Promise<Protocol | null> {
 export interface GitHubContext {
   client: Octokit;
 
+  id: number;
   owner: string;
   name: string;
 
@@ -116,6 +114,7 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
           client,
           name: protocolInfo.repositoryName,
           owner: protocolInfo.owner,
+          id: repoInfo.data.id,
           defaultBranch: `refs/heads/${repoInfo.data.default_branch}`,
           ownerIsOrg: repoInfo.data.owner?.type === "Organization",
           orgFeaturesEnabled:

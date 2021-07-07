@@ -1,8 +1,12 @@
 import * as vscode from "vscode";
-
-import { GitHubContext, getGitHubContext } from "../git/repository";
-import { OrgSecret, RepoSecret, SelfHostedRunner } from "../model";
-
+import { getGitHubContext, GitHubContext } from "../git/repository";
+import {
+  Environment,
+  EnvironmentSecret,
+  OrgSecret,
+  RepoSecret,
+  SelfHostedRunner,
+} from "../model";
 import { getAbsoluteIconPath } from "./icons";
 
 class OrgFeaturesNode extends vscode.TreeItem {
@@ -90,16 +94,58 @@ class OrgSecretNode extends vscode.TreeItem {
   }
 }
 
+class EnvironmentsNode extends vscode.TreeItem {
+  constructor(public readonly gitHubContext: GitHubContext) {
+    super("Environments", vscode.TreeItemCollapsibleState.Collapsed);
+
+    this.iconPath = new vscode.ThemeIcon("server-environment");
+  }
+}
+
+class EnvironmentNode extends vscode.TreeItem {
+  constructor(
+    public readonly gitHubContext: GitHubContext,
+    public readonly environment: Environment
+  ) {
+    super(environment.name, vscode.TreeItemCollapsibleState.Collapsed);
+
+    this.contextValue = "environment";
+  }
+}
+
+class EnvironmentSecretNode extends vscode.TreeItem {
+  constructor(
+    public readonly gitHubContext: GitHubContext,
+    public readonly secret: EnvironmentSecret
+  ) {
+    super(secret.name);
+
+    this.contextValue = "env-secret";
+  }
+}
+
+class EmptyEnvironmentSecretsNode extends vscode.TreeItem {
+  constructor() {
+    super("No environment secrets defined");
+  }
+}
+
 type SettingsExplorerNode =
   | OrgFeaturesNode
   | SelfHostedRunnersNode
   | SecretsNode
   | RepoSecretNode
-  | OrgSecretNode;
+  | OrgSecretNode
+  | EnvironmentsNode
+  | EnvironmentNode
+  | EnvironmentSecretNode
+  | EmptyEnvironmentSecretsNode;
 
 export class SettingsTreeProvider
-  implements vscode.TreeDataProvider<SettingsExplorerNode> {
-  private _onDidChangeTreeData = new vscode.EventEmitter<SettingsExplorerNode | null>();
+  implements vscode.TreeDataProvider<SettingsExplorerNode>
+{
+  private _onDidChangeTreeData =
+    new vscode.EventEmitter<SettingsExplorerNode | null>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   refresh(): void {
@@ -125,8 +171,13 @@ export class SettingsTreeProvider
       return [
         new SelfHostedRunnersNode(gitHubContext),
         new SecretsNode(gitHubContext),
+        new EnvironmentsNode(gitHubContext),
       ];
     }
+
+    //
+    // Secrets
+    //
 
     if (element instanceof SecretsNode) {
       const nodes = [new RepoSecretsNode(gitHubContext)];
@@ -164,15 +215,42 @@ export class SettingsTreeProvider
     }
 
     if (element instanceof SelfHostedRunnersNode) {
-      const result = await gitHubContext.client.actions.listSelfHostedRunnersForRepo(
-        {
+      const result =
+        await gitHubContext.client.actions.listSelfHostedRunnersForRepo({
           owner: gitHubContext.owner,
           repo: gitHubContext.name,
-        }
-      );
+        });
 
       const data = result.data.runners || [];
       return data.map((r) => new SelfHostedRunnerNode(gitHubContext, r));
+    }
+
+    //
+    // Environments
+    //
+
+    if (element instanceof EnvironmentsNode) {
+      const result = await gitHubContext.client.repos.getAllEnvironments({
+        owner: gitHubContext.owner,
+        repo: gitHubContext.name,
+      });
+
+      const data = result.data.environments || [];
+      return data.map((e) => new EnvironmentNode(gitHubContext, e));
+    }
+
+    if (element instanceof EnvironmentNode) {
+      const result = await gitHubContext.client.actions.listEnvironmentSecrets({
+        repository_id: gitHubContext.id,
+        environment_name: element.environment.name,
+      });
+
+      const data = result.data.secrets;
+      if (!data) {
+        return [new EmptyEnvironmentSecretsNode()];
+      }
+
+      return data.map((s) => new EnvironmentSecretNode(gitHubContext, s));
     }
 
     return [];
