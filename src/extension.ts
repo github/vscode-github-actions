@@ -1,32 +1,9 @@
 import * as vscode from "vscode";
-
-import { GitHubContext, getGitHead, getGitHubContext } from "./git/repository";
-import {
-  OrgSecret,
-  RepoSecret,
-  Workflow,
-  WorkflowJob,
-  WorkflowRun,
-  WorkflowStep,
-} from "./model";
-import { getWorkflowUri, parseWorkflow } from "./workflow/workflow";
-
-import { LogScheme } from "./logs/constants";
-import { SettingsTreeProvider } from "./treeViews/settings";
-import { WorkflowStepLogFoldingProvider } from "./logs/foldingProvider";
-import { WorkflowStepLogProvider } from "./logs/fileProvider";
-import { WorkflowStepLogSymbolProvider } from "./logs/symbolProvider";
-import { ActionsExplorerProvider as WorkflowsTreeProvider } from "./treeViews/workflows";
-import { buildLogURI } from "./logs/scheme";
-import { enableOrgFeatures } from "./auth/auth";
-import { encodeSecret } from "./secrets";
-import { getLogInfo } from "./logs/logInfoProvider";
-import { init } from "./workflow/diagnostics";
-import { initConfiguration } from "./configuration/configuration";
-import { initPinnedWorkflows } from "./pinnedWorkflows/pinnedWorkflows";
-import { initResources } from "./treeViews/icons";
+import { getGitHubContext } from "./git/repository";
 import { initWorkflowDocumentTracking } from "./tracker/workflowDocumentTracker";
-import { updateDecorations } from "./logs/formatProvider";
+import { initResources } from "./treeViews/icons";
+import { SettingsTreeProvider } from "./treeViews/settings";
+import { WorkflowsTreeProvider } from "./treeViews/workflows";
 
 export function activate(context: vscode.ExtensionContext) {
   // Prefetch git repository origin url
@@ -34,8 +11,8 @@ export function activate(context: vscode.ExtensionContext) {
 
   initResources(context);
 
-  initConfiguration(context);
-  initPinnedWorkflows(context);
+  // initConfiguration(context);
+  // initPinnedWorkflows(context);
 
   // Track workflow
   initWorkflowDocumentTracking(context);
@@ -63,6 +40,8 @@ export function activate(context: vscode.ExtensionContext) {
       settingsTreeProvider.refresh();
     })
   );
+
+  /*
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "github-actions.explorer.openRun",
@@ -519,4 +498,5 @@ export function activate(context: vscode.ExtensionContext) {
   // Editing features
   //
   init(context);
+  */
 }

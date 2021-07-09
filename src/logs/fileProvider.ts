@@ -1,51 +1,49 @@
 import * as vscode from "vscode";
 
-import { cacheLogInfo } from "./logInfoProvider";
-import { getGitHubContext } from "../git/repository";
-import { parseLog } from "./model";
-import { parseUri } from "./scheme";
-
 export class WorkflowStepLogProvider
-  implements vscode.TextDocumentContentProvider {
+  implements vscode.TextDocumentContentProvider
+{
   onDidChangeEmitter = new vscode.EventEmitter<vscode.Uri>();
   onDidChange = this.onDidChangeEmitter.event;
 
   async provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
-    const { owner, repo, jobId } = parseUri(uri);
+    // const { owner, repo, jobId } = parseUri(uri);
 
-    const githubContext = await getGitHubContext();
-    if (!githubContext) {
-      throw new Error("Could not load logs");
-    }
+    // const githubContext = await getGitHubContext();
+    // if (!githubContext) {
+    //   throw new Error("Could not load logs");
+    // }
 
-    try {
-      const result = await githubContext?.client.actions.downloadJobLogsForWorkflowRun(
-        {
-          owner: owner,
-          repo: repo,
-          job_id: jobId,
-        }
-      );
+    // try {
+    //   const result = await githubContext?.client.actions.downloadJobLogsForWorkflowRun(
+    //     {
+    //       owner: owner,
+    //       repo: repo,
+    //       job_id: jobId,
+    //     }
+    //   );
 
-      const log = result.data as any;
+    //   const log = result.data as any;
 
-      const logInfo = parseLog(log);
-      cacheLogInfo(uri, logInfo);
+    //   const logInfo = parseLog(log);
+    //   cacheLogInfo(uri, logInfo);
 
-      return logInfo.updatedLog;
-    } catch (e) {
-      if ("status" in e && e.status === 410) {
-        cacheLogInfo(uri, {
-          colorFormats: [],
-          sections: [],
-          updatedLog: "",
-        });
+    //   return logInfo.updatedLog;
+    // } catch (e) {
+    //   if ("status" in e && e.status === 410) {
+    //     cacheLogInfo(uri, {
+    //       colorFormats: [],
+    //       sections: [],
+    //       updatedLog: "",
+    //     });
 
-        return "Could not open logs, they are expired.";
-      }
+    //     return "Could not open logs, they are expired.";
+    //   }
 
-      console.error("Error loading logs", e);
-      return `Could not open logs, unhandled error: ${e?.message || e}`;
-    }
+    //   console.error("Error loading logs", e);
+    //   return `Could not open logs, unhandled error: ${e?.message || e}`;
+    // }
+
+    return "IMPLEMENT ME";
   }
 }

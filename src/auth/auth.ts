@@ -27,7 +27,7 @@ export async function getSession(): Promise<vscode.AuthenticationSession> {
 
   if (!existingSession) {
     throw new Error(
-      "Could not get token from the GitHub provider. \nPlease sign-in and allow access."
+      "Could not get token from the GitHub authentication provider. \nPlease sign-in and allow access."
     );
   }
 

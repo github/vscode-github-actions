@@ -4,7 +4,6 @@ import { getClient } from "../api/api";
 import { getSession } from "../auth/auth";
 import { Protocol } from "../external/protocol";
 import { API, GitExtension, RefType } from "../typings/git";
-import { flatten } from "../utils/array";
 
 async function getGitExtension(): Promise<API | undefined> {
   const gitExtension =
@@ -45,40 +44,41 @@ export async function getGitHead(): Promise<string | undefined> {
   }
 }
 
-export async function getGitHubUrl(): Promise<string | null> {
+export async function getGitHubUrls(): Promise<string[] | null> {
   const git = await getGitExtension();
 
   if (git && git.repositories.length > 0) {
-    // To keep it very simple for now, look for the first remote in the current workspace that is a
-    // github.com remote. This will be the repository for the workflow explorer.
-    const originRemotes = flatten(
-      git.repositories.map((r) =>
-        r.state.remotes.filter((remote) => remote.name === "origin")
-      )
-    );
+    return git.repositories
+      .map((r) => {
+        const originRemote = r.state.remotes.filter(
+          (remote) => remote.name === "origin"
+        );
+        if (
+          originRemote.length > 0 &&
+          originRemote[0].pushUrl?.indexOf("github.com") !== -1
+        ) {
+          return originRemote[0].pushUrl!;
+        }
 
-    const githubRemotes = originRemotes.filter(
-      (x) => x.pushUrl?.indexOf("github.com") !== -1
-    );
-    if (githubRemotes.length > 0) {
-      return githubRemotes[0].pushUrl!;
-    }
+        return undefined;
+      })
+      .filter((x) => !!x) as string[];
   }
 
   return null;
 }
 
-export async function getGitHubProtocol(): Promise<Protocol | null> {
-  const url = await getGitHubUrl();
+export async function getGitHubProtocols(): Promise<Protocol[] | null> {
+  const urls = await getGitHubUrls();
 
-  if (url) {
-    return new Protocol(url);
+  if (urls) {
+    return urls.map((url) => new Protocol(url));
   }
 
   return null;
 }
 
-export interface GitHubContext {
+export interface GitHubRepoContext {
   client: Octokit;
 
   id: number;
@@ -91,20 +91,28 @@ export interface GitHubContext {
   orgFeaturesEnabled?: boolean;
 }
 
+export interface GitHubContext {
+  repos: GitHubRepoContext[];
+}
+
 let gitHubContext: Promise<GitHubContext | undefined> | undefined;
 
 export async function getGitHubContext(): Promise<GitHubContext | undefined> {
-  if (!gitHubContext) {
-    gitHubContext = (async (): Promise<GitHubContext | undefined> => {
-      try {
-        const session = await getSession();
+  if (gitHubContext) {
+    return gitHubContext;
+  }
 
-        const protocolInfo = await getGitHubProtocol();
-        if (!protocolInfo) {
-          return undefined;
-        }
+  try {
+    const session = await getSession();
+    const client = getClient(session.accessToken);
 
-        const client = getClient(session.accessToken);
+    const protocolInfos = await getGitHubProtocols();
+    if (!protocolInfos) {
+      return undefined;
+    }
+
+    const repos = await Promise.all(
+      protocolInfos.map(async (protocolInfo): Promise<GitHubRepoContext> => {
         const repoInfo = await client.repos.get({
           repo: protocolInfo.repositoryName,
           owner: protocolInfo.owner,
@@ -121,14 +129,16 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
             session.scopes.find((x) => x.toLocaleLowerCase() === "admin:org") !=
             null,
         };
-      } catch (e) {
-        // Reset the context so the next attempt will try this flow again
-        gitHubContext = undefined;
+      })
+    );
 
-        // Rethrow original error
-        throw e;
-      }
-    })();
+    gitHubContext = Promise.resolve({ repos });
+  } catch (e) {
+    // Reset the context so the next attempt will try this flow again
+    gitHubContext = undefined;
+
+    // Rethrow original error
+    throw e;
   }
 
   return gitHubContext;
