@@ -1,5 +1,12 @@
 import * as vscode from "vscode";
+import { registerOpenWorkflowFile } from "./commands/openWorkflowFile";
+import { registerOpenWorkflowRun } from "./commands/openWorkflowRun";
+import { registerOpenWorkflowRunLogs } from "./commands/openWorkflowRunLogs";
 import { getGitHubContext } from "./git/repository";
+import { LogScheme } from "./logs/constants";
+import { WorkflowStepLogProvider } from "./logs/fileProvider";
+import { WorkflowStepLogFoldingProvider } from "./logs/foldingProvider";
+import { WorkflowStepLogSymbolProvider } from "./logs/symbolProvider";
 import { initWorkflowDocumentTracking } from "./tracker/workflowDocumentTracker";
 import { initResources } from "./treeViews/icons";
 import { SettingsTreeProvider } from "./treeViews/settings";
@@ -17,7 +24,10 @@ export function activate(context: vscode.ExtensionContext) {
   // Track workflow
   initWorkflowDocumentTracking(context);
 
-  // Actions Explorer
+  //
+  // Tree views
+  //
+
   const workflowTreeProvider = new WorkflowsTreeProvider();
   context.subscriptions.push(
     vscode.window.registerTreeDataProvider(
@@ -41,36 +51,15 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
+  //
+  // Commands
+  //
+
+  registerOpenWorkflowRun(context);
+  registerOpenWorkflowFile(context);
+  registerOpenWorkflowRunLogs(context);
+
   /*
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "github-actions.explorer.openRun",
-      (args) => {
-        const url = args.url || args;
-        vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(url));
-      }
-    )
-  );
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "github-actions.explorer.openWorkflowFile",
-      async (args) => {
-        const wf: Workflow = args.wf;
-
-        const fileUri = getWorkflowUri(wf.path);
-        if (fileUri) {
-          const textDocument = await vscode.workspace.openTextDocument(fileUri);
-          vscode.window.showTextDocument(textDocument);
-          return;
-        }
-
-        // File not found in workspace
-        vscode.window.showErrorMessage(
-          `Workflow ${wf.path} not found in current workspace`
-        );
-      }
-    )
-  );
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "github-actions.explorer.triggerRun",
@@ -220,69 +209,6 @@ export function activate(context: vscode.ExtensionContext) {
       "github-actions.auth.org-login",
       async () => {
         enableOrgFeatures();
-      }
-    )
-  );
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "github-actions.workflow.run.open",
-      async (args) => {
-        const run: WorkflowRun = args.run;
-        const url = run.html_url;
-        vscode.env.openExternal(vscode.Uri.parse(url));
-      }
-    )
-  );
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "github-actions.workflow.logs",
-      async (args) => {
-        const gitHubContext: GitHubContext = args.gitHubContext;
-        const job: WorkflowJob = args.job;
-        const step: WorkflowStep | undefined = args.step;
-        const uri = buildLogURI(
-          gitHubContext.owner,
-          gitHubContext.name,
-          job.id,
-          step?.name
-        );
-        const doc = await vscode.workspace.openTextDocument(uri);
-        const editor = await vscode.window.showTextDocument(doc, {
-          preview: false,
-        });
-
-        const logInfo = getLogInfo(uri);
-        if (!logInfo) {
-          throw new Error("Could not get log info");
-        }
-
-        // Custom formatting after the editor has been opened
-        updateDecorations(editor, logInfo);
-
-        // Deep linking
-        if (step) {
-          let matchingSection = logInfo.sections.find(
-            (s) => s.name && s.name === step.name
-          );
-          if (!matchingSection) {
-            // If we cannot match by name, see if we can try to match by number
-            matchingSection = logInfo.sections[step.number - 1];
-          }
-
-          if (matchingSection) {
-            editor.revealRange(
-              new vscode.Range(
-                matchingSection.start,
-                0,
-                matchingSection.start,
-                0
-              ),
-              vscode.TextEditorRevealType.InCenter
-            );
-          }
-        }
       }
     )
   );
@@ -467,6 +393,7 @@ export function activate(context: vscode.ExtensionContext) {
       }
     )
   );
+  */
 
   //
   // Log providers
@@ -494,6 +421,7 @@ export function activate(context: vscode.ExtensionContext) {
     )
   );
 
+  /*
   //
   // Editing features
   //

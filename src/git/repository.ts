@@ -148,3 +148,15 @@ export async function resetGitHubContext() {
   gitHubContext = undefined;
   await getGitHubContext();
 }
+
+export async function getGitHubContextForRepo(
+  owner: string,
+  name: string
+): Promise<GitHubRepoContext | undefined> {
+  const gitHubContext = await getGitHubContext();
+  if (!gitHubContext) {
+    return undefined;
+  }
+
+  return gitHubContext.repos.find((r) => r.owner === owner && r.name === name);
+}
