@@ -46,28 +46,6 @@ export class WorkflowsTreeProvider
         if (gitHubContext.repos.length > 0) {
           return gitHubContext.repos.map((r) => new WorkflowsRepoNode(r));
         }
-
-        // const result = await gitHubContext.client.actions.listRepoWorkflows({
-        //   owner: gitHubContext.owner,
-        //   repo: gitHubContext.name,
-        // });
-        // const response = result.data;
-
-        // const workflows = response.workflows;
-        // workflows.sort((a, b) => a.name.localeCompare(b.name));
-
-        // return await Promise.all(
-        //   workflows.map(async (wf) => {
-        //     let parsedWorkflow: ParsedWorkflow | undefined;
-
-        //     const workflowUri = getWorkflowUri(wf.path);
-        //     if (workflowUri) {
-        //       parsedWorkflow = await parseWorkflow(workflowUri, gitHubContext);
-        //     }
-
-        //     return new WorkflowNode(gitHubContext, wf, parsedWorkflow);
-        //   })
-        // );
       } catch (e) {
         if (
           `${e?.message}`.startsWith(

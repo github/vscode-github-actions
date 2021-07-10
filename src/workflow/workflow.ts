@@ -50,24 +50,28 @@ function getEvents(doc: any): On[] {
   return on;
 }
 
-export function usesRepositoryDispatch(path: string): boolean {
+export function getContextStringForWorkflow(path: string): string {
   try {
     const doc = safeLoad(readFileSync(path, "utf8"));
     if (doc) {
-      if (
-        getEvents(doc).some(
-          (t) => t.event.toLowerCase() === "repository_dispatch"
-        )
-      ) {
-        // One of the triggers is repository dispatch, allow sending it
-        return true;
+      let context = "";
+
+      const events = getEvents(doc);
+      if (events.some((t) => t.event.toLowerCase() === "repository_dispatch")) {
+        context += "rdispatch";
       }
+
+      if (events.some((t) => t.event.toLowerCase() === "workflow_dispatch")) {
+        context += "wdispatch";
+      }
+
+      return context;
     }
   } catch (e) {
     // Ignore
   }
 
-  return false;
+  return "";
 }
 
 export function getRepositoryDispatchTypes(path: string): string[] {

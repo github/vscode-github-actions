@@ -44,12 +44,21 @@ export async function getGitHead(): Promise<string | undefined> {
   }
 }
 
-export async function getGitHubUrls(): Promise<string[] | null> {
+export async function getGitHubUrls(): Promise<
+  | {
+      workspaceUri: vscode.Uri;
+      url: string;
+      protocol: Protocol;
+    }[]
+  | null
+> {
   const git = await getGitExtension();
 
   if (git && git.repositories.length > 0) {
     return git.repositories
       .map((r) => {
+        // In the future we might make this configurable, but for now continue to look
+        // for a remote named "origin".
         const originRemote = r.state.remotes.filter(
           (remote) => remote.name === "origin"
         );
@@ -57,22 +66,18 @@ export async function getGitHubUrls(): Promise<string[] | null> {
           originRemote.length > 0 &&
           originRemote[0].pushUrl?.indexOf("github.com") !== -1
         ) {
-          return originRemote[0].pushUrl!;
+          const url = originRemote[0].pushUrl!;
+
+          return {
+            workspaceUri: r.rootUri,
+            url,
+            protocol: new Protocol(url),
+          };
         }
 
         return undefined;
       })
-      .filter((x) => !!x) as string[];
-  }
-
-  return null;
-}
-
-export async function getGitHubProtocols(): Promise<Protocol[] | null> {
-  const urls = await getGitHubUrls();
-
-  if (urls) {
-    return urls.map((url) => new Protocol(url));
+      .filter((x) => !!x) as any;
   }
 
   return null;
@@ -80,6 +85,8 @@ export async function getGitHubProtocols(): Promise<Protocol[] | null> {
 
 export interface GitHubRepoContext {
   client: Octokit;
+
+  workspaceUri: vscode.Uri;
 
   id: number;
   owner: string;
@@ -93,6 +100,7 @@ export interface GitHubRepoContext {
 
 export interface GitHubContext {
   repos: GitHubRepoContext[];
+  reposByUri: Map<string, GitHubRepoContext>;
 }
 
 let gitHubContext: Promise<GitHubContext | undefined> | undefined;
@@ -106,7 +114,7 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
     const session = await getSession();
     const client = getClient(session.accessToken);
 
-    const protocolInfos = await getGitHubProtocols();
+    const protocolInfos = await getGitHubUrls();
     if (!protocolInfos) {
       return undefined;
     }
@@ -114,14 +122,15 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
     const repos = await Promise.all(
       protocolInfos.map(async (protocolInfo): Promise<GitHubRepoContext> => {
         const repoInfo = await client.repos.get({
-          repo: protocolInfo.repositoryName,
-          owner: protocolInfo.owner,
+          repo: protocolInfo.protocol.repositoryName,
+          owner: protocolInfo.protocol.owner,
         });
 
         return {
+          workspaceUri: protocolInfo.workspaceUri,
           client,
-          name: protocolInfo.repositoryName,
-          owner: protocolInfo.owner,
+          name: protocolInfo.protocol.repositoryName,
+          owner: protocolInfo.protocol.owner,
           id: repoInfo.data.id,
           defaultBranch: `refs/heads/${repoInfo.data.default_branch}`,
           ownerIsOrg: repoInfo.data.owner?.type === "Organization",
@@ -132,7 +141,10 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
       })
     );
 
-    gitHubContext = Promise.resolve({ repos });
+    gitHubContext = Promise.resolve({
+      repos,
+      reposByUri: new Map(repos.map((r) => [r.workspaceUri.toString(), r])),
+    });
   } catch (e) {
     // Reset the context so the next attempt will try this flow again
     gitHubContext = undefined;
@@ -159,4 +171,15 @@ export async function getGitHubContextForRepo(
   }
 
   return gitHubContext.repos.find((r) => r.owner === owner && r.name === name);
+}
+
+export async function getGitHubContextForWorkspaceUri(
+  workspaceUri: vscode.Uri
+): Promise<GitHubRepoContext | undefined> {
+  const gitHubContext = await getGitHubContext();
+  if (!gitHubContext) {
+    return undefined;
+  }
+
+  return gitHubContext.reposByUri.get(workspaceUri.toString());
 }

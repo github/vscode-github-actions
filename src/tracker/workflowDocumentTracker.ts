@@ -1,6 +1,6 @@
 import { extname } from "path";
 import * as vscode from "vscode";
-import { usesRepositoryDispatch } from "../workflow/workflow";
+import { getContextStringForWorkflow } from "../workflow/workflow";
 
 export function initWorkflowDocumentTracking(context: vscode.ExtensionContext) {
   context.subscriptions.push(
@@ -30,7 +30,7 @@ function onDidChangeActiveTextEditor(editor?: vscode.TextEditor) {
   vscode.commands.executeCommand(
     "setContext",
     "githubActions:activeFile",
-    usesRepositoryDispatch(editor.document.uri.fsPath) ? "rdispatch" : ""
+    getContextStringForWorkflow(editor.document.fileName)
   );
 }
 
