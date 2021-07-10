@@ -10,9 +10,10 @@ export interface IStatusAndConclusion {
   conclusion: string;
 }
 
-export function getAbsoluteIconPath(
-  relativeIconPath: string
-): { light: string | vscode.Uri; dark: string | vscode.Uri } {
+export function getAbsoluteIconPath(relativeIconPath: string): {
+  light: string | vscode.Uri;
+  dark: string | vscode.Uri;
+} {
   return {
     light: _context.asAbsolutePath(`resources/icons/light/${relativeIconPath}`),
     dark: _context.asAbsolutePath(`resources/icons/dark/${relativeIconPath}`),
@@ -45,6 +46,9 @@ function _getIconForWorkflowrun(
 
     case "queued":
       return getAbsoluteIconPath("statuses/queued.svg");
+
+    case "waiting":
+      return getAbsoluteIconPath("statuses/waiting.svg");
 
     case "inprogress":
     case "in_progress":
