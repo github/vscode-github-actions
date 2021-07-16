@@ -32,6 +32,26 @@ export function getPinnedWorkflows(): string[] {
   );
 }
 
+export async function pinWorkflow(workflow: string) {
+  const pinedWorkflows = Array.from(
+    new Set(getPinnedWorkflows()).add(workflow)
+  );
+  await getConfiguration().update(
+    getSettingsKey("workflows.pinned.workflows"),
+    pinedWorkflows
+  );
+}
+
+export async function unpinWorkflow(workflow: string) {
+  const x = new Set(getPinnedWorkflows());
+  x.delete(workflow);
+  const pinnedWorkflows = Array.from(x);
+  await getConfiguration().update(
+    getSettingsKey("workflows.pinned.workflows"),
+    pinnedWorkflows
+  );
+}
+
 export function isPinnedWorkflowsRefreshEnabled(): boolean {
   return getConfiguration().get<boolean>(
     getSettingsKey("workflows.pinned.refresh.enabled"),

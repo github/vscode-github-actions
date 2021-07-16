@@ -1,14 +1,16 @@
-import { Workflow as ParsedWorkflow } from "github-actions-parser/dist/lib/workflow";
 import * as vscode from "vscode";
-import { GitHubRepoContext } from "../../git/repository";
+
 import { getWorkflowUri, parseWorkflow } from "../../workflow/workflow";
+
+import { GitHubRepoContext } from "../../git/repository";
+import { Workflow as ParsedWorkflow } from "github-actions-parser/dist/lib/workflow";
 import { WorkflowNode } from "./workflowNode";
 
 export class WorkflowsRepoNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext) {
     super(gitHubRepoContext.name, vscode.TreeItemCollapsibleState.Collapsed);
 
-    this.contextValue = "workflows-repo";
+    this.contextValue = "wf-repo";
   }
 
   async getWorkflows(): Promise<WorkflowNode[]> {
@@ -27,7 +29,7 @@ export class WorkflowsRepoNode extends vscode.TreeItem {
       workflows.map(async (wf) => {
         let parsedWorkflow: ParsedWorkflow | undefined;
 
-        const workflowUri = getWorkflowUri(wf.path);
+        const workflowUri = getWorkflowUri(this.gitHubRepoContext, wf.path);
         if (workflowUri) {
           parsedWorkflow = await parseWorkflow(
             workflowUri,

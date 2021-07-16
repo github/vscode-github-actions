@@ -1,10 +1,11 @@
-import { readFileSync } from "fs";
-import { parse } from "github-actions-parser";
-import { Workflow } from "github-actions-parser/dist/lib/workflow";
-import { safeLoad } from "js-yaml";
-import { basename, join } from "path";
 import * as vscode from "vscode";
+
 import { GitHubRepoContext } from "../git/repository";
+import { Workflow } from "github-actions-parser/dist/lib/workflow";
+import { basename } from "path";
+import { parse } from "github-actions-parser";
+import { readFileSync } from "fs";
+import { safeLoad } from "js-yaml";
 
 interface On {
   event: string;
@@ -95,15 +96,11 @@ export function getRepositoryDispatchTypes(path: string): string[] {
  *
  * @param path Path for workflow. E.g., `.github/workflows/somebuild.yaml`
  */
-export function getWorkflowUri(path: string): vscode.Uri | null {
-  for (const workspaceFolder of vscode.workspace.workspaceFolders || []) {
-    const fileUri = vscode.Uri.file(join(workspaceFolder.uri.fsPath, path));
-    if (vscode.workspace.getWorkspaceFolder(fileUri)) {
-      return fileUri;
-    }
-  }
-
-  return null;
+export function getWorkflowUri(
+  gitHubRepoContext: GitHubRepoContext,
+  path: string
+): vscode.Uri | null {
+  return vscode.Uri.joinPath(gitHubRepoContext.workspaceUri, path);
 }
 
 export async function parseWorkflow(

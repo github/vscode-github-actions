@@ -1,8 +1,9 @@
 import * as vscode from "vscode";
+
 import { GitHubRepoContext } from "../git/repository";
 import { WorkflowRun } from "../model";
 
-export interface ReRunWorkflowRunLogsCommandArgs {
+interface ReRunWorkflowRunLogsCommandArgs {
   gitHubRepoContext: GitHubRepoContext;
   run: WorkflowRun;
 }

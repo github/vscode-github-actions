@@ -1,10 +1,17 @@
 import * as vscode from "vscode";
-import { getGitHead, getGitHubContextForWorkspaceUri } from "../git/repository";
-import { Workflow } from "../model";
+
+import {
+  GitHubRepoContext,
+  getGitHead,
+  getGitHubContextForWorkspaceUri,
+} from "../git/repository";
 import { getWorkflowUri, parseWorkflow } from "../workflow/workflow";
+
+import { Workflow } from "../model";
 
 interface TriggerRunCommandOptions {
   wf?: Workflow;
+  gitHubRepoContext: GitHubRepoContext;
 }
 
 export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
@@ -17,7 +24,7 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
           workflowUri = args;
         } else if (args.wf) {
           const wf: Workflow = args.wf;
-          workflowUri = getWorkflowUri(wf.path);
+          workflowUri = getWorkflowUri(args.gitHubRepoContext, wf.path);
         }
 
         if (!workflowUri) {

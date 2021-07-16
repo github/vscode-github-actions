@@ -83,6 +83,9 @@ export function getCodIconForWorkflowrun(
     case "queued":
       return "primitive-dot";
 
+    case "waiting":
+      return "bell";
+
     case "inprogress":
     case "in_progress":
       return "sync~spin";

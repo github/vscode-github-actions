@@ -1,5 +1,8 @@
 import * as vscode from "vscode";
-import { getGitHubContext } from "../git/repository";
+
+import { complete, hover, parse } from "github-actions-parser";
+
+import { getGitHubContextForDocumentUri } from "../git/repository";
 
 const WorkflowSelector = {
   pattern: "**/.github/workflows/*.{yaml,yml}",
@@ -49,39 +52,43 @@ async function updateDiagnostics(
   document: vscode.TextDocument,
   collection: vscode.DiagnosticCollection
 ): Promise<void> {
-  // if (
-  //   document &&
-  //   document.fileName.match("(.*)?.github/workflows/(.*).ya?ml")
-  // ) {
-  //   collection.clear();
-  //   const githubContext = await getGitHubContext();
-  //   if (!githubContext) {
-  //     return;
-  //   }
-  //   const result = await parse(
-  //     {
-  //       ...githubContext,
-  //       repository: githubContext.name,
-  //     },
-  //     vscode.workspace.asRelativePath(document.uri),
-  //     document.getText()
-  //   );
-  //   if (result.diagnostics.length > 0) {
-  //     collection.set(
-  //       document.uri,
-  //       result.diagnostics.map((x) => ({
-  //         severity: vscode.DiagnosticSeverity.Error,
-  //         message: x.message,
-  //         range: new vscode.Range(
-  //           document.positionAt(x.pos[0]),
-  //           document.positionAt(x.pos[1])
-  //         ),
-  //       }))
-  //     );
-  //   }
-  // } else {
-  //   collection.clear();
-  // }
+  if (
+    document &&
+    document.fileName.match("(.*)?.github/workflows/(.*).ya?ml")
+  ) {
+    collection.clear();
+
+    const gitHubRepoContext = await getGitHubContextForDocumentUri(
+      document.uri
+    );
+    if (!gitHubRepoContext) {
+      return;
+    }
+
+    const result = await parse(
+      {
+        ...gitHubRepoContext,
+        repository: gitHubRepoContext.name,
+      },
+      document.uri.fsPath,
+      document.getText()
+    );
+    if (result.diagnostics.length > 0) {
+      collection.set(
+        document.uri,
+        result.diagnostics.map((x) => ({
+          severity: vscode.DiagnosticSeverity.Error,
+          message: x.message,
+          range: new vscode.Range(
+            document.positionAt(x.pos[0]),
+            document.positionAt(x.pos[1])
+          ),
+        }))
+      );
+    }
+  } else {
+    collection.clear();
+  }
 }
 
 export class WorkflowHoverProvider implements vscode.HoverProvider {
@@ -91,28 +98,31 @@ export class WorkflowHoverProvider implements vscode.HoverProvider {
     token: vscode.CancellationToken
   ): Promise<null | vscode.Hover> {
     try {
-      const githubContext = await getGitHubContext();
-      if (!githubContext) {
+      const gitHubRepoContext = await getGitHubContextForDocumentUri(
+        document.uri
+      );
+      if (!gitHubRepoContext) {
         return null;
       }
 
-      // const hoverResult = await hover(
-      //   {
-      //     ...githubContext,
-      //     repository: githubContext.name,
-      //   },
-      //   vscode.workspace.asRelativePath(document.uri),
-      //   document.getText(),
-      //   document.offsetAt(position)
-      // );
+      const hoverResult = await hover(
+        {
+          ...gitHubRepoContext,
+          repository: gitHubRepoContext.name,
+        },
+        document.uri.fsPath,
+        document.getText(),
+        document.offsetAt(position)
+      );
 
-      // if (hoverResult?.description) {
-      //   return {
-      //     contents: [hoverResult?.description],
-      //   };
-      // }
+      if (hoverResult?.description) {
+        return {
+          contents: [hoverResult?.description],
+        };
+      }
     } catch (e) {
       // TODO: CS: handle
+      debugger;
     }
 
     return null;
@@ -128,37 +138,39 @@ export class WorkflowCompletionItemProvider
     cancellationToken: vscode.CancellationToken
   ): Promise<vscode.CompletionItem[]> {
     try {
-      const githubContext = await getGitHubContext();
-      if (!githubContext) {
+      const gitHubRepoContext = await getGitHubContextForDocumentUri(
+        document.uri
+      );
+      if (!gitHubRepoContext) {
         return [];
       }
 
-      // const completionResult = await complete(
-      //   {
-      //     ...githubContext,
-      //     repository: githubContext.name,
-      //   },
-      //   vscode.workspace.asRelativePath(document.uri),
-      //   document.getText(),
-      //   document.offsetAt(position)
-      // );
+      const completionResult = await complete(
+        {
+          ...gitHubRepoContext,
+          repository: gitHubRepoContext.name,
+        },
+        document.uri.fsPath,
+        document.getText(),
+        document.offsetAt(position)
+      );
 
-      // if (completionResult.length > 0) {
-      //   return completionResult.map((x) => {
-      //     const completionItem = new vscode.CompletionItem(
-      //       x.value,
-      //       vscode.CompletionItemKind.Constant
-      //     );
+      if (completionResult.length > 0) {
+        return completionResult.map((x) => {
+          const completionItem = new vscode.CompletionItem(
+            x.value,
+            vscode.CompletionItemKind.Constant
+          );
 
-      //     if (x.description) {
-      //       completionItem.documentation = new vscode.MarkdownString(
-      //         x.description
-      //       );
-      //     }
+          if (x.description) {
+            completionItem.documentation = new vscode.MarkdownString(
+              x.description
+            );
+          }
 
-      //     return completionItem;
-      //   });
-      // }
+          return completionItem;
+        });
+      }
     } catch (e) {
       // Ignore error
       return [];

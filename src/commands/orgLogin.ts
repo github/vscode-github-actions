@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+
 import { enableOrgFeatures } from "../auth/auth";
 
 export function registerOrgLogin(context: vscode.ExtensionContext) {

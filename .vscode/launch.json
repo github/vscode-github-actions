@@ -6,10 +6,7 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Run Extension",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
+			"name": "Run extension PWA",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
@@ -18,7 +15,11 @@
 				"${workspaceFolder}/node_modules/**/*.js"
 			],
 			"preLaunchTask": "${defaultBuildTask}",
-			"sourceMaps": true,
+			"request": "launch",
+			"type": "pwa-extensionHost",
+			"localRoot": "${workspaceFolder}",
+			"remoteRoot": "${workspaceFolder}/",
+			"sourceMaps": true
 		},
 		{
 			"name": "Extension Tests",

@@ -1,9 +1,11 @@
-import { Octokit } from "@octokit/rest";
 import * as vscode from "vscode";
+
+import { API, GitExtension, RefType } from "../typings/git";
+
+import { Octokit } from "@octokit/rest";
+import { Protocol } from "../external/protocol";
 import { getClient } from "../api/api";
 import { getSession } from "../auth/auth";
-import { Protocol } from "../external/protocol";
-import { API, GitExtension, RefType } from "../typings/git";
 
 async function getGitExtension(): Promise<API | undefined> {
   const gitExtension =
@@ -182,4 +184,21 @@ export async function getGitHubContextForWorkspaceUri(
   }
 
   return gitHubContext.reposByUri.get(workspaceUri.toString());
+}
+
+export async function getGitHubContextForDocumentUri(
+  documentUri: vscode.Uri
+): Promise<GitHubRepoContext | undefined> {
+  const gitHubContext = await getGitHubContext();
+  if (!gitHubContext) {
+    return undefined;
+  }
+
+  const workspaceUri = vscode.workspace.getWorkspaceFolder(documentUri);
+  if (!workspaceUri) {
+    debugger;
+    return;
+  }
+
+  return getGitHubContextForWorkspaceUri(workspaceUri.uri);
 }

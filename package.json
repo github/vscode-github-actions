@@ -147,6 +147,18 @@
           "dark": "resources/icons/dark/remove.svg",
           "light": "resources/icons/light/remove.svg"
         }
+      },
+      {
+        "command": "github-actions.workflow.pin",
+        "category": "GitHub Actions",
+        "title": "Pin workflow",
+        "icon": "$(pin)"
+      },
+      {
+        "command": "github-actions.workflow.unpin",
+        "category": "GitHub Actions",
+        "title": "Unpin workflow",
+        "icon": "$(pinned)"
       }
     ],
     "views": {
@@ -189,6 +201,29 @@
         {
           "command": "github-actions.explorer.openWorkflowFile",
           "when": "viewItem =~ /workflow/"
+        },
+        {
+          "command": "github-actions.workflow.pin",
+          "group": "inline@1",
+          "when": "viewItem =~ /workflow/ && viewItem =~ /pinnable/"
+        },
+        {
+          "command": "github-actions.workflow.pin",
+          "when": "viewItem =~ /workflow/ && viewItem =~ /pinnable/"
+        },
+        {
+          "command": "github-actions.workflow.unpin",
+          "group": "inline@2",
+          "when": "viewItem =~ /workflow/ && viewItem =~ /pinned/"
+        },
+        {
+          "command": "github-actions.workflow.unpin",
+          "when": "viewItem =~ /workflow/ && viewItem =~ /pinned/"
+        },
+        {
+          "command": "github-actions.explorer.triggerRun",
+          "group": "inline@10",
+          "when": "viewItem =~ /rdispatch/ || viewItem =~ /wdispatch/"
         },
         {
           "command": "github-actions.explorer.triggerRun",
@@ -277,6 +312,14 @@
         },
         {
           "command": "github-actions.settings.secret.delete",
+          "when": "false"
+        },
+        {
+          "command": "github-actions.workflow.pin",
+          "when": "false"
+        },
+        {
+          "command": "github-actions.workflow.unpin",
           "when": "false"
         }
       ]
