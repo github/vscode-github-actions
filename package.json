@@ -356,7 +356,7 @@
     "@octokit/rest": "18.3.5",
     "atob": "^2.1.2",
     "btoa": "^1.2.1",
-    "github-actions-parser": "0.21.1",
+    "github-actions-parser": "0.22.0",
     "js-yaml": "^3.14.0",
     "ssh-config": "^3.0.0",
     "tunnel": "0.0.6",
