@@ -8,7 +8,9 @@ Simple, **unofficial** extension to interact with GitHub Actions from within VS 
 
 1. Install extension
 2. Open a repository with a `github.com` origin
-3. When prompted, allow `GitHub Actions` to access your `github` account
+3. When prompted, allow `GitHub Actions` to access your `github` account from the "Accounts" menu:
+
+    ![Location of the "Accounts" menu](https://user-images.githubusercontent.com/2201819/106392564-413ae880-63a7-11eb-8b67-d06c1eede4ea.png)
 
 ## Features
 
