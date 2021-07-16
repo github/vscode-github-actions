@@ -1,25 +1,25 @@
+import { sep } from "path";
 import * as vscode from "vscode";
-
-import {
-  GitHubRepoContext,
-  getGitHubContextForWorkspaceUri,
-} from "../git/repository";
 import {
   getPinnedWorkflows,
   isPinnedWorkflowsRefreshEnabled,
   onPinnedWorkflowsChange,
   pinnedWorkflowsRefreshInterval,
 } from "../configuration/configuration";
-
+import {
+  getGitHubContextForWorkspaceUri,
+  GitHubRepoContext,
+} from "../git/repository";
 import { WorkflowRun } from "../model";
 import { getCodIconForWorkflowrun } from "../treeViews/icons";
-import { sep } from "path";
 
 interface PinnedWorkflow {
   /** Displayed name */
   workflowName: string;
 
   workflowId: string;
+
+  gitHubRepoContext: GitHubRepoContext;
 
   /** Status bar item created for this workflow */
   statusBarItem: vscode.StatusBarItem;
@@ -107,22 +107,19 @@ async function updatePinnedWorkflows() {
     for (const pinnedWorkflow of workflowsByWorkspace.get(workspaceName) ||
       []) {
       const pW = createPinnedWorkflow(
+        gitHubRepoContext,
         pinnedWorkflow,
         workflowNameByPath[pinnedWorkflow]
       );
-      await updatePinnedWorkflow(gitHubRepoContext, pW);
+      await updatePinnedWorkflow(pW);
     }
   }
 }
 
 async function refreshPinnedWorkflows() {
-  // const gitHubContext = await getGitHubContext();
-  // if (!gitHubContext) {
-  //   return;
-  // }
-  // for (const pinnedWorkflow of pinnedWorkflows) {
-  //   await updatePinnedWorkflow(gitHubContext, pinnedWorkflow);
-  // }
+  for (const pinnedWorkflow of pinnedWorkflows) {
+    await updatePinnedWorkflow(pinnedWorkflow);
+  }
 }
 
 function clearPinnedWorkflows() {
@@ -135,12 +132,17 @@ function clearPinnedWorkflows() {
   pinnedWorkflows.splice(0, pinnedWorkflows.length);
 }
 
-function createPinnedWorkflow(id: string, name: string): PinnedWorkflow {
+function createPinnedWorkflow(
+  gitHubRepoContext: GitHubRepoContext,
+  id: string,
+  name: string
+): PinnedWorkflow {
   const statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left
   );
 
   const pinnedWorkflow = {
+    gitHubRepoContext,
     workflowId: id,
     workflowName: name,
     statusBarItem,
@@ -151,10 +153,9 @@ function createPinnedWorkflow(id: string, name: string): PinnedWorkflow {
   return pinnedWorkflow;
 }
 
-async function updatePinnedWorkflow(
-  gitHubRepoContext: GitHubRepoContext,
-  pinnedWorkflow: PinnedWorkflow
-) {
+async function updatePinnedWorkflow(pinnedWorkflow: PinnedWorkflow) {
+  const { gitHubRepoContext } = pinnedWorkflow;
+
   try {
     const runs = await gitHubRepoContext.client.actions.listWorkflowRuns({
       owner: gitHubRepoContext.owner,
