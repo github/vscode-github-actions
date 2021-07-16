@@ -26,11 +26,11 @@ export class WorkflowJobNode extends vscode.TreeItem {
   }
 
   hasSteps(): boolean {
-    return this.job.steps && this.job.steps.length > 0;
+    return !!(this.job.steps && this.job.steps.length > 0);
   }
 
   async getSteps(): Promise<WorkflowStepNode[]> {
-    return this.job.steps.map(
+    return (this.job.steps || []).map(
       (s) => new WorkflowStepNode(this.gitHubRepoContext, this.job, s)
     );
   }

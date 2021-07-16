@@ -37,7 +37,7 @@ type OctokitRepoData<
 
 export type Workflow = OctokitData<"listRepoWorkflows", "workflows">;
 export type WorkflowRun = OctokitData<"listWorkflowRuns", "workflow_runs"> & {
-  conclusion: string;
+  conclusion: string | null;
 };
 
 export type WorkflowJob = OctokitData<"listJobsForWorkflowRun", "jobs">;

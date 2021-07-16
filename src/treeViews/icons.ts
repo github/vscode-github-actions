@@ -6,8 +6,8 @@ export function initResources(context: vscode.ExtensionContext) {
 }
 
 export interface IStatusAndConclusion {
-  status: string;
-  conclusion: string;
+  status: string | null;
+  conclusion: string | null;
 }
 
 export function getAbsoluteIconPath(relativeIconPath: string): {
