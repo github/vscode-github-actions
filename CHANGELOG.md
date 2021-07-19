@@ -5,6 +5,15 @@ All notable changes to the "vscode-github-actions" extension will be documented 
 
 ## [vnext]
 
+## [v0.20.3]
+- Revert `extensionKind` setting so extension works again in remote scenarios
+
+## [v0.20.0]
+- Support multi-folder workspaces
+- Provide one-click commands for (un)pinning workflows
+- Updates for recent Actions workflow additions (`concurrency` etc.)
+- Basic support for environments and environment secrets
+
 ## [v0.17.0]
 
 - Support error background for pinned workflows - https://github.com/cschleiden/vscode-github-actions/issues/69
