@@ -4,6 +4,7 @@ All notable changes to the "vscode-github-actions" extension will be documented 
 
 
 ## [vnext]
+- Improve sign-in flow
 
 ## [v0.20.3]
 - Revert `extensionKind` setting so extension works again in remote scenarios

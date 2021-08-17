@@ -1,8 +1,10 @@
 import * as vscode from "vscode";
+
 import {
   orgFeaturesEnabled,
-  updateOrgFeaturesEnabled,
+  updateOrgFeaturesEnabled
 } from "../configuration/configuration";
+
 import { resetGitHubContext } from "../git/repository";
 
 const AUTH_PROVIDER_ID = "github";
@@ -22,7 +24,10 @@ export function registerListeners(context: vscode.ExtensionContext): void {
 export async function getSession(): Promise<vscode.AuthenticationSession> {
   const existingSession = await vscode.authentication.getSession(
     AUTH_PROVIDER_ID,
-    getScopes()
+    getScopes(),
+    {
+      createIfNone: true,
+    }
   );
 
   if (!existingSession) {
