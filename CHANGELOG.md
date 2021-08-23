@@ -2,9 +2,14 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
-
 ## [vnext]
+
+## [v0.21.0]
+- Support github.dev web editor
+
+## [v0.20.6]
 - Improve sign-in flow
+- Prepare for web execution
 
 ## [v0.20.3]
 - Revert `extensionKind` setting so extension works again in remote scenarios
