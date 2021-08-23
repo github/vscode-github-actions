@@ -278,7 +278,7 @@
           "command": "github-actions.settings.secret.delete",
           "when": "viewItem == 'secret'",
           "group": "inline@2"
-        },
+        }
       ],
       "commandPalette": [
         {
