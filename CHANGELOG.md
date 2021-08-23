@@ -4,6 +4,9 @@ All notable changes to the "vscode-github-actions" extension will be documented 
 
 ## [vnext]
 
+## [v0.21.1]
+- Remove duplicate trigger run button
+
 ## [v0.21.0]
 - Support github.dev web editor
 

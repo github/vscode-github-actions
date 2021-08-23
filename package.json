@@ -279,11 +279,6 @@
           "when": "viewItem == 'secret'",
           "group": "inline@2"
         },
-        {
-          "command": "github-actions.explorer.triggerRun",
-          "when": "viewItem =~ /workflow/ && viewItem =~ /rdispatch/",
-          "group": "inline@1"
-        }
       ],
       "commandPalette": [
         {
