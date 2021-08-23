@@ -1,11 +1,9 @@
-import * as vscode from "vscode";
-
-import { API, GitExtension, RefType } from "../typings/git";
-
 import { Octokit } from "@octokit/rest";
-import { Protocol } from "../external/protocol";
+import * as vscode from "vscode";
 import { getClient } from "../api/api";
 import { getSession } from "../auth/auth";
+import { Protocol } from "../external/protocol";
+import { API, GitExtension, RefType } from "../typings/git";
 
 async function getGitExtension(): Promise<API | undefined> {
   const gitExtension =
@@ -45,7 +43,6 @@ export async function getGitHead(): Promise<string | undefined> {
     }
   }
 }
-
 export async function getGitHubUrls(): Promise<
   | {
       workspaceUri: vscode.Uri;
@@ -55,7 +52,6 @@ export async function getGitHubUrls(): Promise<
   | null
 > {
   const git = await getGitExtension();
-
   if (git && git.repositories.length > 0) {
     return git.repositories
       .map((r) => {
@@ -80,6 +76,32 @@ export async function getGitHubUrls(): Promise<
         return undefined;
       })
       .filter((x) => !!x) as any;
+  }
+
+  // If we cannot find the git extension, assume for now that we are running a web context,
+  // for instance, github.dev. I think ideally we'd check the workspace URIs first, but this
+  // works for now. We'll revisit later.
+  if (!git) {
+    // Support for virtual workspaces
+    const isVirtualWorkspace =
+      vscode.workspace.workspaceFolders &&
+      vscode.workspace.workspaceFolders.every((f) => f.uri.scheme !== "file");
+    if (isVirtualWorkspace) {
+      const ghFolder = vscode.workspace.workspaceFolders?.find(
+        (x) => x.uri.scheme === "vscode-vfs" && x.uri.authority === "github"
+      );
+      if (ghFolder) {
+        const url = `https://github.com/${ghFolder.uri.path}`;
+
+        return [
+          {
+            workspaceUri: ghFolder.uri,
+            url: url,
+            protocol: new Protocol(url),
+          },
+        ];
+      }
+    }
   }
 
   return null;

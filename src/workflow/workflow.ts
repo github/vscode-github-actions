@@ -4,7 +4,6 @@ import { GitHubRepoContext } from "../git/repository";
 import { Workflow } from "github-actions-parser/dist/lib/workflow";
 import { basename } from "path";
 import { parse } from "github-actions-parser";
-import { readFileSync } from "fs";
 import { safeLoad } from "js-yaml";
 
 interface On {
@@ -51,9 +50,13 @@ function getEvents(doc: any): On[] {
   return on;
 }
 
-export function getContextStringForWorkflow(path: string): string {
+export async function getContextStringForWorkflow(
+  path: string
+): Promise<string> {
   try {
-    const doc = safeLoad(readFileSync(path, "utf8"));
+    const content = await vscode.workspace.fs.readFile(vscode.Uri.file(path));
+    const file = Buffer.from(content).toString("utf8");
+    const doc = safeLoad(file);
     if (doc) {
       let context = "";
 
@@ -73,22 +76,6 @@ export function getContextStringForWorkflow(path: string): string {
   }
 
   return "";
-}
-
-export function getRepositoryDispatchTypes(path: string): string[] {
-  try {
-    const doc = safeLoad(readFileSync(path, "utf8"));
-    if (doc) {
-      const rdispatch = getEvents(doc).find(
-        (t) => t.event.toLowerCase() == "repository_dispatch"
-      );
-      return rdispatch?.types || [];
-    }
-  } catch (e) {
-    // Ignore
-  }
-
-  return [];
 }
 
 /**

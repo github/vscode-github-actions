@@ -13,13 +13,10 @@
     "vscode": "^1.53.0"
   },
   "extensionKind": [
-    "workspace",
-    "web"
+    "web",
+    "workspace"
   ],
   "capabilities": {
-    "untrustedWorkspaces": {
-      "supported": true
-    },
     "virtualWorkspaces": true
   },
   "categories": [
@@ -30,7 +27,8 @@
     "onView:settings",
     "workspaceContains:**/.github/workflows/**"
   ],
-  "main": "./dist/extension",
+  "main": "./dist/extension-node.js",
+  "browser": "./dist/extension-web.js",
   "contributes": {
     "configuration": {
       "title": "GitHub Actions",
@@ -364,8 +362,7 @@
   },
   "dependencies": {
     "@octokit/rest": "18.6.7",
-    "atob": "^2.1.2",
-    "btoa": "^1.2.1",
+    "abab": "^2.0.5",
     "github-actions-parser": "0.22.0",
     "js-yaml": "^3.14.0",
     "ssh-config": "^3.0.0",
