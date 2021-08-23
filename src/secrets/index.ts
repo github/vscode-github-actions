@@ -1,17 +1,16 @@
 import sodium = require("tweetsodium");
-import atob = require("atob");
-import btoa = require("btoa");
 import util = require("util");
+import { atob, btoa } from "abab";
 
 function decode(encoded: string): Uint8Array {
-  const bytes = atob(encoded)
+  const bytes = atob(encoded)!
     .split("")
     .map((x: string) => x.charCodeAt(0));
   return Uint8Array.from(bytes);
 }
 
 function encode(bytes: Uint8Array): string {
-  return btoa(String.fromCharCode.apply(null, Array.from(bytes)));
+  return btoa(String.fromCharCode.apply(null, Array.from(bytes)))!;
 }
 
 export function encodeSecret(key: string, value: string): string {
