@@ -10,11 +10,11 @@
   "description": "GitHub Actions workflows and runs for github.com hosted repositories in VS Code",
   "version": "0.21.2",
   "engines": {
-    "vscode": "^1.53.0"
+    "vscode": "^1.60.0"
   },
   "extensionKind": [
-    "web",
-    "workspace"
+    "workspace",
+    "web"
   ],
   "capabilities": {
     "virtualWorkspaces": true
@@ -330,13 +330,10 @@
   },
   "scripts": {
     "clean": "rimraf ./dist ./out",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "watch": "webpack --mode development --watch",
     "package": "npm run clean && vsce package",
-    "vscode:prepublish": "webpack --mode production",
-    "webpack": "webpack --mode development",
-    "webpack-dev": "webpack --mode development --watch",
-    "test-compile": "tsc -p ./"
+    "build": "webpack --mode production",
+    "vscode:prepublish": "npm run build"
   },
   "devDependencies": {
     "@types/glob": "^7.1.1",
@@ -358,7 +355,7 @@
   "dependencies": {
     "@octokit/rest": "18.6.7",
     "abab": "^2.0.5",
-    "github-actions-parser": "0.22.0",
+    "github-actions-parser": "0.24.0",
     "js-yaml": "^3.14.0",
     "ssh-config": "^3.0.0",
     "tunnel": "0.0.6",

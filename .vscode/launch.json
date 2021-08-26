@@ -6,19 +6,25 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Run extension PWA",
+			"name": "Run Extension",
+			"type": "extensionHost",
+			"request": "launch",
+			"runtimeExecutable": "${execPath}",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
 			"outFiles": [
-				"${workspaceFolder}/dist/**/*.js",
-				"${workspaceFolder}/node_modules/**/*.js"
+				"${workspaceFolder}/dist/*.js"
 			],
-			"preLaunchTask": "${defaultBuildTask}",
-			"request": "launch",
-			"type": "pwa-extensionHost",
-			"localRoot": "${workspaceFolder}",
-			"remoteRoot": "${workspaceFolder}/",
+			"skipFiles": [
+				"<node_internals>/**/*.js"
+			],
+			"resolveSourceMapLocations": [
+				"dist/**/*.js",
+				"node_modules/github-actions-parser/**/*.js",
+			],
+			// "preLaunchTask": "npm: watch",
+			"smartStep": true,
 			"sourceMaps": true
 		},
 		{
