@@ -13,8 +13,7 @@
     "vscode": "^1.60.0"
   },
   "extensionKind": [
-    "workspace",
-    "web"
+    "workspace"
   ],
   "capabilities": {
     "virtualWorkspaces": true
