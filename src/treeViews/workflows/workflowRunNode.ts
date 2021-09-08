@@ -32,12 +32,6 @@ export class WorkflowRunNode extends vscode.TreeItem {
       this.contextValue += "completed";
     }
 
-    this.command = {
-      title: "Open run",
-      command: "github-actions.workflow.run.open",
-      arguments: [this],
-    };
-
     this.iconPath = getIconForWorkflowRun(this.run);
     this.tooltip = `${this.run.status} ${this.run.conclusion || ""}`;
   }
