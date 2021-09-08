@@ -12,9 +12,7 @@ export class WorkflowRunNode extends vscode.TreeItem {
   ) {
     super(
       `#${run.id}`,
-      (run.status === "completed" &&
-        vscode.TreeItemCollapsibleState.Collapsed) ||
-        undefined
+        vscode.TreeItemCollapsibleState.Collapsed
     );
 
     this.description = `${run.event} (${(run.head_sha || "").substr(0, 7)})`;
@@ -40,10 +38,6 @@ export class WorkflowRunNode extends vscode.TreeItem {
 
     this.iconPath = getIconForWorkflowRun(this.run);
     this.tooltip = `${this.run.status} ${this.run.conclusion || ""}`;
-  }
-
-  hasJobs(): boolean {
-    return this.run.status === "completed";
   }
 
   async getJobs(): Promise<WorkflowJobNode[]> {
