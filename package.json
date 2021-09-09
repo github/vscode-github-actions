@@ -166,6 +166,11 @@
         "category": "GitHub Actions",
         "title": "Unpin workflow",
         "icon": "$(pinned)"
+      },
+      {
+        "command": "github-actions.workflow.run.open",
+        "title": "Open in browser",
+        "icon": "$(globe)"
       }
     ],
     "views": {
@@ -277,6 +282,11 @@
           "command": "github-actions.settings.secret.delete",
           "when": "viewItem == 'secret'",
           "group": "inline@2"
+        },
+        {
+          "command": "github-actions.workflow.run.open",
+          "when": "viewItem =~ /run/",
+          "group": "inline"
         }
       ],
       "commandPalette": [
