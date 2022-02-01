@@ -2,7 +2,8 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
-## [vnext]
+## [v0.22.0]
+- Fix changes in repositories API
 
 ## [v0.21.2]
 - Remove duplicate trigger run button
