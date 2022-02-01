@@ -339,7 +339,7 @@
     "@types/js-yaml": "^3.12.1",
     "@types/node": "14.14.32",
     "@types/uuid": "^3.4.6",
-    "@types/vscode": "1.63.1",
+    "@types/vscode": "1.60.0",
     "@types/yaml": "^1.2.0",
     "glob": "^7.1.5",
     "node-loader": "^0.6.0",
