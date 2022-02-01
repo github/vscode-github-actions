@@ -6,30 +6,11 @@
 		{
 			"type": "npm",
 			"script": "watch",
-			"presentation": {
-				"echo": true,
-				"reveal": "never",
-				"focus": false,
-				"panel": "shared",
-				"showReuseMessage": true,
-				"clear": false
-			},
 			"group": "build",
 			"isBackground": true,
-			"problemMatcher": "$ts-webpack-watch"
+			"problemMatcher": [
+					"$ts-webpack-watch"
+			],
 		},
-		{
-			"type": "npm",
-			"script": "ts-compile",
-			"problemMatcher": "$tsc",
-			"presentation": {
-				"echo": true,
-				"reveal": "never",
-				"focus": false,
-				"panel": "shared",
-				"showReuseMessage": true,
-				"clear": false
-			},
-		}
 	]
 }

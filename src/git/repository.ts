@@ -1,9 +1,12 @@
-import { Octokit } from "@octokit/rest";
 import * as vscode from "vscode";
+
+import { API, GitExtension, RefType } from "../typings/git";
+import { logDebug, logError } from "../log";
+
+import { Octokit } from "@octokit/rest";
+import { Protocol } from "../external/protocol";
 import { getClient } from "../api/api";
 import { getSession } from "../auth/auth";
-import { Protocol } from "../external/protocol";
-import { API, GitExtension, RefType } from "../typings/git";
 
 async function getGitExtension(): Promise<API | undefined> {
   const gitExtension =
@@ -53,8 +56,13 @@ export async function getGitHubUrls(): Promise<
 > {
   const git = await getGitExtension();
   if (git && git.repositories.length > 0) {
-    return git.repositories
-      .map((r) => {
+    logDebug("Found git extension");
+
+    const p = await Promise.all(
+      git.repositories.map(async (r) => {
+        logDebug("Find `origin` remote for repository", r.rootUri.path);
+        await r.status();
+
         // In the future we might make this configurable, but for now continue to look
         // for a remote named "origin".
         const originRemote = r.state.remotes.filter(
@@ -73,9 +81,12 @@ export async function getGitHubUrls(): Promise<
           };
         }
 
+        logDebug("No `origin` remote found, skipping repository");
+
         return undefined;
       })
-      .filter((x) => !!x) as any;
+    );
+    return p.filter((x) => !!x) as any;
   }
 
   // If we cannot find the git extension, assume for now that we are running a web context,
@@ -140,11 +151,16 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
 
     const protocolInfos = await getGitHubUrls();
     if (!protocolInfos) {
+      logDebug("Could not get protocol infos");
       return undefined;
     }
 
+    logDebug("Found protocol infos", protocolInfos.length.toString());
+
     const repos = await Promise.all(
       protocolInfos.map(async (protocolInfo): Promise<GitHubRepoContext> => {
+        logDebug("Getting infos for repository", protocolInfo.url);
+
         const repoInfo = await client.repos.get({
           repo: protocolInfo.protocol.repositoryName,
           owner: protocolInfo.protocol.owner,
@@ -169,9 +185,11 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
       repos,
       reposByUri: new Map(repos.map((r) => [r.workspaceUri.toString(), r])),
     });
-  } catch (e) {
+  } catch (e: any) {
     // Reset the context so the next attempt will try this flow again
     gitHubContext = undefined;
+
+    logError(e, "Error getting GitHub context");
 
     // Rethrow original error
     throw e;

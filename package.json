@@ -329,17 +329,17 @@
   },
   "scripts": {
     "clean": "rimraf ./dist ./out",
-    "watch": "webpack --mode development --watch",
     "package": "npm run clean && vsce package",
     "build": "webpack --mode production",
-    "vscode:prepublish": "npm run build"
+    "vscode:prepublish": "npm run build",
+    "watch": "webpack --watch --mode development --env esbuild --info-verbosity verbose"
   },
   "devDependencies": {
     "@types/glob": "^7.1.1",
     "@types/js-yaml": "^3.12.1",
     "@types/node": "14.14.32",
     "@types/uuid": "^3.4.6",
-    "@types/vscode": "1.53.0",
+    "@types/vscode": "1.63.1",
     "@types/yaml": "^1.2.0",
     "glob": "^7.1.5",
     "node-loader": "^0.6.0",

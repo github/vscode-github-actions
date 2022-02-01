@@ -5,6 +5,7 @@ import { getWorkflowUri, parseWorkflow } from "../../workflow/workflow";
 import { GitHubRepoContext } from "../../git/repository";
 import { Workflow as ParsedWorkflow } from "github-actions-parser/dist/lib/workflow";
 import { WorkflowNode } from "./workflowNode";
+import { logDebug } from "../../log";
 
 export class WorkflowsRepoNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext) {
@@ -14,6 +15,8 @@ export class WorkflowsRepoNode extends vscode.TreeItem {
   }
 
   async getWorkflows(): Promise<WorkflowNode[]> {
+    logDebug("Getting workflows");
+
     const result =
       await this.gitHubRepoContext.client.actions.listRepoWorkflows({
         owner: this.gitHubRepoContext.owner,

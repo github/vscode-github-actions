@@ -1,5 +1,7 @@
 import * as vscode from "vscode";
 
+import { init as initLogger, log } from "./log";
+
 import { LogScheme } from "./logs/constants";
 import { SettingsTreeProvider } from "./treeViews/settings";
 import { WorkflowStepLogFoldingProvider } from "./logs/foldingProvider";
@@ -28,6 +30,9 @@ import { registerUnPinWorkflow } from "./commands/unpinWorkflow";
 import { registerUpdateSecret } from "./commands/secrets/updateSecret";
 
 export function activate(context: vscode.ExtensionContext) {
+  initLogger();
+  log("Activating GitHub Actions extension...");
+
   // Prefetch git repository origin url
   getGitHubContext();
 
@@ -118,4 +123,6 @@ export function activate(context: vscode.ExtensionContext) {
   // Editing features
   //
   init(context);
+
+  log("...initialized");
 }

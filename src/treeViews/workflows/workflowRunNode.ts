@@ -1,8 +1,11 @@
 import * as vscode from "vscode";
-import { GitHubRepoContext } from "../../git/repository";
+
 import { Workflow, WorkflowJob, WorkflowRun } from "../../model";
-import { getIconForWorkflowRun } from "../icons";
+
+import { GitHubRepoContext } from "../../git/repository";
 import { WorkflowJobNode } from "./workflowJobNode";
+import { getIconForWorkflowRun } from "../icons";
+import { logDebug } from "../../log";
 
 export class WorkflowRunNode extends vscode.TreeItem {
   constructor(
@@ -10,10 +13,7 @@ export class WorkflowRunNode extends vscode.TreeItem {
     public readonly workflow: Workflow,
     public readonly run: WorkflowRun
   ) {
-    super(
-      `#${run.id}`,
-        vscode.TreeItemCollapsibleState.Collapsed
-    );
+    super(`#${run.id}`, vscode.TreeItemCollapsibleState.Collapsed);
 
     this.description = `${run.event} (${(run.head_sha || "").substr(0, 7)})`;
 
@@ -41,6 +41,8 @@ export class WorkflowRunNode extends vscode.TreeItem {
   }
 
   async getJobs(): Promise<WorkflowJobNode[]> {
+    logDebug("Getting workflow jobs");
+
     const result =
       await this.gitHubRepoContext.client.actions.listJobsForWorkflowRun({
         owner: this.gitHubRepoContext.owner,

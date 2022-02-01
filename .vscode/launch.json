@@ -1,45 +1,23 @@
-// A launch configuration that compiles the extension and then opens it inside a new window
-// Use IntelliSense to learn about possible attributes.
-// Hover to view descriptions of existing attributes.
-// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 {
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Run Extension",
+			"name": "Watch & Launch Extension",
 			"type": "extensionHost",
 			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}"
-			],
-			"outFiles": [
-				"${workspaceFolder}/dist/*.js"
-			],
-			"skipFiles": [
-				"<node_internals>/**/*.js"
-			],
-			"resolveSourceMapLocations": [
-				"dist/**/*.js",
-				"node_modules/github-actions-parser/**/*.js",
-			],
-			// "preLaunchTask": "npm: watch",
-			"smartStep": true,
-			"sourceMaps": true
-		},
-		{
-			"name": "Extension Tests",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
 			],
+			"skipFiles": [
+				"<node_internals>/**/*.js",
+				"**/node_modules/**/*.js"
+			],
+			"preLaunchTask": "npm: watch",
+			"smartStep": true,
+			"sourceMaps": true,
 			"outFiles": [
-				"${workspaceFolder}/dist/test/**/*.js"
-			],
-			"preLaunchTask": "${defaultBuildTask}"
+				"${workspaceFolder}/dist/*.js"
+			]
 		}
 	]
 }
