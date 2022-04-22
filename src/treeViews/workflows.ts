@@ -1,5 +1,9 @@
 import * as vscode from "vscode";
 
+import {
+  WorkflowsRepoNode,
+  getWorkflowNodes,
+} from "./workflows/workflowsRepoNode";
 import { log, logDebug, logError } from "../log";
 
 import { AuthenticationNode } from "./shared/authenticationNode";
@@ -9,7 +13,6 @@ import { WorkflowJobNode } from "./workflows/workflowJobNode";
 import { WorkflowNode } from "./workflows/workflowNode";
 import { WorkflowRunNode } from "./workflows/workflowRunNode";
 import { WorkflowStepNode } from "./workflows/workflowStepNode";
-import { WorkflowsRepoNode } from "./workflows/workflowsRepoNode";
 import { getGitHubContext } from "../git/repository";
 
 type WorkflowsTreeNode =
@@ -51,6 +54,10 @@ export class WorkflowsTreeProvider
         }
 
         if (gitHubContext.repos.length > 0) {
+          if (gitHubContext.repos.length == 1) {
+            return getWorkflowNodes(gitHubContext.repos[0]);
+          }
+
           return gitHubContext.repos.map((r) => new WorkflowsRepoNode(r));
         }
 

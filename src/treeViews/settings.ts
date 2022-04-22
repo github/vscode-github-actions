@@ -1,13 +1,15 @@
 import * as vscode from "vscode";
-import { getGitHubContext } from "../git/repository";
+
+import { SettingsRepoNode, getSettingNodes } from "./settings/settingsRepoNode";
+
 import { EnvironmentNode } from "./settings/environmentNode";
 import { EnvironmentsNode } from "./settings/environmentsNode";
 import { OrgSecretsNode } from "./settings/orgSecretsNode";
 import { RepoSecretsNode } from "./settings/repoSecretsNode";
 import { SecretsNode } from "./settings/secretsNode";
 import { SelfHostedRunnersNode } from "./settings/selfHostedRunnersNode";
-import { SettingsRepoNode } from "./settings/settingsRepoNode";
 import { SettingsExplorerNode } from "./settings/types";
+import { getGitHubContext } from "../git/repository";
 
 export class SettingsTreeProvider
   implements vscode.TreeDataProvider<SettingsExplorerNode>
@@ -36,6 +38,10 @@ export class SettingsTreeProvider
 
     if (!element) {
       if (gitHubContext.repos.length > 0) {
+        if (gitHubContext.repos.length == 1) {
+          return getSettingNodes(gitHubContext.repos[0]);
+        }
+
         return gitHubContext.repos.map((r) => new SettingsRepoNode(r));
       }
     }
