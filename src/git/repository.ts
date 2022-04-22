@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { API, GitExtension, RefType } from "../typings/git";
+import { API, GitExtension, RefType, RepositoryState } from "../typings/git";
 import { logDebug, logError } from "../log";
 
 import { Octokit } from "@octokit/rest";
@@ -120,6 +120,7 @@ export async function getGitHubUrls(): Promise<
 
 export interface GitHubRepoContext {
   client: Octokit;
+  repositoryState: RepositoryState;
 
   workspaceUri: vscode.Uri;
 
@@ -146,6 +147,12 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
   }
 
   try {
+    const git = await getGitExtension();
+    if (!git) {
+      logDebug("Could not find git extension");
+      return;
+    }
+
     const session = await getSession();
     const client = getClient(session.accessToken);
 
@@ -166,9 +173,12 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
           owner: protocolInfo.protocol.owner,
         });
 
+        const repo = git.getRepository(protocolInfo.workspaceUri);
+
         return {
           workspaceUri: protocolInfo.workspaceUri,
           client,
+          repositoryState: repo!.state,
           name: protocolInfo.protocol.repositoryName,
           owner: protocolInfo.protocol.owner,
           id: repoInfo.data.id,
@@ -236,9 +246,21 @@ export async function getGitHubContextForDocumentUri(
 
   const workspaceUri = vscode.workspace.getWorkspaceFolder(documentUri);
   if (!workspaceUri) {
-    debugger;
     return;
   }
 
   return getGitHubContextForWorkspaceUri(workspaceUri.uri);
+}
+
+export function getCurrentBranch(state: RepositoryState): string | undefined {
+  const head = state.HEAD;
+  if (!head) {
+    return;
+  }
+
+  if (head.type != RefType.Head) {
+    return;
+  }
+
+  return head.name;
 }

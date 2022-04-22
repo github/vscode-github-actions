@@ -61,8 +61,6 @@ export class WorkflowNode extends vscode.TreeItem {
     const resp = result.data;
     const runs = resp.workflow_runs;
 
-    return runs.map(
-      (wr) => new WorkflowRunNode(this.gitHubRepoContext, this.wf, wr)
-    );
+    return runs.map((wr) => new WorkflowRunNode(this.gitHubRepoContext, wr));
   }
 }

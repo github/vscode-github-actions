@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { Workflow, WorkflowJob, WorkflowRun } from "../../model";
+import { WorkflowJob, WorkflowRun } from "../../model";
 
 import { GitHubRepoContext } from "../../git/repository";
 import { WorkflowJobNode } from "./workflowJobNode";
@@ -10,10 +10,13 @@ import { logDebug } from "../../log";
 export class WorkflowRunNode extends vscode.TreeItem {
   constructor(
     public readonly gitHubRepoContext: GitHubRepoContext,
-    public readonly workflow: Workflow,
-    public readonly run: WorkflowRun
+    public readonly run: WorkflowRun,
+    public readonly workflowName?: string
   ) {
-    super(`#${run.id}`, vscode.TreeItemCollapsibleState.Collapsed);
+    super(
+      `${workflowName ? workflowName + " " : ""}#${run.id}`,
+      vscode.TreeItemCollapsibleState.Collapsed
+    );
 
     this.description = `${run.event} (${(run.head_sha || "").substr(0, 7)})`;
 

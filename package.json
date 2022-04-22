@@ -68,6 +68,15 @@
         }
       },
       {
+        "command": "github-actions.explorer.current-branch.refresh",
+        "category": "GitHub Actions",
+        "title": "Refresh current branch",
+        "icon": {
+          "dark": "resources/icons/dark/refresh.svg",
+          "light": "resources/icons/light/refresh.svg"
+        }
+      },
+      {
         "command": "github-actions.explorer.openRun",
         "category": "GitHub Actions",
         "title": "Open workflow run",
@@ -176,6 +185,10 @@
     "views": {
       "github-actions": [
         {
+          "id": "github-actions.current-branch",
+          "name": "Current Branch"
+        },
+        {
           "id": "github-actions.workflows",
           "name": "Workflows"
         },
@@ -200,6 +213,11 @@
           "command": "github-actions.explorer.refresh",
           "group": "navigation",
           "when": "view == github-actions.workflows || view == github-actions.settings"
+        },
+        {
+          "command": "github-actions.explorer.current-branch.refresh",
+          "group": "navigation",
+          "when": "view == github-actions.current-branch"
         }
       ],
       "editor/title": [
