@@ -364,7 +364,7 @@
   "dependencies": {
     "@octokit/rest": "18.6.7",
     "abab": "^2.0.5",
-    "github-actions-parser": "0.24.0",
+    "github-actions-parser": "0.26.0",
     "js-yaml": "^3.14.0",
     "ssh-config": "^3.0.0",
     "tunnel": "0.0.6",
