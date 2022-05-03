@@ -77,3 +77,10 @@ export async function updateOrgFeaturesEnabled(enabled: boolean) {
     true
   );
 }
+
+export function getRemoteName(): string {
+  return getConfiguration().get<string>(
+    getSettingsKey("remote-name"),
+    "origin"
+  );
+}

@@ -7,6 +7,7 @@ import { Octokit } from "@octokit/rest";
 import { Protocol } from "../external/protocol";
 import { getClient } from "../api/api";
 import { getSession } from "../auth/auth";
+import { getRemoteName } from "../configuration/configuration";
 
 async function getGitExtension(): Promise<API | undefined> {
   const gitExtension =
@@ -58,15 +59,15 @@ export async function getGitHubUrls(): Promise<
   if (git && git.repositories.length > 0) {
     logDebug("Found git extension");
 
+    const remoteName = getRemoteName();
+
     const p = await Promise.all(
       git.repositories.map(async (r) => {
         logDebug("Find `origin` remote for repository", r.rootUri.path);
         await r.status();
 
-        // In the future we might make this configurable, but for now continue to look
-        // for a remote named "origin".
         const originRemote = r.state.remotes.filter(
-          (remote) => remote.name === "origin"
+          (remote) => remote.name === remoteName
         );
         if (
           originRemote.length > 0 &&
@@ -81,7 +82,7 @@ export async function getGitHubUrls(): Promise<
           };
         }
 
-        logDebug("No `origin` remote found, skipping repository");
+        logDebug(`Remote "${remoteName}" not found, skipping repository`);
 
         return undefined;
       })

@@ -54,6 +54,12 @@
           "description": "Whether org features should be enabled. Requires the `admin:org` scope",
           "default": false,
           "scope": "window"
+        },
+        "github-actions.remote-name": {
+          "type": "string",
+          "description": "The name of the repository's git remote that points to GitHub",
+          "default": "origin",
+          "scope": "window"
         }
       }
     },
