@@ -10,33 +10,37 @@ Simple extension to interact with GitHub Actions from within VS Code.
 2. Open a repository with a `github.com` origin
 3. When prompted, allow `GitHub Actions` to access your `github` account from the "Accounts" menu:
 
-    ![Location of the "Accounts" menu](https://user-images.githubusercontent.com/2201819/106392564-413ae880-63a7-11eb-8b67-d06c1eede4ea.png)
+    ![Sign in via Accounts menu](./media/sign-in.png)
 
 ## Features
 
 ### Auto-complete and documentation
 
-No additional YAML extension needed, this extension includes a built-in language server with full support for the workflow schema.
+No additional YAML extension needed, this extension includes a built-in language server with support for the workflow schema:
 
 ![Workflow auto-complete](./media/workflow-auto-complete.gif)
 
-### Auto-complete actions parameters
+#### Actions parameters
 
 Auto-completion and validation for every action you reference in `uses`:
 
 ![Actions auto-complete](./media/actions-auto-complete.gif)
 
-### Auto-complete runner label
+#### Runner labels
+
+Auto-completion and validation of labels for hosted and self-hosted runners:
 
 ![Auto-complete runner label](./media/runs-on-auto-complete.gif)
 
-### Smart auto-complete and evaluation of expressions
+### Expressions
+
+Auto-completion, validation, and evaluation of expressions:
 
 ![Auto-complete and evaluation of expressions](./media/env-auto-complete.gif)
 
-### Auto-complete and validate `github` event expressions
+#### `github` event expressions
 
-The extension knows about all the webhook payloads and suggests and auto-completes event payload fields
+Auto-complete and validate all webhook event payloads:
 
 ![Auto-complete github event expressions](./media/github-auto-complete.gif)
 
@@ -56,7 +60,7 @@ The extension knows about all the webhook payloads and suggests and auto-complet
 
 ### Trigger runs
 
-If a workflow uses `repository_dispatch` as a trigger, you can start a new workflow run from the workflow context menu:
+If a workflow uses `repository_dispatch` or `workflow_dispatch` as a trigger, you can start a new workflow run from the workflow context menu:
 
 ![](./media/rdispatch.gif)
 
@@ -73,20 +77,6 @@ Or from the editor when editing a workflow:
 You can pin workflows to the status bar per workspace, and automatically see the status of the most recent run. For example, to see if the change you just pushed passes the CI Build:
 ![](./media/pin-workflows.gif)
 
-1. To setup, configure the `"github-actions.workflows.pinned.workflows"` property on a global level, or per workspace (`.vscode/settings.json`):
+### View workflow runs for the current branch
 
-```json
-{
-    "github-actions.workflows.pinned.workflows": [".github/workflows/build.yml", ".github/workflows/create.yml"],
-}
-```
-
-2. To enable auto-refresh via polling, set `refresh.enabled` to `true`. This works by polling the workflow runs API with a default interval of `30` seconds. You can customized the interal via `refresh.interval`:
-
-```json
-{
-    "github-actions.workflows.pinned.workflows": [".github/workflows/build.yml", ".github/workflows/create.yml"],
-    "github-actions.workflows.pinned.refresh.enabled": true,
-    "github-actions.workflows.pinned.refresh.interval": 65,
-}
-```
+![](./media/workflows-current-branch.gif)
