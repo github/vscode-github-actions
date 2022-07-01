@@ -2,7 +2,7 @@
 
 [![Build](https://github.com/cschleiden/vscode-github-actions/actions/workflows/build.yml/badge.svg)](https://github.com/cschleiden/vscode-github-actions/actions/workflows/build.yml)
 
-Simple, **unofficial** extension to interact with GitHub Actions from within VS Code.
+Simple extension to interact with GitHub Actions from within VS Code.
 
 ## Installation
 
@@ -90,7 +90,3 @@ You can pin workflows to the status bar per workspace, and automatically see the
     "github-actions.workflows.pinned.refresh.interval": 65,
 }
 ```
-
-
-## Known issues
-
