@@ -162,6 +162,28 @@ export class WorkflowCompletionItemProvider
             vscode.CompletionItemKind.Constant
           );
 
+          // Fix the replacement range. By default VS Code looks for the current word, which leads to duplicate
+          // replacements for something like `runs-|` which auto-completes to `runs-runs-on`
+          const text = document.getText(
+            new vscode.Range(
+              position.line,
+              Math.max(0, position.character - x.value.length),
+              position.line,
+              position.character
+            )
+          );
+          for (let i = x.value.length; i >= 0; --i) {
+            if (text.endsWith(x.value.substr(0, i))) {
+              completionItem.range = new vscode.Range(
+                position.line,
+                Math.max(0, position.character - i),
+                position.line,
+                position.character
+              );
+              break;
+            }
+          }
+
           if (x.description) {
             completionItem.documentation = new vscode.MarkdownString(
               x.description
