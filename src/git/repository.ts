@@ -1,13 +1,13 @@
 import * as vscode from "vscode";
 
-import { API, GitExtension, RefType, RepositoryState } from "../typings/git";
 import { logDebug, logError } from "../log";
+import { API, GitExtension, RefType, RepositoryState } from "../typings/git";
 
 import { Octokit } from "@octokit/rest";
-import { Protocol } from "../external/protocol";
 import { getClient } from "../api/api";
 import { getSession } from "../auth/auth";
 import { getRemoteName } from "../configuration/configuration";
+import { Protocol } from "../external/protocol";
 
 async function getGitExtension(): Promise<API | undefined> {
   const gitExtension =

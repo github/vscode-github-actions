@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
 
-import { GitHubRepoContext } from "../git/repository";
-import { Workflow } from "github-actions-parser/dist/lib/workflow";
-import { basename } from "path";
 import { parse } from "github-actions-parser";
+import { Workflow } from "github-actions-parser/dist/lib/workflow";
 import { safeLoad } from "js-yaml";
+import { basename } from "path";
+import { GitHubRepoContext } from "../git/repository";
 
 interface On {
   event: string;

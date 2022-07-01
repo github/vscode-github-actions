@@ -21,7 +21,7 @@ export function registerCancelWorkflowRun(context: vscode.ExtensionContext) {
             repo: gitHubContext.name,
             run_id: run.id,
           });
-        } catch (e) {
+        } catch (e: any) {
           vscode.window.showErrorMessage(
             `Could not cancel workflow: '${e.message}'`
           );
