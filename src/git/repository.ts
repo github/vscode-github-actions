@@ -1,11 +1,13 @@
 import * as vscode from "vscode";
 
-import { API, GitExtension, RefType } from "../typings/git";
+import { logDebug, logError } from "../log";
+import { API, GitExtension, RefType, RepositoryState } from "../typings/git";
 
 import { Octokit } from "@octokit/rest";
-import { Protocol } from "../external/protocol";
 import { getClient } from "../api/api";
 import { getSession } from "../auth/auth";
+import { getRemoteName } from "../configuration/configuration";
+import { Protocol } from "../external/protocol";
 
 async function getGitExtension(): Promise<API | undefined> {
   const gitExtension =
@@ -45,7 +47,6 @@ export async function getGitHead(): Promise<string | undefined> {
     }
   }
 }
-
 export async function getGitHubUrls(): Promise<
   | {
       workspaceUri: vscode.Uri;
@@ -55,14 +56,18 @@ export async function getGitHubUrls(): Promise<
   | null
 > {
   const git = await getGitExtension();
-
   if (git && git.repositories.length > 0) {
-    return git.repositories
-      .map((r) => {
-        // In the future we might make this configurable, but for now continue to look
-        // for a remote named "origin".
+    logDebug("Found git extension");
+
+    const remoteName = getRemoteName();
+
+    const p = await Promise.all(
+      git.repositories.map(async (r) => {
+        logDebug("Find `origin` remote for repository", r.rootUri.path);
+        await r.status();
+
         const originRemote = r.state.remotes.filter(
-          (remote) => remote.name === "origin"
+          (remote) => remote.name === remoteName
         );
         if (
           originRemote.length > 0 &&
@@ -77,9 +82,38 @@ export async function getGitHubUrls(): Promise<
           };
         }
 
+        logDebug(`Remote "${remoteName}" not found, skipping repository`);
+
         return undefined;
       })
-      .filter((x) => !!x) as any;
+    );
+    return p.filter((x) => !!x) as any;
+  }
+
+  // If we cannot find the git extension, assume for now that we are running a web context,
+  // for instance, github.dev. I think ideally we'd check the workspace URIs first, but this
+  // works for now. We'll revisit later.
+  if (!git) {
+    // Support for virtual workspaces
+    const isVirtualWorkspace =
+      vscode.workspace.workspaceFolders &&
+      vscode.workspace.workspaceFolders.every((f) => f.uri.scheme !== "file");
+    if (isVirtualWorkspace) {
+      const ghFolder = vscode.workspace.workspaceFolders?.find(
+        (x) => x.uri.scheme === "vscode-vfs" && x.uri.authority === "github"
+      );
+      if (ghFolder) {
+        const url = `https://github.com/${ghFolder.uri.path}`;
+
+        return [
+          {
+            workspaceUri: ghFolder.uri,
+            url: url,
+            protocol: new Protocol(url),
+          },
+        ];
+      }
+    }
   }
 
   return null;
@@ -87,6 +121,7 @@ export async function getGitHubUrls(): Promise<
 
 export interface GitHubRepoContext {
   client: Octokit;
+  repositoryState: RepositoryState;
 
   workspaceUri: vscode.Uri;
 
@@ -113,24 +148,38 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
   }
 
   try {
+    const git = await getGitExtension();
+    if (!git) {
+      logDebug("Could not find git extension");
+      return;
+    }
+
     const session = await getSession();
     const client = getClient(session.accessToken);
 
     const protocolInfos = await getGitHubUrls();
     if (!protocolInfos) {
+      logDebug("Could not get protocol infos");
       return undefined;
     }
 
+    logDebug("Found protocol infos", protocolInfos.length.toString());
+
     const repos = await Promise.all(
       protocolInfos.map(async (protocolInfo): Promise<GitHubRepoContext> => {
+        logDebug("Getting infos for repository", protocolInfo.url);
+
         const repoInfo = await client.repos.get({
           repo: protocolInfo.protocol.repositoryName,
           owner: protocolInfo.protocol.owner,
         });
 
+        const repo = git.getRepository(protocolInfo.workspaceUri);
+
         return {
           workspaceUri: protocolInfo.workspaceUri,
           client,
+          repositoryState: repo!.state,
           name: protocolInfo.protocol.repositoryName,
           owner: protocolInfo.protocol.owner,
           id: repoInfo.data.id,
@@ -147,9 +196,11 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
       repos,
       reposByUri: new Map(repos.map((r) => [r.workspaceUri.toString(), r])),
     });
-  } catch (e) {
+  } catch (e: any) {
     // Reset the context so the next attempt will try this flow again
     gitHubContext = undefined;
+
+    logError(e, "Error getting GitHub context");
 
     // Rethrow original error
     throw e;
@@ -196,9 +247,21 @@ export async function getGitHubContextForDocumentUri(
 
   const workspaceUri = vscode.workspace.getWorkspaceFolder(documentUri);
   if (!workspaceUri) {
-    debugger;
     return;
   }
 
   return getGitHubContextForWorkspaceUri(workspaceUri.uri);
+}
+
+export function getCurrentBranch(state: RepositoryState): string | undefined {
+  const head = state.HEAD;
+  if (!head) {
+    return;
+  }
+
+  if (head.type != RefType.Head) {
+    return;
+  }
+
+  return head.name;
 }

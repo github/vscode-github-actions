@@ -15,5 +15,6 @@ jobs:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         stale-issue-message: 'This issue is stale due to inactivity'
         stale-pr-message: 'This PR is stale due to inactivity'
-        stale-issue-label: 'stale'
+        stale-issue-label: 'stale'      
         stale-pr-label: 'stale'
+        days-before-stale: 120

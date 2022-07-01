@@ -1,17 +1,19 @@
-import { sep } from "path";
 import * as vscode from "vscode";
+
+import {
+  GitHubRepoContext,
+  getGitHubContextForWorkspaceUri,
+} from "../git/repository";
 import {
   getPinnedWorkflows,
   isPinnedWorkflowsRefreshEnabled,
   onPinnedWorkflowsChange,
   pinnedWorkflowsRefreshInterval,
 } from "../configuration/configuration";
-import {
-  getGitHubContextForWorkspaceUri,
-  GitHubRepoContext,
-} from "../git/repository";
+
 import { WorkflowRun } from "../model";
 import { getCodIconForWorkflowrun } from "../treeViews/icons";
+import { sep } from "path";
 
 interface PinnedWorkflow {
   /** Displayed name */
@@ -26,7 +28,7 @@ interface PinnedWorkflow {
 }
 
 const pinnedWorkflows: PinnedWorkflow[] = [];
-let refreshTimer: NodeJS.Timeout | undefined;
+let refreshTimer: /*NodeJS.Timeout*/ any | undefined;
 
 export async function initPinnedWorkflows(context: vscode.ExtensionContext) {
   // Register handler for configuration changes

@@ -1,20 +1,21 @@
 import * as vscode from "vscode";
+
+import { WorkflowJob, WorkflowRun } from "../../model";
+
 import { GitHubRepoContext } from "../../git/repository";
-import { Workflow, WorkflowJob, WorkflowRun } from "../../model";
-import { getIconForWorkflowRun } from "../icons";
 import { WorkflowJobNode } from "./workflowJobNode";
+import { getIconForWorkflowRun } from "../icons";
+import { logDebug } from "../../log";
 
 export class WorkflowRunNode extends vscode.TreeItem {
   constructor(
     public readonly gitHubRepoContext: GitHubRepoContext,
-    public readonly workflow: Workflow,
-    public readonly run: WorkflowRun
+    public readonly run: WorkflowRun,
+    public readonly workflowName?: string
   ) {
     super(
-      `#${run.id}`,
-      (run.status === "completed" &&
-        vscode.TreeItemCollapsibleState.Collapsed) ||
-        undefined
+      `${workflowName ? workflowName + " " : ""}#${run.id}`,
+      vscode.TreeItemCollapsibleState.Collapsed
     );
 
     this.description = `${run.event} (${(run.head_sha || "").substr(0, 7)})`;
@@ -32,21 +33,13 @@ export class WorkflowRunNode extends vscode.TreeItem {
       this.contextValue += "completed";
     }
 
-    this.command = {
-      title: "Open run",
-      command: "github-actions.workflow.run.open",
-      arguments: [this],
-    };
-
     this.iconPath = getIconForWorkflowRun(this.run);
     this.tooltip = `${this.run.status} ${this.run.conclusion || ""}`;
   }
 
-  hasJobs(): boolean {
-    return this.run.status === "completed";
-  }
-
   async getJobs(): Promise<WorkflowJobNode[]> {
+    logDebug("Getting workflow jobs");
+
     const result =
       await this.gitHubRepoContext.client.actions.listJobsForWorkflowRun({
         owner: this.gitHubRepoContext.owner,

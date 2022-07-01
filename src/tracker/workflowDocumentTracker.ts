@@ -1,5 +1,6 @@
-import { extname } from "path";
 import * as vscode from "vscode";
+
+import { extname } from "path";
 import { getContextStringForWorkflow } from "../workflow/workflow";
 
 export function initWorkflowDocumentTracking(context: vscode.ExtensionContext) {
@@ -11,7 +12,7 @@ export function initWorkflowDocumentTracking(context: vscode.ExtensionContext) {
   onDidChangeActiveTextEditor(vscode.window.activeTextEditor);
 }
 
-function onDidChangeActiveTextEditor(editor?: vscode.TextEditor) {
+async function onDidChangeActiveTextEditor(editor?: vscode.TextEditor) {
   if (!editor || !isTextEditor(editor)) {
     return;
   }
@@ -30,7 +31,7 @@ function onDidChangeActiveTextEditor(editor?: vscode.TextEditor) {
   vscode.commands.executeCommand(
     "setContext",
     "githubActions:activeFile",
-    getContextStringForWorkflow(editor.document.fileName)
+    await getContextStringForWorkflow(editor.document.fileName)
   );
 }
 

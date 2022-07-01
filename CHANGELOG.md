@@ -2,8 +2,24 @@
 
 All notable changes to the "vscode-github-actions" extension will be documented in this file.
 
+## [v0.24.0]
+- New "Current Branch" view
 
-## [vnext]
+## [v0.23.0]
+- Various bug fixes and schema updates
+
+## [v0.22.0]
+- Fix changes in repositories API
+
+## [v0.21.2]
+- Remove duplicate trigger run button
+
+## [v0.21.0]
+- Support github.dev web editor
+
+## [v0.20.6]
+- Improve sign-in flow
+- Prepare for web execution
 
 ## [v0.20.3]
 - Revert `extensionKind` setting so extension works again in remote scenarios

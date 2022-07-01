@@ -1,39 +1,23 @@
-// A launch configuration that compiles the extension and then opens it inside a new window
-// Use IntelliSense to learn about possible attributes.
-// Hover to view descriptions of existing attributes.
-// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 {
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Run extension PWA",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}"
-			],
-			"outFiles": [
-				"${workspaceFolder}/dist/**/*.js",
-				"${workspaceFolder}/node_modules/**/*.js"
-			],
-			"preLaunchTask": "${defaultBuildTask}",
-			"request": "launch",
-			"type": "pwa-extensionHost",
-			"localRoot": "${workspaceFolder}",
-			"remoteRoot": "${workspaceFolder}/",
-			"sourceMaps": true
-		},
-		{
-			"name": "Extension Tests",
+			"name": "Watch & Launch Extension",
 			"type": "extensionHost",
 			"request": "launch",
-			"runtimeExecutable": "${execPath}",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
 			],
+			"skipFiles": [
+				"<node_internals>/**/*.js",
+				"**/node_modules/**/*.js"
+			],
+			"preLaunchTask": "npm: watch",
+			"smartStep": true,
+			"sourceMaps": true,
 			"outFiles": [
-				"${workspaceFolder}/dist/test/**/*.js"
-			],
-			"preLaunchTask": "${defaultBuildTask}"
+				"${workspaceFolder}/dist/*.js"
+			]
 		}
 	]
 }

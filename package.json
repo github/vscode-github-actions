@@ -8,13 +8,16 @@
     "url": "https://github.com/cschleiden/vscode-github-actions"
   },
   "description": "GitHub Actions workflows and runs for github.com hosted repositories in VS Code",
-  "version": "0.20.3",
+  "version": "0.24.1",
   "engines": {
-    "vscode": "^1.53.0"
+    "vscode": "^1.60.0"
   },
   "extensionKind": [
     "workspace"
   ],
+  "capabilities": {
+    "virtualWorkspaces": true
+  },
   "categories": [
     "Other"
   ],
@@ -23,7 +26,8 @@
     "onView:settings",
     "workspaceContains:**/.github/workflows/**"
   ],
-  "main": "./dist/extension",
+  "main": "./dist/extension-node.js",
+  "browser": "./dist/extension-web.js",
   "contributes": {
     "configuration": {
       "title": "GitHub Actions",
@@ -50,6 +54,12 @@
           "description": "Whether org features should be enabled. Requires the `admin:org` scope",
           "default": false,
           "scope": "window"
+        },
+        "github-actions.remote-name": {
+          "type": "string",
+          "description": "The name of the repository's git remote that points to GitHub",
+          "default": "origin",
+          "scope": "window"
         }
       }
     },
@@ -58,6 +68,15 @@
         "command": "github-actions.explorer.refresh",
         "category": "GitHub Actions",
         "title": "Refresh",
+        "icon": {
+          "dark": "resources/icons/dark/refresh.svg",
+          "light": "resources/icons/light/refresh.svg"
+        }
+      },
+      {
+        "command": "github-actions.explorer.current-branch.refresh",
+        "category": "GitHub Actions",
+        "title": "Refresh current branch",
         "icon": {
           "dark": "resources/icons/dark/refresh.svg",
           "light": "resources/icons/light/refresh.svg"
@@ -162,10 +181,19 @@
         "category": "GitHub Actions",
         "title": "Unpin workflow",
         "icon": "$(pinned)"
+      },
+      {
+        "command": "github-actions.workflow.run.open",
+        "title": "Open in browser",
+        "icon": "$(globe)"
       }
     ],
     "views": {
       "github-actions": [
+        {
+          "id": "github-actions.current-branch",
+          "name": "Current Branch"
+        },
         {
           "id": "github-actions.workflows",
           "name": "Workflows"
@@ -191,6 +219,11 @@
           "command": "github-actions.explorer.refresh",
           "group": "navigation",
           "when": "view == github-actions.workflows || view == github-actions.settings"
+        },
+        {
+          "command": "github-actions.explorer.current-branch.refresh",
+          "group": "navigation",
+          "when": "view == github-actions.current-branch"
         }
       ],
       "editor/title": [
@@ -275,9 +308,9 @@
           "group": "inline@2"
         },
         {
-          "command": "github-actions.explorer.triggerRun",
-          "when": "viewItem =~ /workflow/ && viewItem =~ /rdispatch/",
-          "group": "inline@1"
+          "command": "github-actions.workflow.run.open",
+          "when": "viewItem =~ /run/",
+          "group": "inline"
         }
       ],
       "commandPalette": [
@@ -330,20 +363,17 @@
   },
   "scripts": {
     "clean": "rimraf ./dist ./out",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
     "package": "npm run clean && vsce package",
-    "vscode:prepublish": "webpack --mode production",
-    "webpack": "webpack --mode development",
-    "webpack-dev": "webpack --mode development --watch",
-    "test-compile": "tsc -p ./"
+    "build": "webpack --mode production",
+    "vscode:prepublish": "npm run build",
+    "watch": "webpack --watch --mode development --env esbuild --info-verbosity verbose"
   },
   "devDependencies": {
     "@types/glob": "^7.1.1",
     "@types/js-yaml": "^3.12.1",
     "@types/node": "14.14.32",
     "@types/uuid": "^3.4.6",
-    "@types/vscode": "1.53.0",
+    "@types/vscode": "1.60.0",
     "@types/yaml": "^1.2.0",
     "glob": "^7.1.5",
     "node-loader": "^0.6.0",
@@ -351,15 +381,14 @@
     "ts-loader": "^6.2.1",
     "tslint": "^5.20.0",
     "typescript": "4.2.3",
-    "vsce": "1.75.0",
+    "vsce": "1.96.1",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.10"
   },
   "dependencies": {
     "@octokit/rest": "18.6.7",
-    "atob": "^2.1.2",
-    "btoa": "^1.2.1",
-    "github-actions-parser": "0.22.0",
+    "abab": "^2.0.5",
+    "github-actions-parser": "0.26.0",
     "js-yaml": "^3.14.0",
     "ssh-config": "^3.0.0",
     "tunnel": "0.0.6",

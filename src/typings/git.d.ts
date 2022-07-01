@@ -3,7 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Uri, SourceControlInputBox, Event, CancellationToken } from "vscode";
+import { Disposable, Event, ProviderResult, Uri } from "vscode";
+export { ProviderResult } from "vscode";
 
 export interface Git {
   readonly path: string;
@@ -13,10 +14,15 @@ export interface InputBox {
   value: string;
 }
 
+export const enum ForcePushMode {
+  Force,
+  ForceWithLease,
+}
+
 export const enum RefType {
   Head,
   RemoteHead,
-  Tag
+  Tag,
 }
 
 export interface Ref {
@@ -41,7 +47,10 @@ export interface Commit {
   readonly hash: string;
   readonly message: string;
   readonly parents: string[];
-  readonly authorEmail?: string | undefined;
+  readonly authorDate?: Date;
+  readonly authorName?: string;
+  readonly authorEmail?: string;
+  readonly commitDate?: Date;
 }
 
 export interface Submodule {
@@ -76,7 +85,7 @@ export const enum Status {
   DELETED_BY_THEM,
   BOTH_ADDED,
   BOTH_DELETED,
-  BOTH_MODIFIED
+  BOTH_MODIFIED,
 }
 
 export interface Change {
@@ -116,6 +125,32 @@ export interface RepositoryUIState {
 export interface LogOptions {
   /** Max number of log entries to retrieve. If not specified, the default is 32. */
   readonly maxEntries?: number;
+  readonly path?: string;
+}
+
+export interface CommitOptions {
+  all?: boolean | "tracked";
+  amend?: boolean;
+  signoff?: boolean;
+  signCommit?: boolean;
+  empty?: boolean;
+  noVerify?: boolean;
+  requireUserConfig?: boolean;
+}
+
+export interface FetchOptions {
+  remote?: string;
+  ref?: string;
+  all?: boolean;
+  prune?: boolean;
+  depth?: number;
+}
+
+export interface BranchQuery {
+  readonly remote?: boolean;
+  readonly pattern?: string;
+  readonly count?: number;
+  readonly contains?: string;
 }
 
 export interface Repository {
@@ -140,6 +175,7 @@ export interface Repository {
   show(ref: string, path: string): Promise<string>;
   getCommit(ref: string): Promise<Commit>;
 
+  add(paths: string[]): Promise<void>;
   clean(paths: string[]): Promise<void>;
 
   apply(patch: string, reverse?: boolean): Promise<void>;
@@ -161,39 +197,101 @@ export interface Repository {
   createBranch(name: string, checkout: boolean, ref?: string): Promise<void>;
   deleteBranch(name: string, force?: boolean): Promise<void>;
   getBranch(name: string): Promise<Branch>;
+  getBranches(query: BranchQuery): Promise<Ref[]>;
   setBranchUpstream(name: string, upstream: string): Promise<void>;
 
   getMergeBase(ref1: string, ref2: string): Promise<string>;
+
+  tag(name: string, upstream: string): Promise<void>;
+  deleteTag(name: string): Promise<void>;
 
   status(): Promise<void>;
   checkout(treeish: string): Promise<void>;
 
   addRemote(name: string, url: string): Promise<void>;
   removeRemote(name: string): Promise<void>;
+  renameRemote(name: string, newName: string): Promise<void>;
 
+  fetch(options?: FetchOptions): Promise<void>;
   fetch(remote?: string, ref?: string, depth?: number): Promise<void>;
   pull(unshallow?: boolean): Promise<void>;
   push(
     remoteName?: string,
     branchName?: string,
-    setUpstream?: boolean
+    setUpstream?: boolean,
+    force?: ForcePushMode
   ): Promise<void>;
 
   blame(path: string): Promise<string>;
   log(options?: LogOptions): Promise<Commit[]>;
+
+  commit(message: string, opts?: CommitOptions): Promise<void>;
+}
+
+export interface RemoteSource {
+  readonly name: string;
+  readonly description?: string;
+  readonly url: string | string[];
+}
+
+export interface RemoteSourceProvider {
+  readonly name: string;
+  readonly icon?: string; // codicon name
+  readonly supportsQuery?: boolean;
+  getRemoteSources(query?: string): ProviderResult<RemoteSource[]>;
+  getBranches?(url: string): ProviderResult<string[]>;
+  publishRepository?(repository: Repository): Promise<void>;
+}
+
+export interface RemoteSourcePublisher {
+  readonly name: string;
+  readonly icon?: string; // codicon name
+  publishRepository(repository: Repository): Promise<void>;
+}
+
+export interface Credentials {
+  readonly username: string;
+  readonly password: string;
+}
+
+export interface CredentialsProvider {
+  getCredentials(host: Uri): ProviderResult<Credentials>;
+}
+
+export interface PushErrorHandler {
+  handlePushError(
+    repository: Repository,
+    remote: Remote,
+    refspec: string,
+    error: Error & { gitErrorCode: GitErrorCodes }
+  ): Promise<boolean>;
 }
 
 export type APIState = "uninitialized" | "initialized";
 
+export interface PublishEvent {
+  repository: Repository;
+  branch?: string;
+}
+
 export interface API {
   readonly state: APIState;
   readonly onDidChangeState: Event<APIState>;
+  readonly onDidPublish: Event<PublishEvent>;
   readonly git: Git;
   readonly repositories: Repository[];
   readonly onDidOpenRepository: Event<Repository>;
   readonly onDidCloseRepository: Event<Repository>;
 
   toGitUri(uri: Uri, ref: string): Uri;
+  getRepository(uri: Uri): Repository | null;
+  init(root: Uri): Promise<Repository | null>;
+  openRepository(root: Uri): Promise<Repository | null>;
+
+  registerRemoteSourcePublisher(publisher: RemoteSourcePublisher): Disposable;
+  registerRemoteSourceProvider(provider: RemoteSourceProvider): Disposable;
+  registerCredentialsProvider(provider: CredentialsProvider): Disposable;
+  registerPushErrorHandler(handler: PushErrorHandler): Disposable;
 }
 
 export interface GitExtension {
@@ -230,6 +328,7 @@ export const enum GitErrorCodes {
   CantOpenResource = "CantOpenResource",
   GitNotFound = "GitNotFound",
   CantCreatePipe = "CantCreatePipe",
+  PermissionDenied = "PermissionDenied",
   CantAccessRemote = "CantAccessRemote",
   RepositoryNotFound = "RepositoryNotFound",
   RepositoryIsLocked = "RepositoryIsLocked",
@@ -247,5 +346,5 @@ export const enum GitErrorCodes {
   CantRebaseMultipleBranches = "CantRebaseMultipleBranches",
   PatchDoesNotApply = "PatchDoesNotApply",
   NoPathFound = "NoPathFound",
-  UnknownPath = "UnknownPath"
+  UnknownPath = "UnknownPath",
 }

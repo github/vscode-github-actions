@@ -1,5 +1,8 @@
 import * as vscode from "vscode";
 
+import { init as initLogger, log, logDebug } from "./log";
+
+import { CurrentBranchTreeProvider } from "./treeViews/currentBranch";
 import { LogScheme } from "./logs/constants";
 import { SettingsTreeProvider } from "./treeViews/settings";
 import { WorkflowStepLogFoldingProvider } from "./logs/foldingProvider";
@@ -28,6 +31,9 @@ import { registerUnPinWorkflow } from "./commands/unpinWorkflow";
 import { registerUpdateSecret } from "./commands/secrets/updateSecret";
 
 export function activate(context: vscode.ExtensionContext) {
+  initLogger();
+  log("Activating GitHub Actions extension...");
+
   // Prefetch git repository origin url
   getGitHubContext();
 
@@ -59,12 +65,54 @@ export function activate(context: vscode.ExtensionContext) {
     )
   );
 
+  const currentBranchTreeProvider = new CurrentBranchTreeProvider();
+  context.subscriptions.push(
+    vscode.window.registerTreeDataProvider(
+      "github-actions.current-branch",
+      currentBranchTreeProvider
+    )
+  );
+
   context.subscriptions.push(
     vscode.commands.registerCommand("github-actions.explorer.refresh", () => {
       workflowTreeProvider.refresh();
       settingsTreeProvider.refresh();
     })
   );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "github-actions.explorer.current-branch.refresh",
+      () => {
+        currentBranchTreeProvider.refresh();
+      }
+    )
+  );
+
+  (async () => {
+    const context = await getGitHubContext();
+    if (!context) {
+      logDebug("Could not register branch change event handler");
+      return;
+    }
+
+    for (const repo of context.repos) {
+      let currentAhead = repo.repositoryState.HEAD?.ahead;
+      let currentHeadName = repo.repositoryState.HEAD?.name;
+      repo.repositoryState.onDidChange(() => {
+        // When the current head/branch changes, or the number of commits ahead changes (which indicates
+        // a push), refresh the current-branch view
+        if (
+          repo.repositoryState.HEAD?.name !== currentHeadName ||
+          (repo.repositoryState.HEAD?.ahead || 0) < (currentAhead || 0)
+        ) {
+          currentHeadName = repo.repositoryState.HEAD?.name;
+          currentAhead = repo.repositoryState.HEAD?.ahead;
+          currentBranchTreeProvider.refresh();
+        }
+      });
+    }
+  })();
 
   //
   // Commands
@@ -118,4 +166,6 @@ export function activate(context: vscode.ExtensionContext) {
   // Editing features
   //
   init(context);
+
+  log("...initialized");
 }

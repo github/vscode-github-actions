@@ -1,7 +1,4 @@
 import { parse as parseConfig } from "ssh-config";
-import { readFileSync } from "fs";
-import { join } from "path";
-import { homedir } from "os";
 
 const SSH_URL_RE = /^(?:([^@:]+)@)?([^:/]+):?(.+)$/;
 const URL_SCHEME_RE = /^([a-z-]+):\/\//;
@@ -55,7 +52,7 @@ export const resolve = (url: string, resolveConfig = Resolvers.current) => {
 };
 
 export class Resolvers {
-  static default = chainResolvers(baseResolver, resolverFromConfigFile());
+  static default = chainResolvers(baseResolver /*, resolverFromConfigFile()*/);
 
   static fromConfig(conf: string) {
     return chainResolvers(baseResolver, resolverFromConfig(conf));
@@ -89,16 +86,17 @@ function baseResolver(config: Config) {
   };
 }
 
-function resolverFromConfigFile(
-  configPath = join(homedir(), ".ssh", "config")
-): ConfigResolver | undefined {
-  try {
-    const config = readFileSync(configPath).toString();
-    return resolverFromConfig(config);
-  } catch (error) {
-    // Logger.appendLine(`${configPath}: ${error.message}`);
-  }
-}
+// Temporarily disable this to remove `fs` dependency
+// function resolverFromConfigFile(
+//   configPath = join(homedir(), ".ssh", "config")
+// ): ConfigResolver | undefined {
+//   try {
+//     const config = readFileSync(configPath).toString();
+//     return resolverFromConfig(config);
+//   } catch (error) {
+//     // Logger.appendLine(`${configPath}: ${error.message}`);
+//   }
+// }
 
 export function resolverFromConfig(text: string): ConfigResolver {
   const config = parseConfig(text);
