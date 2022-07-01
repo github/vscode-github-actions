@@ -1,6 +1,6 @@
 # GitHub Actions for VS Code
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cschleiden/vscode-github-actions/Build)
+[![Build](https://github.com/cschleiden/vscode-github-actions/actions/workflows/build.yml/badge.svg)](https://github.com/cschleiden/vscode-github-actions/actions/workflows/build.yml)
 
 Simple, **unofficial** extension to interact with GitHub Actions from within VS Code.
 
