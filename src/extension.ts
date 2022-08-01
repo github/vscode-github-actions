@@ -2,33 +2,33 @@ import * as vscode from "vscode";
 
 import { init as initLogger, log, logDebug } from "./log";
 
-import { CurrentBranchTreeProvider } from "./treeViews/currentBranch";
-import { LogScheme } from "./logs/constants";
-import { SettingsTreeProvider } from "./treeViews/settings";
-import { WorkflowStepLogFoldingProvider } from "./logs/foldingProvider";
-import { WorkflowStepLogProvider } from "./logs/fileProvider";
-import { WorkflowStepLogSymbolProvider } from "./logs/symbolProvider";
-import { WorkflowsTreeProvider } from "./treeViews/workflows";
-import { getGitHubContext } from "./git/repository";
-import { init } from "./workflow/diagnostics";
-import { initConfiguration } from "./configuration/configuration";
-import { initPinnedWorkflows } from "./pinnedWorkflows/pinnedWorkflows";
-import { initResources } from "./treeViews/icons";
-import { initWorkflowDocumentTracking } from "./tracker/workflowDocumentTracker";
-import { registerAddSecret } from "./commands/secrets/addSecret";
 import { registerCancelWorkflowRun } from "./commands/cancelWorkflowRun";
-import { registerCopySecret } from "./commands/secrets/copySecret";
-import { registerDeleteSecret } from "./commands/secrets/deleteSecret";
-import { registerManageOrgSecrets } from "./commands/secrets/manageOrgSecrets";
 import { registerOpenWorkflowFile } from "./commands/openWorkflowFile";
 import { registerOpenWorkflowRun } from "./commands/openWorkflowRun";
 import { registerOpenWorkflowRunLogs } from "./commands/openWorkflowRunLogs";
 import { registerOrgLogin } from "./commands/orgLogin";
 import { registerPinWorkflow } from "./commands/pinWorkflow";
 import { registerReRunWorkflowRun } from "./commands/rerunWorkflowRun";
+import { registerAddSecret } from "./commands/secrets/addSecret";
+import { registerCopySecret } from "./commands/secrets/copySecret";
+import { registerDeleteSecret } from "./commands/secrets/deleteSecret";
+import { registerManageOrgSecrets } from "./commands/secrets/manageOrgSecrets";
+import { registerUpdateSecret } from "./commands/secrets/updateSecret";
 import { registerTriggerWorkflowRun } from "./commands/triggerWorkflowRun";
 import { registerUnPinWorkflow } from "./commands/unpinWorkflow";
-import { registerUpdateSecret } from "./commands/secrets/updateSecret";
+import { initConfiguration } from "./configuration/configuration";
+import { getGitHubContext } from "./git/repository";
+import { LogScheme } from "./logs/constants";
+import { WorkflowStepLogProvider } from "./logs/fileProvider";
+import { WorkflowStepLogFoldingProvider } from "./logs/foldingProvider";
+import { WorkflowStepLogSymbolProvider } from "./logs/symbolProvider";
+import { initPinnedWorkflows } from "./pinnedWorkflows/pinnedWorkflows";
+import { initWorkflowDocumentTracking } from "./tracker/workflowDocumentTracker";
+import { CurrentBranchTreeProvider } from "./treeViews/currentBranch";
+import { initResources } from "./treeViews/icons";
+import { SettingsTreeProvider } from "./treeViews/settings";
+import { WorkflowsTreeProvider } from "./treeViews/workflows";
+import { init } from "./workflow/diagnostics";
 
 export function activate(context: vscode.ExtensionContext) {
   initLogger();
@@ -97,17 +97,21 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     for (const repo of context.repos) {
+      if (!repo.repositoryState) {
+        continue;
+      }
+
       let currentAhead = repo.repositoryState.HEAD?.ahead;
       let currentHeadName = repo.repositoryState.HEAD?.name;
       repo.repositoryState.onDidChange(() => {
         // When the current head/branch changes, or the number of commits ahead changes (which indicates
         // a push), refresh the current-branch view
         if (
-          repo.repositoryState.HEAD?.name !== currentHeadName ||
-          (repo.repositoryState.HEAD?.ahead || 0) < (currentAhead || 0)
+          repo.repositoryState!.HEAD?.name !== currentHeadName ||
+          (repo.repositoryState!.HEAD?.ahead || 0) < (currentAhead || 0)
         ) {
-          currentHeadName = repo.repositoryState.HEAD?.name;
-          currentAhead = repo.repositoryState.HEAD?.ahead;
+          currentHeadName = repo.repositoryState!.HEAD?.name;
+          currentAhead = repo.repositoryState!.HEAD?.ahead;
           currentBranchTreeProvider.refresh();
         }
       });
