@@ -93,27 +93,31 @@ export async function getGitHubUrls(): Promise<
   // If we cannot find the git extension, assume for now that we are running a web context,
   // for instance, github.dev. I think ideally we'd check the workspace URIs first, but this
   // works for now. We'll revisit later.
-  if (!git) {
-    // Support for virtual workspaces
-    const isVirtualWorkspace =
-      vscode.workspace.workspaceFolders &&
-      vscode.workspace.workspaceFolders.every((f) => f.uri.scheme !== "file");
-    if (isVirtualWorkspace) {
-      const ghFolder = vscode.workspace.workspaceFolders?.find(
-        (x) => x.uri.scheme === "vscode-vfs" && x.uri.authority === "github"
-      );
-      if (ghFolder) {
-        const url = `https://github.com/${ghFolder.uri.path}`;
+  // if (!git) {
+  // Support for virtual workspaces
+  const isVirtualWorkspace =
+    vscode.workspace.workspaceFolders &&
+    vscode.workspace.workspaceFolders.every((f) => f.uri.scheme !== "file");
+  if (isVirtualWorkspace) {
+    logDebug("Found virtual workspace");
 
-        return [
-          {
-            workspaceUri: ghFolder.uri,
-            url: url,
-            protocol: new Protocol(url),
-          },
-        ];
-      }
+    const ghFolder = vscode.workspace.workspaceFolders?.find(
+      (x) => x.uri.scheme === "vscode-vfs" && x.uri.authority === "github"
+    );
+    if (ghFolder) {
+      logDebug("Found virtual GitHub workspace folder");
+
+      const url = `https://github.com/${ghFolder.uri.path}`;
+
+      return [
+        {
+          workspaceUri: ghFolder.uri,
+          url: url,
+          protocol: new Protocol(url),
+        },
+      ];
     }
+    // }
   }
 
   return null;
@@ -121,7 +125,7 @@ export async function getGitHubUrls(): Promise<
 
 export interface GitHubRepoContext {
   client: Octokit;
-  repositoryState: RepositoryState;
+  repositoryState: RepositoryState | undefined;
 
   workspaceUri: vscode.Uri;
 
@@ -149,10 +153,10 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
 
   try {
     const git = await getGitExtension();
-    if (!git) {
-      logDebug("Could not find git extension");
-      return;
-    }
+    // if (!git) {
+    //   logDebug("Could not find git extension");
+    //   return;
+    // }
 
     const session = await getSession();
     const client = getClient(session.accessToken);
@@ -174,12 +178,12 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
           owner: protocolInfo.protocol.owner,
         });
 
-        const repo = git.getRepository(protocolInfo.workspaceUri);
+        const repo = git && git.getRepository(protocolInfo.workspaceUri);
 
         return {
           workspaceUri: protocolInfo.workspaceUri,
           client,
-          repositoryState: repo!.state,
+          repositoryState: repo?.state,
           name: protocolInfo.protocol.repositoryName,
           owner: protocolInfo.protocol.owner,
           id: repoInfo.data.id,
@@ -253,7 +257,13 @@ export async function getGitHubContextForDocumentUri(
   return getGitHubContextForWorkspaceUri(workspaceUri.uri);
 }
 
-export function getCurrentBranch(state: RepositoryState): string | undefined {
+export function getCurrentBranch(
+  state: RepositoryState | undefined
+): string | undefined {
+  if (!state) {
+    return;
+  }
+
   const head = state.HEAD;
   if (!head) {
     return;
