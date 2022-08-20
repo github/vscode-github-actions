@@ -6,3 +6,5 @@ tsconfig.json
 webpack.config.js
 !node_modules/keytar
 runners
+media
+dist/*.map
