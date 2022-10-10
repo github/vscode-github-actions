@@ -368,7 +368,8 @@
     "vscode:prepublish": "npm run build",
     "watch": "webpack --watch --mode development --env esbuild --info-verbosity verbose",
     "open-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "lint-fix": "eslint . --ext .ts --fix && prettier --config .prettierrc 'src/**/*.ts' --write"
   },
   "devDependencies": {
     "@types/glob": "^7.1.1",
