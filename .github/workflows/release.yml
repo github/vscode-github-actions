@@ -5,7 +5,7 @@ on:
     inputs:
       version:
         required: true
-        description: Version to bump `package.json` to
+        description: 'Version to bump `package.json` to (format: x.y.z)'
 
 jobs:
   build:
