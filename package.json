@@ -367,7 +367,8 @@
     "build": "webpack --mode production",
     "vscode:prepublish": "npm run build",
     "watch": "webpack --watch --mode development --env esbuild --info-verbosity verbose",
-    "open-in-browser": "vscode-test-web --extensionDevelopmentPath=. ."
+    "open-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
+    "lint": "eslint . --ext .ts"
   },
   "devDependencies": {
     "@types/glob": "^7.1.1",
@@ -376,7 +377,12 @@
     "@types/uuid": "^3.4.6",
     "@types/vscode": "1.60.0",
     "@types/yaml": "^1.2.0",
+    "@typescript-eslint/eslint-plugin": "^5.40.0",
+    "@typescript-eslint/parser": "^5.40.0",
     "@vscode/test-web": "*",
+    "eslint": "^8.25.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "glob": "^7.1.5",
     "node-loader": "^0.6.0",
     "prettier": "2.7.1",

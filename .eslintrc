@@ -1,0 +1,152 @@
+{
+	"env": {
+		"es6": true
+	},
+	"extends": [
+		"eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:@typescript-eslint/recommended-requiring-type-checking",
+		"prettier"
+	],
+	"parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "project": "./tsconfig.json"
+	},
+	"plugins": ["@typescript-eslint", "prettier"],
+	"reportUnusedDisableDirectives": true,
+	"root": true,
+	"rules": {
+		"new-parens": "error",
+		"no-async-promise-executor": "off",
+		"no-console": "off",
+		"no-constant-condition": ["warn", { "checkLoops": false }],
+		"no-caller": "error",
+		"no-case-declarations": "off",
+		"no-debugger": "warn",
+		"no-dupe-class-members": "off",
+		"no-duplicate-imports": "error",
+		"no-empty": ["warn", { "allowEmptyCatch": true }],
+		"no-eval": "error",
+		"no-ex-assign": "warn",
+		"no-extend-native": "error",
+		"no-extra-bind": "error",
+		"no-extra-boolean-cast": "error",
+		"no-floating-decimal": "error",
+		"no-implicit-coercion": "off",
+		"no-implied-eval": "error",
+		"no-inner-declarations": "error",
+		"no-lone-blocks": "error",
+		"no-lonely-if": "off",
+		"no-loop-func": "error",
+		"no-multi-spaces": "off",
+		"no-prototype-builtins": "off",
+		"no-return-assign": "error",
+		"no-self-compare": "error",
+		"no-sequences": "error",
+		"no-template-curly-in-string": "warn",
+		"no-throw-literal": "error",
+		"no-unmodified-loop-condition": "warn",
+		"no-unneeded-ternary": "error",
+		"no-use-before-define": "off",
+		"no-useless-call": "error",
+		"no-useless-catch": "error",
+		"no-useless-computed-key": "error",
+		"no-useless-concat": "error",
+		"no-useless-escape": "off",
+		"no-useless-rename": "error",
+		"no-useless-return": "off",
+		"no-var": "error",
+		"no-with": "error",
+		"object-shorthand": "off",
+		"one-var": ["error", "never"],
+		"prefer-const": "off",
+		"prefer-numeric-literals": "error",
+		"prefer-object-spread": "error",
+		"prefer-rest-params": "error",
+		"prefer-spread": "error",
+		"quotes": ["error", "double", { "avoidEscape": true, "allowTemplateLiterals": true }],
+		"require-atomic-updates": "off",
+		"semi": ["error", "always"],
+		"semi-style": ["error", "last"],
+		"sort-imports": [
+			"error",
+			{
+				"ignoreCase": true,
+				"ignoreDeclarationSort": true,
+				"ignoreMemberSort": false,
+				"memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
+			}
+		],
+		"yoda": "error",
+		"@typescript-eslint/await-thenable": "error",
+		"@typescript-eslint/ban-types": [
+			"error",
+			{
+				"extendDefaults": false,
+				"types": {
+					"String": {
+						"message": "Use string instead",
+						"fixWith": "string"
+					},
+					"Boolean": {
+						"message": "Use boolean instead",
+						"fixWith": "boolean"
+					},
+					"Number": {
+						"message": "Use number instead",
+						"fixWith": "number"
+					},
+					"Symbol": {
+						"message": "Use symbol instead",
+						"fixWith": "symbol"
+					},
+					"Function": {
+						"message": "The `Function` type accepts any function-like value.\nIt provides no type safety when calling the function, which can be a common source of bugs.\nIt also accepts things like class declarations, which will throw at runtime as they will not be called with `new`.\nIf you are expecting the function to accept certain arguments, you should explicitly define the function shape."
+					},
+					"Object": {
+						"message": "The `Object` type actually means \"any non-nullish value\", so it is marginally better than `unknown`.\n- If you want a type meaning \"any object\", you probably want `Record<string, unknown>` instead.\n- If you want a type meaning \"any value\", you probably want `unknown` instead."
+					},
+					"{}": {
+						"message": "`{}` actually means \"any non-nullish value\".\n- If you want a type meaning \"any object\", you probably want `object` or `Record<string, unknown>` instead.\n- If you want a type meaning \"any value\", you probably want `unknown` instead.",
+						"fixWith": "object"
+					}
+					// "object": {
+					// 	"message": "The `object` type is currently hard to use ([see this issue](https://github.com/microsoft/TypeScript/issues/21732)).\nConsider using `Record<string, unknown>` instead, as it allows you to more easily inspect and use the keys."
+					// }
+				}
+			}
+		],
+		"@typescript-eslint/consistent-type-assertions": [
+			"warn",
+			{
+				"assertionStyle": "as",
+				"objectLiteralTypeAssertions": "allow-as-parameter"
+			}
+		],
+		"@typescript-eslint/explicit-function-return-type": "off",
+		"@typescript-eslint/explicit-member-accessibility": "off",
+		"@typescript-eslint/no-empty-function": "off",
+		"@typescript-eslint/no-empty-interface": "error",
+		"@typescript-eslint/no-explicit-any": "off",
+		"@typescript-eslint/no-implied-eval": "error",
+		"@typescript-eslint/no-inferrable-types": ["warn", { "ignoreParameters": true, "ignoreProperties": true }],
+		"@typescript-eslint/no-misused-promises": ["error", { "checksConditionals": false, "checksVoidReturn": false }],
+		"@typescript-eslint/no-namespace": "off",
+		"@typescript-eslint/no-non-null-assertion": "off",
+		"@typescript-eslint/no-parameter-properties": "off",
+		"@typescript-eslint/no-this-alias": "off",
+		"@typescript-eslint/no-unnecessary-condition": "off",
+		"@typescript-eslint/no-unused-expressions": ["warn", { "allowShortCircuit": true }],
+		"@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+		"@typescript-eslint/no-use-before-define": "off",
+		"@typescript-eslint/prefer-regexp-exec": "off",
+		"@typescript-eslint/prefer-nullish-coalescing": "off",
+		"@typescript-eslint/prefer-optional-chain": "off",
+		"@typescript-eslint/require-await": "off",
+		"@typescript-eslint/restrict-plus-operands": "error",
+		"@typescript-eslint/restrict-template-expressions": "off",
+		"@typescript-eslint/strict-boolean-expressions": "off",
+		"@typescript-eslint/unbound-method": "off" // Too many bugs right now: https://github.com/typescript-eslint/typescript-eslint/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+unbound-method
+	}
+}
