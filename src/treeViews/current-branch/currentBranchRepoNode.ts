@@ -7,10 +7,7 @@ import { WorkflowRunNode } from "../workflows/workflowRunNode";
 import { logDebug } from "../../log";
 
 export class CurrentBranchRepoNode extends vscode.TreeItem {
-  constructor(
-    public readonly gitHubRepoContext: GitHubRepoContext,
-    public readonly currentBranchName: string
-  ) {
+  constructor(public readonly gitHubRepoContext: GitHubRepoContext, public readonly currentBranchName: string) {
     super(gitHubRepoContext.name, vscode.TreeItemCollapsibleState.Collapsed);
 
     this.description = currentBranchName;
@@ -20,14 +17,12 @@ export class CurrentBranchRepoNode extends vscode.TreeItem {
   async getRuns(): Promise<(WorkflowRunNode | NoRunForBranchNode)[]> {
     logDebug("Getting workflow runs for current branch");
 
-    return (
-      (await getCurrentBranchWorkflowRunNodes(this.gitHubRepoContext)) || []
-    );
+    return (await getCurrentBranchWorkflowRunNodes(this.gitHubRepoContext)) || [];
   }
 }
 
 export async function getCurrentBranchWorkflowRunNodes(
-  gitHubRepoContext: GitHubRepoContext
+  gitHubRepoContext: GitHubRepoContext,
 ): Promise<(WorkflowRunNode | NoRunForBranchNode)[] | undefined> {
   const currentBranch = getCurrentBranch(gitHubRepoContext.repositoryState);
   if (!currentBranch) {
@@ -35,13 +30,11 @@ export async function getCurrentBranchWorkflowRunNodes(
     return [];
   }
 
-  const result = await gitHubRepoContext.client.actions.listWorkflowRunsForRepo(
-    {
-      owner: gitHubRepoContext.owner,
-      repo: gitHubRepoContext.name,
-      branch: currentBranch,
-    }
-  );
+  const result = await gitHubRepoContext.client.actions.listWorkflowRunsForRepo({
+    owner: gitHubRepoContext.owner,
+    repo: gitHubRepoContext.name,
+    branch: currentBranch,
+  });
 
   const resp = result.data;
   const runs = resp.workflow_runs;

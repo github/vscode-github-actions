@@ -12,7 +12,7 @@ export class WorkflowNode extends vscode.TreeItem {
   constructor(
     public readonly gitHubRepoContext: GitHubRepoContext,
     public readonly wf: Workflow,
-    public readonly parsed?: ParsedWorkflow
+    public readonly parsed?: ParsedWorkflow,
   ) {
     super(wf.name, vscode.TreeItemCollapsibleState.Collapsed);
 
@@ -22,13 +22,9 @@ export class WorkflowNode extends vscode.TreeItem {
   updateContextValue() {
     this.contextValue = "workflow";
 
-    const workflowFullPath = getWorkflowUri(
-      this.gitHubRepoContext,
-      this.wf.path
-    );
+    const workflowFullPath = getWorkflowUri(this.gitHubRepoContext, this.wf.path);
     if (workflowFullPath) {
-      const relativeWorkflowPath =
-        vscode.workspace.asRelativePath(workflowFullPath);
+      const relativeWorkflowPath = vscode.workspace.asRelativePath(workflowFullPath);
       if (new Set(getPinnedWorkflows()).has(relativeWorkflowPath)) {
         this.contextValue += " pinned";
       } else {
@@ -50,13 +46,11 @@ export class WorkflowNode extends vscode.TreeItem {
   async getRuns(): Promise<WorkflowRunNode[]> {
     logDebug("Getting workflow runs");
 
-    const result = await this.gitHubRepoContext.client.actions.listWorkflowRuns(
-      {
-        owner: this.gitHubRepoContext.owner,
-        repo: this.gitHubRepoContext.name,
-        workflow_id: this.wf.id,
-      }
-    );
+    const result = await this.gitHubRepoContext.client.actions.listWorkflowRuns({
+      owner: this.gitHubRepoContext.owner,
+      repo: this.gitHubRepoContext.name,
+      workflow_id: this.wf.id,
+    });
 
     const resp = result.data;
     const runs = resp.workflow_runs;

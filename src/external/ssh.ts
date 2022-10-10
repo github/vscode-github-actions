@@ -82,7 +82,7 @@ const parse = (url: string): Config | undefined => {
 function baseResolver(config: Config) {
   return {
     ...config,
-    HostName: config.Host
+    HostName: config.Host,
   };
 }
 
@@ -100,19 +100,17 @@ function baseResolver(config: Config) {
 
 export function resolverFromConfig(text: string): ConfigResolver {
   const config = parseConfig(text);
-  return h => config.compute(h.Host);
+  return (h) => config.compute(h.Host);
 }
 
-function chainResolvers(
-  ...chain: (ConfigResolver | undefined)[]
-): ConfigResolver {
-  const resolvers = chain.filter(x => !!x) as ConfigResolver[];
+function chainResolvers(...chain: (ConfigResolver | undefined)[]): ConfigResolver {
+  const resolvers = chain.filter((x) => !!x) as ConfigResolver[];
   return (config: Config) =>
     resolvers.reduce(
       (resolved, next) => ({
         ...resolved,
-        ...next(resolved)
+        ...next(resolved),
       }),
-      config
+      config,
     );
 }

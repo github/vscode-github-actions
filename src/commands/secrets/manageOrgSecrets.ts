@@ -17,11 +17,9 @@ export function registerManageOrgSecrets(context: vscode.ExtensionContext) {
         // Open link to manage org-secrets
         vscode.commands.executeCommand(
           "vscode.open",
-          vscode.Uri.parse(
-            `https://github.com/organizations/${gitHubContext.owner}/settings/secrets`
-          )
+          vscode.Uri.parse(`https://github.com/organizations/${gitHubContext.owner}/settings/secrets`),
         );
-      }
-    )
+      },
+    ),
   );
 }

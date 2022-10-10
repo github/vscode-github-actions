@@ -18,9 +18,7 @@ export class SettingsRepoNode extends vscode.TreeItem {
   }
 }
 
-export function getSettingNodes(
-  gitHubContext: GitHubRepoContext
-): SettingsExplorerNode[] {
+export function getSettingNodes(gitHubContext: GitHubRepoContext): SettingsExplorerNode[] {
   const nodes: SettingsExplorerNode[] = [];
 
   nodes.push(new EnvironmentsNode(gitHubContext));

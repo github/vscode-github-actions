@@ -22,13 +22,11 @@ export function registerCancelWorkflowRun(context: vscode.ExtensionContext) {
             run_id: run.id,
           });
         } catch (e: any) {
-          vscode.window.showErrorMessage(
-            `Could not cancel workflow: '${e.message}'`
-          );
+          vscode.window.showErrorMessage(`Could not cancel workflow: '${e.message}'`);
         }
 
         vscode.commands.executeCommand("github-actions.explorer.refresh");
-      }
-    )
+      },
+    ),
   );
 }

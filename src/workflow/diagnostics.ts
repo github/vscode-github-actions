@@ -10,22 +10,14 @@ const WorkflowSelector = {
 
 export function init(context: vscode.ExtensionContext) {
   // Register auto-complete
-  vscode.languages.registerCompletionItemProvider(
-    WorkflowSelector,
-    new WorkflowCompletionItemProvider(),
-    "."
-  );
+  vscode.languages.registerCompletionItemProvider(WorkflowSelector, new WorkflowCompletionItemProvider(), ".");
 
-  vscode.languages.registerHoverProvider(
-    WorkflowSelector,
-    new WorkflowHoverProvider()
-  );
+  vscode.languages.registerHoverProvider(WorkflowSelector, new WorkflowHoverProvider());
 
   //
   // Provide diagnostics information
   //
-  const collection =
-    vscode.languages.createDiagnosticCollection("github-actions");
+  const collection = vscode.languages.createDiagnosticCollection("github-actions");
   if (vscode.window.activeTextEditor) {
     updateDiagnostics(vscode.window.activeTextEditor.document, collection);
   }
@@ -34,33 +26,24 @@ export function init(context: vscode.ExtensionContext) {
       if (editor) {
         updateDiagnostics(editor.document, collection);
       }
-    })
+    }),
   );
 
   context.subscriptions.push(
-    vscode.workspace.onDidChangeTextDocument((e) =>
-      updateDiagnostics(e.document, collection)
-    )
+    vscode.workspace.onDidChangeTextDocument((e) => updateDiagnostics(e.document, collection)),
   );
 
-  context.subscriptions.push(
-    vscode.workspace.onDidCloseTextDocument((doc) => collection.delete(doc.uri))
-  );
+  context.subscriptions.push(vscode.workspace.onDidCloseTextDocument((doc) => collection.delete(doc.uri)));
 }
 
 async function updateDiagnostics(
   document: vscode.TextDocument,
-  collection: vscode.DiagnosticCollection
+  collection: vscode.DiagnosticCollection,
 ): Promise<void> {
-  if (
-    document &&
-    document.fileName.match("(.*)?.github/workflows/(.*).ya?ml")
-  ) {
+  if (document && document.fileName.match("(.*)?.github/workflows/(.*).ya?ml")) {
     collection.clear();
 
-    const gitHubRepoContext = await getGitHubContextForDocumentUri(
-      document.uri
-    );
+    const gitHubRepoContext = await getGitHubContextForDocumentUri(document.uri);
     if (!gitHubRepoContext) {
       return;
     }
@@ -71,7 +54,7 @@ async function updateDiagnostics(
         repository: gitHubRepoContext.name,
       },
       document.uri.fsPath,
-      document.getText()
+      document.getText(),
     );
     if (result.diagnostics.length > 0) {
       collection.set(
@@ -79,11 +62,8 @@ async function updateDiagnostics(
         result.diagnostics.map((x) => ({
           severity: vscode.DiagnosticSeverity.Error,
           message: x.message,
-          range: new vscode.Range(
-            document.positionAt(x.pos[0]),
-            document.positionAt(x.pos[1])
-          ),
-        }))
+          range: new vscode.Range(document.positionAt(x.pos[0]), document.positionAt(x.pos[1])),
+        })),
       );
     }
   } else {
@@ -95,12 +75,10 @@ export class WorkflowHoverProvider implements vscode.HoverProvider {
   async provideHover(
     document: vscode.TextDocument,
     position: vscode.Position,
-    token: vscode.CancellationToken
+    token: vscode.CancellationToken,
   ): Promise<null | vscode.Hover> {
     try {
-      const gitHubRepoContext = await getGitHubContextForDocumentUri(
-        document.uri
-      );
+      const gitHubRepoContext = await getGitHubContextForDocumentUri(document.uri);
       if (!gitHubRepoContext) {
         return null;
       }
@@ -112,7 +90,7 @@ export class WorkflowHoverProvider implements vscode.HoverProvider {
         },
         document.uri.fsPath,
         document.getText(),
-        document.offsetAt(position)
+        document.offsetAt(position),
       );
 
       if (hoverResult?.description) {
@@ -129,18 +107,14 @@ export class WorkflowHoverProvider implements vscode.HoverProvider {
   }
 }
 
-export class WorkflowCompletionItemProvider
-  implements vscode.CompletionItemProvider
-{
+export class WorkflowCompletionItemProvider implements vscode.CompletionItemProvider {
   async provideCompletionItems(
     document: vscode.TextDocument,
     position: vscode.Position,
-    cancellationToken: vscode.CancellationToken
+    cancellationToken: vscode.CancellationToken,
   ): Promise<vscode.CompletionItem[]> {
     try {
-      const gitHubRepoContext = await getGitHubContextForDocumentUri(
-        document.uri
-      );
+      const gitHubRepoContext = await getGitHubContextForDocumentUri(document.uri);
       if (!gitHubRepoContext) {
         return [];
       }
@@ -152,15 +126,12 @@ export class WorkflowCompletionItemProvider
         },
         document.uri.fsPath,
         document.getText(),
-        document.offsetAt(position)
+        document.offsetAt(position),
       );
 
       if (completionResult.length > 0) {
         return completionResult.map((x) => {
-          const completionItem = new vscode.CompletionItem(
-            x.value,
-            vscode.CompletionItemKind.Constant
-          );
+          const completionItem = new vscode.CompletionItem(x.value, vscode.CompletionItemKind.Constant);
 
           // Fix the replacement range. By default VS Code looks for the current word, which leads to duplicate
           // replacements for something like `runs-|` which auto-completes to `runs-runs-on`
@@ -169,8 +140,8 @@ export class WorkflowCompletionItemProvider
               position.line,
               Math.max(0, position.character - x.value.length),
               position.line,
-              position.character
-            )
+              position.character,
+            ),
           );
           for (let i = x.value.length; i >= 0; --i) {
             if (text.endsWith(x.value.substr(0, i))) {
@@ -178,16 +149,14 @@ export class WorkflowCompletionItemProvider
                 position.line,
                 Math.max(0, position.character - i),
                 position.line,
-                position.character
+                position.character,
               );
               break;
             }
           }
 
           if (x.description) {
-            completionItem.documentation = new vscode.MarkdownString(
-              x.description
-            );
+            completionItem.documentation = new vscode.MarkdownString(x.description);
           }
 
           return completionItem;

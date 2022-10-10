@@ -7,7 +7,7 @@ export class WorkflowStepNode extends vscode.TreeItem {
   constructor(
     public readonly gitHubRepoContext: GitHubRepoContext,
     public readonly job: WorkflowJob,
-    public readonly step: WorkflowStep
+    public readonly step: WorkflowStep,
   ) {
     super(step.name);
 

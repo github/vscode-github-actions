@@ -23,13 +23,11 @@ export function registerReRunWorkflowRun(context: vscode.ExtensionContext) {
             run_id: run.id,
           });
         } catch (e: any) {
-          vscode.window.showErrorMessage(
-            `Could not rerun workflow: '${e.message}'`
-          );
+          vscode.window.showErrorMessage(`Could not rerun workflow: '${e.message}'`);
         }
 
         vscode.commands.executeCommand("github-actions.explorer.refresh");
-      }
-    )
+      },
+    ),
   );
 }
