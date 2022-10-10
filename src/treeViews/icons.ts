@@ -26,10 +26,7 @@ export function getIconForWorkflowRun(runOrJob: IStatusAndConclusion) {
 
 function _getIconForWorkflowrun(
   runOrJob: IStatusAndConclusion
-):
-  | string
-  | vscode.ThemeIcon
-  | { light: string | vscode.Uri; dark: string | vscode.Uri } {
+): string | vscode.ThemeIcon | { light: string | vscode.Uri; dark: string | vscode.Uri } {
   switch (runOrJob.status) {
     case "completed": {
       switch (runOrJob.conclusion) {
@@ -59,9 +56,7 @@ function _getIconForWorkflowrun(
 }
 
 /** Get one of the built-in VS Code icons */
-export function getCodIconForWorkflowrun(
-  runOrJob?: IStatusAndConclusion
-): string {
+export function getCodIconForWorkflowrun(runOrJob?: IStatusAndConclusion): string {
   if (!runOrJob) {
     return "circle-outline";
   }

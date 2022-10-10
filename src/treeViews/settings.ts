@@ -11,26 +11,19 @@ import { SelfHostedRunnersNode } from "./settings/selfHostedRunnersNode";
 import { SettingsExplorerNode } from "./settings/types";
 import { getGitHubContext } from "../git/repository";
 
-export class SettingsTreeProvider
-  implements vscode.TreeDataProvider<SettingsExplorerNode>
-{
-  private _onDidChangeTreeData =
-    new vscode.EventEmitter<SettingsExplorerNode | null>();
+export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExplorerNode> {
+  private _onDidChangeTreeData = new vscode.EventEmitter<SettingsExplorerNode | null>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   refresh(): void {
     this._onDidChangeTreeData.fire(null);
   }
 
-  getTreeItem(
-    element: SettingsExplorerNode
-  ): vscode.TreeItem | Thenable<vscode.TreeItem> {
+  getTreeItem(element: SettingsExplorerNode): vscode.TreeItem | Thenable<vscode.TreeItem> {
     return element;
   }
 
-  async getChildren(
-    element?: SettingsExplorerNode | undefined
-  ): Promise<SettingsExplorerNode[]> {
+  async getChildren(element?: SettingsExplorerNode | undefined): Promise<SettingsExplorerNode[]> {
     const gitHubContext = await getGitHubContext();
     if (!gitHubContext) {
       return [];
