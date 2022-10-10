@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { GitHubRepoContext, getCurrentBranch } from "../../git/repository";
+import { getCurrentBranch, GitHubRepoContext } from "../../git/repository";
 
 import { NoRunForBranchNode } from "./noRunForBranchNode";
 import { WorkflowRunNode } from "../workflows/workflowRunNode";

@@ -1,9 +1,9 @@
 import * as vscode from "vscode";
 
 import {
-  GitHubRepoContext,
   getGitHead,
   getGitHubContextForWorkspaceUri,
+  GitHubRepoContext,
 } from "../git/repository";
 import { getWorkflowUri, parseWorkflow } from "../workflow/workflow";
 

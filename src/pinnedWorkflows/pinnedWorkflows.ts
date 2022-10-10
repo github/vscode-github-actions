@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 
 import {
-  GitHubRepoContext,
   getGitHubContextForWorkspaceUri,
+  GitHubRepoContext,
 } from "../git/repository";
 import {
   getPinnedWorkflows,
