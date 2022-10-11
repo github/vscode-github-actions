@@ -1,3 +1,7 @@
+# Improvements in progress
+
+GitHub is currently working on officially supporting this extension. Read more about our plans in our [public roadmap issue](https://github.com/github/roadmap/issues/564). We will be dedicating resources to cleaning up the extension, squashing bugs, and more so your experience with Actions in VS Code is better than ever!
+
 # GitHub Actions for VS Code
 
 [![Build](https://github.com/cschleiden/vscode-github-actions/actions/workflows/build.yml/badge.svg)](https://github.com/cschleiden/vscode-github-actions/actions/workflows/build.yml)
