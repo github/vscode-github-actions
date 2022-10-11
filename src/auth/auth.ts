@@ -1,6 +1,9 @@
 import * as vscode from "vscode";
 
-import { orgFeaturesEnabled, updateOrgFeaturesEnabled } from "../configuration/configuration";
+import {
+  orgFeaturesEnabled,
+  updateOrgFeaturesEnabled
+} from "../configuration/configuration";
 
 import { resetGitHubContext } from "../git/repository";
 
@@ -14,17 +17,23 @@ export function registerListeners(context: vscode.ExtensionContext): void {
       if (e.provider.id === AUTH_PROVIDER_ID) {
         await enableOrgFeatures();
       }
-    }),
+    })
   );
 }
 
 export async function getSession(): Promise<vscode.AuthenticationSession> {
-  const existingSession = await vscode.authentication.getSession(AUTH_PROVIDER_ID, getScopes(), {
-    createIfNone: true,
-  });
+  const existingSession = await vscode.authentication.getSession(
+    AUTH_PROVIDER_ID,
+    getScopes(),
+    {
+      createIfNone: true,
+    }
+  );
 
   if (!existingSession) {
-    throw new Error("Could not get token from the GitHub authentication provider. \nPlease sign-in and allow access.");
+    throw new Error(
+      "Could not get token from the GitHub authentication provider. \nPlease sign-in and allow access."
+    );
   }
 
   return existingSession;

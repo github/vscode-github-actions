@@ -14,7 +14,8 @@ interface On {
 }
 
 function getEvents(doc: any): On[] {
-  let trigger: string | string[] | { [trigger: string]: any | undefined } = doc.on;
+  let trigger: string | string[] | { [trigger: string]: any | undefined } =
+    doc.on;
 
   const on: On[] = [];
 
@@ -28,7 +29,7 @@ function getEvents(doc: any): On[] {
     on.push(
       ...trigger.map((t) => ({
         event: t,
-      })),
+      }))
     );
   } else if (typeof trigger == "object") {
     on.push(
@@ -42,14 +43,16 @@ function getEvents(doc: any): On[] {
           branches: t?.branches,
           schedule: t?.schedule,
         };
-      }),
+      })
     );
   }
 
   return on;
 }
 
-export async function getContextStringForWorkflow(path: string): Promise<string> {
+export async function getContextStringForWorkflow(
+  path: string
+): Promise<string> {
   try {
     const content = await vscode.workspace.fs.readFile(vscode.Uri.file(path));
     const file = Buffer.from(content).toString("utf8");
@@ -80,13 +83,16 @@ export async function getContextStringForWorkflow(path: string): Promise<string>
  *
  * @param path Path for workflow. E.g., `.github/workflows/somebuild.yaml`
  */
-export function getWorkflowUri(gitHubRepoContext: GitHubRepoContext, path: string): vscode.Uri | null {
+export function getWorkflowUri(
+  gitHubRepoContext: GitHubRepoContext,
+  path: string
+): vscode.Uri | null {
   return vscode.Uri.joinPath(gitHubRepoContext.workspaceUri, path);
 }
 
 export async function parseWorkflow(
   uri: vscode.Uri,
-  gitHubRepoContext: GitHubRepoContext,
+  gitHubRepoContext: GitHubRepoContext
 ): Promise<Workflow | undefined> {
   try {
     const b = await vscode.workspace.fs.readFile(uri);
@@ -97,7 +103,7 @@ export async function parseWorkflow(
         repository: gitHubRepoContext.name,
       },
       basename(uri.fsPath),
-      workflowInput,
+      workflowInput
     );
     return doc.workflow;
   } catch {

@@ -4,8 +4,15 @@ import { LogScheme } from "./constants";
 /**
  * @param displayName Must not contain '/'
  */
-export function buildLogURI(displayName: string, owner: string, repo: string, jobId: number): vscode.Uri {
-  return vscode.Uri.parse(`${LogScheme}://${owner}/${repo}/${displayName}?${jobId}`);
+export function buildLogURI(
+  displayName: string,
+  owner: string,
+  repo: string,
+  jobId: number
+): vscode.Uri {
+  return vscode.Uri.parse(
+    `${LogScheme}://${owner}/${repo}/${displayName}?${jobId}`
+  );
 }
 
 export function parseUri(uri: vscode.Uri): {

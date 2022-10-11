@@ -42,6 +42,6 @@ export async function getWorkflowNodes(gitHubRepoContext: GitHubRepoContext) {
       }
 
       return new WorkflowNode(gitHubRepoContext, wf, parsedWorkflow);
-    }),
+    })
   );
 }

@@ -1,6 +1,10 @@
 import * as vscode from "vscode";
 
-import { getGitHead, getGitHubContextForWorkspaceUri, GitHubRepoContext } from "../git/repository";
+import {
+  GitHubRepoContext,
+  getGitHead,
+  getGitHubContextForWorkspaceUri,
+} from "../git/repository";
 import { getWorkflowUri, parseWorkflow } from "../workflow/workflow";
 
 import { Workflow } from "../model";
@@ -28,12 +32,15 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
         }
 
         // Parse
-        const workspaceFolder = vscode.workspace.getWorkspaceFolder(workflowUri);
+        const workspaceFolder =
+          vscode.workspace.getWorkspaceFolder(workflowUri);
         if (!workspaceFolder) {
           return;
         }
 
-        const gitHubRepoContext = await getGitHubContextForWorkspaceUri(workspaceFolder.uri);
+        const gitHubRepoContext = await getGitHubContextForWorkspaceUri(
+          workspaceFolder.uri
+        );
         if (!gitHubRepoContext) {
           return;
         }
@@ -44,16 +51,25 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
         }
 
         let selectedEvent: string | undefined;
-        if (workflow.on.workflow_dispatch !== undefined && workflow.on.repository_dispatch !== undefined) {
-          selectedEvent = await vscode.window.showQuickPick(["repository_dispatch", "workflow_dispatch"], {
-            placeHolder: "Which event to trigger?",
-          });
+        if (
+          workflow.on.workflow_dispatch !== undefined &&
+          workflow.on.repository_dispatch !== undefined
+        ) {
+          selectedEvent = await vscode.window.showQuickPick(
+            ["repository_dispatch", "workflow_dispatch"],
+            {
+              placeHolder: "Which event to trigger?",
+            }
+          );
           if (!selectedEvent) {
             return;
           }
         }
 
-        if ((!selectedEvent || selectedEvent === "workflow_dispatch") && workflow.on.workflow_dispatch !== undefined) {
+        if (
+          (!selectedEvent || selectedEvent === "workflow_dispatch") &&
+          workflow.on.workflow_dispatch !== undefined
+        ) {
           const ref = await vscode.window.showInputBox({
             prompt: "Enter ref to trigger workflow on",
             value: (await getGitHead()) || gitHubRepoContext.defaultBranch,
@@ -68,11 +84,15 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
 
               for (const definedInput of Object.keys(definedInputs)) {
                 const value = await vscode.window.showInputBox({
-                  prompt: `Value for input ${definedInput} ${definedInputs[definedInput].required ? "[required]" : ""}`,
+                  prompt: `Value for input ${definedInput} ${
+                    definedInputs[definedInput].required ? "[required]" : ""
+                  }`,
                   value: definedInputs[definedInput].default,
                 });
                 if (!value && definedInputs[definedInput].required) {
-                  vscode.window.showErrorMessage(`Input ${definedInput} is required`);
+                  vscode.window.showErrorMessage(
+                    `Input ${definedInput} is required`
+                  );
                   return;
                 }
 
@@ -83,7 +103,10 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
             }
 
             try {
-              const relativeWorkflowPath = vscode.workspace.asRelativePath(workflowUri, false);
+              const relativeWorkflowPath = vscode.workspace.asRelativePath(
+                workflowUri,
+                false
+              );
 
               await gitHubRepoContext.client.actions.createWorkflowDispatch({
                 owner: gitHubRepoContext.owner,
@@ -93,9 +116,14 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
                 inputs,
               });
 
-              vscode.window.setStatusBarMessage(`GitHub Actions: Workflow event dispatched`, 2000);
+              vscode.window.setStatusBarMessage(
+                `GitHub Actions: Workflow event dispatched`,
+                2000
+              );
             } catch (error) {
-              vscode.window.showErrorMessage(`Could not create workflow dispatch: ${error.message}`);
+              vscode.window.showErrorMessage(
+                `Could not create workflow dispatch: ${error.message}`
+              );
             }
           }
         } else if (
@@ -106,9 +134,12 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
           const event_types = workflow.on.repository_dispatch.types;
           if (Array.isArray(event_types) && event_types?.length > 0) {
             const custom_type = "✐ Enter custom type";
-            const selection = await vscode.window.showQuickPick([custom_type, ...event_types], {
-              placeHolder: "Select an event_type to dispatch",
-            });
+            const selection = await vscode.window.showQuickPick(
+              [custom_type, ...event_types],
+              {
+                placeHolder: "Select an event_type to dispatch",
+              }
+            );
 
             if (selection === undefined) {
               return;
@@ -132,12 +163,15 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
               client_payload: {},
             });
 
-            vscode.window.setStatusBarMessage(`GitHub Actions: Repository event '${event_type}' dispatched`, 2000);
+            vscode.window.setStatusBarMessage(
+              `GitHub Actions: Repository event '${event_type}' dispatched`,
+              2000
+            );
           }
         }
 
         vscode.commands.executeCommand("github-actions.explorer.refresh");
-      },
-    ),
+      }
+    )
   );
 }

@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { getWorkflowNodes, WorkflowsRepoNode } from "./workflows/workflowsRepoNode";
+import { WorkflowsRepoNode, getWorkflowNodes } from "./workflows/workflowsRepoNode";
 import { log, logDebug, logError } from "../log";
 
 import { AuthenticationNode } from "./shared/authenticationNode";

@@ -15,6 +15,8 @@ export class RepoSecretsNode extends vscode.TreeItem {
       repo: this.gitHubRepoContext.name,
     });
 
-    return result.data.secrets.map((s) => new RepoSecretNode(this.gitHubRepoContext, s));
+    return result.data.secrets.map(
+      (s) => new RepoSecretNode(this.gitHubRepoContext, s)
+    );
   }
 }

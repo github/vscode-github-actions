@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { getSettingNodes, SettingsRepoNode } from "./settings/settingsRepoNode";
+import { SettingsRepoNode, getSettingNodes } from "./settings/settingsRepoNode";
 
 import { EnvironmentNode } from "./settings/environmentNode";
 import { EnvironmentsNode } from "./settings/environmentsNode";

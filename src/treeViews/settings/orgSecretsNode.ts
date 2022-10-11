@@ -19,6 +19,8 @@ export class OrgSecretsNode extends vscode.TreeItem {
       org: this.gitHubRepoContext.owner,
     });
 
-    return result.data.secrets.map((s) => new OrgSecretNode(this.gitHubRepoContext, s));
+    return result.data.secrets.map(
+      (s) => new OrgSecretNode(this.gitHubRepoContext, s)
+    );
   }
 }

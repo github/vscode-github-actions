@@ -14,23 +14,27 @@ interface UnPinWorkflowCommandOptions {
 
 export function registerUnPinWorkflow(context: vscode.ExtensionContext) {
   context.subscriptions.push(
-    vscode.commands.registerCommand("github-actions.workflow.unpin", async (args: UnPinWorkflowCommandOptions) => {
-      const { gitHubRepoContext, wf } = args;
+    vscode.commands.registerCommand(
+      "github-actions.workflow.unpin",
+      async (args: UnPinWorkflowCommandOptions) => {
+        const { gitHubRepoContext, wf } = args;
 
-      if (!wf) {
-        return;
+        if (!wf) {
+          return;
+        }
+
+        const workflowFullPath = getWorkflowUri(gitHubRepoContext, wf.path);
+        if (!workflowFullPath) {
+          return;
+        }
+
+        const relativeWorkflowPath =
+          vscode.workspace.asRelativePath(workflowFullPath);
+        await unpinWorkflow(relativeWorkflowPath);
+
+        args.updateContextValue();
+        vscode.commands.executeCommand("github-actions.explorer.refresh");
       }
-
-      const workflowFullPath = getWorkflowUri(gitHubRepoContext, wf.path);
-      if (!workflowFullPath) {
-        return;
-      }
-
-      const relativeWorkflowPath = vscode.workspace.asRelativePath(workflowFullPath);
-      await unpinWorkflow(relativeWorkflowPath);
-
-      args.updateContextValue();
-      vscode.commands.executeCommand("github-actions.explorer.refresh");
-    }),
+    )
   );
 }

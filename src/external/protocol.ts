@@ -12,7 +12,7 @@ export enum ProtocolType {
   HTTP,
   SSH,
   GIT,
-  OTHER,
+  OTHER
 }
 
 export class Protocol {
@@ -24,7 +24,9 @@ export class Protocol {
   public repositoryName: string = "";
 
   public get nameWithOwner(): string {
-    return this.owner ? `${this.owner}/${this.repositoryName}` : this.repositoryName;
+    return this.owner
+      ? `${this.owner}/${this.repositoryName}`
+      : this.repositoryName;
   }
 
   //@ts-ignore
@@ -47,7 +49,7 @@ export class Protocol {
     } catch (e) {
       // Logger.appendLine(`Failed to parse '${uriString}'`);
       vscode.window.showWarningMessage(
-        `Unable to parse remote '${uriString}'. Please check that it is correctly formatted.`,
+        `Unable to parse remote '${uriString}'. Please check that it is correctly formatted.`
       );
     }
   }
@@ -88,7 +90,9 @@ export class Protocol {
     if (matches && matches.length >= 2) {
       // normalize to fix #903.
       // www.github.com will redirect anyways, so this is safe in this specific case, but potentially not in others.
-      return matches[1].toLocaleLowerCase() === "www.github.com" ? "github.com" : matches[1];
+      return matches[1].toLocaleLowerCase() === "www.github.com"
+        ? "github.com"
+        : matches[1];
     }
 
     return "";
@@ -132,12 +136,17 @@ export class Protocol {
     }
 
     let scheme = "https";
-    if (this.url && (this.url.scheme === "http" || this.url.scheme === "https")) {
+    if (
+      this.url &&
+      (this.url.scheme === "http" || this.url.scheme === "https")
+    ) {
       scheme = this.url.scheme;
     }
 
     try {
-      return vscode.Uri.parse(`${scheme}://${this.host.toLocaleLowerCase()}/${this.nameWithOwner.toLocaleLowerCase()}`);
+      return vscode.Uri.parse(
+        `${scheme}://${this.host.toLocaleLowerCase()}/${this.nameWithOwner.toLocaleLowerCase()}`
+      );
     } catch (e) {
       return;
     }
@@ -171,7 +180,12 @@ export class Protocol {
     return;
   }
 
-  update(change: { type?: ProtocolType; host?: string; owner?: string; repositoryName?: string }): Protocol {
+  update(change: {
+    type?: ProtocolType;
+    host?: string;
+    owner?: string;
+    repositoryName?: string;
+  }): Protocol {
     if (change.type) {
       this.type = change.type;
     }
@@ -202,6 +216,9 @@ export class Protocol {
       return false;
     }
 
-    return normalizeUri.toString().toLocaleLowerCase() === otherNormalizeUri.toString().toLocaleLowerCase();
+    return (
+      normalizeUri.toString().toLocaleLowerCase() ===
+      otherNormalizeUri.toString().toLocaleLowerCase()
+    );
   }
 }

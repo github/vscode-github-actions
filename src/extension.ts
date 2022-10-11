@@ -50,27 +50,43 @@ export function activate(context: vscode.ExtensionContext) {
   //
 
   const workflowTreeProvider = new WorkflowsTreeProvider();
-  context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.workflows", workflowTreeProvider));
+  context.subscriptions.push(
+    vscode.window.registerTreeDataProvider(
+      "github-actions.workflows",
+      workflowTreeProvider
+    )
+  );
 
   const settingsTreeProvider = new SettingsTreeProvider();
-  context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.settings", settingsTreeProvider));
+  context.subscriptions.push(
+    vscode.window.registerTreeDataProvider(
+      "github-actions.settings",
+      settingsTreeProvider
+    )
+  );
 
   const currentBranchTreeProvider = new CurrentBranchTreeProvider();
   context.subscriptions.push(
-    vscode.window.registerTreeDataProvider("github-actions.current-branch", currentBranchTreeProvider),
+    vscode.window.registerTreeDataProvider(
+      "github-actions.current-branch",
+      currentBranchTreeProvider
+    )
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand("github-actions.explorer.refresh", () => {
       workflowTreeProvider.refresh();
       settingsTreeProvider.refresh();
-    }),
+    })
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("github-actions.explorer.current-branch.refresh", () => {
-      currentBranchTreeProvider.refresh();
-    }),
+    vscode.commands.registerCommand(
+      "github-actions.explorer.current-branch.refresh",
+      () => {
+        currentBranchTreeProvider.refresh();
+      }
+    )
   );
 
   (async () => {
@@ -128,11 +144,17 @@ export function activate(context: vscode.ExtensionContext) {
   // Log providers
   //
   context.subscriptions.push(
-    vscode.workspace.registerTextDocumentContentProvider(LogScheme, new WorkflowStepLogProvider()),
+    vscode.workspace.registerTextDocumentContentProvider(
+      LogScheme,
+      new WorkflowStepLogProvider()
+    )
   );
 
   context.subscriptions.push(
-    vscode.languages.registerFoldingRangeProvider({ scheme: LogScheme }, new WorkflowStepLogFoldingProvider()),
+    vscode.languages.registerFoldingRangeProvider(
+      { scheme: LogScheme },
+      new WorkflowStepLogFoldingProvider()
+    )
   );
 
   context.subscriptions.push(
@@ -140,8 +162,8 @@ export function activate(context: vscode.ExtensionContext) {
       {
         scheme: LogScheme,
       },
-      new WorkflowStepLogSymbolProvider(),
-    ),
+      new WorkflowStepLogSymbolProvider()
+    )
   );
 
   //

@@ -4,7 +4,7 @@ const commandRE = /##\[[a-z]+\]/gm;
 
 export enum Type {
   Setup,
-  Step,
+  Step
 }
 
 export interface LogSection {
@@ -38,7 +38,7 @@ export function parseLog(log: string): LogInfo {
     name: "Setup",
     type: Type.Setup,
     start: 0,
-    end: 1,
+    end: 1
   };
 
   // Assume there is always the setup section
@@ -47,7 +47,7 @@ export function parseLog(log: string): LogInfo {
   const colorInfo: LogColorInfo[] = [];
 
   let currentRange: LogSection | null = null;
-  const lines = log.split(/\n|\r/).filter((l) => !!l);
+  const lines = log.split(/\n|\r/).filter(l => !!l);
   let lineIdx = 0;
 
   for (const line of lines) {
@@ -71,7 +71,7 @@ export function parseLog(log: string): LogInfo {
         name,
         type: Type.Step,
         start: lineIdx,
-        end: lineIdx + 1,
+        end: lineIdx + 1
       };
     }
 
@@ -88,7 +88,7 @@ export function parseLog(log: string): LogInfo {
         line: lineIdx,
         color: parseCustomColor(colorConfig),
         start: match.index,
-        end: match.index + text.length,
+        end: match.index + text.length
       });
 
       // Remove from output
@@ -106,7 +106,7 @@ export function parseLog(log: string): LogInfo {
   return {
     updatedLog: lines.join("\n"),
     sections,
-    colorFormats: colorInfo,
+    colorFormats: colorInfo
   };
 }
 
