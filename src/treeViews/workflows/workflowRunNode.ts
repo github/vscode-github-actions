@@ -13,10 +13,7 @@ export class WorkflowRunNode extends vscode.TreeItem {
     public readonly run: WorkflowRun,
     public readonly workflowName?: string
   ) {
-    super(
-      `${workflowName ? workflowName + " " : ""}#${run.id}`,
-      vscode.TreeItemCollapsibleState.Collapsed
-    );
+    super(`${workflowName ? workflowName + " " : ""}#${run.id}`, vscode.TreeItemCollapsibleState.Collapsed);
 
     this.description = `${run.event} (${(run.head_sha || "").substr(0, 7)})`;
 
@@ -40,12 +37,11 @@ export class WorkflowRunNode extends vscode.TreeItem {
   async getJobs(): Promise<WorkflowJobNode[]> {
     logDebug("Getting workflow jobs");
 
-    const result =
-      await this.gitHubRepoContext.client.actions.listJobsForWorkflowRun({
-        owner: this.gitHubRepoContext.owner,
-        repo: this.gitHubRepoContext.name,
-        run_id: this.run.id,
-      });
+    const result = await this.gitHubRepoContext.client.actions.listJobsForWorkflowRun({
+      owner: this.gitHubRepoContext.owner,
+      repo: this.gitHubRepoContext.name,
+      run_id: this.run.id,
+    });
 
     const resp = result.data;
     const jobs: WorkflowJob[] = (resp as any).jobs;

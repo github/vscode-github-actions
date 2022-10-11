@@ -1,9 +1,6 @@
 import * as vscode from "vscode";
 
-import {
-  CurrentBranchRepoNode,
-  getCurrentBranchWorkflowRunNodes,
-} from "./current-branch/currentBranchRepoNode";
+import { CurrentBranchRepoNode, getCurrentBranchWorkflowRunNodes } from "./current-branch/currentBranchRepoNode";
 import { getCurrentBranch, getGitHubContext } from "../git/repository";
 
 import { NoRunForBranchNode } from "./current-branch/noRunForBranchNode";
@@ -19,26 +16,19 @@ type CurrentBranchTreeNode =
   | WorkflowStepNode
   | NoRunForBranchNode;
 
-export class CurrentBranchTreeProvider
-  implements vscode.TreeDataProvider<CurrentBranchTreeNode>
-{
-  private _onDidChangeTreeData =
-    new vscode.EventEmitter<CurrentBranchTreeNode | null>();
+export class CurrentBranchTreeProvider implements vscode.TreeDataProvider<CurrentBranchTreeNode> {
+  private _onDidChangeTreeData = new vscode.EventEmitter<CurrentBranchTreeNode | null>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   refresh(): void {
     this._onDidChangeTreeData.fire(null);
   }
 
-  getTreeItem(
-    element: CurrentBranchTreeNode
-  ): vscode.TreeItem | Thenable<vscode.TreeItem> {
+  getTreeItem(element: CurrentBranchTreeNode): vscode.TreeItem | Thenable<vscode.TreeItem> {
     return element;
   }
 
-  async getChildren(
-    element?: CurrentBranchTreeNode | undefined
-  ): Promise<CurrentBranchTreeNode[]> {
+  async getChildren(element?: CurrentBranchTreeNode | undefined): Promise<CurrentBranchTreeNode[]> {
     if (!element) {
       const gitHubContext = await getGitHubContext();
       if (!gitHubContext) {
@@ -46,9 +36,7 @@ export class CurrentBranchTreeProvider
       }
 
       if (gitHubContext.repos.length === 1) {
-        return (
-          (await getCurrentBranchWorkflowRunNodes(gitHubContext.repos[0])) || []
-        );
+        return (await getCurrentBranchWorkflowRunNodes(gitHubContext.repos[0])) || [];
       }
 
       if (gitHubContext.repos.length > 1) {

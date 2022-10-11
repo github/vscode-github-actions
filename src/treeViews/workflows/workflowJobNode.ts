@@ -5,17 +5,8 @@ import { getIconForWorkflowRun } from "../icons";
 import { WorkflowStepNode } from "./workflowStepNode";
 
 export class WorkflowJobNode extends vscode.TreeItem {
-  constructor(
-    public readonly gitHubRepoContext: GitHubRepoContext,
-    public readonly job: WorkflowJob
-  ) {
-    super(
-      job.name,
-      (job.steps &&
-        job.steps.length > 0 &&
-        vscode.TreeItemCollapsibleState.Collapsed) ||
-        undefined
-    );
+  constructor(public readonly gitHubRepoContext: GitHubRepoContext, public readonly job: WorkflowJob) {
+    super(job.name, (job.steps && job.steps.length > 0 && vscode.TreeItemCollapsibleState.Collapsed) || undefined);
 
     this.contextValue = "job";
     if (this.job.status === "completed") {
@@ -30,8 +21,6 @@ export class WorkflowJobNode extends vscode.TreeItem {
   }
 
   async getSteps(): Promise<WorkflowStepNode[]> {
-    return (this.job.steps || []).map(
-      (s) => new WorkflowStepNode(this.gitHubRepoContext, this.job, s)
-    );
+    return (this.job.steps || []).map((s) => new WorkflowStepNode(this.gitHubRepoContext, this.job, s));
   }
 }

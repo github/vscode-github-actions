@@ -26,44 +26,27 @@ export function onPinnedWorkflowsChange(handler: () => void) {
 }
 
 export function getPinnedWorkflows(): string[] {
-  return getConfiguration().get<string[]>(
-    getSettingsKey("workflows.pinned.workflows"),
-    []
-  );
+  return getConfiguration().get<string[]>(getSettingsKey("workflows.pinned.workflows"), []);
 }
 
 export async function pinWorkflow(workflow: string) {
-  const pinedWorkflows = Array.from(
-    new Set(getPinnedWorkflows()).add(workflow)
-  );
-  await getConfiguration().update(
-    getSettingsKey("workflows.pinned.workflows"),
-    pinedWorkflows
-  );
+  const pinedWorkflows = Array.from(new Set(getPinnedWorkflows()).add(workflow));
+  await getConfiguration().update(getSettingsKey("workflows.pinned.workflows"), pinedWorkflows);
 }
 
 export async function unpinWorkflow(workflow: string) {
   const x = new Set(getPinnedWorkflows());
   x.delete(workflow);
   const pinnedWorkflows = Array.from(x);
-  await getConfiguration().update(
-    getSettingsKey("workflows.pinned.workflows"),
-    pinnedWorkflows
-  );
+  await getConfiguration().update(getSettingsKey("workflows.pinned.workflows"), pinnedWorkflows);
 }
 
 export function isPinnedWorkflowsRefreshEnabled(): boolean {
-  return getConfiguration().get<boolean>(
-    getSettingsKey("workflows.pinned.refresh.enabled"),
-    false
-  );
+  return getConfiguration().get<boolean>(getSettingsKey("workflows.pinned.refresh.enabled"), false);
 }
 
 export function pinnedWorkflowsRefreshInterval(): number {
-  return getConfiguration().get<number>(
-    getSettingsKey("workflows.pinned.refresh.interval"),
-    60
-  );
+  return getConfiguration().get<number>(getSettingsKey("workflows.pinned.refresh.interval"), 60);
 }
 
 export function orgFeaturesEnabled(): boolean {
@@ -71,16 +54,9 @@ export function orgFeaturesEnabled(): boolean {
 }
 
 export async function updateOrgFeaturesEnabled(enabled: boolean) {
-  await getConfiguration().update(
-    getSettingsKey("org-features"),
-    enabled,
-    true
-  );
+  await getConfiguration().update(getSettingsKey("org-features"), enabled, true);
 }
 
 export function getRemoteName(): string {
-  return getConfiguration().get<string>(
-    getSettingsKey("remote-name"),
-    "origin"
-  );
+  return getConfiguration().get<string>(getSettingsKey("remote-name"), "origin");
 }

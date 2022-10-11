@@ -4,7 +4,7 @@ import { LogInfo } from "./model";
 const timestampRE = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{7}Z/;
 
 const timestampDecorationType = vscode.window.createTextEditorDecorationType({
-  color: "#99999959"
+  color: "#99999959",
 });
 
 const background = {
@@ -16,7 +16,7 @@ const background = {
   "45": "#881798",
   "46": "#3a96dd",
   "47": "#cccccc",
-  "100": "#767676"
+  "100": "#767676",
 } as { [key: string]: string };
 
 const foreground = {
@@ -28,13 +28,10 @@ const foreground = {
   "35": "#881798",
   "36": "#3a96dd",
   "37": "#cccccc",
-  "90": "#767676"
+  "90": "#767676",
 } as { [key: string]: string };
 
-export function updateDecorations(
-  activeEditor: vscode.TextEditor,
-  logInfo: LogInfo
-) {
+export function updateDecorations(activeEditor: vscode.TextEditor, logInfo: LogInfo) {
   if (!activeEditor) {
     return;
   }
@@ -44,12 +41,12 @@ export function updateDecorations(
   activeEditor.setDecorations(
     timestampDecorationType,
     Array.from(Array(numberOfLines).keys())
-      .filter(i => {
+      .filter((i) => {
         const line = activeEditor.document.lineAt(i).text;
         return timestampRE.test(line);
       })
-      .map(i => ({
-        range: new vscode.Range(i, 0, i, 28) // timestamps always have 28 chars
+      .map((i) => ({
+        range: new vscode.Range(i, 0, i, 28), // timestamps always have 28 chars
       }))
   );
 
@@ -59,25 +56,16 @@ export function updateDecorations(
   } = {};
 
   for (const colorFormat of logInfo.colorFormats) {
-    const range = new vscode.Range(
-      colorFormat.line,
-      colorFormat.start,
-      colorFormat.line,
-      colorFormat.end
-    );
+    const range = new vscode.Range(colorFormat.line, colorFormat.start, colorFormat.line, colorFormat.end);
 
     const key = `${colorFormat.color.foreground}-${colorFormat.color.background}`;
     if (!ctypes[key]) {
       ctypes[key] = {
         type: vscode.window.createTextEditorDecorationType({
-          color:
-            colorFormat.color.foreground &&
-            foreground[colorFormat.color.foreground],
-          backgroundColor:
-            colorFormat.color.background &&
-            background[colorFormat.color.background]
+          color: colorFormat.color.foreground && foreground[colorFormat.color.foreground],
+          backgroundColor: colorFormat.color.background && background[colorFormat.color.background],
         }),
-        ranges: [range]
+        ranges: [range],
       };
     } else {
       ctypes[key].ranges.push(range);

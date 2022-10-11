@@ -10,8 +10,7 @@ import { getRemoteName } from "../configuration/configuration";
 import { Protocol } from "../external/protocol";
 
 async function getGitExtension(): Promise<API | undefined> {
-  const gitExtension =
-    vscode.extensions.getExtension<GitExtension>("vscode.git");
+  const gitExtension = vscode.extensions.getExtension<GitExtension>("vscode.git");
   if (gitExtension) {
     if (!gitExtension.isActive) {
       await gitExtension.activate();
@@ -66,13 +65,8 @@ export async function getGitHubUrls(): Promise<
         logDebug("Find `origin` remote for repository", r.rootUri.path);
         await r.status();
 
-        const originRemote = r.state.remotes.filter(
-          (remote) => remote.name === remoteName
-        );
-        if (
-          originRemote.length > 0 &&
-          originRemote[0].pushUrl?.indexOf("github.com") !== -1
-        ) {
+        const originRemote = r.state.remotes.filter((remote) => remote.name === remoteName);
+        if (originRemote.length > 0 && originRemote[0].pushUrl?.indexOf("github.com") !== -1) {
           const url = originRemote[0].pushUrl!;
 
           return {
@@ -96,8 +90,7 @@ export async function getGitHubUrls(): Promise<
   // if (!git) {
   // Support for virtual workspaces
   const isVirtualWorkspace =
-    vscode.workspace.workspaceFolders &&
-    vscode.workspace.workspaceFolders.every((f) => f.uri.scheme !== "file");
+    vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.every((f) => f.uri.scheme !== "file");
   if (isVirtualWorkspace) {
     logDebug("Found virtual workspace");
 
@@ -189,9 +182,7 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
           id: repoInfo.data.id,
           defaultBranch: `refs/heads/${repoInfo.data.default_branch}`,
           ownerIsOrg: repoInfo.data.owner?.type === "Organization",
-          orgFeaturesEnabled:
-            session.scopes.find((x) => x.toLocaleLowerCase() === "admin:org") !=
-            null,
+          orgFeaturesEnabled: session.scopes.find((x) => x.toLocaleLowerCase() === "admin:org") != null,
         };
       })
     );
@@ -218,10 +209,7 @@ export async function resetGitHubContext() {
   await getGitHubContext();
 }
 
-export async function getGitHubContextForRepo(
-  owner: string,
-  name: string
-): Promise<GitHubRepoContext | undefined> {
+export async function getGitHubContextForRepo(owner: string, name: string): Promise<GitHubRepoContext | undefined> {
   const gitHubContext = await getGitHubContext();
   if (!gitHubContext) {
     return undefined;
@@ -241,9 +229,7 @@ export async function getGitHubContextForWorkspaceUri(
   return gitHubContext.reposByUri.get(workspaceUri.toString());
 }
 
-export async function getGitHubContextForDocumentUri(
-  documentUri: vscode.Uri
-): Promise<GitHubRepoContext | undefined> {
+export async function getGitHubContextForDocumentUri(documentUri: vscode.Uri): Promise<GitHubRepoContext | undefined> {
   const gitHubContext = await getGitHubContext();
   if (!gitHubContext) {
     return undefined;
@@ -257,9 +243,7 @@ export async function getGitHubContextForDocumentUri(
   return getGitHubContextForWorkspaceUri(workspaceUri.uri);
 }
 
-export function getCurrentBranch(
-  state: RepositoryState | undefined
-): string | undefined {
+export function getCurrentBranch(state: RepositoryState | undefined): string | undefined {
   if (!state) {
     return;
   }

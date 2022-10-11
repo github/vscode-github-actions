@@ -24,9 +24,7 @@ export function registerOpenWorkflowFile(context: vscode.ExtensionContext) {
         }
 
         // File not found in workspace
-        vscode.window.showErrorMessage(
-          `Workflow ${wf.path} not found in current workspace`
-        );
+        vscode.window.showErrorMessage(`Workflow ${wf.path} not found in current workspace`);
       }
     )
   );
