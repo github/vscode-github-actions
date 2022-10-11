@@ -1,6 +1,7 @@
-# Improvements in progress
+> **Note**
+>
+> GitHub is currently working on officially supporting this extension. Read more about our plans in our [public roadmap issue](https://github.com/github/roadmap/issues/564). We will be dedicating resources to cleaning up the extension, squashing bugs, and more so your experience with Actions in VS Code is better than ever!
 
-GitHub is currently working on officially supporting this extension. Read more about our plans in our [public roadmap issue](https://github.com/github/roadmap/issues/564). We will be dedicating resources to cleaning up the extension, squashing bugs, and more so your experience with Actions in VS Code is better than ever!
 
 # GitHub Actions for VS Code
 
