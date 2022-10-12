@@ -44,8 +44,6 @@ export async function getCurrentBranchWorkflowRunNodes(
   }
 
   return runs.map((wr) => {
-    const wf = wr.workflow_id;
-
     // TODO: Do we need to include the workflow name here?
     return new WorkflowRunNode(gitHubRepoContext, wr, wr.name ?? undefined);
   });

@@ -39,6 +39,7 @@ function _getIconForWorkflowrun(
         case "cancelled":
           return getAbsoluteIconPath("conclusions/cancelled.svg");
       }
+      break;
     }
 
     case "queued":
@@ -73,6 +74,7 @@ export function getCodIconForWorkflowrun(runOrJob?: IStatusAndConclusion): strin
         case "cancelled":
           return "circle-slash";
       }
+      break;
     }
 
     case "queued":

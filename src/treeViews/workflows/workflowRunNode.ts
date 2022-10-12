@@ -31,7 +31,7 @@ export class WorkflowRunNode extends vscode.TreeItem {
     }
 
     this.iconPath = getIconForWorkflowRun(this.run);
-    this.tooltip = `${this.run.status} ${this.run.conclusion || ""}`;
+    this.tooltip = `${this.run.status || ""} ${this.run.conclusion || ""}`;
   }
 
   async getJobs(): Promise<WorkflowJobNode[]> {
@@ -44,7 +44,7 @@ export class WorkflowRunNode extends vscode.TreeItem {
     });
 
     const resp = result.data;
-    const jobs: WorkflowJob[] = (resp as any).jobs;
+    const jobs: WorkflowJob[] = resp.jobs;
 
     return jobs.map((job) => new WorkflowJobNode(this.gitHubRepoContext, job));
   }

@@ -13,7 +13,7 @@ export class SettingsRepoNode extends vscode.TreeItem {
     this.contextValue = "settings-repo";
   }
 
-  async getSettings(): Promise<SettingsExplorerNode[]> {
+  getSettings(): SettingsExplorerNode[] {
     return getSettingNodes(this.gitHubRepoContext);
   }
 }
