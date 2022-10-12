@@ -3,11 +3,11 @@ import * as vscode from "vscode";
 import { extname } from "path";
 import { getContextStringForWorkflow } from "../workflow/workflow";
 
-export function initWorkflowDocumentTracking(context: vscode.ExtensionContext) {
+export async function initWorkflowDocumentTracking(context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(onDidChangeActiveTextEditor));
 
   // Check for initial document
-  onDidChangeActiveTextEditor(vscode.window.activeTextEditor);
+  await onDidChangeActiveTextEditor(vscode.window.activeTextEditor);
 }
 
 async function onDidChangeActiveTextEditor(editor?: vscode.TextEditor) {
@@ -19,13 +19,13 @@ async function onDidChangeActiveTextEditor(editor?: vscode.TextEditor) {
   if (
     !editor.document.uri?.fsPath ||
     editor.document.uri.scheme !== "file" ||
-    (extname(editor.document.fileName) !== ".yaml" && extname(editor.document.fileName) !== ".yml") ||
+    !extname(editor.document.fileName).match(/\.ya?ml/) ||
     editor.document.fileName.indexOf(".github/workflows") === -1
   ) {
     return;
   }
 
-  vscode.commands.executeCommand(
+  await vscode.commands.executeCommand(
     "setContext",
     "githubActions:activeFile",
     await getContextStringForWorkflow(editor.document.fileName)
