@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 
+import { logError } from "../log";
 import { complete, hover, parse } from "github-actions-parser";
 
 import { getGitHubContextForDocumentUri } from "../git/repository";
@@ -8,7 +9,7 @@ const WorkflowSelector = {
   pattern: "**/.github/workflows/*.{yaml,yml}",
 };
 
-export function init(context: vscode.ExtensionContext) {
+export async function init(context: vscode.ExtensionContext) {
   // Register auto-complete
   vscode.languages.registerCompletionItemProvider(WorkflowSelector, new WorkflowCompletionItemProvider(), ".");
 
@@ -19,12 +20,12 @@ export function init(context: vscode.ExtensionContext) {
   //
   const collection = vscode.languages.createDiagnosticCollection("github-actions");
   if (vscode.window.activeTextEditor) {
-    updateDiagnostics(vscode.window.activeTextEditor.document, collection);
+    await updateDiagnostics(vscode.window.activeTextEditor.document, collection);
   }
   context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor((editor) => {
+    vscode.window.onDidChangeActiveTextEditor(async (editor) => {
       if (editor) {
-        updateDiagnostics(editor.document, collection);
+        await updateDiagnostics(editor.document, collection);
       }
     })
   );
@@ -74,8 +75,7 @@ async function updateDiagnostics(
 export class WorkflowHoverProvider implements vscode.HoverProvider {
   async provideHover(
     document: vscode.TextDocument,
-    position: vscode.Position,
-    token: vscode.CancellationToken
+    position: vscode.Position
   ): Promise<null | vscode.Hover> {
     try {
       const gitHubRepoContext = await getGitHubContextForDocumentUri(document.uri);
@@ -98,9 +98,15 @@ export class WorkflowHoverProvider implements vscode.HoverProvider {
           contents: [hoverResult?.description],
         };
       }
-    } catch (e) {
+    } catch (e: unknown) {
       // TODO: CS: handle
-      debugger;
+      // Probably coming up from repository:
+      // repository.ts:getGitHubContext re-throws
+      // -> called from repository.ts:getGitHubContextForWorkspaceUri
+      // -> called from diagnostics.ts:getGitHubContextForDocumentUri
+      // -> called from diagnostics.ts:provideHover
+      // -> caught here
+      logError(e as Error, "Caught error in provideHover");
     }
 
     return null;
@@ -110,8 +116,7 @@ export class WorkflowHoverProvider implements vscode.HoverProvider {
 export class WorkflowCompletionItemProvider implements vscode.CompletionItemProvider {
   async provideCompletionItems(
     document: vscode.TextDocument,
-    position: vscode.Position,
-    cancellationToken: vscode.CancellationToken
+    position: vscode.Position
   ): Promise<vscode.CompletionItem[]> {
     try {
       const gitHubRepoContext = await getGitHubContextForDocumentUri(document.uri);
