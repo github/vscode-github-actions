@@ -3,6 +3,7 @@
 "use strict";
 
 const path = require("path");
+const webpack = require('webpack');
 
 /**@type {import('webpack').Configuration}*/
 const config = {
@@ -11,10 +12,19 @@ const config = {
   externals: {
     vscode: "commonjs vscode",
   },
+  plugins: [
+    new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer'],
+  }),
+  ],
   resolve: {
     extensions: [".ts", ".js"],
     alias: {
       "universal-user-agent$": "universal-user-agent/dist-node/index.js"
+    },
+    fallback: {
+      "buffer": require.resolve("buffer/"),
+      "path": require.resolve("path-browserify")
     }
   },
   module: {
