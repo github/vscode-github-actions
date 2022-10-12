@@ -369,7 +369,7 @@
     "watch": "webpack --watch --mode development --env esbuild --info-verbosity verbose",
     "open-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
     "lint": "eslint . --ext .ts",
-    "lint-fix": "eslint . --ext .ts --fix; prettier --config .prettierrc.json 'src/**/*.ts' --write",
+    "lint-fix": "eslint . --ext .ts --fix; prettier --config .prettierrc.json 'src/**/*.ts' '*.json' --write",
     "prettier": "prettier .",
     "prettier-fix": "prettier --write ."
   },
