@@ -146,11 +146,6 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
 
   try {
     const git = await getGitExtension();
-    // if (!git) {
-    //   logDebug("Could not find git extension");
-    //   return;
-    // }
-
     const session = await getSession();
     const client = getClient(session.accessToken);
 

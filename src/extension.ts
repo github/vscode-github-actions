@@ -30,17 +30,17 @@ import { SettingsTreeProvider } from "./treeViews/settings";
 import { WorkflowsTreeProvider } from "./treeViews/workflows";
 import { init } from "./workflow/diagnostics";
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
   initLogger();
   log("Activating GitHub Actions extension...");
 
   // Prefetch git repository origin url
-  getGitHubContext();
+  await getGitHubContext();
 
   initResources(context);
 
   initConfiguration(context);
-  initPinnedWorkflows(context);
+  await initPinnedWorkflows(context);
 
   // Track workflow
   initWorkflowDocumentTracking(context);
@@ -73,7 +73,7 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
-  (async () => {
+  await (async () => {
     const context = await getGitHubContext();
     if (!context) {
       logDebug("Could not register branch change event handler");
@@ -91,20 +91,18 @@ export function activate(context: vscode.ExtensionContext) {
         // When the current head/branch changes, or the number of commits ahead changes (which indicates
         // a push), refresh the current-branch view
         if (
-          repo.repositoryState!.HEAD?.name !== currentHeadName ||
-          (repo.repositoryState!.HEAD?.ahead || 0) < (currentAhead || 0)
+          (repo.repositoryState?.HEAD?.name ?? false) !== currentHeadName ||
+          (repo.repositoryState?.HEAD?.ahead || 0) < (currentAhead || 0)
         ) {
-          currentHeadName = repo.repositoryState!.HEAD?.name;
-          currentAhead = repo.repositoryState!.HEAD?.ahead;
+          currentHeadName = repo.repositoryState?.HEAD?.name;
+          currentAhead = repo.repositoryState?.HEAD?.ahead;
           currentBranchTreeProvider.refresh();
         }
       });
     }
   })();
 
-  //
   // Commands
-  //
 
   registerOpenWorkflowRun(context);
   registerOpenWorkflowFile(context);
@@ -124,9 +122,8 @@ export function activate(context: vscode.ExtensionContext) {
   registerPinWorkflow(context);
   registerUnPinWorkflow(context);
 
-  //
   // Log providers
-  //
+
   context.subscriptions.push(
     vscode.workspace.registerTextDocumentContentProvider(LogScheme, new WorkflowStepLogProvider())
   );
@@ -144,9 +141,8 @@ export function activate(context: vscode.ExtensionContext) {
     )
   );
 
-  //
   // Editing features
-  //
+
   init(context);
 
   log("...initialized");
