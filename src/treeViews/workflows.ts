@@ -1,9 +1,6 @@
 import * as vscode from "vscode";
 
-import {
-  WorkflowsRepoNode,
-  getWorkflowNodes,
-} from "./workflows/workflowsRepoNode";
+import { WorkflowsRepoNode, getWorkflowNodes } from "./workflows/workflowsRepoNode";
 import { log, logDebug, logError } from "../log";
 
 import { AuthenticationNode } from "./shared/authenticationNode";
@@ -19,14 +16,12 @@ type WorkflowsTreeNode =
   | AuthenticationNode
   | NoGitHubRepositoryNode
   | WorkflowNode
+  | WorkflowJobNode
   | WorkflowRunNode
   | WorkflowStepNode;
 
-export class WorkflowsTreeProvider
-  implements vscode.TreeDataProvider<WorkflowsTreeNode>
-{
-  private _onDidChangeTreeData =
-    new vscode.EventEmitter<WorkflowsTreeNode | null>();
+export class WorkflowsTreeProvider implements vscode.TreeDataProvider<WorkflowsTreeNode> {
+  private _onDidChangeTreeData = new vscode.EventEmitter<WorkflowsTreeNode | null>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   refresh(): void {
@@ -34,15 +29,11 @@ export class WorkflowsTreeProvider
     this._onDidChangeTreeData.fire(null);
   }
 
-  getTreeItem(
-    element: WorkflowsTreeNode
-  ): vscode.TreeItem | Thenable<vscode.TreeItem> {
+  getTreeItem(element: WorkflowsTreeNode): vscode.TreeItem | Thenable<vscode.TreeItem> {
     return element;
   }
 
-  async getChildren(
-    element?: WorkflowsTreeNode | undefined
-  ): Promise<WorkflowsTreeNode[]> {
+  async getChildren(element?: WorkflowsTreeNode | undefined): Promise<WorkflowsTreeNode[]> {
     logDebug("Getting root children");
 
     if (!element) {
@@ -66,11 +57,7 @@ export class WorkflowsTreeProvider
       } catch (e: any) {
         logError(e as Error, "Failed to get GitHub context");
 
-        if (
-          `${e?.message}`.startsWith(
-            "Could not get token from the GitHub authentication provider."
-          )
-        ) {
+        if (`${e?.message}`.startsWith("Could not get token from the GitHub authentication provider.")) {
           return [new AuthenticationNode()];
         }
 

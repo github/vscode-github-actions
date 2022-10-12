@@ -1,3 +1,7 @@
 {
-  "github-actions.workflows.pinned.workflows": [".github/workflows/build.yml"]
+  "github-actions.workflows.pinned.workflows": [".github/workflows/build.yml"],
+  "editor.formatOnSave": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
 }

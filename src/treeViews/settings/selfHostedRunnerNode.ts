@@ -13,9 +13,7 @@ export class SelfHostedRunnerNode extends vscode.TreeItem {
     this.contextValue = "runner";
     this.tooltip = this.selfHostedRunner.status;
     this.iconPath = getAbsoluteIconPath(
-      this.selfHostedRunner.status == "online"
-        ? "runner-online.svg"
-        : "runner-offline.svg"
+      this.selfHostedRunner.status == "online" ? "runner-online.svg" : "runner-offline.svg"
     );
   }
 }

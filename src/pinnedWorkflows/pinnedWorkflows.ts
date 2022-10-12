@@ -1,9 +1,6 @@
 import * as vscode from "vscode";
 
-import {
-  GitHubRepoContext,
-  getGitHubContextForWorkspaceUri,
-} from "../git/repository";
+import { GitHubRepoContext, getGitHubContextForWorkspaceUri } from "../git/repository";
 import {
   getPinnedWorkflows,
   isPinnedWorkflowsRefreshEnabled,
@@ -45,10 +42,7 @@ async function _init() {
     refreshTimer = undefined;
   }
   if (isPinnedWorkflowsRefreshEnabled()) {
-    refreshTimer = setInterval(
-      refreshPinnedWorkflows,
-      pinnedWorkflowsRefreshInterval() * 1000
-    );
+    refreshTimer = setInterval(refreshPinnedWorkflows, pinnedWorkflowsRefreshInterval() * 1000);
   }
 }
 
@@ -63,10 +57,10 @@ async function updatePinnedWorkflows() {
 
   const firstWorkspaceFolderName = vscode.workspace.workspaceFolders[0].name;
 
-  let workflowsByWorkspace = new Map<string, string[]>();
+  const workflowsByWorkspace = new Map<string, string[]>();
 
   for (const pinnedWorkflow of pinnedWorkflows) {
-    let workflowPath = pinnedWorkflow;
+    const workflowPath = pinnedWorkflow;
     if (pinnedWorkflow.startsWith(".github/")) {
       // No workspace, attribute to the first workspace folder
       workflowsByWorkspace.set(firstWorkspaceFolderName, [
@@ -75,24 +69,17 @@ async function updatePinnedWorkflows() {
       ]);
     } else {
       const [workSpaceName, ...r] = workflowPath.split(sep);
-      workflowsByWorkspace.set(workSpaceName, [
-        r.join(sep),
-        ...(workflowsByWorkspace.get(workSpaceName) || []),
-      ]);
+      workflowsByWorkspace.set(workSpaceName, [r.join(sep), ...(workflowsByWorkspace.get(workSpaceName) || [])]);
     }
   }
 
   for (const workspaceName of workflowsByWorkspace.keys()) {
-    const workspace = vscode.workspace.workspaceFolders?.find(
-      (x) => x.name === workspaceName
-    );
+    const workspace = vscode.workspace.workspaceFolders?.find((x) => x.name === workspaceName);
     if (!workspace) {
       continue;
     }
 
-    const gitHubRepoContext = await getGitHubContextForWorkspaceUri(
-      workspace.uri
-    );
+    const gitHubRepoContext = await getGitHubContextForWorkspaceUri(workspace.uri);
     if (!gitHubRepoContext) {
       return;
     }
@@ -103,16 +90,9 @@ async function updatePinnedWorkflows() {
       repo: gitHubRepoContext.name,
     });
     const workflowNameByPath: { [id: string]: string } = {};
-    workflows.data.workflows.forEach(
-      (w) => (workflowNameByPath[w.path] = w.name)
-    );
-    for (const pinnedWorkflow of workflowsByWorkspace.get(workspaceName) ||
-      []) {
-      const pW = createPinnedWorkflow(
-        gitHubRepoContext,
-        pinnedWorkflow,
-        workflowNameByPath[pinnedWorkflow]
-      );
+    workflows.data.workflows.forEach((w) => (workflowNameByPath[w.path] = w.name));
+    for (const pinnedWorkflow of workflowsByWorkspace.get(workspaceName) || []) {
+      const pW = createPinnedWorkflow(gitHubRepoContext, pinnedWorkflow, workflowNameByPath[pinnedWorkflow]);
       await updatePinnedWorkflow(pW);
     }
   }
@@ -134,14 +114,8 @@ function clearPinnedWorkflows() {
   pinnedWorkflows.splice(0, pinnedWorkflows.length);
 }
 
-function createPinnedWorkflow(
-  gitHubRepoContext: GitHubRepoContext,
-  id: string,
-  name: string
-): PinnedWorkflow {
-  const statusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Left
-  );
+function createPinnedWorkflow(gitHubRepoContext: GitHubRepoContext, id: string, name: string): PinnedWorkflow {
+  const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
 
   const pinnedWorkflow = {
     gitHubRepoContext,
@@ -168,20 +142,14 @@ async function updatePinnedWorkflow(pinnedWorkflow: PinnedWorkflow) {
     const { total_count, workflow_runs } = runs.data;
     if (total_count == 0) {
       // Workflow has never run, set default text
-      pinnedWorkflow.statusBarItem.text = `$(${getCodIconForWorkflowrun()}) ${
-        pinnedWorkflow.workflowName
-      }`;
+      pinnedWorkflow.statusBarItem.text = `$(${getCodIconForWorkflowrun()}) ${pinnedWorkflow.workflowName}`;
       // Can't do anything without a run
       pinnedWorkflow.statusBarItem.command = undefined;
     }
     const mostRecentRun = workflow_runs[0] as WorkflowRun;
-    pinnedWorkflow.statusBarItem.text = `$(${getCodIconForWorkflowrun(
-      mostRecentRun
-    )}) ${pinnedWorkflow.workflowName}`;
+    pinnedWorkflow.statusBarItem.text = `$(${getCodIconForWorkflowrun(mostRecentRun)}) ${pinnedWorkflow.workflowName}`;
     if (mostRecentRun.conclusion === "failure") {
-      pinnedWorkflow.statusBarItem.backgroundColor = new vscode.ThemeColor(
-        "statusBarItem.errorBackground"
-      );
+      pinnedWorkflow.statusBarItem.backgroundColor = new vscode.ThemeColor("statusBarItem.errorBackground");
     } else {
       pinnedWorkflow.statusBarItem.backgroundColor = undefined;
     }

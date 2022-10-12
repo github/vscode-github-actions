@@ -11,11 +11,10 @@ export class SelfHostedRunnersNode extends vscode.TreeItem {
   }
 
   async getRunners(): Promise<vscode.TreeItem[]> {
-    const result =
-      await this.gitHubRepoContext.client.actions.listSelfHostedRunnersForRepo({
-        owner: this.gitHubRepoContext.owner,
-        repo: this.gitHubRepoContext.name,
-      });
+    const result = await this.gitHubRepoContext.client.actions.listSelfHostedRunnersForRepo({
+      owner: this.gitHubRepoContext.owner,
+      repo: this.gitHubRepoContext.name,
+    });
 
     const data = result.data.runners || [];
     return data.map((r) => new SelfHostedRunnerNode(this.gitHubRepoContext, r));

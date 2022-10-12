@@ -11,25 +11,13 @@ type GetElementType<T> = T extends (infer U)[] ? U : never;
 
 type OctokitData<
   Operation extends keyof RestEndpointMethods["actions"],
-  ResultProperty extends keyof Await<
-    ReturnType<RestEndpointMethods["actions"][Operation]>
-  >["data"]
-> = GetElementType<
-  Await<
-    ReturnType<RestEndpointMethods["actions"][Operation]>
-  >["data"][ResultProperty]
->;
+  ResultProperty extends keyof Await<ReturnType<RestEndpointMethods["actions"][Operation]>>["data"]
+> = GetElementType<Await<ReturnType<RestEndpointMethods["actions"][Operation]>>["data"][ResultProperty]>;
 
 type OctokitRepoData<
   Operation extends keyof RestEndpointMethods["repos"],
-  ResultProperty extends keyof Await<
-    ReturnType<RestEndpointMethods["repos"][Operation]>
-  >["data"]
-> = GetElementType<
-  Await<
-    ReturnType<RestEndpointMethods["repos"][Operation]>
-  >["data"][ResultProperty]
->;
+  ResultProperty extends keyof Await<ReturnType<RestEndpointMethods["repos"][Operation]>>["data"]
+> = GetElementType<Await<ReturnType<RestEndpointMethods["repos"][Operation]>>["data"][ResultProperty]>;
 
 //
 // Domain types
@@ -50,12 +38,6 @@ export type OrgSecret = OctokitData<"listOrgSecrets", "secrets">;
 
 export type Environment = OctokitRepoData<"getAllEnvironments", "environments">;
 
-export type EnvironmentSecret = OctokitData<
-  "listEnvironmentSecrets",
-  "secrets"
->;
+export type EnvironmentSecret = OctokitData<"listEnvironmentSecrets", "secrets">;
 
-export type SelfHostedRunner = OctokitData<
-  "listSelfHostedRunnersForRepo",
-  "runners"
->;
+export type SelfHostedRunner = OctokitData<"listSelfHostedRunnersForRepo", "runners">;
