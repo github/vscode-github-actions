@@ -91,7 +91,7 @@ export async function activate(context: vscode.ExtensionContext) {
         // When the current head/branch changes, or the number of commits ahead changes (which indicates
         // a push), refresh the current-branch view
         if (
-          (repo.repositoryState?.HEAD?.name ?? false) !== currentHeadName ||
+          repo.repositoryState?.HEAD?.name !== currentHeadName ||
           (repo.repositoryState?.HEAD?.ahead || 0) < (currentAhead || 0)
         ) {
           currentHeadName = repo.repositoryState?.HEAD?.name;

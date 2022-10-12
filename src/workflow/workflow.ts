@@ -13,8 +13,18 @@ interface On {
   schedule?: string[];
 }
 
-function getEvents(doc: any): On[] {
-  const trigger: string | string[] | { [trigger: string]: any | undefined } = doc.on;
+type EventTrigger = {
+  on: string | string[] | { [trigger: string]: string[] | undefined };
+}
+
+interface Trigger {
+  types?: string[];
+  branches?: string[];
+  schedule?: string[];
+}
+
+function getEvents(doc: string | object): On[] {
+  const trigger = (doc as EventTrigger).on;
 
   const on: On[] = [];
 
@@ -33,14 +43,13 @@ function getEvents(doc: any): On[] {
   } else if (typeof trigger == "object") {
     on.push(
       ...Object.keys(trigger).map((event) => {
-        // Work around typing :(
-        const t = (trigger as any)[event];
+        const t = (trigger as { [trigger: string]: Trigger | undefined })[event];
 
         return {
           event,
-          types: t?.types,
-          branches: t?.branches,
-          schedule: t?.schedule,
+          types: (t as Trigger).types,
+          branches: (t as Trigger).branches,
+          schedule: (t as Trigger).schedule,
         };
       })
     );
