@@ -24,7 +24,9 @@ const config = {
     },
     fallback: {
       "buffer": require.resolve("buffer/"),
-      "path": require.resolve("path-browserify")
+      "path": require.resolve("path-browserify"),
+      "crypto": require.resolve("crypto-browserify"),
+      "stream": require.resolve("stream-browserify")
     }
   },
   module: {
