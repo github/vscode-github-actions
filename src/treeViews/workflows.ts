@@ -54,7 +54,7 @@ export class WorkflowsTreeProvider implements vscode.TreeDataProvider<WorkflowsT
 
         log('No GitHub repositories found');
         return [];
-      } catch (e: unknown) {
+      } catch (e) {
         logError(e as Error, 'Failed to get GitHub context');
 
         if (`${(e as Error).message}`.startsWith('Could not get token from the GitHub authentication provider.')) {

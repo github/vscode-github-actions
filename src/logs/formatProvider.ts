@@ -58,8 +58,8 @@ export function updateDecorations(activeEditor: vscode.TextEditor, logInfo: LogI
   for (const colorFormat of logInfo.colorFormats) {
     const range = new vscode.Range(colorFormat.line, colorFormat.start, colorFormat.line, colorFormat.end);
 
-    // TODO find real names of colors
-    const key = `${colorFormat.color.foreground || 'fg_color'}-${colorFormat.color.background || 'bg_color'}`;
+    // TODO default to real colors
+    const key = `${colorFormat.color.foreground || ''}-${colorFormat.color.background || ''}`;
     if (!ctypes[key]) {
       ctypes[key] = {
         type: vscode.window.createTextEditorDecorationType({

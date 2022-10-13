@@ -39,7 +39,7 @@ async function updateDiagnostics(
   document: vscode.TextDocument,
   collection: vscode.DiagnosticCollection
 ): Promise<void> {
-  if (document && document.fileName.match('(.*)?.github/workflows/(.*).ya?ml')) {
+  if (document && document.fileName.match(/(.*)?\.github\/workflows\/(.*)\.ya?ml/)) {
     collection.clear();
 
     const gitHubRepoContext = await getGitHubContextForDocumentUri(document.uri);
@@ -93,7 +93,7 @@ export class WorkflowHoverProvider implements vscode.HoverProvider {
           contents: [hoverResult?.description]
         };
       }
-    } catch (e: unknown) {
+    } catch (e) {
       // TODO: CS: handle
       // Probably coming up from repository:
       // repository.ts:getGitHubContext re-throws
