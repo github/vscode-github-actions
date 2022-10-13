@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {parse as parseConfig} from 'ssh-config';
 
 const SSH_URL_RE = /^(?:([^@:]+)@)?([^:/]+):?(.+)$/;
@@ -99,6 +103,7 @@ function baseResolver(config: Config) {
 // }
 
 export function resolverFromConfig(text: string): ConfigResolver {
+  // This causes many linter issues, ignore them in whole file for now
   const config = parseConfig(text);
   return h => config.compute(h.Host);
 }
