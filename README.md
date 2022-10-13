@@ -2,6 +2,7 @@
 >
 > GitHub is currently working on officially supporting this extension. Read more about our plans in our [public roadmap issue](https://github.com/github/roadmap/issues/564). We will be dedicating resources to cleaning up the extension, squashing bugs, and more so your experience with Actions in VS Code is better than ever!
 
+
 # GitHub Actions for VS Code
 
 [![Build](https://github.com/cschleiden/vscode-github-actions/actions/workflows/build.yml/badge.svg)](https://github.com/cschleiden/vscode-github-actions/actions/workflows/build.yml)
@@ -14,7 +15,7 @@ Simple extension to interact with GitHub Actions from within VS Code.
 2. Open a repository with a `github.com` `origin` git remote
 3. When prompted, allow `GitHub Actions` access to your GitHub account:
 
-   ![Sign in via Accounts menu](./media/allow-access.png)
+    ![Sign in via Accounts menu](./media/allow-access.png)
 
 ## Features
 
@@ -49,6 +50,7 @@ Auto-complete and validate all webhook event payloads:
 See runs for workflows in the repository, drill into jobs and steps, and inspect logs:
 
 ![See workflows and runs for the current repository](./media/logs.gif)
+
 
 ### Other features
 
