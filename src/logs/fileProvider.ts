@@ -4,6 +4,10 @@ import {cacheLogInfo} from './logInfoProvider';
 import {parseLog} from './model';
 import {parseUri} from './scheme';
 
+interface OctokitStatus {
+  status: number
+}
+
 export class WorkflowStepLogProvider implements vscode.TextDocumentContentProvider {
   onDidChangeEmitter = new vscode.EventEmitter<vscode.Uri>();
   onDidChange = this.onDidChangeEmitter.event;
@@ -30,8 +34,7 @@ export class WorkflowStepLogProvider implements vscode.TextDocumentContentProvid
 
       return logInfo.updatedLog;
     } catch (e) {
-      const err = e as Error;
-      if ('status' in err && err.status === 410) {
+      if ('status' in (e as OctokitStatus) && (e as OctokitStatus).status === 410) {
         cacheLogInfo(uri, {
           colorFormats: [],
           sections: [],
@@ -42,7 +45,7 @@ export class WorkflowStepLogProvider implements vscode.TextDocumentContentProvid
       }
 
       console.error('Error loading logs', e);
-      return `Could not open logs, unhandled error: ${err.message}`;
+      return `Could not open logs, unhandled error: ${(e as Error).message}`;
     }
   }
 }
