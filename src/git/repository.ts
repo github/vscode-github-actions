@@ -67,12 +67,12 @@ export async function getGitHubUrls(): Promise<
 
         const originRemote = r.state.remotes.filter(remote => remote.name === remoteName);
         if (originRemote.length > 0 && originRemote[0].pushUrl?.indexOf('github.com') !== -1) {
-          const url = originRemote[0].pushUrl!;
+          const url = originRemote[0].pushUrl;
 
           return {
             workspaceUri: r.rootUri,
             url,
-            protocol: new Protocol(url)
+            protocol: new Protocol(url as string)
           };
         }
 
@@ -81,7 +81,11 @@ export async function getGitHubUrls(): Promise<
         return undefined;
       })
     );
-    return p.filter(x => !!x) as any;
+    return p.filter(x => Boolean(x)) as {
+      workspaceUri: vscode.Uri;
+      url: string;
+      protocol: Protocol;
+    }[];
   }
 
   // If we cannot find the git extension, assume for now that we are running a web context,
@@ -186,11 +190,11 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
       repos,
       reposByUri: new Map(repos.map(r => [r.workspaceUri.toString(), r]))
     });
-  } catch (e: any) {
+  } catch (e) {
     // Reset the context so the next attempt will try this flow again
     gitHubContext = undefined;
 
-    logError(e, 'Error getting GitHub context');
+    logError(e as Error, 'Error getting GitHub context');
 
     // Rethrow original error
     throw e;
