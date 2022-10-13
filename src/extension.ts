@@ -40,14 +40,12 @@ export async function activate(context: vscode.ExtensionContext) {
   initResources(context);
 
   initConfiguration(context);
-  await initPinnedWorkflows(context);
+  await initPinnedWorkflows();
 
   // Track workflow
-  initWorkflowDocumentTracking(context);
+  await initWorkflowDocumentTracking(context);
 
-  //
   // Tree views
-  //
 
   const workflowTreeProvider = new WorkflowsTreeProvider();
   context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.workflows", workflowTreeProvider));
@@ -143,7 +141,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // Editing features
 
-  init(context);
+  await init(context);
 
   log("...initialized");
 }

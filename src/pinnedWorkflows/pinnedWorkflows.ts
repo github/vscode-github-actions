@@ -25,11 +25,11 @@ interface PinnedWorkflow {
 }
 
 const pinnedWorkflows: PinnedWorkflow[] = [];
-let refreshTimer: /*NodeJS.Timeout*/ any | undefined;
+let refreshTimer: NodeJS.Timeout | undefined;
 
-export async function initPinnedWorkflows(context: vscode.ExtensionContext) {
+export async function initPinnedWorkflows() {
   // Register handler for configuration changes
-  onPinnedWorkflowsChange(_init);
+  onPinnedWorkflowsChange(() => _init);
 
   await _init();
 }
@@ -42,7 +42,7 @@ async function _init() {
     refreshTimer = undefined;
   }
   if (isPinnedWorkflowsRefreshEnabled()) {
-    refreshTimer = setInterval(refreshPinnedWorkflows, pinnedWorkflowsRefreshInterval() * 1000);
+    refreshTimer = setInterval(() => refreshPinnedWorkflows, pinnedWorkflowsRefreshInterval() * 1000);
   }
 }
 
@@ -136,7 +136,7 @@ async function updatePinnedWorkflow(pinnedWorkflow: PinnedWorkflow) {
     const runs = await gitHubRepoContext.client.actions.listWorkflowRuns({
       owner: gitHubRepoContext.owner,
       repo: gitHubRepoContext.name,
-      workflow_id: pinnedWorkflow.workflowId as any, // Workflow can also be a file name
+      workflow_id: pinnedWorkflow.workflowId, // Workflow can also be a file name
       per_page: 1,
     });
     const { total_count, workflow_runs } = runs.data;
