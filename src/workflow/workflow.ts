@@ -47,9 +47,9 @@ function getEvents(doc: string | object): On[] {
 
         return {
           event,
-          types: (t as Trigger).types,
-          branches: (t as Trigger).branches,
-          schedule: (t as Trigger).schedule
+          types: t?.types,
+          branches: t?.branches,
+          schedule: t?.schedule
         };
       })
     );

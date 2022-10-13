@@ -3,10 +3,7 @@ import {getGitHubContextForRepo} from '../git/repository';
 import {cacheLogInfo} from './logInfoProvider';
 import {parseLog} from './model';
 import {parseUri} from './scheme';
-
-interface OctokitStatus {
-  status: number
-}
+import {OctokitResponse} from '@octokit/types';
 
 export class WorkflowStepLogProvider implements vscode.TextDocumentContentProvider {
   onDidChangeEmitter = new vscode.EventEmitter<vscode.Uri>();
@@ -34,7 +31,8 @@ export class WorkflowStepLogProvider implements vscode.TextDocumentContentProvid
 
       return logInfo.updatedLog;
     } catch (e) {
-      if ('status' in (e as OctokitStatus) && (e as OctokitStatus).status === 410) {
+      const respErr = e as OctokitResponse<unknown, number>
+      if (respErr.status === 410) {
         cacheLogInfo(uri, {
           colorFormats: [],
           sections: [],
@@ -45,7 +43,7 @@ export class WorkflowStepLogProvider implements vscode.TextDocumentContentProvid
       }
 
       console.error('Error loading logs', e);
-      return `Could not open logs, unhandled error: ${(e as Error).message}`;
+      return `Could not open logs, unhandled error. HTTP status: ${respErr.status}`;
     }
   }
 }

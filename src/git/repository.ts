@@ -9,6 +9,12 @@ import {getSession} from '../auth/auth';
 import {getRemoteName} from '../configuration/configuration';
 import {Protocol} from '../external/protocol';
 
+interface GitHubUrls {
+  workspaceUri: vscode.Uri;
+  url: string;
+  protocol: Protocol;
+}
+
 async function getGitExtension(): Promise<API | undefined> {
   const gitExtension = vscode.extensions.getExtension<GitExtension>('vscode.git');
   if (gitExtension) {
@@ -46,12 +52,9 @@ export async function getGitHead(): Promise<string | undefined> {
     }
   }
 }
+
 export async function getGitHubUrls(): Promise<
-  | {
-      workspaceUri: vscode.Uri;
-      url: string;
-      protocol: Protocol;
-    }[]
+  | GitHubUrls[]
   | null
 > {
   const git = await getGitExtension();
@@ -81,11 +84,7 @@ export async function getGitHubUrls(): Promise<
         return undefined;
       })
     );
-    return p.filter(x => Boolean(x)) as {
-      workspaceUri: vscode.Uri;
-      url: string;
-      protocol: Protocol;
-    }[];
+    return p.filter(x => !!x) as GitHubUrls[];
   }
 
   // If we cannot find the git extension, assume for now that we are running a web context,
@@ -106,15 +105,16 @@ export async function getGitHubUrls(): Promise<
 
       const url = `https://github.com/${ghFolder.uri.path}`;
 
-      return [
+      const urls: [GitHubUrls] = [
         {
           workspaceUri: ghFolder.uri,
           url: url,
           protocol: new Protocol(url)
         }
-      ];
+      ]
+
+      return urls;
     }
-    // }
   }
 
   return null;
