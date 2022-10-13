@@ -3,8 +3,7 @@ import { getLogInfo } from "./logInfoProvider";
 
 export class WorkflowStepLogSymbolProvider implements vscode.DocumentSymbolProvider {
   provideDocumentSymbols(
-    document: vscode.TextDocument,
-    token: vscode.CancellationToken
+    document: vscode.TextDocument
   ): vscode.ProviderResult<vscode.SymbolInformation[] | vscode.DocumentSymbol[]> {
     const logInfo = getLogInfo(document.uri);
     if (!logInfo) {

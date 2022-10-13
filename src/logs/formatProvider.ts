@@ -52,13 +52,14 @@ export function updateDecorations(activeEditor: vscode.TextEditor, logInfo: LogI
 
   // Custom colors
   const ctypes: {
-    [key: string]: { type: vscode.TextEditorDecorationType; ranges: any[] };
+    [key: string]: { type: vscode.TextEditorDecorationType; ranges: vscode.Range[] };
   } = {};
 
   for (const colorFormat of logInfo.colorFormats) {
     const range = new vscode.Range(colorFormat.line, colorFormat.start, colorFormat.line, colorFormat.end);
 
-    const key = `${colorFormat.color.foreground}-${colorFormat.color.background}`;
+    // TODO find real names of colors
+    const key = `${colorFormat.color.foreground || "fg_color"}-${colorFormat.color.background || "bg_color"}`;
     if (!ctypes[key]) {
       ctypes[key] = {
         type: vscode.window.createTextEditorDecorationType({

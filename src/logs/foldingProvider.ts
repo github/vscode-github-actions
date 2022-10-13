@@ -3,9 +3,7 @@ import { getLogInfo } from "./logInfoProvider";
 
 export class WorkflowStepLogFoldingProvider implements vscode.FoldingRangeProvider {
   provideFoldingRanges(
-    document: vscode.TextDocument,
-    context: vscode.FoldingContext,
-    token: vscode.CancellationToken
+    document: vscode.TextDocument
   ): vscode.ProviderResult<vscode.FoldingRange[]> {
     const logInfo = getLogInfo(document.uri);
     if (!logInfo) {

@@ -23,14 +23,15 @@ export class WorkflowStepLogProvider implements vscode.TextDocumentContentProvid
         job_id: jobId,
       });
 
-      const log = result.data as any;
+      const log = result.data;
 
-      const logInfo = parseLog(log);
+      const logInfo = parseLog(log as string);
       cacheLogInfo(uri, logInfo);
 
       return logInfo.updatedLog;
     } catch (e) {
-      if ("status" in e && e.status === 410) {
+      const err = e as Error;
+      if ("status" in err && err.status === 410) {
         cacheLogInfo(uri, {
           colorFormats: [],
           sections: [],
