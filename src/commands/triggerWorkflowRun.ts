@@ -72,7 +72,7 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
                   value: definedInputs[definedInput].default
                 });
                 if (!value && definedInputs[definedInput].required) {
-                  vscode.window.showErrorMessage(`Input ${definedInput} is required`);
+                  await vscode.window.showErrorMessage(`Input ${definedInput} is required`);
                   return;
                 }
 
@@ -95,7 +95,7 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
 
               vscode.window.setStatusBarMessage(`GitHub Actions: Workflow event dispatched`, 2000);
             } catch (error) {
-              vscode.window.showErrorMessage(`Could not create workflow dispatch: ${error.message}`);
+              await vscode.window.showErrorMessage(`Could not create workflow dispatch: ${(error as Error).message}`);
             }
           }
         } else if (
@@ -136,7 +136,7 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
           }
         }
 
-        vscode.commands.executeCommand('github-actions.explorer.refresh');
+        await vscode.commands.executeCommand('github-actions.explorer.refresh');
       }
     )
   );

@@ -19,7 +19,7 @@ export function registerDeleteSecret(context: vscode.ExtensionContext) {
         secret_name: secret.name
       });
 
-      vscode.commands.executeCommand('github-actions.explorer.refresh');
+      await vscode.commands.executeCommand('github-actions.explorer.refresh');
     })
   );
 }

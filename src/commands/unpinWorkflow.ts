@@ -30,7 +30,7 @@ export function registerUnPinWorkflow(context: vscode.ExtensionContext) {
       await unpinWorkflow(relativeWorkflowPath);
 
       args.updateContextValue();
-      vscode.commands.executeCommand('github-actions.explorer.refresh');
+      await vscode.commands.executeCommand('github-actions.explorer.refresh');
     })
   );
 }

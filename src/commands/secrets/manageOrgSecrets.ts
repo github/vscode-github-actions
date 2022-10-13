@@ -15,7 +15,7 @@ export function registerManageOrgSecrets(context: vscode.ExtensionContext) {
         const gitHubContext = args.gitHubRepoContext;
 
         // Open link to manage org-secrets
-        vscode.commands.executeCommand(
+        await vscode.commands.executeCommand(
           'vscode.open',
           vscode.Uri.parse(`https://github.com/organizations/${gitHubContext.owner}/settings/secrets`)
         );

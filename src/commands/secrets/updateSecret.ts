@@ -39,7 +39,7 @@ export function registerUpdateSecret(context: vscode.ExtensionContext) {
           encrypted_value: encodeSecret(key, value)
         });
       } catch (e) {
-        vscode.window.showErrorMessage(e.message);
+        await vscode.window.showErrorMessage((e as Error).message);
       }
     })
   );

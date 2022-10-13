@@ -46,7 +46,7 @@ export class Protocol {
       }
     } catch (e) {
       // Logger.appendLine(`Failed to parse '${uriString}'`);
-      vscode.window.showWarningMessage(
+      void vscode.window.showWarningMessage(
         `Unable to parse remote '${uriString}'. Please check that it is correctly formatted.`
       );
     }
