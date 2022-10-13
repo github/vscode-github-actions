@@ -1,28 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {parse as parseConfig} from 'ssh-config';
+import {parse as parseConfig, Config, ConfigResolver} from 'ssh-config';
 
 const SSH_URL_RE = /^(?:([^@:]+)@)?([^:/]+):?(.+)$/;
 const URL_SCHEME_RE = /^([a-z-]+):\/\//;
-
-/**
- * SSH Config interface
- *
- * Note that this interface atypically capitalizes field names. This is for consistency
- * with SSH config files.
- */
-export interface Config {
-  Host: string;
-  [param: string]: string;
-}
-
-/**
- * ConfigResolvers take a config, resolve some additional data (perhaps using
- * a config file), and return a new Config.
- */
-export type ConfigResolver = (config: Config) => Config;
 
 /**
  * Parse and resolve an SSH url. Resolves host aliases using the configuration
