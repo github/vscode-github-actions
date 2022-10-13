@@ -8,7 +8,7 @@ interface OpenWorkflowRunCommandArgs {
 export function registerOpenWorkflowRun(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand('github-actions.workflow.run.open', async (args: OpenWorkflowRunCommandArgs) => {
-      const run: WorkflowRun = args.run;
+      const run = args.run;
       const url = run.html_url;
       await vscode.env.openExternal(vscode.Uri.parse(url));
     })
