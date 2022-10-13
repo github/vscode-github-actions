@@ -1,7 +1,6 @@
 /// <reference path='./git.d.ts'/>
 
 declare module 'tunnel';
-declare module 'ssh-config';
 
 declare module 'atob';
 declare module 'btoa';
