@@ -43,7 +43,7 @@ export class WorkflowStepLogProvider implements vscode.TextDocumentContentProvid
       }
 
       console.error('Error loading logs', e);
-      return `Could not open logs, unhandled error. HTTP status: ${respErr.status}`;
+      return `Could not open logs, unhandled error. ${(e as Error).message}`;
     }
   }
 }
