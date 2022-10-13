@@ -1,9 +1,9 @@
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 
-import { GitHubRepoContext } from "../git/repository";
-import { Workflow } from "../model";
-import { getWorkflowUri } from "../workflow/workflow";
-import { pinWorkflow } from "../configuration/configuration";
+import {GitHubRepoContext} from '../git/repository';
+import {Workflow} from '../model';
+import {getWorkflowUri} from '../workflow/workflow';
+import {pinWorkflow} from '../configuration/configuration';
 
 interface PinWorkflowCommandOptions {
   gitHubRepoContext: GitHubRepoContext;
@@ -14,8 +14,8 @@ interface PinWorkflowCommandOptions {
 
 export function registerPinWorkflow(context: vscode.ExtensionContext) {
   context.subscriptions.push(
-    vscode.commands.registerCommand("github-actions.workflow.pin", async (args: PinWorkflowCommandOptions) => {
-      const { gitHubRepoContext, wf } = args;
+    vscode.commands.registerCommand('github-actions.workflow.pin', async (args: PinWorkflowCommandOptions) => {
+      const {gitHubRepoContext, wf} = args;
 
       if (!wf) {
         return;
@@ -30,7 +30,7 @@ export function registerPinWorkflow(context: vscode.ExtensionContext) {
       await pinWorkflow(relativeWorkflowPath);
 
       args.updateContextValue();
-      vscode.commands.executeCommand("github-actions.explorer.refresh");
+      vscode.commands.executeCommand('github-actions.explorer.refresh');
     })
   );
 }

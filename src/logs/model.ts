@@ -1,10 +1,10 @@
 const ansiColorRE = /\u001b\[((?:\d+;?)+)m(.*)\u001b\[0m/gm;
-const groupMarker = "##[group]";
+const groupMarker = '##[group]';
 const commandRE = /##\[[a-z]+\]/gm;
 
 export enum Type {
   Setup,
-  Step,
+  Step
 }
 
 export interface LogSection {
@@ -35,10 +35,10 @@ export interface LogInfo {
 
 export function parseLog(log: string): LogInfo {
   let firstSection: LogSection | null = {
-    name: "Setup",
+    name: 'Setup',
     type: Type.Setup,
     start: 0,
-    end: 1,
+    end: 1
   };
 
   // Assume there is always the setup section
@@ -47,7 +47,7 @@ export function parseLog(log: string): LogInfo {
   const colorInfo: LogColorInfo[] = [];
 
   let currentRange: LogSection | null = null;
-  const lines = log.split(/\n|\r/).filter((l) => !!l);
+  const lines = log.split(/\n|\r/).filter(l => !!l);
   let lineIdx = 0;
 
   for (const line of lines) {
@@ -71,12 +71,12 @@ export function parseLog(log: string): LogInfo {
         name,
         type: Type.Step,
         start: lineIdx,
-        end: lineIdx + 1,
+        end: lineIdx + 1
       };
     }
 
     // Remove commands
-    lines[lineIdx] = line.replace(commandRE, "");
+    lines[lineIdx] = line.replace(commandRE, '');
 
     // Check for custom colors
     let match: RegExpExecArray | null;
@@ -88,7 +88,7 @@ export function parseLog(log: string): LogInfo {
         line: lineIdx,
         color: parseCustomColor(colorConfig),
         start: match.index,
-        end: match.index + text.length,
+        end: match.index + text.length
       });
 
       // Remove from output
@@ -104,16 +104,16 @@ export function parseLog(log: string): LogInfo {
   }
 
   return {
-    updatedLog: lines.join("\n"),
+    updatedLog: lines.join('\n'),
     sections,
-    colorFormats: colorInfo,
+    colorFormats: colorInfo
   };
 }
 
 function parseCustomColor(str: string): CustomColor {
   const ret: CustomColor = {};
 
-  const segments = str.split(";");
+  const segments = str.split(';');
   if (segments.length > 0) {
     ret.foreground = segments[0];
   }

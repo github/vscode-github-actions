@@ -1,16 +1,16 @@
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 
-import { WorkflowsRepoNode, getWorkflowNodes } from "./workflows/workflowsRepoNode";
-import { log, logDebug, logError } from "../log";
+import {WorkflowsRepoNode, getWorkflowNodes} from './workflows/workflowsRepoNode';
+import {log, logDebug, logError} from '../log';
 
-import { AuthenticationNode } from "./shared/authenticationNode";
-import { ErrorNode } from "./shared/errorNode";
-import { NoGitHubRepositoryNode } from "./shared/noGitHubRepositoryNode";
-import { WorkflowJobNode } from "./workflows/workflowJobNode";
-import { WorkflowNode } from "./workflows/workflowNode";
-import { WorkflowRunNode } from "./workflows/workflowRunNode";
-import { WorkflowStepNode } from "./workflows/workflowStepNode";
-import { getGitHubContext } from "../git/repository";
+import {AuthenticationNode} from './shared/authenticationNode';
+import {ErrorNode} from './shared/errorNode';
+import {NoGitHubRepositoryNode} from './shared/noGitHubRepositoryNode';
+import {WorkflowJobNode} from './workflows/workflowJobNode';
+import {WorkflowNode} from './workflows/workflowNode';
+import {WorkflowRunNode} from './workflows/workflowRunNode';
+import {WorkflowStepNode} from './workflows/workflowStepNode';
+import {getGitHubContext} from '../git/repository';
 
 type WorkflowsTreeNode =
   | AuthenticationNode
@@ -25,7 +25,7 @@ export class WorkflowsTreeProvider implements vscode.TreeDataProvider<WorkflowsT
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   refresh(): void {
-    logDebug("Refreshing workflow tree");
+    logDebug('Refreshing workflow tree');
     this._onDidChangeTreeData.fire(null);
   }
 
@@ -34,13 +34,13 @@ export class WorkflowsTreeProvider implements vscode.TreeDataProvider<WorkflowsT
   }
 
   async getChildren(element?: WorkflowsTreeNode | undefined): Promise<WorkflowsTreeNode[]> {
-    logDebug("Getting root children");
+    logDebug('Getting root children');
 
     if (!element) {
       try {
         const gitHubContext = await getGitHubContext();
         if (!gitHubContext) {
-          logDebug("could not get github context");
+          logDebug('could not get github context');
           return [];
         }
 
@@ -49,15 +49,15 @@ export class WorkflowsTreeProvider implements vscode.TreeDataProvider<WorkflowsT
             return getWorkflowNodes(gitHubContext.repos[0]);
           }
 
-          return gitHubContext.repos.map((r) => new WorkflowsRepoNode(r));
+          return gitHubContext.repos.map(r => new WorkflowsRepoNode(r));
         }
 
-        log("No GitHub repositories found");
+        log('No GitHub repositories found');
         return [];
       } catch (e: unknown) {
-        logError(e as Error, "Failed to get GitHub context");
+        logError(e as Error, 'Failed to get GitHub context');
 
-        if (`${(e as Error).message}`.startsWith("Could not get token from the GitHub authentication provider.")) {
+        if (`${(e as Error).message}`.startsWith('Could not get token from the GitHub authentication provider.')) {
           return [new AuthenticationNode()];
         }
 

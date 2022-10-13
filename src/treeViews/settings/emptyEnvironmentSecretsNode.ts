@@ -1,7 +1,7 @@
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 
 export class EmptyEnvironmentSecretsNode extends vscode.TreeItem {
   constructor() {
-    super("No environment secrets defined");
+    super('No environment secrets defined');
   }
 }

@@ -1,4 +1,4 @@
-import { parse as parseConfig } from "ssh-config";
+import {parse as parseConfig} from 'ssh-config';
 
 const SSH_URL_RE = /^(?:([^@:]+)@)?([^:/]+):?(.+)$/;
 const URL_SCHEME_RE = /^([a-z-]+):\/\//;
@@ -65,7 +65,7 @@ const parse = (url: string): Config | undefined => {
   const urlMatch = URL_SCHEME_RE.exec(url);
   if (urlMatch) {
     const [fullSchemePrefix, scheme] = urlMatch;
-    if (scheme === "ssh") {
+    if (scheme === 'ssh') {
       url = url.slice(fullSchemePrefix.length);
     } else {
       return;
@@ -76,13 +76,13 @@ const parse = (url: string): Config | undefined => {
     return;
   }
   const [, User, Host, path] = match;
-  return { User, Host, path };
+  return {User, Host, path};
 };
 
 function baseResolver(config: Config) {
   return {
     ...config,
-    HostName: config.Host,
+    HostName: config.Host
   };
 }
 
@@ -100,16 +100,16 @@ function baseResolver(config: Config) {
 
 export function resolverFromConfig(text: string): ConfigResolver {
   const config = parseConfig(text);
-  return (h) => config.compute(h.Host);
+  return h => config.compute(h.Host);
 }
 
 function chainResolvers(...chain: (ConfigResolver | undefined)[]): ConfigResolver {
-  const resolvers = chain.filter((x) => !!x) as ConfigResolver[];
+  const resolvers = chain.filter(x => !!x) as ConfigResolver[];
   return (config: Config) =>
     resolvers.reduce(
       (resolved, next) => ({
         ...resolved,
-        ...next(resolved),
+        ...next(resolved)
       }),
       config
     );

@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 
 let _context: vscode.ExtensionContext;
 export function initResources(context: vscode.ExtensionContext) {
@@ -16,7 +16,7 @@ export function getAbsoluteIconPath(relativeIconPath: string): {
 } {
   return {
     light: _context.asAbsolutePath(`resources/icons/light/${relativeIconPath}`),
-    dark: _context.asAbsolutePath(`resources/icons/dark/${relativeIconPath}`),
+    dark: _context.asAbsolutePath(`resources/icons/dark/${relativeIconPath}`)
   };
 }
 
@@ -26,67 +26,67 @@ export function getIconForWorkflowRun(runOrJob: IStatusAndConclusion) {
 
 function _getIconForWorkflowrun(
   runOrJob: IStatusAndConclusion
-): string | vscode.ThemeIcon | { light: string | vscode.Uri; dark: string | vscode.Uri } {
+): string | vscode.ThemeIcon | {light: string | vscode.Uri; dark: string | vscode.Uri} {
   switch (runOrJob.status) {
-    case "completed": {
+    case 'completed': {
       switch (runOrJob.conclusion) {
-        case "success":
-          return getAbsoluteIconPath("conclusions/success.svg");
+        case 'success':
+          return getAbsoluteIconPath('conclusions/success.svg');
 
-        case "failure":
-          return getAbsoluteIconPath("conclusions/failure.svg");
+        case 'failure':
+          return getAbsoluteIconPath('conclusions/failure.svg');
 
-        case "cancelled":
-          return getAbsoluteIconPath("conclusions/cancelled.svg");
+        case 'cancelled':
+          return getAbsoluteIconPath('conclusions/cancelled.svg');
       }
       break;
     }
 
-    case "queued":
-      return getAbsoluteIconPath("statuses/queued.svg");
+    case 'queued':
+      return getAbsoluteIconPath('statuses/queued.svg');
 
-    case "waiting":
-      return getAbsoluteIconPath("statuses/waiting.svg");
+    case 'waiting':
+      return getAbsoluteIconPath('statuses/waiting.svg');
 
-    case "inprogress":
-    case "in_progress":
-      return new vscode.ThemeIcon("sync~spin");
+    case 'inprogress':
+    case 'in_progress':
+      return new vscode.ThemeIcon('sync~spin');
   }
 
-  return "";
+  return '';
 }
 
 /** Get one of the built-in VS Code icons */
 export function getCodIconForWorkflowrun(runOrJob?: IStatusAndConclusion): string {
   if (!runOrJob) {
-    return "circle-outline";
+    return 'circle-outline';
   }
 
   switch (runOrJob.status) {
-    case "completed": {
+    case 'completed': {
       switch (runOrJob.conclusion) {
-        case "success":
-          return "pass";
+        case 'success':
+          return 'pass';
 
-        case "failure":
-          return "error";
+        case 'failure':
+          return 'error';
 
-        case "cancelled":
-          return "circle-slash";
+        case 'cancelled':
+          return 'circle-slash';
       }
       break;
     }
 
-    case "queued":
-      return "primitive-dot";
+    case 'queued':
+      return 'primitive-dot';
 
-    case "waiting":
-      return "bell";
+    case 'waiting':
+      return 'bell';
 
-    case "inprogress":
-    case "in_progress":
-      return "sync~spin";
+    case 'inprogress':
+    case 'in_progress':
+      return 'sync~spin';
   }
 
-  return "";
+  return '';
 }

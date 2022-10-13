@@ -1,47 +1,45 @@
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 
-import { logError } from "../log";
-import { complete, hover, parse } from "github-actions-parser";
+import {logError} from '../log';
+import {complete, hover, parse} from 'github-actions-parser';
 
-import { getGitHubContextForDocumentUri } from "../git/repository";
+import {getGitHubContextForDocumentUri} from '../git/repository';
 
 const WorkflowSelector = {
-  pattern: "**/.github/workflows/*.{yaml,yml}",
+  pattern: '**/.github/workflows/*.{yaml,yml}'
 };
 
 export async function init(context: vscode.ExtensionContext) {
   // Register auto-complete
-  vscode.languages.registerCompletionItemProvider(WorkflowSelector, new WorkflowCompletionItemProvider(), ".");
+  vscode.languages.registerCompletionItemProvider(WorkflowSelector, new WorkflowCompletionItemProvider(), '.');
 
   vscode.languages.registerHoverProvider(WorkflowSelector, new WorkflowHoverProvider());
 
   //
   // Provide diagnostics information
   //
-  const collection = vscode.languages.createDiagnosticCollection("github-actions");
+  const collection = vscode.languages.createDiagnosticCollection('github-actions');
   if (vscode.window.activeTextEditor) {
     await updateDiagnostics(vscode.window.activeTextEditor.document, collection);
   }
   context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor(async (editor) => {
+    vscode.window.onDidChangeActiveTextEditor(async editor => {
       if (editor) {
         await updateDiagnostics(editor.document, collection);
       }
     })
   );
 
-  context.subscriptions.push(
-    vscode.workspace.onDidChangeTextDocument((e) => updateDiagnostics(e.document, collection))
-  );
+  context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(e => updateDiagnostics(e.document, collection)));
 
-  context.subscriptions.push(vscode.workspace.onDidCloseTextDocument((doc) => collection.delete(doc.uri)));
+  context.subscriptions.push(vscode.workspace.onDidCloseTextDocument(doc => collection.delete(doc.uri)));
 }
 
 async function updateDiagnostics(
   document: vscode.TextDocument,
   collection: vscode.DiagnosticCollection
 ): Promise<void> {
-  if (document && document.fileName.match("(.*)?.github/workflows/(.*).ya?ml")) {
+  if (document && document.fileName.match('(.*)?.github/workflows/(.*).ya?ml')) {
     collection.clear();
 
     const gitHubRepoContext = await getGitHubContextForDocumentUri(document.uri);
@@ -52,7 +50,7 @@ async function updateDiagnostics(
     const result = await parse(
       {
         ...gitHubRepoContext,
-        repository: gitHubRepoContext.name,
+        repository: gitHubRepoContext.name
       },
       document.uri.fsPath,
       document.getText()
@@ -60,10 +58,10 @@ async function updateDiagnostics(
     if (result.diagnostics.length > 0) {
       collection.set(
         document.uri,
-        result.diagnostics.map((x) => ({
+        result.diagnostics.map(x => ({
           severity: vscode.DiagnosticSeverity.Error,
           message: x.message,
-          range: new vscode.Range(document.positionAt(x.pos[0]), document.positionAt(x.pos[1])),
+          range: new vscode.Range(document.positionAt(x.pos[0]), document.positionAt(x.pos[1]))
         }))
       );
     }
@@ -73,10 +71,7 @@ async function updateDiagnostics(
 }
 
 export class WorkflowHoverProvider implements vscode.HoverProvider {
-  async provideHover(
-    document: vscode.TextDocument,
-    position: vscode.Position
-  ): Promise<null | vscode.Hover> {
+  async provideHover(document: vscode.TextDocument, position: vscode.Position): Promise<null | vscode.Hover> {
     try {
       const gitHubRepoContext = await getGitHubContextForDocumentUri(document.uri);
       if (!gitHubRepoContext) {
@@ -86,7 +81,7 @@ export class WorkflowHoverProvider implements vscode.HoverProvider {
       const hoverResult = await hover(
         {
           ...gitHubRepoContext,
-          repository: gitHubRepoContext.name,
+          repository: gitHubRepoContext.name
         },
         document.uri.fsPath,
         document.getText(),
@@ -95,7 +90,7 @@ export class WorkflowHoverProvider implements vscode.HoverProvider {
 
       if (hoverResult?.description) {
         return {
-          contents: [hoverResult?.description],
+          contents: [hoverResult?.description]
         };
       }
     } catch (e: unknown) {
@@ -106,7 +101,7 @@ export class WorkflowHoverProvider implements vscode.HoverProvider {
       // -> called from diagnostics.ts:getGitHubContextForDocumentUri
       // -> called from diagnostics.ts:provideHover
       // -> caught here
-      logError(e as Error, "Caught error in provideHover");
+      logError(e as Error, 'Caught error in provideHover');
     }
 
     return null;
@@ -127,7 +122,7 @@ export class WorkflowCompletionItemProvider implements vscode.CompletionItemProv
       const completionResult = await complete(
         {
           ...gitHubRepoContext,
-          repository: gitHubRepoContext.name,
+          repository: gitHubRepoContext.name
         },
         document.uri.fsPath,
         document.getText(),
@@ -135,7 +130,7 @@ export class WorkflowCompletionItemProvider implements vscode.CompletionItemProv
       );
 
       if (completionResult.length > 0) {
-        return completionResult.map((x) => {
+        return completionResult.map(x => {
           const completionItem = new vscode.CompletionItem(x.value, vscode.CompletionItemKind.Constant);
 
           // Fix the replacement range. By default VS Code looks for the current word, which leads to duplicate
