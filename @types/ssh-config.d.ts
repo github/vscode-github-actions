@@ -9,7 +9,7 @@
  * ConfigResolvers take a config, resolve some additional data (perhaps using
  * a config file), and return a new Config.
  */
-declare module 'ssh-config' {
+declare module "ssh-config" {
   export type ConfigResolver = (config: Config) => Config;
 
   export type Config = Record<string, string>;

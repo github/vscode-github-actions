@@ -1,5 +1,5 @@
-import * as vscode from 'vscode';
-import {LogScheme} from './constants';
+import * as vscode from "vscode";
+import {LogScheme} from "./constants";
 
 /**
  * @param displayName Must not contain '/'
@@ -15,12 +15,12 @@ export function parseUri(uri: vscode.Uri): {
   stepName?: string;
 } {
   if (uri.scheme != LogScheme) {
-    throw new Error('Uri is not of log scheme');
+    throw new Error("Uri is not of log scheme");
   }
 
   return {
     owner: uri.authority,
-    repo: uri.path.split('/').slice(0, -1).join(''),
+    repo: uri.path.split("/").slice(0, -1).join(""),
     jobId: parseInt(uri.query, 10),
     stepName: uri.fragment
   };

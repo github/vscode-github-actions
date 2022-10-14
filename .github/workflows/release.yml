@@ -5,7 +5,7 @@ on:
     inputs:
       version:
         required: true
-        description: 'Version to bump `package.json` to (format: x.y.z)'
+        description: "Version to bump `package.json` to (format: x.y.z)"
 
 jobs:
   build:
@@ -18,7 +18,7 @@ jobs:
           git config --global user.name "Christopher Schleiden"
       - uses: actions/setup-node@v2
         with:
-          node-version: '12'
+          node-version: "12"
       - run: npm version ${{ github.event.inputs.version }}
       - run: npm install
       - run: npm run package
@@ -28,8 +28,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: 'release-v${{ github.event.inputs.version }}'
-          release_name: 'v${{ github.event.inputs.version }}'
+          tag_name: "release-v${{ github.event.inputs.version }}"
+          release_name: "v${{ github.event.inputs.version }}"
           draft: false
           prerelease: false
       - name: Upload Release Asset
@@ -48,5 +48,5 @@ jobs:
           pat: ${{ secrets.PUBLISHER_KEY }}
           registryUrl: https://marketplace.visualstudio.com
           extensionFile: ./vscode-github-actions-${{ github.event.inputs.version }}.vsix
-          packagePath: ''
+          packagePath: ""
       - run: git push

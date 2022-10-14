@@ -1,13 +1,13 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-import {logDebug, logError} from '../log';
-import {API, GitExtension, RefType, RepositoryState} from '../typings/git';
+import {logDebug, logError} from "../log";
+import {API, GitExtension, RefType, RepositoryState} from "../typings/git";
 
-import {Octokit} from '@octokit/rest';
-import {getClient} from '../api/api';
-import {getSession} from '../auth/auth';
-import {getRemoteName} from '../configuration/configuration';
-import {Protocol} from '../external/protocol';
+import {Octokit} from "@octokit/rest";
+import {getClient} from "../api/api";
+import {getSession} from "../auth/auth";
+import {getRemoteName} from "../configuration/configuration";
+import {Protocol} from "../external/protocol";
 
 interface GitHubUrls {
   workspaceUri: vscode.Uri;
@@ -16,21 +16,21 @@ interface GitHubUrls {
 }
 
 async function getGitExtension(): Promise<API | undefined> {
-  const gitExtension = vscode.extensions.getExtension<GitExtension>('vscode.git');
+  const gitExtension = vscode.extensions.getExtension<GitExtension>("vscode.git");
   if (gitExtension) {
     if (!gitExtension.isActive) {
       await gitExtension.activate();
     }
     const git = gitExtension.exports.getAPI(1);
 
-    if (git.state !== 'initialized') {
+    if (git.state !== "initialized") {
       // Wait for the plugin to be initialized
       await new Promise<void>(resolve => {
-        if (git.state === 'initialized') {
+        if (git.state === "initialized") {
           resolve();
         } else {
           const listener = git.onDidChangeState(state => {
-            if (state === 'initialized') {
+            if (state === "initialized") {
               resolve();
             }
             listener.dispose();
@@ -53,23 +53,20 @@ export async function getGitHead(): Promise<string | undefined> {
   }
 }
 
-export async function getGitHubUrls(): Promise<
-  | GitHubUrls[]
-  | null
-> {
+export async function getGitHubUrls(): Promise<GitHubUrls[] | null> {
   const git = await getGitExtension();
   if (git && git.repositories.length > 0) {
-    logDebug('Found git extension');
+    logDebug("Found git extension");
 
     const remoteName = getRemoteName();
 
     const p = await Promise.all(
       git.repositories.map(async r => {
-        logDebug('Find `origin` remote for repository', r.rootUri.path);
+        logDebug("Find `origin` remote for repository", r.rootUri.path);
         await r.status();
 
         const originRemote = r.state.remotes.filter(remote => remote.name === remoteName);
-        if (originRemote.length > 0 && originRemote[0].pushUrl?.indexOf('github.com') !== -1) {
+        if (originRemote.length > 0 && originRemote[0].pushUrl?.indexOf("github.com") !== -1) {
           const url = originRemote[0].pushUrl;
 
           return {
@@ -93,15 +90,15 @@ export async function getGitHubUrls(): Promise<
   // if (!git) {
   // Support for virtual workspaces
   const isVirtualWorkspace =
-    vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.every(f => f.uri.scheme !== 'file');
+    vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.every(f => f.uri.scheme !== "file");
   if (isVirtualWorkspace) {
-    logDebug('Found virtual workspace');
+    logDebug("Found virtual workspace");
 
     const ghFolder = vscode.workspace.workspaceFolders?.find(
-      x => x.uri.scheme === 'vscode-vfs' && x.uri.authority === 'github'
+      x => x.uri.scheme === "vscode-vfs" && x.uri.authority === "github"
     );
     if (ghFolder) {
-      logDebug('Found virtual GitHub workspace folder');
+      logDebug("Found virtual GitHub workspace folder");
 
       const url = `https://github.com/${ghFolder.uri.path}`;
 
@@ -111,7 +108,7 @@ export async function getGitHubUrls(): Promise<
           url: url,
           protocol: new Protocol(url)
         }
-      ]
+      ];
 
       return urls;
     }
@@ -155,15 +152,15 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
 
     const protocolInfos = await getGitHubUrls();
     if (!protocolInfos) {
-      logDebug('Could not get protocol infos');
+      logDebug("Could not get protocol infos");
       return undefined;
     }
 
-    logDebug('Found protocol infos', protocolInfos.length.toString());
+    logDebug("Found protocol infos", protocolInfos.length.toString());
 
     const repos = await Promise.all(
       protocolInfos.map(async (protocolInfo): Promise<GitHubRepoContext> => {
-        logDebug('Getting infos for repository', protocolInfo.url);
+        logDebug("Getting infos for repository", protocolInfo.url);
 
         const repoInfo = await client.repos.get({
           repo: protocolInfo.protocol.repositoryName,
@@ -180,8 +177,8 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
           owner: protocolInfo.protocol.owner,
           id: repoInfo.data.id,
           defaultBranch: `refs/heads/${repoInfo.data.default_branch}`,
-          ownerIsOrg: repoInfo.data.owner?.type === 'Organization',
-          orgFeaturesEnabled: session.scopes.find(x => x.toLocaleLowerCase() === 'admin:org') != null
+          ownerIsOrg: repoInfo.data.owner?.type === "Organization",
+          orgFeaturesEnabled: session.scopes.find(x => x.toLocaleLowerCase() === "admin:org") != null
         };
       })
     );
@@ -194,7 +191,7 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
     // Reset the context so the next attempt will try this flow again
     gitHubContext = undefined;
 
-    logError(e as Error, 'Error getting GitHub context');
+    logError(e as Error, "Error getting GitHub context");
 
     // Rethrow original error
     throw e;

@@ -1,7 +1,7 @@
-import * as vscode from 'vscode';
-import {GitHubRepoContext} from '../../git/repository';
-import {RepoSecret} from '../../model';
-import {encodeSecret} from '../../secrets';
+import * as vscode from "vscode";
+import {GitHubRepoContext} from "../../git/repository";
+import {RepoSecret} from "../../model";
+import {encodeSecret} from "../../secrets";
 
 interface UpdateSecretCommandArgs {
   gitHubRepoContext: GitHubRepoContext;
@@ -10,12 +10,12 @@ interface UpdateSecretCommandArgs {
 
 export function registerUpdateSecret(context: vscode.ExtensionContext) {
   context.subscriptions.push(
-    vscode.commands.registerCommand('github-actions.settings.secret.update', async (args: UpdateSecretCommandArgs) => {
+    vscode.commands.registerCommand("github-actions.settings.secret.update", async (args: UpdateSecretCommandArgs) => {
       const gitHubContext = args.gitHubRepoContext;
       const secret: RepoSecret = args.secret;
 
       const value = await vscode.window.showInputBox({
-        prompt: 'Enter the new secret value'
+        prompt: "Enter the new secret value"
       });
 
       if (!value) {

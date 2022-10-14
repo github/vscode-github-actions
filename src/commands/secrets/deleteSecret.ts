@@ -1,6 +1,6 @@
-import * as vscode from 'vscode';
-import {GitHubRepoContext} from '../../git/repository';
-import {RepoSecret} from '../../model';
+import * as vscode from "vscode";
+import {GitHubRepoContext} from "../../git/repository";
+import {RepoSecret} from "../../model";
 
 interface DeleteSecretCommandArgs {
   gitHubRepoContext: GitHubRepoContext;
@@ -9,7 +9,7 @@ interface DeleteSecretCommandArgs {
 
 export function registerDeleteSecret(context: vscode.ExtensionContext) {
   context.subscriptions.push(
-    vscode.commands.registerCommand('github-actions.settings.secret.delete', async (args: DeleteSecretCommandArgs) => {
+    vscode.commands.registerCommand("github-actions.settings.secret.delete", async (args: DeleteSecretCommandArgs) => {
       const gitHubContext = args.gitHubRepoContext;
       const secret = args.secret;
 
@@ -19,7 +19,7 @@ export function registerDeleteSecret(context: vscode.ExtensionContext) {
         secret_name: secret.name
       });
 
-      await vscode.commands.executeCommand('github-actions.explorer.refresh');
+      await vscode.commands.executeCommand("github-actions.explorer.refresh");
     })
   );
 }

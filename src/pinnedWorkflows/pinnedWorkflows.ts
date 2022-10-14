@@ -1,16 +1,16 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-import {GitHubRepoContext, getGitHubContextForWorkspaceUri} from '../git/repository';
+import {GitHubRepoContext, getGitHubContextForWorkspaceUri} from "../git/repository";
 import {
   getPinnedWorkflows,
   isPinnedWorkflowsRefreshEnabled,
   onPinnedWorkflowsChange,
   pinnedWorkflowsRefreshInterval
-} from '../configuration/configuration';
+} from "../configuration/configuration";
 
-import {WorkflowRun} from '../model';
-import {getCodIconForWorkflowrun} from '../treeViews/icons';
-import {sep} from 'path';
+import {WorkflowRun} from "../model";
+import {getCodIconForWorkflowrun} from "../treeViews/icons";
+import {sep} from "path";
 
 interface PinnedWorkflow {
   /** Displayed name */
@@ -61,7 +61,7 @@ async function updatePinnedWorkflows() {
 
   for (const pinnedWorkflow of pinnedWorkflows) {
     const workflowPath = pinnedWorkflow;
-    if (pinnedWorkflow.startsWith('.github/')) {
+    if (pinnedWorkflow.startsWith(".github/")) {
       // No workspace, attribute to the first workspace folder
       workflowsByWorkspace.set(firstWorkspaceFolderName, [
         pinnedWorkflow,
@@ -148,14 +148,14 @@ async function updatePinnedWorkflow(pinnedWorkflow: PinnedWorkflow) {
     }
     const mostRecentRun = workflow_runs[0] as WorkflowRun;
     pinnedWorkflow.statusBarItem.text = `$(${getCodIconForWorkflowrun(mostRecentRun)}) ${pinnedWorkflow.workflowName}`;
-    if (mostRecentRun.conclusion === 'failure') {
-      pinnedWorkflow.statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.errorBackground');
+    if (mostRecentRun.conclusion === "failure") {
+      pinnedWorkflow.statusBarItem.backgroundColor = new vscode.ThemeColor("statusBarItem.errorBackground");
     } else {
       pinnedWorkflow.statusBarItem.backgroundColor = undefined;
     }
     pinnedWorkflow.statusBarItem.command = {
-      title: 'Open workflow run',
-      command: 'github-actions.workflow.run.open',
+      title: "Open workflow run",
+      command: "github-actions.workflow.run.open",
       arguments: [
         {
           run: mostRecentRun

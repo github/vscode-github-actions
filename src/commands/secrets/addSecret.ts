@@ -1,6 +1,6 @@
-import * as vscode from 'vscode';
-import {GitHubRepoContext} from '../../git/repository';
-import {encodeSecret} from '../../secrets';
+import * as vscode from "vscode";
+import {GitHubRepoContext} from "../../git/repository";
+import {encodeSecret} from "../../secrets";
 
 interface AddSecretCommandArgs {
   gitHubRepoContext: GitHubRepoContext;
@@ -8,11 +8,11 @@ interface AddSecretCommandArgs {
 
 export function registerAddSecret(context: vscode.ExtensionContext) {
   context.subscriptions.push(
-    vscode.commands.registerCommand('github-actions.settings.secret.add', async (args: AddSecretCommandArgs) => {
+    vscode.commands.registerCommand("github-actions.settings.secret.add", async (args: AddSecretCommandArgs) => {
       const gitHubContext = args.gitHubRepoContext;
 
       const name = await vscode.window.showInputBox({
-        prompt: 'Enter name for new secret'
+        prompt: "Enter name for new secret"
       });
 
       if (!name) {
@@ -20,7 +20,7 @@ export function registerAddSecret(context: vscode.ExtensionContext) {
       }
 
       const value = await vscode.window.showInputBox({
-        prompt: 'Enter the new secret value'
+        prompt: "Enter the new secret value"
       });
 
       if (value) {
@@ -45,7 +45,7 @@ export function registerAddSecret(context: vscode.ExtensionContext) {
         }
       }
 
-      await vscode.commands.executeCommand('github-actions.explorer.refresh');
+      await vscode.commands.executeCommand("github-actions.explorer.refresh");
     })
   );
 }

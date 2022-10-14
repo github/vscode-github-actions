@@ -1,9 +1,9 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-import {GitHubRepoContext, getGitHead, getGitHubContextForWorkspaceUri} from '../git/repository';
-import {getWorkflowUri, parseWorkflow} from '../workflow/workflow';
+import {GitHubRepoContext, getGitHead, getGitHubContextForWorkspaceUri} from "../git/repository";
+import {getWorkflowUri, parseWorkflow} from "../workflow/workflow";
 
-import {Workflow} from '../model';
+import {Workflow} from "../model";
 
 interface TriggerRunCommandOptions {
   wf?: Workflow;
@@ -13,7 +13,7 @@ interface TriggerRunCommandOptions {
 export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      'github-actions.explorer.triggerRun',
+      "github-actions.explorer.triggerRun",
       async (args: TriggerRunCommandOptions | vscode.Uri) => {
         let workflowUri: vscode.Uri | null = null;
         if (args instanceof vscode.Uri) {
@@ -45,17 +45,17 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
 
         let selectedEvent: string | undefined;
         if (workflow.on.workflow_dispatch !== undefined && workflow.on.repository_dispatch !== undefined) {
-          selectedEvent = await vscode.window.showQuickPick(['repository_dispatch', 'workflow_dispatch'], {
-            placeHolder: 'Which event to trigger?'
+          selectedEvent = await vscode.window.showQuickPick(["repository_dispatch", "workflow_dispatch"], {
+            placeHolder: "Which event to trigger?"
           });
           if (!selectedEvent) {
             return;
           }
         }
 
-        if ((!selectedEvent || selectedEvent === 'workflow_dispatch') && workflow.on.workflow_dispatch !== undefined) {
+        if ((!selectedEvent || selectedEvent === "workflow_dispatch") && workflow.on.workflow_dispatch !== undefined) {
           const ref = await vscode.window.showInputBox({
-            prompt: 'Enter ref to trigger workflow on',
+            prompt: "Enter ref to trigger workflow on",
             value: (await getGitHead()) || gitHubRepoContext.defaultBranch
           });
 
@@ -68,7 +68,7 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
 
               for (const definedInput of Object.keys(definedInputs)) {
                 const value = await vscode.window.showInputBox({
-                  prompt: `Value for input ${definedInput} ${definedInputs[definedInput].required ? '[required]' : ''}`,
+                  prompt: `Value for input ${definedInput} ${definedInputs[definedInput].required ? "[required]" : ""}`,
                   value: definedInputs[definedInput].default
                 });
                 if (!value && definedInputs[definedInput].required) {
@@ -99,15 +99,15 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
             }
           }
         } else if (
-          (!selectedEvent || selectedEvent === 'repository_dispatch') &&
+          (!selectedEvent || selectedEvent === "repository_dispatch") &&
           workflow.on.repository_dispatch !== undefined
         ) {
           let event_type: string | undefined;
           const event_types = workflow.on.repository_dispatch.types;
           if (Array.isArray(event_types) && event_types?.length > 0) {
-            const custom_type = '✐ Enter custom type';
+            const custom_type = "✐ Enter custom type";
             const selection = await vscode.window.showQuickPick([custom_type, ...event_types], {
-              placeHolder: 'Select an event_type to dispatch'
+              placeHolder: "Select an event_type to dispatch"
             });
 
             if (selection === undefined) {
@@ -119,8 +119,8 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
 
           if (event_type === undefined) {
             event_type = await vscode.window.showInputBox({
-              prompt: 'Enter `event_type` to dispatch to the repository',
-              value: 'default'
+              prompt: "Enter `event_type` to dispatch to the repository",
+              value: "default"
             });
           }
 
@@ -136,7 +136,7 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
           }
         }
 
-        await vscode.commands.executeCommand('github-actions.explorer.refresh');
+        await vscode.commands.executeCommand("github-actions.explorer.refresh");
       }
     )
   );

@@ -1,9 +1,9 @@
-import * as vscode from 'vscode';
-import {GitHubRepoContext} from '../git/repository';
-import {updateDecorations} from '../logs/formatProvider';
-import {getLogInfo} from '../logs/logInfoProvider';
-import {buildLogURI} from '../logs/scheme';
-import {WorkflowJob, WorkflowStep} from '../model';
+import * as vscode from "vscode";
+import {GitHubRepoContext} from "../git/repository";
+import {updateDecorations} from "../logs/formatProvider";
+import {getLogInfo} from "../logs/logInfoProvider";
+import {buildLogURI} from "../logs/scheme";
+import {WorkflowJob, WorkflowStep} from "../model";
 
 export interface OpenWorkflowRunLogsCommandArgs {
   gitHubRepoContext: GitHubRepoContext;
@@ -13,7 +13,7 @@ export interface OpenWorkflowRunLogsCommandArgs {
 
 export function registerOpenWorkflowRunLogs(context: vscode.ExtensionContext) {
   context.subscriptions.push(
-    vscode.commands.registerCommand('github-actions.workflow.logs', async (args: OpenWorkflowRunLogsCommandArgs) => {
+    vscode.commands.registerCommand("github-actions.workflow.logs", async (args: OpenWorkflowRunLogsCommandArgs) => {
       const gitHubRepoContext = args.gitHubRepoContext;
       const job = args.job;
       const step = args.step;
@@ -31,7 +31,7 @@ export function registerOpenWorkflowRunLogs(context: vscode.ExtensionContext) {
 
       const logInfo = getLogInfo(uri);
       if (!logInfo) {
-        throw new Error('Could not get log info');
+        throw new Error("Could not get log info");
       }
 
       // Custom formatting after the editor has been opened

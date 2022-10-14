@@ -1,24 +1,24 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-import {logError} from '../log';
-import {complete, hover, parse} from 'github-actions-parser';
+import {logError} from "../log";
+import {complete, hover, parse} from "github-actions-parser";
 
-import {getGitHubContextForDocumentUri} from '../git/repository';
+import {getGitHubContextForDocumentUri} from "../git/repository";
 
 const WorkflowSelector = {
-  pattern: '**/.github/workflows/*.{yaml,yml}'
+  pattern: "**/.github/workflows/*.{yaml,yml}"
 };
 
 export async function init(context: vscode.ExtensionContext) {
   // Register auto-complete
-  vscode.languages.registerCompletionItemProvider(WorkflowSelector, new WorkflowCompletionItemProvider(), '.');
+  vscode.languages.registerCompletionItemProvider(WorkflowSelector, new WorkflowCompletionItemProvider(), ".");
 
   vscode.languages.registerHoverProvider(WorkflowSelector, new WorkflowHoverProvider());
 
   //
   // Provide diagnostics information
   //
-  const collection = vscode.languages.createDiagnosticCollection('github-actions');
+  const collection = vscode.languages.createDiagnosticCollection("github-actions");
   if (vscode.window.activeTextEditor) {
     await updateDiagnostics(vscode.window.activeTextEditor.document, collection);
   }
@@ -101,7 +101,7 @@ export class WorkflowHoverProvider implements vscode.HoverProvider {
       // -> called from diagnostics.ts:getGitHubContextForDocumentUri
       // -> called from diagnostics.ts:provideHover
       // -> caught here
-      logError(e as Error, 'Caught error in provideHover');
+      logError(e as Error, "Caught error in provideHover");
     }
 
     return null;
