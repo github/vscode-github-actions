@@ -1,4 +1,4 @@
-const ansiColorRE = /\u001b\[((?:\d+;?)+)m(.*)\u001b\[0m/gm;
+const ansiColorRE = /\u001b\[((?:\d+;?)+)m(.*)\u001b\[0m/gmu;
 const groupMarker = '##[group]';
 const commandRE = /##\[[a-z]+\]/gm;
 
@@ -65,7 +65,7 @@ export function parseLog(log: string): LogInfo {
         sections.push(currentRange);
       }
 
-      const name = line.substr(groupMarkerStart + groupMarker.length);
+      const name = line.substring(groupMarkerStart + groupMarker.length);
 
       currentRange = {
         name,
