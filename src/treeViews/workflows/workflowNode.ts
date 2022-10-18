@@ -1,18 +1,17 @@
 import * as vscode from "vscode";
 
-import {GitHubRepoContext} from "../../git/repository";
-import {Workflow as ParsedWorkflow} from "github-actions-parser/dist/lib/workflow";
-import {Workflow} from "../../model";
-import {WorkflowRunNode} from "./workflowRunNode";
 import {getPinnedWorkflows} from "../../configuration/configuration";
-import {getWorkflowUri} from "../../workflow/workflow";
+import {GitHubRepoContext} from "../../git/repository";
 import {logDebug} from "../../log";
+import {Workflow} from "../../model";
+import {getWorkflowUri} from "../../workflow/workflow";
+import {WorkflowRunNode} from "./workflowRunNode";
 
 export class WorkflowNode extends vscode.TreeItem {
   constructor(
     public readonly gitHubRepoContext: GitHubRepoContext,
     public readonly wf: Workflow,
-    public readonly parsed?: ParsedWorkflow
+    public readonly parsed?: any // ParsedWorkflow
   ) {
     super(wf.name, vscode.TreeItemCollapsibleState.Collapsed);
 
