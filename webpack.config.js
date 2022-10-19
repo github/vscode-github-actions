@@ -3,19 +3,19 @@
 "use strict";
 
 const path = require("path");
-const webpack = require('webpack');
+const webpack = require("webpack");
 
 /**@type {import('webpack').Configuration}*/
 const config = {
   entry: "./src/extension.ts", // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
   devtool: "source-map",
   externals: {
-    vscode: "commonjs vscode",
+    vscode: "commonjs vscode"
   },
   plugins: [
     new webpack.ProvidePlugin({
-      Buffer: ['buffer', 'Buffer'],
-  }),
+      Buffer: ["buffer", "Buffer"]
+    })
   ],
   resolve: {
     extensions: [".ts", ".js"],
@@ -23,8 +23,10 @@ const config = {
       "universal-user-agent$": "universal-user-agent/dist-node/index.js"
     },
     fallback: {
-      "buffer": require.resolve("buffer/"),
-      "path": require.resolve("path-browserify")
+      buffer: require.resolve("buffer/"),
+      path: require.resolve("path-browserify"),
+      crypto: require.resolve("crypto-browserify"),
+      stream: require.resolve("stream-browserify")
     }
   },
   module: {
@@ -53,8 +55,8 @@ const nodeConfig = {
     path: path.resolve(__dirname, "dist"),
     filename: "extension-node.js",
     libraryTarget: "commonjs2",
-    devtoolModuleFilenameTemplate: "../[resource-path]",
-  },
+    devtoolModuleFilenameTemplate: "../[resource-path]"
+  }
 };
 
 const webConfig = {
@@ -64,8 +66,8 @@ const webConfig = {
     path: path.resolve(__dirname, "dist"),
     filename: "extension-web.js",
     libraryTarget: "commonjs2",
-    devtoolModuleFilenameTemplate: "../[resource-path]",
-  },
+    devtoolModuleFilenameTemplate: "../[resource-path]"
+  }
 };
 
 module.exports = [nodeConfig, webConfig];

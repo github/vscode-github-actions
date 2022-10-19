@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
 
-import { EnvironmentsNode } from "./environmentsNode";
-import { GitHubRepoContext } from "../../git/repository";
-import { SecretsNode } from "./secretsNode";
-import { SelfHostedRunnersNode } from "./selfHostedRunnersNode";
-import { SettingsExplorerNode } from "./types";
+import {EnvironmentsNode} from "./environmentsNode";
+import {GitHubRepoContext} from "../../git/repository";
+import {SecretsNode} from "./secretsNode";
+import {SelfHostedRunnersNode} from "./selfHostedRunnersNode";
+import {SettingsExplorerNode} from "./types";
 
 export class SettingsRepoNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext) {
@@ -13,7 +13,7 @@ export class SettingsRepoNode extends vscode.TreeItem {
     this.contextValue = "settings-repo";
   }
 
-  async getSettings(): Promise<SettingsExplorerNode[]> {
+  getSettings(): SettingsExplorerNode[] {
     return getSettingNodes(this.gitHubRepoContext);
   }
 }

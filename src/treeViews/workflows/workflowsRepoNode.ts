@@ -1,11 +1,11 @@
 import * as vscode from "vscode";
 
-import { getWorkflowUri, parseWorkflow } from "../../workflow/workflow";
+import {getWorkflowUri, parseWorkflow} from "../../workflow/workflow";
 
-import { GitHubRepoContext } from "../../git/repository";
-import { Workflow as ParsedWorkflow } from "github-actions-parser/dist/lib/workflow";
-import { WorkflowNode } from "./workflowNode";
-import { logDebug } from "../../log";
+import {GitHubRepoContext} from "../../git/repository";
+import {Workflow as ParsedWorkflow} from "github-actions-parser/dist/lib/workflow";
+import {WorkflowNode} from "./workflowNode";
+import {logDebug} from "../../log";
 
 export class WorkflowsRepoNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext) {
@@ -24,7 +24,7 @@ export class WorkflowsRepoNode extends vscode.TreeItem {
 export async function getWorkflowNodes(gitHubRepoContext: GitHubRepoContext) {
   const result = await gitHubRepoContext.client.actions.listRepoWorkflows({
     owner: gitHubRepoContext.owner,
-    repo: gitHubRepoContext.name,
+    repo: gitHubRepoContext.name
   });
 
   const resp = result.data;
@@ -33,7 +33,7 @@ export async function getWorkflowNodes(gitHubRepoContext: GitHubRepoContext) {
   workflows.sort((a, b) => a.name.localeCompare(b.name));
 
   return await Promise.all(
-    workflows.map(async (wf) => {
+    workflows.map(async wf => {
       let parsedWorkflow: ParsedWorkflow | undefined;
 
       const workflowUri = getWorkflowUri(gitHubRepoContext, wf.path);

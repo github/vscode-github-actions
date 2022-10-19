@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
 
-import { GitHubRepoContext, getCurrentBranch } from "../../git/repository";
+import {GitHubRepoContext, getCurrentBranch} from "../../git/repository";
 
-import { NoRunForBranchNode } from "./noRunForBranchNode";
-import { WorkflowRunNode } from "../workflows/workflowRunNode";
-import { logDebug } from "../../log";
+import {NoRunForBranchNode} from "./noRunForBranchNode";
+import {WorkflowRunNode} from "../workflows/workflowRunNode";
+import {logDebug} from "../../log";
 
 export class CurrentBranchRepoNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext, public readonly currentBranchName: string) {
@@ -33,7 +33,7 @@ export async function getCurrentBranchWorkflowRunNodes(
   const result = await gitHubRepoContext.client.actions.listWorkflowRunsForRepo({
     owner: gitHubRepoContext.owner,
     repo: gitHubRepoContext.name,
-    branch: currentBranch,
+    branch: currentBranch
   });
 
   const resp = result.data;
@@ -43,9 +43,7 @@ export async function getCurrentBranchWorkflowRunNodes(
     return [new NoRunForBranchNode()];
   }
 
-  return runs.map((wr) => {
-    const wf = wr.workflow_id;
-
+  return runs.map(wr => {
     // TODO: Do we need to include the workflow name here?
     return new WorkflowRunNode(gitHubRepoContext, wr, wr.name ?? undefined);
   });

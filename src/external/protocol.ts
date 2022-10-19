@@ -5,14 +5,14 @@
 
 import * as vscode from "vscode";
 
-import { resolve } from "./ssh";
+import {resolve} from "./ssh";
 
 export enum ProtocolType {
   Local,
   HTTP,
   SSH,
   GIT,
-  OTHER,
+  OTHER
 }
 
 export class Protocol {
@@ -46,7 +46,7 @@ export class Protocol {
       }
     } catch (e) {
       // Logger.appendLine(`Failed to parse '${uriString}'`);
-      vscode.window.showWarningMessage(
+      void vscode.window.showWarningMessage(
         `Unable to parse remote '${uriString}'. Please check that it is correctly formatted.`
       );
     }
@@ -73,7 +73,7 @@ export class Protocol {
     if (!sshConfig) {
       return false;
     }
-    const { HostName, path } = sshConfig;
+    const {HostName, path} = sshConfig;
     this.host = HostName;
     this.owner = this.getOwnerName(path) || "";
     this.repositoryName = this.getRepositoryName(path) || "";
@@ -171,7 +171,7 @@ export class Protocol {
     return;
   }
 
-  update(change: { type?: ProtocolType; host?: string; owner?: string; repositoryName?: string }): Protocol {
+  update(change: {type?: ProtocolType; host?: string; owner?: string; repositoryName?: string}): Protocol {
     if (change.type) {
       this.type = change.type;
     }

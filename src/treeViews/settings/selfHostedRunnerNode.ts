@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import { GitHubRepoContext } from "../../git/repository";
-import { SelfHostedRunner } from "../../model";
-import { getAbsoluteIconPath } from "../icons";
+import {GitHubRepoContext} from "../../git/repository";
+import {SelfHostedRunner} from "../../model";
+import {getAbsoluteIconPath} from "../icons";
 
 export class SelfHostedRunnerNode extends vscode.TreeItem {
   constructor(

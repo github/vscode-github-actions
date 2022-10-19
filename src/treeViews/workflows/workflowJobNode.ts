@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
-import { GitHubRepoContext } from "../../git/repository";
-import { WorkflowJob } from "../../model";
-import { getIconForWorkflowRun } from "../icons";
-import { WorkflowStepNode } from "./workflowStepNode";
+import {GitHubRepoContext} from "../../git/repository";
+import {WorkflowJob} from "../../model";
+import {getIconForWorkflowRun} from "../icons";
+import {WorkflowStepNode} from "./workflowStepNode";
 
 export class WorkflowJobNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext, public readonly job: WorkflowJob) {
@@ -20,7 +20,7 @@ export class WorkflowJobNode extends vscode.TreeItem {
     return !!(this.job.steps && this.job.steps.length > 0);
   }
 
-  async getSteps(): Promise<WorkflowStepNode[]> {
-    return (this.job.steps || []).map((s) => new WorkflowStepNode(this.gitHubRepoContext, this.job, s));
+  getSteps(): WorkflowStepNode[] {
+    return (this.job.steps || []).map(s => new WorkflowStepNode(this.gitHubRepoContext, this.job, s));
   }
 }

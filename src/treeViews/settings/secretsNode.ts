@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { GitHubRepoContext } from "../../git/repository";
+import {GitHubRepoContext} from "../../git/repository";
 
 export class SecretsNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext) {

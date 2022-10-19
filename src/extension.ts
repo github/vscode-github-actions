@@ -1,53 +1,51 @@
 import * as vscode from "vscode";
 
-import { init as initLogger, log, logDebug } from "./log";
+import {init as initLogger, log, logDebug} from "./log";
 
-import { registerCancelWorkflowRun } from "./commands/cancelWorkflowRun";
-import { registerOpenWorkflowFile } from "./commands/openWorkflowFile";
-import { registerOpenWorkflowRun } from "./commands/openWorkflowRun";
-import { registerOpenWorkflowRunLogs } from "./commands/openWorkflowRunLogs";
-import { registerOrgLogin } from "./commands/orgLogin";
-import { registerPinWorkflow } from "./commands/pinWorkflow";
-import { registerReRunWorkflowRun } from "./commands/rerunWorkflowRun";
-import { registerAddSecret } from "./commands/secrets/addSecret";
-import { registerCopySecret } from "./commands/secrets/copySecret";
-import { registerDeleteSecret } from "./commands/secrets/deleteSecret";
-import { registerManageOrgSecrets } from "./commands/secrets/manageOrgSecrets";
-import { registerUpdateSecret } from "./commands/secrets/updateSecret";
-import { registerTriggerWorkflowRun } from "./commands/triggerWorkflowRun";
-import { registerUnPinWorkflow } from "./commands/unpinWorkflow";
-import { initConfiguration } from "./configuration/configuration";
-import { getGitHubContext } from "./git/repository";
-import { LogScheme } from "./logs/constants";
-import { WorkflowStepLogProvider } from "./logs/fileProvider";
-import { WorkflowStepLogFoldingProvider } from "./logs/foldingProvider";
-import { WorkflowStepLogSymbolProvider } from "./logs/symbolProvider";
-import { initPinnedWorkflows } from "./pinnedWorkflows/pinnedWorkflows";
-import { initWorkflowDocumentTracking } from "./tracker/workflowDocumentTracker";
-import { CurrentBranchTreeProvider } from "./treeViews/currentBranch";
-import { initResources } from "./treeViews/icons";
-import { SettingsTreeProvider } from "./treeViews/settings";
-import { WorkflowsTreeProvider } from "./treeViews/workflows";
-import { init } from "./workflow/diagnostics";
+import {registerCancelWorkflowRun} from "./commands/cancelWorkflowRun";
+import {registerOpenWorkflowFile} from "./commands/openWorkflowFile";
+import {registerOpenWorkflowRun} from "./commands/openWorkflowRun";
+import {registerOpenWorkflowRunLogs} from "./commands/openWorkflowRunLogs";
+import {registerOrgLogin} from "./commands/orgLogin";
+import {registerPinWorkflow} from "./commands/pinWorkflow";
+import {registerReRunWorkflowRun} from "./commands/rerunWorkflowRun";
+import {registerAddSecret} from "./commands/secrets/addSecret";
+import {registerCopySecret} from "./commands/secrets/copySecret";
+import {registerDeleteSecret} from "./commands/secrets/deleteSecret";
+import {registerManageOrgSecrets} from "./commands/secrets/manageOrgSecrets";
+import {registerUpdateSecret} from "./commands/secrets/updateSecret";
+import {registerTriggerWorkflowRun} from "./commands/triggerWorkflowRun";
+import {registerUnPinWorkflow} from "./commands/unpinWorkflow";
+import {initConfiguration} from "./configuration/configuration";
+import {getGitHubContext} from "./git/repository";
+import {LogScheme} from "./logs/constants";
+import {WorkflowStepLogProvider} from "./logs/fileProvider";
+import {WorkflowStepLogFoldingProvider} from "./logs/foldingProvider";
+import {WorkflowStepLogSymbolProvider} from "./logs/symbolProvider";
+import {initPinnedWorkflows} from "./pinnedWorkflows/pinnedWorkflows";
+import {initWorkflowDocumentTracking} from "./tracker/workflowDocumentTracker";
+import {CurrentBranchTreeProvider} from "./treeViews/currentBranch";
+import {initResources} from "./treeViews/icons";
+import {SettingsTreeProvider} from "./treeViews/settings";
+import {WorkflowsTreeProvider} from "./treeViews/workflows";
+import {init} from "./workflow/diagnostics";
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
   initLogger();
   log("Activating GitHub Actions extension...");
 
   // Prefetch git repository origin url
-  getGitHubContext();
+  await getGitHubContext();
 
   initResources(context);
 
   initConfiguration(context);
-  initPinnedWorkflows(context);
+  await initPinnedWorkflows();
 
   // Track workflow
-  initWorkflowDocumentTracking(context);
+  await initWorkflowDocumentTracking(context);
 
-  //
   // Tree views
-  //
 
   const workflowTreeProvider = new WorkflowsTreeProvider();
   context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.workflows", workflowTreeProvider));
@@ -73,7 +71,7 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
-  (async () => {
+  await (async () => {
     const context = await getGitHubContext();
     if (!context) {
       logDebug("Could not register branch change event handler");
@@ -91,20 +89,18 @@ export function activate(context: vscode.ExtensionContext) {
         // When the current head/branch changes, or the number of commits ahead changes (which indicates
         // a push), refresh the current-branch view
         if (
-          repo.repositoryState!.HEAD?.name !== currentHeadName ||
-          (repo.repositoryState!.HEAD?.ahead || 0) < (currentAhead || 0)
+          repo.repositoryState?.HEAD?.name !== currentHeadName ||
+          (repo.repositoryState?.HEAD?.ahead || 0) < (currentAhead || 0)
         ) {
-          currentHeadName = repo.repositoryState!.HEAD?.name;
-          currentAhead = repo.repositoryState!.HEAD?.ahead;
+          currentHeadName = repo.repositoryState?.HEAD?.name;
+          currentAhead = repo.repositoryState?.HEAD?.ahead;
           currentBranchTreeProvider.refresh();
         }
       });
     }
   })();
 
-  //
   // Commands
-  //
 
   registerOpenWorkflowRun(context);
   registerOpenWorkflowFile(context);
@@ -124,30 +120,28 @@ export function activate(context: vscode.ExtensionContext) {
   registerPinWorkflow(context);
   registerUnPinWorkflow(context);
 
-  //
   // Log providers
-  //
+
   context.subscriptions.push(
     vscode.workspace.registerTextDocumentContentProvider(LogScheme, new WorkflowStepLogProvider())
   );
 
   context.subscriptions.push(
-    vscode.languages.registerFoldingRangeProvider({ scheme: LogScheme }, new WorkflowStepLogFoldingProvider())
+    vscode.languages.registerFoldingRangeProvider({scheme: LogScheme}, new WorkflowStepLogFoldingProvider())
   );
 
   context.subscriptions.push(
     vscode.languages.registerDocumentSymbolProvider(
       {
-        scheme: LogScheme,
+        scheme: LogScheme
       },
       new WorkflowStepLogSymbolProvider()
     )
   );
 
-  //
   // Editing features
-  //
-  init(context);
+
+  await init(context);
 
   log("...initialized");
 }

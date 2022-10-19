@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import { GitHubRepoContext } from "../../git/repository";
-import { WorkflowJob, WorkflowStep } from "../../model";
-import { getIconForWorkflowRun } from "../icons";
+import {GitHubRepoContext} from "../../git/repository";
+import {WorkflowJob, WorkflowStep} from "../../model";
+import {getIconForWorkflowRun} from "../icons";
 
 export class WorkflowStepNode extends vscode.TreeItem {
   constructor(
@@ -19,7 +19,7 @@ export class WorkflowStepNode extends vscode.TreeItem {
     this.command = {
       title: "Open run",
       command: "github-actions.workflow.logs",
-      arguments: [this],
+      arguments: [this]
     };
 
     this.iconPath = getIconForWorkflowRun(this.step);

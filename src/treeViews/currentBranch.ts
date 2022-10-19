@@ -1,13 +1,13 @@
 import * as vscode from "vscode";
 
-import { CurrentBranchRepoNode, getCurrentBranchWorkflowRunNodes } from "./current-branch/currentBranchRepoNode";
-import { getCurrentBranch, getGitHubContext } from "../git/repository";
+import {CurrentBranchRepoNode, getCurrentBranchWorkflowRunNodes} from "./current-branch/currentBranchRepoNode";
+import {getCurrentBranch, getGitHubContext} from "../git/repository";
 
-import { NoRunForBranchNode } from "./current-branch/noRunForBranchNode";
-import { WorkflowJobNode } from "./workflows/workflowJobNode";
-import { WorkflowRunNode } from "./workflows/workflowRunNode";
-import { WorkflowStepNode } from "./workflows/workflowStepNode";
-import { logDebug } from "../log";
+import {NoRunForBranchNode} from "./current-branch/noRunForBranchNode";
+import {WorkflowJobNode} from "./workflows/workflowJobNode";
+import {WorkflowRunNode} from "./workflows/workflowRunNode";
+import {WorkflowStepNode} from "./workflows/workflowStepNode";
+import {logDebug} from "../log";
 
 type CurrentBranchTreeNode =
   | CurrentBranchRepoNode
@@ -50,7 +50,7 @@ export class CurrentBranchTreeProvider implements vscode.TreeDataProvider<Curren
 
             return new CurrentBranchRepoNode(repoContext, currentBranch);
           })
-          .filter((x) => x !== undefined) as CurrentBranchRepoNode[];
+          .filter(x => x !== undefined) as CurrentBranchRepoNode[];
       }
     } else if (element instanceof CurrentBranchRepoNode) {
       return element.getRuns();

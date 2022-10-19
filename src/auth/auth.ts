@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 
-import { orgFeaturesEnabled, updateOrgFeaturesEnabled } from "../configuration/configuration";
+import {orgFeaturesEnabled, updateOrgFeaturesEnabled} from "../configuration/configuration";
 
-import { resetGitHubContext } from "../git/repository";
+import {resetGitHubContext} from "../git/repository";
 
 const AUTH_PROVIDER_ID = "github";
 const DEFAULT_SCOPES = ["repo", "workflow"];
@@ -10,7 +10,7 @@ const ORG_SCOPES = [...DEFAULT_SCOPES, "admin:org"];
 
 export function registerListeners(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
-    vscode.authentication.onDidChangeSessions(async (e) => {
+    vscode.authentication.onDidChangeSessions(async e => {
       if (e.provider.id === AUTH_PROVIDER_ID) {
         await enableOrgFeatures();
       }
@@ -20,7 +20,7 @@ export function registerListeners(context: vscode.ExtensionContext): void {
 
 export async function getSession(): Promise<vscode.AuthenticationSession> {
   const existingSession = await vscode.authentication.getSession(AUTH_PROVIDER_ID, getScopes(), {
-    createIfNone: true,
+    createIfNone: true
   });
 
   if (!existingSession) {

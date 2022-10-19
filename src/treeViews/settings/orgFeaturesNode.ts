@@ -7,7 +7,7 @@ export class OrgFeaturesNode extends vscode.TreeItem {
 
     this.command = {
       title: "Login",
-      command: "github-actions.auth.org-login",
+      command: "github-actions.auth.org-login"
     };
   }
 }

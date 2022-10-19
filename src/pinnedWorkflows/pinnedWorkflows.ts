@@ -1,16 +1,16 @@
 import * as vscode from "vscode";
 
-import { GitHubRepoContext, getGitHubContextForWorkspaceUri } from "../git/repository";
+import {GitHubRepoContext, getGitHubContextForWorkspaceUri} from "../git/repository";
 import {
   getPinnedWorkflows,
   isPinnedWorkflowsRefreshEnabled,
   onPinnedWorkflowsChange,
-  pinnedWorkflowsRefreshInterval,
+  pinnedWorkflowsRefreshInterval
 } from "../configuration/configuration";
 
-import { WorkflowRun } from "../model";
-import { getCodIconForWorkflowrun } from "../treeViews/icons";
-import { sep } from "path";
+import {WorkflowRun} from "../model";
+import {getCodIconForWorkflowrun} from "../treeViews/icons";
+import {sep} from "path";
 
 interface PinnedWorkflow {
   /** Displayed name */
@@ -25,11 +25,11 @@ interface PinnedWorkflow {
 }
 
 const pinnedWorkflows: PinnedWorkflow[] = [];
-let refreshTimer: /*NodeJS.Timeout*/ any | undefined;
+let refreshTimer: NodeJS.Timeout | undefined;
 
-export async function initPinnedWorkflows(context: vscode.ExtensionContext) {
+export async function initPinnedWorkflows() {
   // Register handler for configuration changes
-  onPinnedWorkflowsChange(_init);
+  onPinnedWorkflowsChange(() => _init);
 
   await _init();
 }
@@ -42,7 +42,7 @@ async function _init() {
     refreshTimer = undefined;
   }
   if (isPinnedWorkflowsRefreshEnabled()) {
-    refreshTimer = setInterval(refreshPinnedWorkflows, pinnedWorkflowsRefreshInterval() * 1000);
+    refreshTimer = setInterval(() => refreshPinnedWorkflows, pinnedWorkflowsRefreshInterval() * 1000);
   }
 }
 
@@ -65,7 +65,7 @@ async function updatePinnedWorkflows() {
       // No workspace, attribute to the first workspace folder
       workflowsByWorkspace.set(firstWorkspaceFolderName, [
         pinnedWorkflow,
-        ...(workflowsByWorkspace.get(firstWorkspaceFolderName) || []),
+        ...(workflowsByWorkspace.get(firstWorkspaceFolderName) || [])
       ]);
     } else {
       const [workSpaceName, ...r] = workflowPath.split(sep);
@@ -74,7 +74,7 @@ async function updatePinnedWorkflows() {
   }
 
   for (const workspaceName of workflowsByWorkspace.keys()) {
-    const workspace = vscode.workspace.workspaceFolders?.find((x) => x.name === workspaceName);
+    const workspace = vscode.workspace.workspaceFolders?.find(x => x.name === workspaceName);
     if (!workspace) {
       continue;
     }
@@ -87,10 +87,10 @@ async function updatePinnedWorkflows() {
     // Get all workflows to resolve names. We could do this locally, but for now, let's make the API call.
     const workflows = await gitHubRepoContext.client.actions.listRepoWorkflows({
       owner: gitHubRepoContext.owner,
-      repo: gitHubRepoContext.name,
+      repo: gitHubRepoContext.name
     });
-    const workflowNameByPath: { [id: string]: string } = {};
-    workflows.data.workflows.forEach((w) => (workflowNameByPath[w.path] = w.name));
+    const workflowNameByPath: {[id: string]: string} = {};
+    workflows.data.workflows.forEach(w => (workflowNameByPath[w.path] = w.name));
     for (const pinnedWorkflow of workflowsByWorkspace.get(workspaceName) || []) {
       const pW = createPinnedWorkflow(gitHubRepoContext, pinnedWorkflow, workflowNameByPath[pinnedWorkflow]);
       await updatePinnedWorkflow(pW);
@@ -121,7 +121,7 @@ function createPinnedWorkflow(gitHubRepoContext: GitHubRepoContext, id: string, 
     gitHubRepoContext,
     workflowId: id,
     workflowName: name,
-    statusBarItem,
+    statusBarItem
   };
 
   pinnedWorkflows.push(pinnedWorkflow);
@@ -130,16 +130,16 @@ function createPinnedWorkflow(gitHubRepoContext: GitHubRepoContext, id: string, 
 }
 
 async function updatePinnedWorkflow(pinnedWorkflow: PinnedWorkflow) {
-  const { gitHubRepoContext } = pinnedWorkflow;
+  const {gitHubRepoContext} = pinnedWorkflow;
 
   try {
     const runs = await gitHubRepoContext.client.actions.listWorkflowRuns({
       owner: gitHubRepoContext.owner,
       repo: gitHubRepoContext.name,
-      workflow_id: pinnedWorkflow.workflowId as any, // Workflow can also be a file name
-      per_page: 1,
+      workflow_id: pinnedWorkflow.workflowId, // Workflow can also be a file name
+      per_page: 1
     });
-    const { total_count, workflow_runs } = runs.data;
+    const {total_count, workflow_runs} = runs.data;
     if (total_count == 0) {
       // Workflow has never run, set default text
       pinnedWorkflow.statusBarItem.text = `$(${getCodIconForWorkflowrun()}) ${pinnedWorkflow.workflowName}`;
@@ -158,9 +158,9 @@ async function updatePinnedWorkflow(pinnedWorkflow: PinnedWorkflow) {
       command: "github-actions.workflow.run.open",
       arguments: [
         {
-          run: mostRecentRun,
-        },
-      ],
+          run: mostRecentRun
+        }
+      ]
     };
     // TODO: Do we need to hide before?
     pinnedWorkflow.statusBarItem.show();

@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 enum LogLevel {
   Debug,
-  Info,
+  Info
 }
 
 let logger: vscode.OutputChannel;

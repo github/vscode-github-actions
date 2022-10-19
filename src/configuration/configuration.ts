@@ -4,9 +4,9 @@ const settingsKey = "github-actions";
 
 export function initConfiguration(context: vscode.ExtensionContext) {
   context.subscriptions.push(
-    vscode.workspace.onDidChangeConfiguration((e) => {
+    vscode.workspace.onDidChangeConfiguration(e => {
       if (e.affectsConfiguration(getSettingsKey("workflows.pinned"))) {
-        pinnedWorkflowsChangeHandlers.forEach((h) => h());
+        pinnedWorkflowsChangeHandlers.forEach(h => h());
       }
     })
   );

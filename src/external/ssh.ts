@@ -1,24 +1,7 @@
-import { parse as parseConfig } from "ssh-config";
+import {parse as parseConfig, Config, ConfigResolver} from "ssh-config";
 
 const SSH_URL_RE = /^(?:([^@:]+)@)?([^:/]+):?(.+)$/;
 const URL_SCHEME_RE = /^([a-z-]+):\/\//;
-
-/**
- * SSH Config interface
- *
- * Note that this interface atypically capitalizes field names. This is for consistency
- * with SSH config files.
- */
-export interface Config {
-  Host: string;
-  [param: string]: string;
-}
-
-/**
- * ConfigResolvers take a config, resolve some additional data (perhaps using
- * a config file), and return a new Config.
- */
-export type ConfigResolver = (config: Config) => Config;
 
 /**
  * Parse and resolve an SSH url. Resolves host aliases using the configuration
@@ -76,13 +59,13 @@ const parse = (url: string): Config | undefined => {
     return;
   }
   const [, User, Host, path] = match;
-  return { User, Host, path };
+  return {User, Host, path};
 };
 
 function baseResolver(config: Config) {
   return {
     ...config,
-    HostName: config.Host,
+    HostName: config.Host
   };
 }
 
@@ -99,17 +82,18 @@ function baseResolver(config: Config) {
 // }
 
 export function resolverFromConfig(text: string): ConfigResolver {
+  // This causes many linter issues, ignore them in whole file for now
   const config = parseConfig(text);
-  return (h) => config.compute(h.Host);
+  return h => config.compute(h.Host);
 }
 
 function chainResolvers(...chain: (ConfigResolver | undefined)[]): ConfigResolver {
-  const resolvers = chain.filter((x) => !!x) as ConfigResolver[];
+  const resolvers = chain.filter(x => !!x) as ConfigResolver[];
   return (config: Config) =>
     resolvers.reduce(
       (resolved, next) => ({
         ...resolved,
-        ...next(resolved),
+        ...next(resolved)
       }),
       config
     );

@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import { GitHubRepoContext } from "../git/repository";
-import { WorkflowRun } from "../model";
+import {GitHubRepoContext} from "../git/repository";
+import {WorkflowRun} from "../model";
 
 interface CancelWorkflowRunLogsCommandArgs {
   gitHubRepoContext: GitHubRepoContext;
@@ -19,13 +19,13 @@ export function registerCancelWorkflowRun(context: vscode.ExtensionContext) {
           await gitHubContext.client.actions.cancelWorkflowRun({
             owner: gitHubContext.owner,
             repo: gitHubContext.name,
-            run_id: run.id,
+            run_id: run.id
           });
-        } catch (e: any) {
-          vscode.window.showErrorMessage(`Could not cancel workflow: '${e.message}'`);
+        } catch (e) {
+          await vscode.window.showErrorMessage(`Could not cancel workflow: '${(e as Error).message}'`);
         }
 
-        vscode.commands.executeCommand("github-actions.explorer.refresh");
+        await vscode.commands.executeCommand("github-actions.explorer.refresh");
       }
     )
   );

@@ -1,12 +1,12 @@
 import * as vscode from "vscode";
 
-import { GitHubRepoContext } from "../../git/repository";
-import { Workflow as ParsedWorkflow } from "github-actions-parser/dist/lib/workflow";
-import { Workflow } from "../../model";
-import { WorkflowRunNode } from "./workflowRunNode";
-import { getPinnedWorkflows } from "../../configuration/configuration";
-import { getWorkflowUri } from "../../workflow/workflow";
-import { logDebug } from "../../log";
+import {GitHubRepoContext} from "../../git/repository";
+import {Workflow as ParsedWorkflow} from "github-actions-parser/dist/lib/workflow";
+import {Workflow} from "../../model";
+import {WorkflowRunNode} from "./workflowRunNode";
+import {getPinnedWorkflows} from "../../configuration/configuration";
+import {getWorkflowUri} from "../../workflow/workflow";
+import {logDebug} from "../../log";
 
 export class WorkflowNode extends vscode.TreeItem {
   constructor(
@@ -49,12 +49,12 @@ export class WorkflowNode extends vscode.TreeItem {
     const result = await this.gitHubRepoContext.client.actions.listWorkflowRuns({
       owner: this.gitHubRepoContext.owner,
       repo: this.gitHubRepoContext.name,
-      workflow_id: this.wf.id,
+      workflow_id: this.wf.id
     });
 
     const resp = result.data;
     const runs = resp.workflow_runs;
 
-    return runs.map((wr) => new WorkflowRunNode(this.gitHubRepoContext, wr));
+    return runs.map(wr => new WorkflowRunNode(this.gitHubRepoContext, wr));
   }
 }

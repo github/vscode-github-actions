@@ -1,4 +1,4 @@
-import { RestEndpointMethods } from "@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types";
+import {RestEndpointMethods} from "@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types";
 
 // Type helpers
 type Await<T> = T extends {

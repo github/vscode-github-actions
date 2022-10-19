@@ -1,9 +1,9 @@
 import * as vscode from "vscode";
-import { GitHubRepoContext } from "../git/repository";
-import { updateDecorations } from "../logs/formatProvider";
-import { getLogInfo } from "../logs/logInfoProvider";
-import { buildLogURI } from "../logs/scheme";
-import { WorkflowJob, WorkflowStep } from "../model";
+import {GitHubRepoContext} from "../git/repository";
+import {updateDecorations} from "../logs/formatProvider";
+import {getLogInfo} from "../logs/logInfoProvider";
+import {buildLogURI} from "../logs/scheme";
+import {WorkflowJob, WorkflowStep} from "../model";
 
 export interface OpenWorkflowRunLogsCommandArgs {
   gitHubRepoContext: GitHubRepoContext;
@@ -26,7 +26,7 @@ export function registerOpenWorkflowRunLogs(context: vscode.ExtensionContext) {
 
       const doc = await vscode.workspace.openTextDocument(uri);
       const editor = await vscode.window.showTextDocument(doc, {
-        preview: false,
+        preview: false
       });
 
       const logInfo = getLogInfo(uri);
@@ -39,7 +39,7 @@ export function registerOpenWorkflowRunLogs(context: vscode.ExtensionContext) {
 
       // Deep linking to steps
       if (step) {
-        let matchingSection = logInfo.sections.find((s) => s.name && s.name === step.name);
+        let matchingSection = logInfo.sections.find(s => s.name && s.name === step.name);
         if (!matchingSection) {
           // If we cannot match by name, see if we can try to match by number
           matchingSection = logInfo.sections[step.number - 1];

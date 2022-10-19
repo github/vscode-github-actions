@@ -16,7 +16,7 @@ export function getAbsoluteIconPath(relativeIconPath: string): {
 } {
   return {
     light: _context.asAbsolutePath(`resources/icons/light/${relativeIconPath}`),
-    dark: _context.asAbsolutePath(`resources/icons/dark/${relativeIconPath}`),
+    dark: _context.asAbsolutePath(`resources/icons/dark/${relativeIconPath}`)
   };
 }
 
@@ -26,7 +26,7 @@ export function getIconForWorkflowRun(runOrJob: IStatusAndConclusion) {
 
 function _getIconForWorkflowrun(
   runOrJob: IStatusAndConclusion
-): string | vscode.ThemeIcon | { light: string | vscode.Uri; dark: string | vscode.Uri } {
+): string | vscode.ThemeIcon | {light: string | vscode.Uri; dark: string | vscode.Uri} {
   switch (runOrJob.status) {
     case "completed": {
       switch (runOrJob.conclusion) {
@@ -39,6 +39,7 @@ function _getIconForWorkflowrun(
         case "cancelled":
           return getAbsoluteIconPath("conclusions/cancelled.svg");
       }
+      break;
     }
 
     case "queued":
@@ -73,6 +74,7 @@ export function getCodIconForWorkflowrun(runOrJob?: IStatusAndConclusion): strin
         case "cancelled":
           return "circle-slash";
       }
+      break;
     }
 
     case "queued":

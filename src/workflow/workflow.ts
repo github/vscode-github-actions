@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
 
-import { parse } from "github-actions-parser";
-import { Workflow } from "github-actions-parser/dist/lib/workflow";
-import { safeLoad } from "js-yaml";
-import { basename } from "path";
-import { GitHubRepoContext } from "../git/repository";
+import {parse} from "github-actions-parser";
+import {Workflow} from "github-actions-parser/dist/lib/workflow";
+import {safeLoad} from "js-yaml";
+import {basename} from "path";
+import {GitHubRepoContext} from "../git/repository";
 
 interface On {
   event: string;
@@ -13,8 +13,18 @@ interface On {
   schedule?: string[];
 }
 
-function getEvents(doc: any): On[] {
-  const trigger: string | string[] | { [trigger: string]: any | undefined } = doc.on;
+type EventTrigger = {
+  on: string | string[] | {[trigger: string]: string[] | undefined};
+};
+
+interface Trigger {
+  types?: string[];
+  branches?: string[];
+  schedule?: string[];
+}
+
+function getEvents(doc: string | object): On[] {
+  const trigger = (doc as EventTrigger).on;
 
   const on: On[] = [];
 
@@ -22,25 +32,24 @@ function getEvents(doc: any): On[] {
     return [];
   } else if (typeof trigger == "string") {
     on.push({
-      event: trigger,
+      event: trigger
     });
   } else if (Array.isArray(trigger)) {
     on.push(
-      ...trigger.map((t) => ({
-        event: t,
+      ...trigger.map(t => ({
+        event: t
       }))
     );
   } else if (typeof trigger == "object") {
     on.push(
-      ...Object.keys(trigger).map((event) => {
-        // Work around typing :(
-        const t = (trigger as any)[event];
+      ...Object.keys(trigger).map(event => {
+        const t = (trigger as {[trigger: string]: Trigger | undefined})[event];
 
         return {
           event,
           types: t?.types,
           branches: t?.branches,
-          schedule: t?.schedule,
+          schedule: t?.schedule
         };
       })
     );
@@ -58,11 +67,11 @@ export async function getContextStringForWorkflow(path: string): Promise<string>
       let context = "";
 
       const events = getEvents(doc);
-      if (events.some((t) => t.event.toLowerCase() === "repository_dispatch")) {
+      if (events.some(t => t.event.toLowerCase() === "repository_dispatch")) {
         context += "rdispatch";
       }
 
-      if (events.some((t) => t.event.toLowerCase() === "workflow_dispatch")) {
+      if (events.some(t => t.event.toLowerCase() === "workflow_dispatch")) {
         context += "wdispatch";
       }
 
@@ -94,7 +103,7 @@ export async function parseWorkflow(
     const doc = await parse(
       {
         ...gitHubRepoContext,
-        repository: gitHubRepoContext.name,
+        repository: gitHubRepoContext.name
       },
       basename(uri.fsPath),
       workflowInput

@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import { GitHubRepoContext } from "../../git/repository";
-import { OrgFeaturesNode } from "./orgFeaturesNode";
-import { OrgSecretNode } from "./orgSecretNode";
+import {GitHubRepoContext} from "../../git/repository";
+import {OrgFeaturesNode} from "./orgFeaturesNode";
+import {OrgSecretNode} from "./orgSecretNode";
 
 export class OrgSecretsNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext) {
@@ -16,9 +16,9 @@ export class OrgSecretsNode extends vscode.TreeItem {
     }
 
     const result = await this.gitHubRepoContext.client.actions.listOrgSecrets({
-      org: this.gitHubRepoContext.owner,
+      org: this.gitHubRepoContext.owner
     });
 
-    return result.data.secrets.map((s) => new OrgSecretNode(this.gitHubRepoContext, s));
+    return result.data.secrets.map(s => new OrgSecretNode(this.gitHubRepoContext, s));
   }
 }

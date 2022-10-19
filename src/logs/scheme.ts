@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { LogScheme } from "./constants";
+import {LogScheme} from "./constants";
 
 /**
  * @param displayName Must not contain '/'
@@ -22,6 +22,6 @@ export function parseUri(uri: vscode.Uri): {
     owner: uri.authority,
     repo: uri.path.split("/").slice(0, -1).join(""),
     jobId: parseInt(uri.query, 10),
-    stepName: uri.fragment,
+    stepName: uri.fragment
   };
 }
