@@ -1,6 +1,10 @@
 {
   "onCreateCommand": ".devcontainer/on-create-command.sh",
-  "features": {},
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "latest"
+    }
+  },
   "customizations": {
     "codespaces": {
       "repositories": {
