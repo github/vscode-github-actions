@@ -1,4 +1,6 @@
-import {parse as parseConfig, Config, ConfigResolver} from "ssh-config";
+//@ts-nocheck
+// Eventually we need to upgrade ssh-config to a version of the library with types. Ignore checks for now.
+import {Config, ConfigResolver, parse as parseConfig} from "ssh-config";
 
 const SSH_URL_RE = /^(?:([^@:]+)@)?([^:/]+):?(.+)$/;
 const URL_SCHEME_RE = /^([a-z-]+):\/\//;
