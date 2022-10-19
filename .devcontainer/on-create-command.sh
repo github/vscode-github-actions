@@ -30,4 +30,5 @@ echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" > ~/.npmrc
 # Setup npm workspace
 pushd /workspaces
 npm i
+# Build all packages locally
 npm run build -ws
