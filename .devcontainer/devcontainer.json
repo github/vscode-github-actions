@@ -12,28 +12,32 @@
           "permissions": {
             "contents": "write",
             "packages": "read",
-            "pull_requests": "write"
+            "pull_requests": "write",
+            "workflows": "write"
           }
         },
         "github/actions-workflow-parser": {
           "permissions": {
             "contents": "write",
             "packages": "read",
-            "pull_requests": "write"
+            "pull_requests": "write",
+            "workflows": "write"
           }
         },
         "github/actions-languageservice": {
           "permissions": {
             "contents": "write",
             "packages": "read",
-            "pull_requests": "write"
+            "pull_requests": "write",
+            "workflows": "write"
           }
         },
         "github/actions-languageserver": {
           "permissions": {
             "contents": "write",
             "packages": "read",
-            "pull_requests": "write"
+            "pull_requests": "write",
+            "workflows": "write"
           }
         }
       }
