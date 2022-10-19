@@ -12,8 +12,19 @@ function clone_repo() {
   fi
 }
 
+# Clone dependent repos
 clone_repo https://github.com/github/actions-expressions /workspaces/actions-expressions
 clone_repo https://github.com/github/actions-workflow-parser /workspaces/actions-workflow-parser
 clone_repo https://github.com/github/actions-languageservice /workspaces/actions-languageservice
 clone_repo https://github.com/github/actions-languageserver /workspaces/actions-languageserver
 
+# Copy workspace files
+cp /workspaces/vscode-github-actions/.devcontainer/package.json /workspaces/
+cp /workspaces/vscode-github-actions/.devcontainer/vscode-github-actions.code-workspace /workspaces/
+cp /workspaces/vscode-github-actions/.devcontainer/.npmrc /workspaces/
+cp /workspaces/vscode-github-actions/.devcontainer/update-package-locks.sh /workspaces/
+
+# Setup npm workspace
+pushd /workspaces
+npm i
+npm run build -ws
