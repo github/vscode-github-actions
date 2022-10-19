@@ -398,7 +398,6 @@
   },
   "dependencies": {
     "@github/actions-languageserver": "^0.0.2",
-    "@github/actions-languageservice": "^0.0.3",
     "@octokit/rest": "^19.0.5",
     "abab": "^2.0.5",
     "crypto-browserify": "^3.12.0",
