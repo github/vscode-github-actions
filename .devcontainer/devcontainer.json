@@ -8,7 +8,7 @@
   "customizations": {
     "codespaces": {
       "repositories": {
-        "github/actions-expression*": {
+        "github/*": {
           "permissions": {
             "contents": "read",
             "packages": "read"
