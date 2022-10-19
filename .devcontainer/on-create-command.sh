@@ -24,6 +24,9 @@ cp /workspaces/vscode-github-actions/.devcontainer/vscode-github-actions.code-wo
 cp /workspaces/vscode-github-actions/.devcontainer/.npmrc /workspaces/
 cp /workspaces/vscode-github-actions/.devcontainer/update-package-locks.sh /workspaces/
 
+# Setup npm auth
+echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" > ~/.npmrc
+
 # Setup npm workspace
 pushd /workspaces
 npm i
