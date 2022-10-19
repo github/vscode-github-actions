@@ -6,7 +6,7 @@ import { WorkflowSelector } from "./documentSelector";
 
 let client: LanguageClient;
 
-export function initLanguageServer(context: vscode.ExtensionContext) {
+export async function initLanguageServer(context: vscode.ExtensionContext) {
   // TODO: cschleid: figure out how this can work with workspaces
   const serverModule = context.asAbsolutePath(path.join("dist", "server-node.js"));
 
@@ -32,7 +32,7 @@ export function initLanguageServer(context: vscode.ExtensionContext) {
   // Create the language client and start the client.
   client = new LanguageClient("actions-language", "Actions Language Server", serverOptions, clientOptions);
 
-  client.start();
+  await client.start();
 }
 
 export function deactivateLanguageServer(): Promise<void> {
