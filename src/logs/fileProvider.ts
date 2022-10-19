@@ -1,9 +1,9 @@
+import {OctokitResponse} from "@octokit/types";
 import * as vscode from "vscode";
 import {getGitHubContextForRepo} from "../git/repository";
 import {cacheLogInfo} from "./logInfoProvider";
 import {parseLog} from "./model";
 import {parseUri} from "./scheme";
-import {OctokitResponse} from "@octokit/types";
 
 export class WorkflowStepLogProvider implements vscode.TextDocumentContentProvider {
   onDidChangeEmitter = new vscode.EventEmitter<vscode.Uri>();

@@ -28,7 +28,7 @@ import {CurrentBranchTreeProvider} from "./treeViews/currentBranch";
 import {initResources} from "./treeViews/icons";
 import {SettingsTreeProvider} from "./treeViews/settings";
 import {WorkflowsTreeProvider} from "./treeViews/workflows";
-import {init} from "./workflow/diagnostics";
+import {deactivateLanguageServer, initLanguageServer} from "./workflow/languageServer";
 
 export async function activate(context: vscode.ExtensionContext) {
   initLogger();
@@ -140,8 +140,11 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   // Editing features
-
-  await init(context);
+  await initLanguageServer(context);
 
   log("...initialized");
+}
+
+export function deactivate(): Thenable<void> | undefined {
+  return deactivateLanguageServer();
 }

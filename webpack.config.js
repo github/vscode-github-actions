@@ -12,6 +12,9 @@ const config = {
   externals: {
     vscode: "commonjs vscode"
   },
+  node: {
+    __dirname: false // We need to support dirname to be able to load the language server
+  },
   plugins: [
     new webpack.ProvidePlugin({
       Buffer: ["buffer", "Buffer"]
@@ -36,7 +39,12 @@ const config = {
         exclude: /node_modules/,
         use: [
           {
-            loader: "ts-loader"
+            loader: "ts-loader",
+            options: {
+              compilerOptions: {
+                sourceMap: true
+              }
+            }
           }
         ]
       },
@@ -70,4 +78,48 @@ const webConfig = {
   }
 };
 
-module.exports = [nodeConfig, webConfig];
+const serverConfig = {
+  target: "node",
+  entry: "./src/langserver.ts",
+  devtool: "source-map",
+  externals: {
+    vscode: "commonjs vscode"
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: [
+          {
+            loader: "ts-loader"
+          }
+        ],
+        resolve: {
+          fullySpecified: false
+        }
+      },
+      {
+        test: /\.m?js$/,
+        resolve: {
+          fullySpecified: false // disable the behaviour
+        }
+      }
+    ]
+  },
+  resolve: {
+    extensions: [".ts", ".tsx", ".js"],
+    extensionAlias: {
+      ".ts": [".js", ".ts"],
+      ".cts": [".cjs", ".cts"],
+      ".mts": [".mjs", ".mts"]
+    }
+  },
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "server-node.js",
+    libraryTarget: "commonjs",
+    devtoolModuleFilenameTemplate: "../[resource-path]"
+  }
+};
+
+module.exports = [nodeConfig, webConfig, serverConfig];

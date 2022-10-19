@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "workspaces": [
+    "./actions-expressions/typescript",
+    "./actions-workflow-parser/typescript",
+    "./actions-languageservice",
+    "./actions-languageserver",
+    "./vscode-github-actions"
+  ]
+}

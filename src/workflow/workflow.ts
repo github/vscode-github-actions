@@ -1,9 +1,6 @@
 import * as vscode from "vscode";
 
-import {parse} from "github-actions-parser";
-import {Workflow} from "github-actions-parser/dist/lib/workflow";
 import {safeLoad} from "js-yaml";
-import {basename} from "path";
 import {GitHubRepoContext} from "../git/repository";
 
 interface On {
@@ -93,25 +90,26 @@ export function getWorkflowUri(gitHubRepoContext: GitHubRepoContext, path: strin
   return vscode.Uri.joinPath(gitHubRepoContext.workspaceUri, path);
 }
 
-export async function parseWorkflow(
-  uri: vscode.Uri,
-  gitHubRepoContext: GitHubRepoContext
-): Promise<Workflow | undefined> {
-  try {
-    const b = await vscode.workspace.fs.readFile(uri);
-    const workflowInput = Buffer.from(b).toString("utf-8");
-    const doc = await parse(
-      {
-        ...gitHubRepoContext,
-        repository: gitHubRepoContext.name
-      },
-      basename(uri.fsPath),
-      workflowInput
-    );
-    return doc.workflow;
-  } catch {
-    // Ignore error here
-  }
+// TODO: Use parser here
+// export async function parseWorkflow(
+//   uri: vscode.Uri,
+//   gitHubRepoContext: GitHubRepoContext
+// ): Promise<Workflow | undefined> {
+//   try {
+//     const b = await vscode.workspace.fs.readFile(uri);
+//     const workflowInput = Buffer.from(b).toString("utf-8");
+//     const doc = await parse(
+//       {
+//         ...gitHubRepoContext,
+//         repository: gitHubRepoContext.name,
+//       },
+//       basename(uri.fsPath),
+//       workflowInput
+//     );
+//     return doc.workflow;
+//   } catch {
+//     // Ignore error here
+//   }
 
-  return undefined;
-}
+//   return undefined;
+// }

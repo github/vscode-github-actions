@@ -1,0 +1,46 @@
+{
+  "onCreateCommand": ".devcontainer/on-create-command.sh",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "latest"
+    }
+  },
+  "customizations": {
+    "codespaces": {
+      "repositories": {
+        "github/actions-expressions": {
+          "permissions": {
+            "contents": "write",
+            "packages": "read",
+            "pull_requests": "write",
+            "workflows": "write"
+          }
+        },
+        "github/actions-workflow-parser": {
+          "permissions": {
+            "contents": "write",
+            "packages": "read",
+            "pull_requests": "write",
+            "workflows": "write"
+          }
+        },
+        "github/actions-languageservice": {
+          "permissions": {
+            "contents": "write",
+            "packages": "read",
+            "pull_requests": "write",
+            "workflows": "write"
+          }
+        },
+        "github/actions-languageserver": {
+          "permissions": {
+            "contents": "write",
+            "packages": "read",
+            "pull_requests": "write",
+            "workflows": "write"
+          }
+        }
+      }
+    }
+  }
+}
