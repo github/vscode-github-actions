@@ -12,6 +12,10 @@ function clone_repo() {
   fi
 }
 
+# Cache git credentials
+git config --global credential.helper cache
+git credential-cache exit
+
 # Clone dependent repos
 clone_repo https://github.com/github/actions-expressions /workspaces/actions-expressions
 clone_repo https://github.com/github/actions-workflow-parser /workspaces/actions-workflow-parser

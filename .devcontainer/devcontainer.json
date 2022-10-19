@@ -8,12 +8,6 @@
   "customizations": {
     "codespaces": {
       "repositories": {
-        "github/*": {
-          "permissions": {
-            "contents": "read",
-            "packages": "read"
-          }
-        },
         "github/actions-expressions": {
           "permissions": {
             "contents": "write",
