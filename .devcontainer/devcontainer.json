@@ -1,6 +1,5 @@
 {
   "onCreateCommand": ".devcontainer/on-create-command.sh",
-  "image": "ghcr.io/github/github/bootstrap-nightly:latest",
   "features": {},
   "customizations": {
     "codespaces": {
