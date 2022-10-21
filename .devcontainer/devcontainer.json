@@ -6,6 +6,10 @@
     }
   },
   "extensions": ["ms-vscode-remote.remote-containers"],
+  "hostRequirements": {
+    "cpus": 32,
+    "memory": "8gb"
+  },
   "customizations": {
     "codespaces": {
       "repositories": {
