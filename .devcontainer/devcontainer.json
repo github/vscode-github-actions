@@ -5,6 +5,7 @@
       "version": "latest"
     }
   },
+  "extensions": ["ms-vscode-remote.remote-containers"],
   "customizations": {
     "codespaces": {
       "repositories": {
