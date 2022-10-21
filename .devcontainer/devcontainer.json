@@ -5,6 +5,10 @@
       "version": "latest"
     }
   },
+  "hostRequirements": {
+    "cpus": 32,
+    "memory": "8gb"
+ },
   "customizations": {
     "codespaces": {
       "repositories": {
