@@ -14,7 +14,7 @@
       "repositories": {
         "github/actions-expressions": {
           "permissions": {
-            "contents": "write",
+            "contents": "write, read",
             "packages": "read",
             "pull_requests": "write",
             "workflows": "write"
@@ -22,7 +22,7 @@
         },
         "github/actions-workflow-parser": {
           "permissions": {
-            "contents": "write",
+            "contents": "write, read",
             "packages": "read",
             "pull_requests": "write",
             "workflows": "write"
@@ -30,7 +30,7 @@
         },
         "github/actions-languageservice": {
           "permissions": {
-            "contents": "write",
+            "contents": "write, read",
             "packages": "read",
             "pull_requests": "write",
             "workflows": "write"
@@ -38,7 +38,7 @@
         },
         "github/actions-languageserver": {
           "permissions": {
-            "contents": "write",
+            "contents": "write, read",
             "packages": "read",
             "pull_requests": "write",
             "workflows": "write"
