@@ -1,4 +1,4 @@
-import {parse as parseConfig, Config, ConfigResolver} from 'ssh-config';
+import {Config, ConfigResolver, parse as parseConfig} from "ssh-config";
 
 const SSH_URL_RE = /^(?:([^@:]+)@)?([^:/]+):?(.+)$/;
 const URL_SCHEME_RE = /^([a-z-]+):\/\//;
@@ -48,7 +48,7 @@ const parse = (url: string): Config | undefined => {
   const urlMatch = URL_SCHEME_RE.exec(url);
   if (urlMatch) {
     const [fullSchemePrefix, scheme] = urlMatch;
-    if (scheme === 'ssh') {
+    if (scheme === "ssh") {
       url = url.slice(fullSchemePrefix.length);
     } else {
       return;

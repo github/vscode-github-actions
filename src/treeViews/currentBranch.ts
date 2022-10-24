@@ -1,13 +1,13 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-import {CurrentBranchRepoNode, getCurrentBranchWorkflowRunNodes} from './current-branch/currentBranchRepoNode';
-import {getCurrentBranch, getGitHubContext} from '../git/repository';
+import {CurrentBranchRepoNode, getCurrentBranchWorkflowRunNodes} from "./current-branch/currentBranchRepoNode";
+import {getCurrentBranch, getGitHubContext} from "../git/repository";
 
-import {NoRunForBranchNode} from './current-branch/noRunForBranchNode';
-import {WorkflowJobNode} from './workflows/workflowJobNode';
-import {WorkflowRunNode} from './workflows/workflowRunNode';
-import {WorkflowStepNode} from './workflows/workflowStepNode';
-import {logDebug} from '../log';
+import {NoRunForBranchNode} from "./current-branch/noRunForBranchNode";
+import {WorkflowJobNode} from "./workflows/workflowJobNode";
+import {WorkflowRunNode} from "./workflows/workflowRunNode";
+import {WorkflowStepNode} from "./workflows/workflowStepNode";
+import {logDebug} from "../log";
 
 type CurrentBranchTreeNode =
   | CurrentBranchRepoNode

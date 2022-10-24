@@ -1,17 +1,15 @@
 {
+  "include": ["src"],
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es6",
-    "outDir": "dist",
-    "lib": ["ES2019", "DOM"],
+    "module": "esnext",
+    "target": "ES2020",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "sourceMap": true,
+    "strict": true,
+    "moduleResolution": "node",
     "rootDir": "src",
-    "typeRoots": ["./node_modules/@types", "./src/typings/"],
-    "strict": true /* enable all strict type-checking options */
-    /* Additional Checks */
-    // "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
-    // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
-    // "noUnusedParameters": true,  /* Report errors on unused parameters. */
+    "outDir": "out"
   },
   "exclude": ["node_modules", ".vscode-test"]
 }

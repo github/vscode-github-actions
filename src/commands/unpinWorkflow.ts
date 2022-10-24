@@ -1,9 +1,9 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-import {GitHubRepoContext} from '../git/repository';
-import {Workflow} from '../model';
-import {getWorkflowUri} from '../workflow/workflow';
-import {unpinWorkflow} from '../configuration/configuration';
+import {GitHubRepoContext} from "../git/repository";
+import {Workflow} from "../model";
+import {getWorkflowUri} from "../workflow/workflow";
+import {unpinWorkflow} from "../configuration/configuration";
 
 interface UnPinWorkflowCommandOptions {
   gitHubRepoContext: GitHubRepoContext;
@@ -14,7 +14,7 @@ interface UnPinWorkflowCommandOptions {
 
 export function registerUnPinWorkflow(context: vscode.ExtensionContext) {
   context.subscriptions.push(
-    vscode.commands.registerCommand('github-actions.workflow.unpin', async (args: UnPinWorkflowCommandOptions) => {
+    vscode.commands.registerCommand("github-actions.workflow.unpin", async (args: UnPinWorkflowCommandOptions) => {
       const {gitHubRepoContext, wf} = args;
 
       if (!wf) {
@@ -30,7 +30,7 @@ export function registerUnPinWorkflow(context: vscode.ExtensionContext) {
       await unpinWorkflow(relativeWorkflowPath);
 
       args.updateContextValue();
-      await vscode.commands.executeCommand('github-actions.explorer.refresh');
+      await vscode.commands.executeCommand("github-actions.explorer.refresh");
     })
   );
 }

@@ -1,8 +1,8 @@
-import libsodium = require('libsodium-wrappers');
-import {atob, btoa} from 'abab';
+import {atob, btoa} from "abab";
+import * as libsodium from "libsodium-wrappers";
 
 function decode(encoded: string): Uint8Array {
-  const bytes = (atob(encoded) as string).split('').map((x: string) => x.charCodeAt(0));
+  const bytes = (atob(encoded) as string).split("").map((x: string) => x.charCodeAt(0));
   return Uint8Array.from(bytes);
 }
 

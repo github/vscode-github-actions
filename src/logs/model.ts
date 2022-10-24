@@ -35,7 +35,7 @@ export interface LogInfo {
 
 export function parseLog(log: string): LogInfo {
   let firstSection: LogSection | null = {
-    name: 'Setup',
+    name: "Setup",
     type: Type.Setup,
     start: 0,
     end: 1
@@ -76,7 +76,7 @@ export function parseLog(log: string): LogInfo {
     }
 
     // Remove commands
-    lines[lineIdx] = line.replace(commandRE, '');
+    lines[lineIdx] = line.replace(commandRE, "");
 
     // Check for custom colors
     let match: RegExpExecArray | null;
@@ -104,7 +104,7 @@ export function parseLog(log: string): LogInfo {
   }
 
   return {
-    updatedLog: lines.join('\n'),
+    updatedLog: lines.join("\n"),
     sections,
     colorFormats: colorInfo
   };
@@ -113,7 +113,7 @@ export function parseLog(log: string): LogInfo {
 function parseCustomColor(str: string): CustomColor {
   const ret: CustomColor = {};
 
-  const segments = str.split(';');
+  const segments = str.split(";");
   if (segments.length > 0) {
     ret.foreground = segments[0];
   }

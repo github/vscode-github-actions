@@ -1,14 +1,14 @@
-import * as vscode from 'vscode';
-import {GitHubRepoContext} from '../../git/repository';
-import {Environment} from '../../model';
-import {EmptyEnvironmentSecretsNode} from './emptyEnvironmentSecretsNode';
-import {EnvironmentSecretNode} from './environmentSecretNode';
+import * as vscode from "vscode";
+import {GitHubRepoContext} from "../../git/repository";
+import {Environment} from "../../model";
+import {EmptyEnvironmentSecretsNode} from "./emptyEnvironmentSecretsNode";
+import {EnvironmentSecretNode} from "./environmentSecretNode";
 
 export class EnvironmentNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext, public readonly environment: Environment) {
     super(environment.name, vscode.TreeItemCollapsibleState.Collapsed);
 
-    this.contextValue = 'environment';
+    this.contextValue = "environment";
   }
 
   async getSecrets(): Promise<(EnvironmentSecretNode | EmptyEnvironmentSecretsNode)[]> {

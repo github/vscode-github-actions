@@ -1,7 +1,7 @@
 /// <reference path='./git.d.ts'/>
 
-declare module 'tunnel';
+declare module "tunnel";
 
-declare module 'atob';
-declare module 'btoa';
-declare module 'util';
+declare module "atob";
+declare module "btoa";
+declare module "util";

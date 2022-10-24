@@ -1,7 +1,7 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-import {GitHubRepoContext} from '../git/repository';
-import {WorkflowRun} from '../model';
+import {GitHubRepoContext} from "../git/repository";
+import {WorkflowRun} from "../model";
 
 interface ReRunWorkflowRunLogsCommandArgs {
   gitHubRepoContext: GitHubRepoContext;
@@ -11,7 +11,7 @@ interface ReRunWorkflowRunLogsCommandArgs {
 export function registerReRunWorkflowRun(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      'github-actions.workflow.run.rerun',
+      "github-actions.workflow.run.rerun",
       async (args: ReRunWorkflowRunLogsCommandArgs) => {
         const gitHubContext = args.gitHubRepoContext;
         const run = args.run;
@@ -26,7 +26,7 @@ export function registerReRunWorkflowRun(context: vscode.ExtensionContext) {
           await vscode.window.showErrorMessage(`Could not rerun workflow: '${(e as Error).message}'`);
         }
 
-        await vscode.commands.executeCommand('github-actions.explorer.refresh');
+        await vscode.commands.executeCommand("github-actions.explorer.refresh");
       }
     )
   );

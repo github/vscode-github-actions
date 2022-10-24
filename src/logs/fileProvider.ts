@@ -1,9 +1,9 @@
-import * as vscode from 'vscode';
-import {getGitHubContextForRepo} from '../git/repository';
-import {cacheLogInfo} from './logInfoProvider';
-import {parseLog} from './model';
-import {parseUri} from './scheme';
-import {OctokitResponse} from '@octokit/types';
+import {OctokitResponse} from "@octokit/types";
+import * as vscode from "vscode";
+import {getGitHubContextForRepo} from "../git/repository";
+import {cacheLogInfo} from "./logInfoProvider";
+import {parseLog} from "./model";
+import {parseUri} from "./scheme";
 
 export class WorkflowStepLogProvider implements vscode.TextDocumentContentProvider {
   onDidChangeEmitter = new vscode.EventEmitter<vscode.Uri>();
@@ -14,7 +14,7 @@ export class WorkflowStepLogProvider implements vscode.TextDocumentContentProvid
 
     const githubRepoContext = await getGitHubContextForRepo(owner, repo);
     if (!githubRepoContext) {
-      throw new Error('Could not load logs');
+      throw new Error("Could not load logs");
     }
 
     try {
@@ -31,18 +31,18 @@ export class WorkflowStepLogProvider implements vscode.TextDocumentContentProvid
 
       return logInfo.updatedLog;
     } catch (e) {
-      const respErr = e as OctokitResponse<unknown, number>
+      const respErr = e as OctokitResponse<unknown, number>;
       if (respErr.status === 410) {
         cacheLogInfo(uri, {
           colorFormats: [],
           sections: [],
-          updatedLog: ''
+          updatedLog: ""
         });
 
-        return 'Could not open logs, they are expired.';
+        return "Could not open logs, they are expired.";
       }
 
-      console.error('Error loading logs', e);
+      console.error("Error loading logs", e);
       return `Could not open logs, unhandled error. ${(e as Error).message}`;
     }
   }

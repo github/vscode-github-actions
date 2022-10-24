@@ -1,12 +1,12 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-import {orgFeaturesEnabled, updateOrgFeaturesEnabled} from '../configuration/configuration';
+import {orgFeaturesEnabled, updateOrgFeaturesEnabled} from "../configuration/configuration";
 
-import {resetGitHubContext} from '../git/repository';
+import {resetGitHubContext} from "../git/repository";
 
-const AUTH_PROVIDER_ID = 'github';
-const DEFAULT_SCOPES = ['repo', 'workflow'];
-const ORG_SCOPES = [...DEFAULT_SCOPES, 'admin:org'];
+const AUTH_PROVIDER_ID = "github";
+const DEFAULT_SCOPES = ["repo", "workflow"];
+const ORG_SCOPES = [...DEFAULT_SCOPES, "admin:org"];
 
 export function registerListeners(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
@@ -24,7 +24,7 @@ export async function getSession(): Promise<vscode.AuthenticationSession> {
   });
 
   if (!existingSession) {
-    throw new Error('Could not get token from the GitHub authentication provider. \nPlease sign-in and allow access.');
+    throw new Error("Could not get token from the GitHub authentication provider. \nPlease sign-in and allow access.");
   }
 
   return existingSession;
@@ -36,7 +36,7 @@ export async function enableOrgFeatures() {
   await resetGitHubContext();
 
   // TODO: CS: There has be a better way :)
-  await vscode.commands.executeCommand('github-actions.explorer.refresh');
+  await vscode.commands.executeCommand("github-actions.explorer.refresh");
 }
 
 function getScopes(): string[] {

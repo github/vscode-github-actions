@@ -1,18 +1,17 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-import {GitHubRepoContext} from '../../git/repository';
-import {Workflow as ParsedWorkflow} from 'github-actions-parser/dist/lib/workflow';
-import {Workflow} from '../../model';
-import {WorkflowRunNode} from './workflowRunNode';
-import {getPinnedWorkflows} from '../../configuration/configuration';
-import {getWorkflowUri} from '../../workflow/workflow';
-import {logDebug} from '../../log';
+import {getPinnedWorkflows} from "../../configuration/configuration";
+import {GitHubRepoContext} from "../../git/repository";
+import {logDebug} from "../../log";
+import {Workflow} from "../../model";
+import {getWorkflowUri} from "../../workflow/workflow";
+import {WorkflowRunNode} from "./workflowRunNode";
 
 export class WorkflowNode extends vscode.TreeItem {
   constructor(
     public readonly gitHubRepoContext: GitHubRepoContext,
     public readonly wf: Workflow,
-    public readonly parsed?: ParsedWorkflow
+    public readonly parsed?: any // ParsedWorkflow
   ) {
     super(wf.name, vscode.TreeItemCollapsibleState.Collapsed);
 
@@ -20,31 +19,31 @@ export class WorkflowNode extends vscode.TreeItem {
   }
 
   updateContextValue() {
-    this.contextValue = 'workflow';
+    this.contextValue = "workflow";
 
     const workflowFullPath = getWorkflowUri(this.gitHubRepoContext, this.wf.path);
     if (workflowFullPath) {
       const relativeWorkflowPath = vscode.workspace.asRelativePath(workflowFullPath);
       if (new Set(getPinnedWorkflows()).has(relativeWorkflowPath)) {
-        this.contextValue += ' pinned';
+        this.contextValue += " pinned";
       } else {
-        this.contextValue += ' pinnable';
+        this.contextValue += " pinnable";
       }
     }
 
     if (this.parsed) {
       if (this.parsed.on.repository_dispatch !== undefined) {
-        this.contextValue += ' rdispatch';
+        this.contextValue += " rdispatch";
       }
 
       if (this.parsed.on.workflow_dispatch !== undefined) {
-        this.contextValue += ' wdispatch';
+        this.contextValue += " wdispatch";
       }
     }
   }
 
   async getRuns(): Promise<WorkflowRunNode[]> {
-    logDebug('Getting workflow runs');
+    logDebug("Getting workflow runs");
 
     const result = await this.gitHubRepoContext.client.actions.listWorkflowRuns({
       owner: this.gitHubRepoContext.owner,

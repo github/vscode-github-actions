@@ -1,0 +1,51 @@
+{
+  "onCreateCommand": ".devcontainer/on-create-command.sh",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "latest"
+    }
+  },
+  "extensions": ["ms-vscode-remote.remote-containers"],
+  "hostRequirements": {
+    "cpus": 32,
+    "memory": "8gb"
+  },
+  "customizations": {
+    "codespaces": {
+      "repositories": {
+        "github/actions-expressions": {
+          "permissions": {
+            "contents": "write, read",
+            "packages": "read",
+            "pull_requests": "write",
+            "workflows": "write"
+          }
+        },
+        "github/actions-workflow-parser": {
+          "permissions": {
+            "contents": "write, read",
+            "packages": "read",
+            "pull_requests": "write",
+            "workflows": "write"
+          }
+        },
+        "github/actions-languageservice": {
+          "permissions": {
+            "contents": "write, read",
+            "packages": "read",
+            "pull_requests": "write",
+            "workflows": "write"
+          }
+        },
+        "github/actions-languageserver": {
+          "permissions": {
+            "contents": "write, read",
+            "packages": "read",
+            "pull_requests": "write",
+            "workflows": "write"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,21 +1,21 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-import {GitHubRepoContext, getCurrentBranch} from '../../git/repository';
+import {GitHubRepoContext, getCurrentBranch} from "../../git/repository";
 
-import {NoRunForBranchNode} from './noRunForBranchNode';
-import {WorkflowRunNode} from '../workflows/workflowRunNode';
-import {logDebug} from '../../log';
+import {NoRunForBranchNode} from "./noRunForBranchNode";
+import {WorkflowRunNode} from "../workflows/workflowRunNode";
+import {logDebug} from "../../log";
 
 export class CurrentBranchRepoNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext, public readonly currentBranchName: string) {
     super(gitHubRepoContext.name, vscode.TreeItemCollapsibleState.Collapsed);
 
     this.description = currentBranchName;
-    this.contextValue = 'cb-repo';
+    this.contextValue = "cb-repo";
   }
 
   async getRuns(): Promise<(WorkflowRunNode | NoRunForBranchNode)[]> {
-    logDebug('Getting workflow runs for current branch');
+    logDebug("Getting workflow runs for current branch");
 
     return (await getCurrentBranchWorkflowRunNodes(this.gitHubRepoContext)) || [];
   }
