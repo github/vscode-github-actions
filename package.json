@@ -309,7 +309,7 @@
         },
         {
           "command": "github-actions.workflow.run.open",
-          "when": "viewItem =~ /run/",
+          "when": "viewItem =~ /run\\s/",
           "group": "inline"
         }
       ],
