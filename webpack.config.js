@@ -1,5 +1,3 @@
-//@ts-check
-
 "use strict";
 
 const path = require("path");
@@ -91,7 +89,12 @@ const serverConfig = {
         test: /\.ts$/,
         use: [
           {
-            loader: "ts-loader"
+            loader: "ts-loader",
+            options: {
+              compilerOptions: {
+                sourceMap: true
+              }
+            }
           }
         ],
         resolve: {
