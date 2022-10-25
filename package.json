@@ -397,7 +397,7 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
-    "@github/actions-languageserver": "^0.0.2",
+    "@github/actions-languageserver": "*",
     "@octokit/rest": "^19.0.5",
     "abab": "^2.0.5",
     "crypto-browserify": "^3.12.0",
