@@ -27,7 +27,7 @@ export class WorkflowRunNode extends vscode.TreeItem {
     }
 
     if (this.run.status === "completed") {
-      this.contextValue += "completed";
+      this.contextValue += " completed";
     }
 
     this.iconPath = getIconForWorkflowRun(this.run);
