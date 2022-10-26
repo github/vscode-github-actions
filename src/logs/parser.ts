@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // From azure pipelines UI.
 //   Class names have been changed to work with Primer styles
 //   Source: https://github.com/microsoft/azure-devops-ui/blob/22b5ae5969d405f4459caf9b020019e95bbded38/packages/azure-pipelines-ui/src/Utilities/Parser.ts#L1
@@ -110,6 +109,18 @@ const base8BitColors = {
   '5': 'm',
   '6': 'c',
   '7': 'w'
+} as Record<string, string>
+
+export const ColorToHex = {
+  'b': '#0c0c0c', // '30/40',
+  'r': '#e74856', // '31/41',
+  'g': '#16c60c', // '32/42',
+  'y': '#f9f1a5', // '33/43',
+  'bl': '#0037da', // '34/44',
+  'm': '#881798', // '35/45',
+  'c': '#3a96dd', // '36/46',
+  'w': '#cccccc', // '37/47',
+  'gr': '#767676' // '90/100'
 } as Record<string, string>
 
 //0-255 in 6 increments, used to generate 216 equally incrementing colors
@@ -382,6 +393,21 @@ export class Parser {
     }
 
     return result
+  }
+
+  /**
+   * Gets a unique key for each style
+   * @param style style to get key for
+   * @returns a string that is guaranteed to be unique for every different style
+   */
+  public static styleKey(style: IStyle): string {
+    const fg = style.fg ?? "-"
+    const bg = style.bg ?? "-"
+    const bold = style.bold ? "b" : "n"
+    const ital = style.italic ? "i" : "n"
+    const underline = style.underline ? "u" : "n"
+    // May produce two different strings for the same style if using an RBG that matches a predefined color code
+    return fg + bg + bold + ital + underline
   }
 
   /**

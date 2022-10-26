@@ -1,36 +1,12 @@
-import { types } from "util";
-import * as vscode from "vscode";
-import {LogInfo} from "./model";
+import * as vscode from "vscode"
+import {LogInfo} from "./model"
+import {Parser, ColorToHex} from './parser'
 
 const timestampRE = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{7}Z/;
 
 const timestampDecorationType = vscode.window.createTextEditorDecorationType({
   color: "#99999959"
 });
-
-const background = {
-  "40": "#0c0c0c",
-  "41": "#e74856",
-  "42": "#16c60c",
-  "43": "#f9f1a5",
-  "44": "#0037da",
-  "45": "#881798",
-  "46": "#3a96dd",
-  "47": "#cccccc",
-  "100": "#767676"
-} as {[key: string]: string};
-
-const foreground = {
-  "30": "#0c0c0c",
-  "31": "#e74856",
-  "32": "#16c60c",
-  "33": "#f9f1a5",
-  "34": "#0037da",
-  "35": "#881798",
-  "36": "#3a96dd",
-  "37": "#cccccc",
-  "90": "#767676"
-} as {[key: string]: string};
 
 export function updateDecorations(activeEditor: vscode.TextEditor, logInfo: LogInfo) {
   if (!activeEditor) {
@@ -56,7 +32,6 @@ export function updateDecorations(activeEditor: vscode.TextEditor, logInfo: LogI
     [key: string]: {type: vscode.TextEditorDecorationType; ranges: vscode.Range[]};
   } = {};
 
-  
   for (let lineNo = 0; lineNo < logInfo.updatedLogLines.length; lineNo++) {
     // .filter() preserves the order of the array
     const lineStyles = logInfo.styleFormats.filter(style => style.line == lineNo)
@@ -67,21 +42,49 @@ export function updateDecorations(activeEditor: vscode.TextEditor, logInfo: LogI
       const range = new vscode.Range(lineNo, pos, lineNo, endPos);
       pos = endPos
 
-      // TODO build key by concatenating styles... or using style hash?
-      const key = `mykey`
-      if (!ctypes[key]) {
-        ctypes[key] = {
-          type: vscode.window.createTextEditorDecorationType({
-            color: style.style?.fg,
-            backgroundColor: style.style?.bg,
-            fontWeight: style.style?.bold ? "bold" : "normal",
-            fontStyle: style.style?.italic ? "italic" : "normal",
-            textDecoration: style.style?.underline ? "underline" : ""
-          }),
-          ranges: [range]
-        };
-      } else {
-        ctypes[key].ranges.push(range);
+      if (style.style) {
+        const key = Parser.styleKey(style.style)
+        let fgHex = ""
+        let bgHex = ""
+
+        // Convert to hex colors if RGB-formatted, or use lookup for predefined colors
+        if (style.style.isFgRGB) {
+          const rgbValues = style.style.fg.split(',')
+          if (rgbValues.length == 3) {
+            fgHex = "#"
+            for (let i = 0; i < 3; i++) {
+              fgHex.concat(parseInt(rgbValues[i]).toString(16))
+            }
+          }
+        } else {
+          fgHex = ColorToHex[style.style.fg]
+        }
+        if (style.style.isBgRGB) {
+          const rgbValues = style.style.bg.split(',')
+          if (rgbValues.length == 3) {
+            bgHex = "#"
+            for (let i = 0; i < 3; i++) {
+              bgHex.concat(parseInt(rgbValues[i]).toString(16))
+            }
+          }
+        } else {
+          bgHex = ColorToHex[style.style.bg]
+        }
+
+        if (!ctypes[key]) {
+          ctypes[key] = {
+            type: vscode.window.createTextEditorDecorationType({
+              color: fgHex,
+              backgroundColor: bgHex,
+              fontWeight: style.style.bold ? "bold" : "normal",
+              fontStyle: style.style.italic ? "italic" : "normal",
+              textDecoration: style.style.underline ? "underline" : ""
+            }),
+            ranges: [range]
+          };
+        } else {
+          ctypes[key].ranges.push(range);
+        }
       }
     }
   }

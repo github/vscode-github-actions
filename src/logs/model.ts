@@ -1,3 +1,4 @@
+const ansiColorRE = /\u001b\[(\d+;?)+m/gm;
 const groupMarker = '##[group]';
 
 import { Parser, IStyle } from './parser'
@@ -78,6 +79,9 @@ export function parseLog(log: string): LogInfo {
         style: state.style
       });
     }
+
+    // Remove all other codes from the output, we don't support those
+    lines[lineIdx] = line.replace(ansiColorRE, "");
 
     ++lineIdx;
   }
