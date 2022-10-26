@@ -1,7 +1,7 @@
 const ansiColorRE = /\u001b\[(\d+;?)+m/gm;
-const groupMarker = '##[group]';
+const groupMarker = "##[group]";
 
-import { Parser, IStyle } from './parser'
+import {Parser, IStyle} from "./parser";
 
 export enum Type {
   Setup,
@@ -40,7 +40,7 @@ export function parseLog(log: string): LogInfo {
 
   let currentRange: LogSection | null = null;
 
-  const parser = new Parser()
+  const parser = new Parser();
   const styleInfo: LogStyleInfo[] = [];
   const lines = log.split(/\n|\r/).filter(l => !!l);
 
@@ -71,7 +71,7 @@ export function parseLog(log: string): LogInfo {
       };
     }
 
-    const stateFragments = parser.getStates(line)
+    const stateFragments = parser.getStates(line);
     for (const state of stateFragments) {
       styleInfo.push({
         line: lineIdx,
@@ -97,4 +97,3 @@ export function parseLog(log: string): LogInfo {
     styleFormats: styleInfo
   };
 }
-

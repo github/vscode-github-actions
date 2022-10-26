@@ -1,6 +1,6 @@
-import * as vscode from "vscode"
-import {LogInfo} from "./model"
-import {Parser, ColorToHex} from './parser'
+import * as vscode from "vscode";
+import {LogInfo} from "./model";
+import {Parser, ColorToHex} from "./parser";
 
 const timestampRE = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{7}Z/;
 
@@ -34,41 +34,41 @@ export function updateDecorations(activeEditor: vscode.TextEditor, logInfo: LogI
 
   for (let lineNo = 0; lineNo < logInfo.updatedLogLines.length; lineNo++) {
     // .filter() preserves the order of the array
-    const lineStyles = logInfo.styleFormats.filter(style => style.line == lineNo)
-    let pos = 0
+    const lineStyles = logInfo.styleFormats.filter(style => style.line == lineNo);
+    let pos = 0;
     for (let styleNo = 0; styleNo < lineStyles.length; styleNo++) {
-      const style = lineStyles[styleNo]
-      const endPos = pos + style.content.length
+      const style = lineStyles[styleNo];
+      const endPos = pos + style.content.length;
       const range = new vscode.Range(lineNo, pos, lineNo, endPos);
-      pos = endPos
+      pos = endPos;
 
       if (style.style) {
-        const key = Parser.styleKey(style.style)
-        let fgHex = ""
-        let bgHex = ""
+        const key = Parser.styleKey(style.style);
+        let fgHex = "";
+        let bgHex = "";
 
         // Convert to hex colors if RGB-formatted, or use lookup for predefined colors
         if (style.style.isFgRGB) {
-          const rgbValues = style.style.fg.split(',')
+          const rgbValues = style.style.fg.split(",");
           if (rgbValues.length == 3) {
-            fgHex = "#"
+            fgHex = "#";
             for (let i = 0; i < 3; i++) {
-              fgHex.concat(parseInt(rgbValues[i]).toString(16))
+              fgHex.concat(parseInt(rgbValues[i]).toString(16));
             }
           }
         } else {
-          fgHex = ColorToHex[style.style.fg]
+          fgHex = ColorToHex[style.style.fg];
         }
         if (style.style.isBgRGB) {
-          const rgbValues = style.style.bg.split(',')
+          const rgbValues = style.style.bg.split(",");
           if (rgbValues.length == 3) {
-            bgHex = "#"
+            bgHex = "#";
             for (let i = 0; i < 3; i++) {
-              bgHex.concat(parseInt(rgbValues[i]).toString(16))
+              bgHex.concat(parseInt(rgbValues[i]).toString(16));
             }
           }
         } else {
-          bgHex = ColorToHex[style.style.bg]
+          bgHex = ColorToHex[style.style.bg];
         }
 
         if (!ctypes[key]) {
