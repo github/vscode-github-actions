@@ -20,7 +20,7 @@ export function parseUri(uri: vscode.Uri): {
 
   return {
     owner: uri.authority,
-    repo: uri.path.split("/").slice(0, -1).join(""),
+    repo: uri.path.split("/").slice(0, 2).join(""),
     jobId: parseInt(uri.query, 10),
     stepName: uri.fragment
   };
