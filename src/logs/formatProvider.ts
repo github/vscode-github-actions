@@ -1,3 +1,4 @@
+import { types } from "util";
 import * as vscode from "vscode";
 import {LogInfo} from "./model";
 
@@ -55,21 +56,33 @@ export function updateDecorations(activeEditor: vscode.TextEditor, logInfo: LogI
     [key: string]: {type: vscode.TextEditorDecorationType; ranges: vscode.Range[]};
   } = {};
 
-  for (const colorFormat of logInfo.colorFormats) {
-    const range = new vscode.Range(colorFormat.line, colorFormat.start, colorFormat.line, colorFormat.end);
+  
+  for (let lineNo = 0; lineNo < logInfo.updatedLogLines.length; lineNo++) {
+    // .filter() preserves the order of the array
+    const lineStyles = logInfo.styleFormats.filter(style => style.line == lineNo)
+    let pos = 0
+    for (let styleNo = 0; styleNo < lineStyles.length; styleNo++) {
+      const style = lineStyles[styleNo]
+      const endPos = pos + style.content.length
+      const range = new vscode.Range(lineNo, pos, lineNo, endPos);
+      pos = endPos
 
-    // TODO default to real colors
-    const key = `${colorFormat.color.foreground || ""}-${colorFormat.color.background || ""}`;
-    if (!ctypes[key]) {
-      ctypes[key] = {
-        type: vscode.window.createTextEditorDecorationType({
-          color: colorFormat.color.foreground && foreground[colorFormat.color.foreground],
-          backgroundColor: colorFormat.color.background && background[colorFormat.color.background]
-        }),
-        ranges: [range]
-      };
-    } else {
-      ctypes[key].ranges.push(range);
+      // TODO build key by concatenating styles... or using style hash?
+      const key = `mykey`
+      if (!ctypes[key]) {
+        ctypes[key] = {
+          type: vscode.window.createTextEditorDecorationType({
+            color: style.style?.fg,
+            backgroundColor: style.style?.bg,
+            fontWeight: style.style?.bold ? "bold" : "normal",
+            fontStyle: style.style?.italic ? "italic" : "normal",
+            textDecoration: style.style?.underline ? "underline" : ""
+          }),
+          ranges: [range]
+        };
+      } else {
+        ctypes[key].ranges.push(range);
+      }
     }
   }
 
