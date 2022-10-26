@@ -2,28 +2,15 @@
 // From azure pipelines UI.
 //   Class names have been changed to work with Primer styles
 //   Source: https://github.com/microsoft/azure-devops-ui/blob/22b5ae5969d405f4459caf9b020019e95bbded38/packages/azure-pipelines-ui/src/Utilities/Parser.ts#L1
-import {ILine, IParseNode, IParsedFindResult, NodeType} from './parserTypes'
-import {TemplateResult, html} from 'lit-html/lit-html'
+import { IParseNode } from './parserTypes'
 
 // #region ANSII section
 
 const ESC = '\u001b'
-const TimestampLength = 29
-const TimestampRegex = /^.{27}Z /gm
 const BrightClassPostfix = '-br'
 
 // match characters that could be enclosing url to cleanly handle url formatting
 export const URLRegex = /([{([]*https?:\/\/[a-z0-9]+(?:-[a-z0-9]+)*\.[^\s<>|'",]{2,})/gi
-// URLs in logs can be wrapped in punctuation to assist with parsing
-const URLPunctuation = {
-  '(': ')',
-  '[': ']',
-  '{': '}'
-}
-type URLStartPunctuation = keyof typeof URLPunctuation
-type URLEndPunctuation = typeof URLPunctuation[URLStartPunctuation]
-const matchingURLPunctuation = (ch: string): URLEndPunctuation => URLPunctuation[ch as URLStartPunctuation]
-const regexpEscape = (ch: string) => `\\${ch}`
 
 /**
  * Regex for matching ANSII escape codes
@@ -148,20 +135,6 @@ const END_GROUP = 'endgroup'
 const ICON = 'icon'
 const NOTICE = 'notice'
 
-const commandToType: {[command: string]: NodeType} = {
-  command: NodeType.Command,
-  debug: NodeType.Debug,
-  error: NodeType.Error,
-  info: NodeType.Info,
-  section: NodeType.Section,
-  verbose: NodeType.Verbose,
-  warning: NodeType.Warning,
-  notice: NodeType.Notice,
-  group: NodeType.Group,
-  endgroup: NodeType.EndGroup,
-  icon: NodeType.Icon
-}
-
 const typeToCommand: {[type: string]: string} = {
   '0': PLAIN,
   '1': COMMAND,
@@ -176,10 +149,6 @@ const typeToCommand: {[type: string]: string} = {
   '10': ICON,
   '11': NOTICE
 }
-
-// Store the max command length we support, for example, we support "section", "command" which are of length 7, which highest of all others
-const maxCommandLength = 8
-const supportedCommands = [COMMAND, DEBUG, ERROR, INFO, SECTION, VERBOSE, WARNING, GROUP, END_GROUP, ICON, NOTICE]
 
 export function getType(node: IParseNode) {
   return typeToCommand[node.type]
@@ -213,310 +182,11 @@ interface IAnsiEscapeCodeState {
   style?: IStyle
 }
 
-enum CharacterType {
-  Standard,
-  Search,
-  EOL
-}
 
 // Set max to prevent any perf degradations
 export const maxLineMatchesToParse = 100
 
-const maxMatches = 50
-const unsetValue = -1
-const newLineChar = '\n'
-const hashChar = '#'
-const commandStart = '['
-const commandEnd = ']'
-
 export class Parser {
-  /**
-   * Converts the content to HTML with appropriate styles, escapes content to prevent XSS
-   * @param content
-   */
-  public parse(content: string): TemplateResult {
-    let result = html``
-    const states = this.getStates(content)
-    for (const x of states) {
-      const classNames: string[] = []
-      const styles: string[] = []
-      const currentText = x.output
-      if (x.style) {
-        const fg = x.style.fg
-        const bg = x.style.bg
-        const isFgRGB = x.style.isFgRGB
-        const isBgRGB = x.style.isBgRGB
-        if (fg && !isFgRGB) {
-          classNames.push(`ansifg-${fg}`)
-        }
-        if (bg && !isBgRGB) {
-          classNames.push(`ansibg-${bg}`)
-          classNames.push(`d-inline-flex`)
-        }
-        if (fg && isFgRGB) {
-          styles.push(`color:rgb(${fg})`)
-        }
-        if (bg && isBgRGB) {
-          styles.push(`background-color:rgb(${bg})`)
-          classNames.push(`d-inline-flex`)
-        }
-        if (x.style.bold) {
-          classNames.push('text-bold')
-        }
-        if (x.style.italic) {
-          classNames.push('text-italic')
-        }
-        if (x.style.underline) {
-          classNames.push('text-underline')
-        }
-      }
-
-      let output
-      const parseResult = Array(currentText.length).fill(CharacterType.Standard)
-
-      result = html`${result}<span class="${classNames.join(' ')}" style="${styles.join(';')}">${output}</span>`
-    }
-
-    return result
-  }
-
-  /**
-   * Parses the content into lines with nodes
-   * @param content content to parse
-   */
-  public parseLines(content: string): ILine[] {
-    // lines we return
-    const lines: ILine[] = []
-    // accumulated nodes for a particular line
-    let nodes: IParseNode[] = []
-
-    // start of a particular line
-    let lineStartIndex = 0
-    // start of plain node content
-    let plainNodeStart = unsetValue
-
-    // tells to consider the default logic where we check for plain text etc.,
-    let considerDefaultLogic = true
-
-    // stores the command, to match one of the 'supportedCommands'
-    let currentCommand = ''
-    // helps in finding commands in our format "##[command]" or "[command]"
-    let commandSeeker = ''
-
-    // when line ends, this tells if there's any pending node
-    let pendingLastNode: number = unsetValue
-
-    const resetCommandVar = () => {
-      commandSeeker = ''
-      currentCommand = ''
-    }
-
-    const resetPlain = () => {
-      plainNodeStart = unsetValue
-    }
-
-    const resetPending = () => {
-      pendingLastNode = unsetValue
-    }
-
-    const parseCommandEnd = () => {
-      // possible continuation of our well-known commands
-      const commandIndex = supportedCommands.indexOf(currentCommand)
-      if (commandIndex !== -1) {
-        considerDefaultLogic = false
-        // we reached the end and found the command
-        resetPlain()
-        // command is for the whole line, so we are not pushing the node here but defering this to when we find the new line
-        pendingLastNode = commandToType[currentCommand]
-
-        if (
-          currentCommand === SECTION ||
-          currentCommand === GROUP ||
-          currentCommand === END_GROUP ||
-          currentCommand === COMMAND ||
-          currentCommand === ERROR ||
-          currentCommand === WARNING ||
-          currentCommand === NOTICE
-        ) {
-          // strip off ##[$(currentCommand)] if there are no timestamps at start
-          const possibleTimestamp = content.substring(lineStartIndex, lineStartIndex + TimestampLength) || ''
-          if (!possibleTimestamp.match(TimestampRegex)) {
-            // Replace command only if it's found at the beginning of the line
-            if (possibleTimestamp.indexOf(currentCommand) < 4) {
-              // ## is optional, so pick the right offset
-              const offset = content.substring(lineStartIndex, lineStartIndex + 2) === '##' ? 4 : 2
-              lineStartIndex = lineStartIndex + offset + currentCommand.length
-            }
-          }
-        }
-
-        if (currentCommand === GROUP) {
-          groupStarted = true
-        }
-
-        // group logic- happyCase1: we found endGroup and there's already a group starting
-        if (currentCommand === END_GROUP && currentGroupNode) {
-          groupEnded = true
-        }
-      }
-
-      resetCommandVar()
-    }
-
-    let groupStarted = false
-    let groupEnded = false
-    let currentGroupNode: IParseNode | undefined
-    let nodeIndex = 0
-    let groupCount = 0
-
-    for (let index = 0; index < content.length; index++) {
-      const char = content.charAt(index)
-      // start with considering default logic, individual conditions are responsible to set it false
-      considerDefaultLogic = true
-      if (char === newLineChar || index === content.length - 1) {
-        if (char === commandEnd) {
-          parseCommandEnd()
-        }
-
-        const node = {
-          type: pendingLastNode,
-          start: lineStartIndex,
-          end: index,
-          lineIndex: lines.length,
-          groupCount
-        } as IParseNode
-
-        let pushNode = false
-        // end of the line/text, push any final nodes
-        if (pendingLastNode !== NodeType.Plain) {
-          // there's pending special node to be pushed
-          pushNode = true
-          // a new group has just started
-          if (groupStarted) {
-            currentGroupNode = node
-            groupStarted = false
-          }
-
-          // a group has ended
-          if (groupEnded && currentGroupNode) {
-            // links to specifc lines in the UI need to match exactly what was provided by the runner for things like annotations so nodes can't be discarded
-            // lineIndexes are further adjusted based on the number of groups to ensure consistent and continuout numbering of lines in the UI
-            pushNode = true
-            node.group = {
-              lineIndex: currentGroupNode.lineIndex - 1,
-              nodeIndex: currentGroupNode.index
-            }
-            node.groupCount = groupCount
-            currentGroupNode.isGroup = true
-
-            // since group has ended, clear all of our pointers
-            groupEnded = false
-            currentGroupNode = undefined
-            groupCount++
-          }
-        } else if (pendingLastNode === NodeType.Plain) {
-          // there's pending plain node to be pushed
-          pushNode = true
-        }
-
-        if (pushNode) {
-          node.index = nodeIndex++
-          nodes.push(node)
-        }
-
-        // A group is pending
-        if (currentGroupNode && node !== currentGroupNode) {
-          node.group = {
-            lineIndex: currentGroupNode.lineIndex,
-            nodeIndex: currentGroupNode.index
-          }
-        }
-
-        // end of the line, push all nodes that are accumulated till now
-        if (nodes.length > 0) {
-          lines.push({nodes})
-        }
-
-        // clear node as we are done with the line
-        nodes = []
-        // increment lineStart for the next line
-        lineStartIndex = index + 1
-        // unset
-        resetPlain()
-        resetPending()
-        resetCommandVar()
-
-        considerDefaultLogic = false
-      } else if (char === hashChar) {
-        // possible start of our well-known commands
-        if (commandSeeker === '' || commandSeeker === '#') {
-          considerDefaultLogic = false
-          commandSeeker += hashChar
-        }
-      } else if (char === commandStart) {
-        // possible continuation of our well-known commands
-        if (commandSeeker === '##') {
-          considerDefaultLogic = false
-          commandSeeker += commandStart
-        } else if (commandSeeker.length === 0) {
-          // covers - "", for live logs, commands will be of [section], with out "##"
-          considerDefaultLogic = false
-          commandSeeker += commandStart
-        }
-      } else if (char === commandEnd) {
-        if (currentCommand === ICON) {
-          const startIndex = index + 1
-          let endIndex = startIndex
-          for (let i = startIndex; i < content.length; i++) {
-            const iconChar = content[i]
-            if (iconChar === ' ') {
-              endIndex = i
-              break
-            }
-          }
-          nodes.push({
-            type: NodeType.Icon,
-            lineIndex: lines.length,
-            start: startIndex,
-            end: endIndex,
-            index: nodeIndex++,
-            groupCount
-          })
-          // jump to post Icon content
-          index = endIndex + 1
-          lineStartIndex = index
-          continue
-        } else {
-          parseCommandEnd()
-        }
-      }
-
-      if (considerDefaultLogic) {
-        if (commandSeeker === '##[' || commandSeeker === '[') {
-          // it's possible that we are parsing a command
-          currentCommand += char.toLowerCase()
-        }
-
-        if (currentCommand.length > maxCommandLength) {
-          // to avoid accumulating command unncessarily, let's check max length, if it exceeds, it's not a command
-          resetCommandVar()
-        }
-
-        // considering as plain text
-        if (plainNodeStart === unsetValue) {
-          // we didn't set this yet, set now
-          plainNodeStart = lineStartIndex
-          // set pending node if there isn't one pending
-          if (pendingLastNode === unsetValue) {
-            pendingLastNode = NodeType.Plain
-          }
-        }
-      }
-    }
-
-    return lines
-  }
-
   /**
    * Parses the content into ANSII states
    * @param content content to parse
