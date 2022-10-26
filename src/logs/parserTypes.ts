@@ -1,4 +1,4 @@
-export const enum NodeType {
+const enum NodeType {
   Plain = 0,
   Command = 1,
   Debug = 2,
@@ -16,19 +16,6 @@ export const enum NodeType {
 interface IGroupInfo {
   lineIndex: number;
   nodeIndex: number;
-}
-
-export interface ISectionFind {
-  line: number;
-}
-
-interface IFindResult {
-  lines: ISectionFind[];
-  text: string;
-}
-
-export interface IParsedFindResult extends IFindResult {
-  selectedLine: number;
 }
 
 export interface IParseNode {
