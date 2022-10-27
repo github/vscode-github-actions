@@ -9,7 +9,8 @@ let client: LanguageClient;
 export async function initLanguageServer(context: vscode.ExtensionContext) {
   const serverModule = context.asAbsolutePath(path.join("dist", "server-node.js"));
 
-  const debugOptions = {execArgv: ["--nolazy", "--inspect=6009"]};
+  // 6009 is used by redhat yaml extension
+  const debugOptions = {execArgv: ["--nolazy", "--inspect=6010"]};
 
   const serverOptions: ServerOptions = {
     run: {module: serverModule, transport: TransportKind.ipc},
