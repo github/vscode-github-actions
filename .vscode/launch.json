@@ -16,7 +16,7 @@
       "name": "Attach to Language-Server",
       "address": "localhost",
       "protocol": "inspector",
-      "port": 6009,
+      "port": 6010,
       "smartStep": true,
       "sourceMaps": true,
     },
