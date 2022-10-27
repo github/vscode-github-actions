@@ -18,7 +18,7 @@
       "protocol": "inspector",
       "port": 6010,
       "smartStep": true,
-      "sourceMaps": true,
+      "sourceMaps": true
     },
     {
       "name": "Run Web Extension in VS Code",

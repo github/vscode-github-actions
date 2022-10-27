@@ -79,7 +79,7 @@ const webConfig = {
 const serverConfig = {
   target: "node",
   entry: "./src/langserver.ts",
-  devtool: "source-map",
+  devtool: "inline-source-map",
   externals: {
     vscode: "commonjs vscode"
   },
@@ -100,6 +100,11 @@ const serverConfig = {
         resolve: {
           fullySpecified: false
         }
+      },
+      {
+        test: /\.js$/,
+        enforce: "pre",
+        use: ["source-map-loader"]
       },
       {
         test: /\.m?js$/,
