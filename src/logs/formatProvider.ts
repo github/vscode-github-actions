@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import {LogInfo} from "./model";
-import {Parser, ColorToHex} from "./parser";
+import {Parser, VSCodeDefaultColors} from "./parser";
 
 const timestampRE = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{7}Z/;
 
@@ -27,8 +27,8 @@ export function updateDecorations(activeEditor: vscode.TextEditor, logInfo: LogI
       }))
   );
 
-  // Custom colors
-  const ctypes: {
+  // Custom decorations
+  const decoratorTypes: {
     [key: string]: {type: vscode.TextEditorDecorationType; ranges: vscode.Range[]};
   } = {};
 
@@ -37,59 +37,60 @@ export function updateDecorations(activeEditor: vscode.TextEditor, logInfo: LogI
     const lineStyles = logInfo.styleFormats.filter(style => style.line == lineNo);
     let pos = 0;
     for (let styleNo = 0; styleNo < lineStyles.length; styleNo++) {
-      const style = lineStyles[styleNo];
-      const endPos = pos + style.content.length;
+      const styleInfo = lineStyles[styleNo];
+      const endPos = pos + styleInfo.content.length;
       const range = new vscode.Range(lineNo, pos, lineNo, endPos);
       pos = endPos;
 
-      if (style.style) {
-        const key = Parser.styleKey(style.style);
+      if (styleInfo.style) {
+        const key = Parser.styleKey(styleInfo.style);
         let fgHex = "";
         let bgHex = "";
 
         // Convert to hex colors if RGB-formatted, or use lookup for predefined colors
-        if (style.style.isFgRGB) {
-          const rgbValues = style.style.fg.split(",");
-          if (rgbValues.length == 3) {
-            fgHex = "#";
-            for (let i = 0; i < 3; i++) {
-              fgHex = fgHex.concat(parseInt(rgbValues[i]).toString(16).padStart(2, '0'));
-            }
-          }
+        if (styleInfo.style.isFgRGB) {
+          const rgbValues = styleInfo.style.fg.split(",");
+          fgHex = rgbToHex(rgbValues);
         } else {
-          fgHex = ColorToHex[style.style.fg];
+          fgHex = VSCodeDefaultColors[styleInfo.style.fg] ?? "";
         }
-        if (style.style.isBgRGB) {
-          const rgbValues = style.style.bg.split(",");
-          if (rgbValues.length == 3) {
-            bgHex = "#";
-            for (let i = 0; i < 3; i++) {
-              bgHex = bgHex.concat(parseInt(rgbValues[i]).toString(16).padStart(2, '0'));
-            }
-          }
+        if (styleInfo.style.isBgRGB) {
+          const rgbValues = styleInfo.style.bg.split(",");
+          bgHex = rgbToHex(rgbValues);
         } else {
-          bgHex = ColorToHex[style.style.bg];
+          bgHex = VSCodeDefaultColors[styleInfo.style.bg] ?? "";
         }
 
-        if (!ctypes[key]) {
-          ctypes[key] = {
+        if (!decoratorTypes[key]) {
+          decoratorTypes[key] = {
             type: vscode.window.createTextEditorDecorationType({
               color: fgHex,
               backgroundColor: bgHex,
-              fontWeight: style.style.bold ? "bold" : "normal",
-              fontStyle: style.style.italic ? "italic" : "normal",
-              textDecoration: style.style.underline ? "underline" : ""
+              fontWeight: styleInfo.style.bold ? "bold" : "normal",
+              fontStyle: styleInfo.style.italic ? "italic" : "normal",
+              textDecoration: styleInfo.style.underline ? "underline" : ""
             }),
             ranges: [range]
           };
         } else {
-          ctypes[key].ranges.push(range);
+          decoratorTypes[key].ranges.push(range);
         }
       }
     }
   }
 
-  for (const ctype of Object.values(ctypes)) {
-    activeEditor.setDecorations(ctype.type, ctype.ranges);
+  for (const decoratorType of Object.values(decoratorTypes)) {
+    activeEditor.setDecorations(decoratorType.type, decoratorType.ranges);
   }
+}
+
+function rgbToHex(rgbValues: string[]) {
+  let hex = "";
+  if (rgbValues.length == 3) {
+    hex = "#";
+    for (let i = 0; i < 3; i++) {
+      hex = hex.concat(parseInt(rgbValues[i]).toString(16).padStart(2, "0"));
+    }
+  }
+  return hex;
 }

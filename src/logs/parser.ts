@@ -1,8 +1,3 @@
-// From azure pipelines UI.
-//   Class names have been changed to work with Primer styles
-//   Source: https://github.com/microsoft/azure-devops-ui/blob/22b5ae5969d405f4459caf9b020019e95bbded38/packages/azure-pipelines-ui/src/Utilities/Parser.ts#L1
-import {IParseNode} from "./parserTypes";
-
 // #region ANSII section
 
 const ESC = "\u001b";
@@ -24,8 +19,7 @@ export const URLRegex = /([{([]*https?:\/\/[a-z0-9]+(?:-[a-z0-9]+)*\.[^\s<>|'",]
 const _ansiEscapeCodeRegex = /(?:\u001b\[)(?:[?|#])?(?:(?:[0-9]{1,3})?(?:(?:;[0-9]{0,3})*)?[A-Z|a-z])/;
 
 /**
- * http://ascii-table.com/ansi-escape-sequences.php
- * https://en.wikipedia.org/wiki/ANSI_escape_code#3/4_bit
+ * https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters
  * We support sequences of format:
  *  Esc[CONTENTHEREm
  *  Where CONTENTHERE can be of format: VALUE;VALUE;VALUE or VALUE
@@ -55,7 +49,7 @@ const _ansiEscapeCodeRegex = /(?:\u001b\[)(?:[?|#])?(?:(?:[0-9]{1,3})?(?:(?:;[0-
  */
 // #endregion ANSII section
 
-// #region Pipelines commands
+// #region commands
 enum Resets {
   Reset = "0",
   Bold = "22",
@@ -112,7 +106,7 @@ const base8BitColors = {
 } as Record<string, string>;
 
 // VS Code default values taken from this table: https://en.wikipedia.org/wiki/ANSI_escape_code#3-bit_and_4-bit
-export const ColorToHex = {
+export const VSCodeDefaultColors = {
   b: "#000000", // '30/40',
   r: "#cd3131", // '31/41',
   g: "#0dbc79", // '32/42',
@@ -129,7 +123,7 @@ export const ColorToHex = {
   "bl-br": "#3b8eea", // '94/104',
   "m-br": "#d670d6", // '95/105',
   "c-br": "#21b8db", // '96/106',
-  "w-br": "#e5e5e5", // '97/107',
+  "w-br": "#e5e5e5" // '97/107',
 } as Record<string, string>;
 
 //0-255 in 6 increments, used to generate 216 equally incrementing colors
@@ -142,43 +136,7 @@ const colorIncrements216 = {
   5: 255
 } as Record<number, number>;
 
-const PLAIN = "plain";
-const COMMAND = "command";
-const DEBUG = "debug";
-const ERROR = "error";
-const INFO = "info";
-const SECTION = "section";
-const VERBOSE = "verbose";
-const WARNING = "warning";
-const GROUP = "group";
-const END_GROUP = "endgroup";
-const ICON = "icon";
-const NOTICE = "notice";
-
-const typeToCommand: {[type: string]: string} = {
-  "0": PLAIN,
-  "1": COMMAND,
-  "2": DEBUG,
-  "3": ERROR,
-  "4": INFO,
-  "5": SECTION,
-  "6": VERBOSE,
-  "7": WARNING,
-  "8": GROUP,
-  "9": END_GROUP,
-  "10": ICON,
-  "11": NOTICE
-};
-
-export function getType(node: IParseNode) {
-  return typeToCommand[node.type];
-}
-// #endregion Pipelines commands
-
-export function getText(text: string) {
-  return (text || "").toLocaleLowerCase();
-}
-// #endregion Common functions
+// #endregion commands
 
 export interface IStyle {
   fg: string;
@@ -201,9 +159,6 @@ interface IAnsiEscapeCodeState {
   output: string;
   style?: IStyle;
 }
-
-// Set max to prevent any perf degradations
-export const maxLineMatchesToParse = 100;
 
 export class Parser {
   /**
@@ -414,7 +369,6 @@ export class Parser {
     const bold = style.bold ? "b" : "n";
     const ital = style.italic ? "i" : "n";
     const underline = style.underline ? "u" : "n";
-    // May produce two different strings for the same style if using an RBG that matches a predefined color code
     return fg + bg + bold + ital + underline;
   }
 
