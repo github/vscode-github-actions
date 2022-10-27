@@ -29,14 +29,14 @@ export class WorkflowStepLogProvider implements vscode.TextDocumentContentProvid
       const logInfo = parseLog(log as string);
       cacheLogInfo(uri, logInfo);
 
-      return logInfo.updatedLog;
+      return logInfo.updatedLogLines.join("\n");
     } catch (e) {
       const respErr = e as OctokitResponse<unknown, number>;
       if (respErr.status === 410) {
         cacheLogInfo(uri, {
-          colorFormats: [],
           sections: [],
-          updatedLog: ""
+          updatedLogLines: [],
+          styleFormats: []
         });
 
         return "Could not open logs, they are expired.";

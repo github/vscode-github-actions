@@ -1,6 +1,7 @@
-const ansiColorRE = /\u001b\[((?:\d+;?)+)m(.*)\u001b\[0m/gm;
+const ansiColorRegex = /\u001b\[(\d+;?)+m/gm;
 const groupMarker = "##[group]";
-const commandRE = /##\[[a-z]+\]/gm;
+
+import {Parser, IStyle} from "./parser";
 
 export enum Type {
   Setup,
@@ -14,23 +15,16 @@ export interface LogSection {
   name?: string;
 }
 
-export interface LogColorInfo {
+export interface LogStyleInfo {
   line: number;
-  start: number;
-  end: number;
-
-  color: CustomColor;
-}
-
-export interface CustomColor {
-  foreground?: string;
-  background?: string;
+  content: string;
+  style?: IStyle;
 }
 
 export interface LogInfo {
-  updatedLog: string;
+  updatedLogLines: string[];
   sections: LogSection[];
-  colorFormats: LogColorInfo[];
+  styleFormats: LogStyleInfo[];
 }
 
 export function parseLog(log: string): LogInfo {
@@ -44,10 +38,12 @@ export function parseLog(log: string): LogInfo {
   // Assume there is always the setup section
   const sections: LogSection[] = [firstSection];
 
-  const colorInfo: LogColorInfo[] = [];
-
   let currentRange: LogSection | null = null;
+
+  const parser = new Parser();
+  const styleInfo: LogStyleInfo[] = [];
   const lines = log.split(/\n|\r/).filter(l => !!l);
+
   let lineIdx = 0;
 
   for (const line of lines) {
@@ -65,7 +61,7 @@ export function parseLog(log: string): LogInfo {
         sections.push(currentRange);
       }
 
-      const name = line.substr(groupMarkerStart + groupMarker.length);
+      const name = line.substring(groupMarkerStart + groupMarker.length);
 
       currentRange = {
         name,
@@ -75,25 +71,17 @@ export function parseLog(log: string): LogInfo {
       };
     }
 
-    // Remove commands
-    lines[lineIdx] = line.replace(commandRE, "");
-
-    // Check for custom colors
-    let match: RegExpExecArray | null;
-    if ((match = ansiColorRE.exec(line))) {
-      const colorConfig = match[1];
-      const text = match[2];
-
-      colorInfo.push({
+    const stateFragments = parser.getStates(line);
+    for (const state of stateFragments) {
+      styleInfo.push({
         line: lineIdx,
-        color: parseCustomColor(colorConfig),
-        start: match.index,
-        end: match.index + text.length
+        content: state.output,
+        style: state.style
       });
-
-      // Remove from output
-      lines[lineIdx] = line.replace(ansiColorRE, text);
     }
+
+    // Remove all other commands and codes from the output, we don't support those
+    lines[lineIdx] = line.replace(ansiColorRegex, "");
 
     ++lineIdx;
   }
@@ -104,23 +92,8 @@ export function parseLog(log: string): LogInfo {
   }
 
   return {
-    updatedLog: lines.join("\n"),
-    sections,
-    colorFormats: colorInfo
+    updatedLogLines: lines,
+    sections: sections,
+    styleFormats: styleInfo
   };
-}
-
-function parseCustomColor(str: string): CustomColor {
-  const ret: CustomColor = {};
-
-  const segments = str.split(";");
-  if (segments.length > 0) {
-    ret.foreground = segments[0];
-  }
-
-  if (segments.length > 1) {
-    ret.background = segments[1];
-  }
-
-  return ret;
 }
