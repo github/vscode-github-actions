@@ -111,16 +111,25 @@ const base8BitColors = {
   "7": "w"
 } as Record<string, string>;
 
+// VS Code default values taken from this table: https://en.wikipedia.org/wiki/ANSI_escape_code#3-bit_and_4-bit
 export const ColorToHex = {
-  b: "#0c0c0c", // '30/40',
-  r: "#e74856", // '31/41',
-  g: "#16c60c", // '32/42',
-  y: "#f9f1a5", // '33/43',
-  bl: "#0037da", // '34/44',
-  m: "#881798", // '35/45',
-  c: "#3a96dd", // '36/46',
-  w: "#cccccc", // '37/47',
-  gr: "#767676" // '90/100'
+  b: "#000000", // '30/40',
+  r: "#cd3131", // '31/41',
+  g: "#0dbc79", // '32/42',
+  y: "#e5e510", // '33/43',
+  bl: "#2472c8", // '34/44',
+  m: "#bc3fbc", // '35/45',
+  c: "#11a8cd", // '36/46',
+  w: "#e5e5e5", // '37/47',
+  gr: "#666666", // '90/100'
+  "b-br": "#666666", // '90/100',
+  "r-br": "#f14c4c", // '91/101',
+  "g-br": "#23d18b", // '92/102',
+  "y-br": "#f5f543", // '93/103',
+  "bl-br": "#3b8eea", // '94/104',
+  "m-br": "#d670d6", // '95/105',
+  "c-br": "#21b8db", // '96/106',
+  "w-br": "#e5e5e5", // '97/107',
 } as Record<string, string>;
 
 //0-255 in 6 increments, used to generate 216 equally incrementing colors

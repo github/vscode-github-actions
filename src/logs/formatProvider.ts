@@ -53,7 +53,7 @@ export function updateDecorations(activeEditor: vscode.TextEditor, logInfo: LogI
           if (rgbValues.length == 3) {
             fgHex = "#";
             for (let i = 0; i < 3; i++) {
-              fgHex.concat(parseInt(rgbValues[i]).toString(16));
+              fgHex = fgHex.concat(parseInt(rgbValues[i]).toString(16).padStart(2, '0'));
             }
           }
         } else {
@@ -64,7 +64,7 @@ export function updateDecorations(activeEditor: vscode.TextEditor, logInfo: LogI
           if (rgbValues.length == 3) {
             bgHex = "#";
             for (let i = 0; i < 3; i++) {
-              bgHex.concat(parseInt(rgbValues[i]).toString(16));
+              bgHex = bgHex.concat(parseInt(rgbValues[i]).toString(16).padStart(2, '0'));
             }
           }
         } else {
