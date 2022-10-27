@@ -1,5 +1,4 @@
 const ansiColorRegex = /\u001b\[(\d+;?)+m/gm;
-const commandRegex = /##\[[a-z]+\]/gm;
 const groupMarker = "##[group]";
 
 import {Parser, IStyle} from "./parser";
@@ -83,7 +82,6 @@ export function parseLog(log: string): LogInfo {
 
     // Remove all other commands and codes from the output, we don't support those
     lines[lineIdx] = line.replace(ansiColorRegex, "");
-    lines[lineIdx] = line.replace(commandRegex, "");
 
     ++lineIdx;
   }
