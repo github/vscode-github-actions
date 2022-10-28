@@ -399,11 +399,10 @@
   },
   "dependencies": {
     "@github/actions-languageserver": "*",
+    "@github/actions-workflow-parser": "*",
     "@octokit/rest": "^19.0.5",
     "abab": "^2.0.5",
     "crypto-browserify": "^3.12.0",
-    "github-actions-parser": "0.27.0",
-    "js-yaml": "^3.14.0",
     "libsodium-wrappers": "^0.7.10",
     "ssh-config": "^3.0.0",
     "stream-browserify": "^3.0.0",

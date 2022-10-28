@@ -28,7 +28,7 @@ async function onDidChangeActiveTextEditor(editor?: vscode.TextEditor) {
   await vscode.commands.executeCommand(
     "setContext",
     "githubActions:activeFile",
-    await getContextStringForWorkflow(editor.document.fileName)
+    await getContextStringForWorkflow(editor.document.uri)
   );
 }
 

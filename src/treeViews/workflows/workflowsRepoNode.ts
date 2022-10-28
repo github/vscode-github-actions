@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 
 import {GitHubRepoContext} from "../../git/repository";
 import {logDebug} from "../../log";
+import {getContextStringForWorkflow, getWorkflowUri} from "../../workflow/workflow";
 import {WorkflowNode} from "./workflowNode";
 
 export class WorkflowsRepoNode extends vscode.TreeItem {
@@ -31,15 +32,10 @@ export async function getWorkflowNodes(gitHubRepoContext: GitHubRepoContext) {
 
   return await Promise.all(
     workflows.map(async wf => {
-      // TODO: Parse workflow here
-      // let parsedWorkflow: ParsedWorkflow | undefined;
+      const workflowUri = getWorkflowUri(gitHubRepoContext, wf.path);
+      const workflowContext = await getContextStringForWorkflow(workflowUri);
 
-      // const workflowUri = getWorkflowUri(gitHubRepoContext, wf.path);
-      // if (workflowUri) {
-      //   parsedWorkflow = await parseWorkflow(workflowUri, gitHubRepoContext);
-      // }
-
-      return new WorkflowNode(gitHubRepoContext, wf, /*parsedWorkflow*/ undefined);
+      return new WorkflowNode(gitHubRepoContext, wf, workflowContext);
     })
   );
 }
