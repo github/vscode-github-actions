@@ -47,11 +47,17 @@ const config = {
         ]
       },
       {
+        test: /\.js$/,
+        enforce: "pre",
+        use: ["source-map-loader"]
+      },
+      {
         test: /\.node$/,
         use: "node-loader"
       }
     ]
-  }
+  },
+  ignoreWarnings: [/Failed to parse source map/]
 };
 
 const nodeConfig = {
@@ -114,6 +120,7 @@ const serverConfig = {
       }
     ]
   },
+  ignoreWarnings: [/Failed to parse source map/],
   resolve: {
     extensions: [".ts", ".tsx", ".js"],
     extensionAlias: {
