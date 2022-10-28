@@ -47,11 +47,17 @@ const config = {
         ]
       },
       {
+        test: /\.js$/,
+        enforce: "pre",
+        use: ["source-map-loader"]
+      },
+      {
         test: /\.node$/,
         use: "node-loader"
       }
     ]
-  }
+  },
+  ignoreWarnings: [/Failed to parse source map/]
 };
 
 const nodeConfig = {
@@ -79,7 +85,7 @@ const webConfig = {
 const serverConfig = {
   target: "node",
   entry: "./src/langserver.ts",
-  devtool: "source-map",
+  devtool: "inline-source-map",
   externals: {
     vscode: "commonjs vscode"
   },
@@ -102,6 +108,11 @@ const serverConfig = {
         }
       },
       {
+        test: /\.js$/,
+        enforce: "pre",
+        use: ["source-map-loader"]
+      },
+      {
         test: /\.m?js$/,
         resolve: {
           fullySpecified: false // disable the behaviour
@@ -109,6 +120,7 @@ const serverConfig = {
       }
     ]
   },
+  ignoreWarnings: [/Failed to parse source map/],
   resolve: {
     extensions: [".ts", ".tsx", ".js"],
     extensionAlias: {
