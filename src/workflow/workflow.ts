@@ -1,78 +1,46 @@
 import * as vscode from "vscode";
 
-import {safeLoad} from "js-yaml";
+import {
+  convertWorkflowTemplate,
+  NoOperationTraceWriter,
+  parseWorkflow,
+  WorkflowTemplate
+} from "@github/actions-workflow-parser";
+import {basename} from "path";
 import {GitHubRepoContext} from "../git/repository";
 
-interface On {
-  event: string;
-  types?: string[];
-  branches?: string[];
-  schedule?: string[];
-}
-
-type EventTrigger = {
-  on: string | string[] | {[trigger: string]: string[] | undefined};
-};
-
-interface Trigger {
-  types?: string[];
-  branches?: string[];
-  schedule?: string[];
-}
-
-function getEvents(doc: string | object): On[] {
-  const trigger = (doc as EventTrigger).on;
-
-  const on: On[] = [];
-
-  if (trigger == undefined) {
-    return [];
-  } else if (typeof trigger == "string") {
-    on.push({
-      event: trigger
-    });
-  } else if (Array.isArray(trigger)) {
-    on.push(
-      ...trigger.map(t => ({
-        event: t
-      }))
-    );
-  } else if (typeof trigger == "object") {
-    on.push(
-      ...Object.keys(trigger).map(event => {
-        const t = (trigger as {[trigger: string]: Trigger | undefined})[event];
-
-        return {
-          event,
-          types: t?.types,
-          branches: t?.branches,
-          schedule: t?.schedule
-        };
-      })
-    );
-  }
-
-  return on;
-}
-
-export async function getContextStringForWorkflow(path: string): Promise<string> {
+export async function getContextStringForWorkflow(workflowUri: vscode.Uri): Promise<string> {
   try {
-    const content = await vscode.workspace.fs.readFile(vscode.Uri.file(path));
+    const content = await vscode.workspace.fs.readFile(workflowUri);
     const file = Buffer.from(content).toString("utf8");
-    const doc = safeLoad(file);
-    if (doc) {
-      let context = "";
 
-      const events = getEvents(doc);
-      if (events.some(t => t.event.toLowerCase() === "repository_dispatch")) {
-        context += "rdispatch";
+    const fileName = "";
+
+    const result = parseWorkflow(
+      fileName,
+      [
+        {
+          name: fileName,
+          content: file
+        }
+      ],
+      new NoOperationTraceWriter()
+    );
+
+    if (result.value) {
+      const template = convertWorkflowTemplate(result.context, result.value);
+
+      const context: string[] = [];
+
+      if (template.events["repository_dispatch"]) {
+        context.push("rdispatch");
       }
 
-      if (events.some(t => t.event.toLowerCase() === "workflow_dispatch")) {
-        context += "wdispatch";
+      if (template.events["workflow_dispatch"]) {
+        context.push("wdispatch");
       }
 
-      return context;
+      return context.join("");
     }
   } catch (e) {
     // Ignore
@@ -86,30 +54,34 @@ export async function getContextStringForWorkflow(path: string): Promise<string>
  *
  * @param path Path for workflow. E.g., `.github/workflows/somebuild.yaml`
  */
-export function getWorkflowUri(gitHubRepoContext: GitHubRepoContext, path: string): vscode.Uri | null {
+export function getWorkflowUri(gitHubRepoContext: GitHubRepoContext, path: string): vscode.Uri {
   return vscode.Uri.joinPath(gitHubRepoContext.workspaceUri, path);
 }
 
-// TODO: Use parser here
-// export async function parseWorkflow(
-//   uri: vscode.Uri,
-//   gitHubRepoContext: GitHubRepoContext
-// ): Promise<Workflow | undefined> {
-//   try {
-//     const b = await vscode.workspace.fs.readFile(uri);
-//     const workflowInput = Buffer.from(b).toString("utf-8");
-//     const doc = await parse(
-//       {
-//         ...gitHubRepoContext,
-//         repository: gitHubRepoContext.name,
-//       },
-//       basename(uri.fsPath),
-//       workflowInput
-//     );
-//     return doc.workflow;
-//   } catch {
-//     // Ignore error here
-//   }
+export async function parseWorkflowFile(uri: vscode.Uri, _: GitHubRepoContext): Promise<WorkflowTemplate | undefined> {
+  try {
+    const b = await vscode.workspace.fs.readFile(uri);
+    const workflowInput = Buffer.from(b).toString("utf-8");
 
-//   return undefined;
-// }
+    const fileName = basename(uri.fsPath);
+
+    const result = parseWorkflow(
+      fileName,
+      [
+        {
+          name: fileName,
+          content: workflowInput
+        }
+      ],
+      new NoOperationTraceWriter()
+    );
+
+    if (result.value) {
+      return convertWorkflowTemplate(result.context, result.value);
+    }
+  } catch {
+    // Ignore error here
+  }
+
+  return undefined;
+}

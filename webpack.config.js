@@ -52,6 +52,12 @@ const config = {
         use: ["source-map-loader"]
       },
       {
+        test: /\.m?js$/,
+        resolve: {
+          fullySpecified: false // disable the behaviour
+        }
+      },
+      {
         test: /\.node$/,
         use: "node-loader"
       }
@@ -66,7 +72,7 @@ const nodeConfig = {
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "extension-node.js",
-    libraryTarget: "commonjs2",
+    libraryTarget: "commonjs",
     devtoolModuleFilenameTemplate: "../[resource-path]"
   }
 };
@@ -77,7 +83,7 @@ const webConfig = {
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "extension-web.js",
-    libraryTarget: "commonjs2",
+    libraryTarget: "commonjs",
     devtoolModuleFilenameTemplate: "../[resource-path]"
   }
 };

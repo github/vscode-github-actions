@@ -11,7 +11,7 @@ export class WorkflowNode extends vscode.TreeItem {
   constructor(
     public readonly gitHubRepoContext: GitHubRepoContext,
     public readonly wf: Workflow,
-    public readonly parsed?: any // ParsedWorkflow
+    public readonly workflowContext?: string
   ) {
     super(wf.name, vscode.TreeItemCollapsibleState.Collapsed);
 
@@ -31,14 +31,8 @@ export class WorkflowNode extends vscode.TreeItem {
       }
     }
 
-    if (this.parsed) {
-      if (this.parsed.on.repository_dispatch !== undefined) {
-        this.contextValue += " rdispatch";
-      }
-
-      if (this.parsed.on.workflow_dispatch !== undefined) {
-        this.contextValue += " wdispatch";
-      }
+    if (this.workflowContext) {
+      this.contextValue += this.workflowContext;
     }
   }
 
