@@ -9,7 +9,8 @@ npm workspaces are really meant for mono-repos, but we can use that feature here
 1. Open the workspace in VS Code `File -> Open Workspace from File...`: `/workspaces/vscode-github-actions.code-workspace`
 1. Make change to any of the packages
 1. Build them all with `npm run build -ws` in `/workspaces/`
-1. Start and debug extension
+1. Start and debug extension with the `Watch & Launch Extension` configuration from the "Run and Debug" side panel menu
+1. Open a workspace in the remote extension host that contains workflow files in the `.github/workflows` directory
 
 #### Updating dependencies
 
