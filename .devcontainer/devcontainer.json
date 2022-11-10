@@ -29,15 +29,7 @@
             "workflows": "write"
           }
         },
-        "github/actions-languageservice": {
-          "permissions": {
-            "contents": "write",
-            "packages": "read",
-            "pull_requests": "write",
-            "workflows": "write"
-          }
-        },
-        "github/actions-languageserver": {
+        "github/actions-languageservices": {
           "permissions": {
             "contents": "write",
             "packages": "read",
