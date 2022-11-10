@@ -3,8 +3,8 @@
   "workspaces": [
     "./actions-expressions/typescript",
     "./actions-workflow-parser/typescript",
-    "./actions-languageservice",
-    "./actions-languageserver",
+    "./actions-languageservices/actions-languageservice",
+    "./actions-languageservices/actions-languageserver",
     "./vscode-github-actions"
   ]
 }

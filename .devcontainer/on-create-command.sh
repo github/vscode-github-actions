@@ -19,8 +19,7 @@ git credential-cache exit
 # Clone dependent repos
 clone_repo https://github.com/github/actions-expressions /workspaces/actions-expressions
 clone_repo https://github.com/github/actions-workflow-parser /workspaces/actions-workflow-parser
-clone_repo https://github.com/github/actions-languageservice /workspaces/actions-languageservice
-clone_repo https://github.com/github/actions-languageserver /workspaces/actions-languageserver
+clone_repo https://github.com/github/actions-languageservices /workspaces/actions-languageservices
 
 # Copy workspace files
 cp /workspaces/vscode-github-actions/.devcontainer/package.json /workspaces/
