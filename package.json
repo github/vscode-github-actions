@@ -1,7 +1,7 @@
 {
   "name": "vscode-github-actions",
   "displayName": "GitHub Actions",
-  "publisher": "cschleiden",
+  "publisher": "github",
   "icon": "resources/logo.png",
   "license": "MIT",
   "repository": {
