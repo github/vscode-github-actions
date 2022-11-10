@@ -10,7 +10,7 @@
   "description": "GitHub Actions workflows and runs for github.com hosted repositories in VS Code",
   "version": "0.24.1",
   "engines": {
-    "vscode": "^1.60.0"
+    "vscode": "^1.72.0"
   },
   "extensionKind": [
     "workspace"
