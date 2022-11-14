@@ -287,6 +287,11 @@
           "group": "inline@1"
         },
         {
+          "command": "github-actions.settings.secret.copy",
+          "when": "viewItem == 'secret'",
+          "group": "context"
+        },
+        {
           "command": "github-actions.settings.secret.delete",
           "when": "viewItem == 'secret'",
           "group": "inline@2"
