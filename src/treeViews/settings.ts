@@ -4,7 +4,6 @@ import {SettingsRepoNode, getSettingNodes} from "./settings/settingsRepoNode";
 
 import {EnvironmentNode} from "./settings/environmentNode";
 import {EnvironmentsNode} from "./settings/environmentsNode";
-import {OrgSecretsNode} from "./settings/orgSecretsNode";
 import {RepoSecretsNode} from "./settings/repoSecretsNode";
 import {SecretsNode} from "./settings/secretsNode";
 import {SelfHostedRunnersNode} from "./settings/selfHostedRunnersNode";
@@ -47,20 +46,10 @@ export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExp
     // Secrets
     //
     if (element instanceof SecretsNode) {
-      const nodes = [new RepoSecretsNode(element.gitHubRepoContext)];
-
-      if (element.gitHubRepoContext.ownerIsOrg) {
-        nodes.push(new OrgSecretsNode(element.gitHubRepoContext));
-      }
-
-      return nodes;
+      return [new RepoSecretsNode(element.gitHubRepoContext)];
     }
 
     if (element instanceof RepoSecretsNode) {
-      return element.getSecrets();
-    }
-
-    if (element instanceof OrgSecretsNode) {
       return element.getSecrets();
     }
 

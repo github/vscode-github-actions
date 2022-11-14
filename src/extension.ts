@@ -6,13 +6,11 @@ import {registerCancelWorkflowRun} from "./commands/cancelWorkflowRun";
 import {registerOpenWorkflowFile} from "./commands/openWorkflowFile";
 import {registerOpenWorkflowRun} from "./commands/openWorkflowRun";
 import {registerOpenWorkflowRunLogs} from "./commands/openWorkflowRunLogs";
-import {registerOrgLogin} from "./commands/orgLogin";
 import {registerPinWorkflow} from "./commands/pinWorkflow";
 import {registerReRunWorkflowRun} from "./commands/rerunWorkflowRun";
 import {registerAddSecret} from "./commands/secrets/addSecret";
 import {registerCopySecret} from "./commands/secrets/copySecret";
 import {registerDeleteSecret} from "./commands/secrets/deleteSecret";
-import {registerManageOrgSecrets} from "./commands/secrets/manageOrgSecrets";
 import {registerUpdateSecret} from "./commands/secrets/updateSecret";
 import {registerTriggerWorkflowRun} from "./commands/triggerWorkflowRun";
 import {registerUnPinWorkflow} from "./commands/unpinWorkflow";
@@ -109,13 +107,10 @@ export async function activate(context: vscode.ExtensionContext) {
   registerReRunWorkflowRun(context);
   registerCancelWorkflowRun(context);
 
-  registerManageOrgSecrets(context);
   registerAddSecret(context);
   registerDeleteSecret(context);
   registerCopySecret(context);
   registerUpdateSecret(context);
-
-  registerOrgLogin(context);
 
   registerPinWorkflow(context);
   registerUnPinWorkflow(context);

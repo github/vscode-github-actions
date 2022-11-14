@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
 import {GitHubRepoContext} from "../../git/repository";
-import {EnvironmentSecret, OrgSecret, RepoSecret} from "../../model";
+import {EnvironmentSecret, RepoSecret} from "../../model";
 
 interface CopySecretCommandArgs {
   gitHubRepoContext: GitHubRepoContext;
-  secret: RepoSecret | OrgSecret | EnvironmentSecret;
+  secret: RepoSecret | EnvironmentSecret;
 }
 
 export function registerCopySecret(context: vscode.ExtensionContext) {

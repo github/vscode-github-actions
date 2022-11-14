@@ -49,14 +49,6 @@ export function pinnedWorkflowsRefreshInterval(): number {
   return getConfiguration().get<number>(getSettingsKey("workflows.pinned.refresh.interval"), 60);
 }
 
-export function orgFeaturesEnabled(): boolean {
-  return getConfiguration().get<boolean>(getSettingsKey("org-features"), false);
-}
-
-export async function updateOrgFeaturesEnabled(enabled: boolean) {
-  await getConfiguration().update(getSettingsKey("org-features"), enabled, true);
-}
-
 export function getRemoteName(): string {
   return getConfiguration().get<string>(getSettingsKey("remote-name"), "origin");
 }
