@@ -34,8 +34,6 @@ export type WorkflowStep = GetElementType<WorkflowJob["steps"]>;
 
 export type RepoSecret = OctokitData<"listRepoSecrets", "secrets">;
 
-export type OrgSecret = OctokitData<"listOrgSecrets", "secrets">;
-
 export type Environment = OctokitRepoData<"getAllEnvironments", "environments">;
 
 export type EnvironmentSecret = OctokitData<"listEnvironmentSecrets", "secrets">;

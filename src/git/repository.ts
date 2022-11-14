@@ -128,9 +128,6 @@ export interface GitHubRepoContext {
   name: string;
 
   defaultBranch: string;
-
-  ownerIsOrg: boolean;
-  orgFeaturesEnabled?: boolean;
 }
 
 export interface GitHubContext {
@@ -176,9 +173,7 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
           name: protocolInfo.protocol.repositoryName,
           owner: protocolInfo.protocol.owner,
           id: repoInfo.data.id,
-          defaultBranch: `refs/heads/${repoInfo.data.default_branch}`,
-          ownerIsOrg: repoInfo.data.owner?.type === "Organization",
-          orgFeaturesEnabled: session.scopes.find(x => x.toLocaleLowerCase() === "admin:org") != null
+          defaultBranch: `refs/heads/${repoInfo.data.default_branch}`
         };
       })
     );
@@ -198,11 +193,6 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
   }
 
   return gitHubContext;
-}
-
-export async function resetGitHubContext() {
-  gitHubContext = undefined;
-  await getGitHubContext();
 }
 
 export async function getGitHubContextForRepo(owner: string, name: string): Promise<GitHubRepoContext | undefined> {

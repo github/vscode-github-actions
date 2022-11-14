@@ -49,12 +49,6 @@
           "default": 30,
           "scope": "window"
         },
-        "github-actions.org-features": {
-          "type": "boolean",
-          "description": "Whether org features should be enabled. Requires the `admin:org` scope",
-          "default": false,
-          "scope": "window"
-        },
         "github-actions.remote-name": {
           "type": "string",
           "description": "The name of the repository's git remote that points to GitHub",
@@ -288,18 +282,13 @@
           "when": "viewItem == 'secrets'"
         },
         {
-          "command": "github-actions.settings.secrets.manage",
-          "group": "inline",
-          "when": "viewItem == 'org-secrets'"
-        },
-        {
           "command": "github-actions.settings.secret.update",
           "when": "viewItem == 'secret'",
           "group": "inline@1"
         },
         {
           "command": "github-actions.settings.secret.copy",
-          "when": "viewItem == 'secret' || viewItem == 'org-secret'",
+          "when": "viewItem == 'secret'",
           "group": "context"
         },
         {
