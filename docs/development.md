@@ -1,10 +1,45 @@
-### Development in Codespaces
+# Development
 
-This Codespaces/devcontainer setup uses [npm workspaces](https://docs.npmjs.com/cli/v8/using-npm/workspaces) to allow us to test changes to multiple packages.
+## Workspaces
+
+It's recommended to use [npm workspaces](https://docs.npmjs.com/cli/v8/using-npm/workspaces) to allow testing changes to multiple packages. On Codespaces, this is already set up.
 
 npm workspaces are really meant for mono-repos, but we can use that feature here to link our various packages together so you can make changes to a package and immediately consume those changes in a dependent package.
 
-### Make changes
+## Local Setup
+
+The workspace files will be in the parent directory of the repository, so it's recommended to create a folder for all of the workspace repositories.
+
+```shell
+mkdir ~/parser
+cd ~/parser
+```
+
+This directory will replace `/workspaces/` below in the instructions on how to make changes.
+
+Then, clone this repository and run `script/bootstrap` to pull in the other repositories.
+
+```shell
+gh repo clone github/vscode-github-actions
+cd vscode-github-actions
+script/bootstrap
+```
+
+For any private NPM packages in `@github`, you'll need to login with NPM. See [Working with the npm registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry) for more details.
+
+```shell
+npm login --scope=@github --registry=https://npm.pkg.github.com
+```
+
+Finally, install packages in the workspace and build
+
+```shell
+cd ~/parser
+npm i
+npm run build -ws
+```
+
+## Make changes
 
 1. Open the workspace in VS Code `File -> Open Workspace from File...`: `/workspaces/vscode-github-actions.code-workspace`
 1. Make change to any of the packages
@@ -12,8 +47,7 @@ npm workspaces are really meant for mono-repos, but we can use that feature here
 1. Start and debug extension with the `Watch & Launch Extension` configuration from the "Run and Debug" side panel menu
 1. Open a workspace in the remote extension host that contains workflow files in the `.github/workflows` directory
 
-#### Updating dependencies
-
+### Updating dependencies
 
 Once you're happy with your changes, publish the changes to the respective packages. You might have to adjust package versions, so if you made a change to `actions-workflow-parser` and increase the version there, you will have to consume the updated package in `actions-languageservice`.
 
@@ -21,6 +55,6 @@ Once you're happy with your changes, publish the changes to the respective packa
 
 There is a script in `/workspaces`: `update-package-locks.sh` that does an `npm install` in every package directory _without_ using workspaces. That way, the local `package-lock.json` file is generated correctly and can be pushed to the repository.
 
-### Debugging
+## Debugging
 
 Launching and debugging the extension should just work. If you need to debug the language server, start the extension first, then execute the `Attach to language-server` target to also attach to the language server.

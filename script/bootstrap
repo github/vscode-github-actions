@@ -1,0 +1,31 @@
+#!/bin/bash
+set -e
+
+function clone_repo() {
+  GREEN='\033[0;32m'
+
+  REPOSITORY_URL=$1
+  REPOSITORY_PATH=$2
+  if [[ ! -d "$REPOSITORY_PATH/.git" ]]; then
+    echo -e "\n${GREEN}➡️ Cloning $REPOSITORY_URL...\n${NC}"
+    git clone "$REPOSITORY_URL" "$REPOSITORY_PATH"
+  fi
+}
+
+repo_root="$(git rev-parse --show-toplevel)"
+root="$(dirname "$repo_root")"
+
+# Clone dependent repos
+echo "Cloning dependent repos..."
+clone_repo https://github.com/github/actions-expressions "$root"/actions-expressions
+clone_repo https://github.com/github/actions-workflow-parser "$root"/actions-workflow-parser
+clone_repo https://github.com/github/actions-languageservices "$root"/actions-languageservices
+
+
+# Copy workspace files
+echo "Copying workspace files..."
+cp "$repo_root"/.devcontainer/package.json "$root"
+cp "$repo_root"/.devcontainer/vscode-github-actions.code-workspace "$root"
+cp "$repo_root"/.devcontainer/.npmrc "$root"
+cp "$repo_root"/.devcontainer/update-package-locks.sh "$root"
+cp "$repo_root"/.devcontainer/watch.sh "$root"

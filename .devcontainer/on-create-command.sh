@@ -16,17 +16,7 @@ function clone_repo() {
 git config --global credential.helper cache
 git credential-cache exit
 
-# Clone dependent repos
-clone_repo https://github.com/github/actions-expressions /workspaces/actions-expressions
-clone_repo https://github.com/github/actions-workflow-parser /workspaces/actions-workflow-parser
-clone_repo https://github.com/github/actions-languageservices /workspaces/actions-languageservices
-
-# Copy workspace files
-cp /workspaces/vscode-github-actions/.devcontainer/package.json /workspaces/
-cp /workspaces/vscode-github-actions/.devcontainer/vscode-github-actions.code-workspace /workspaces/
-cp /workspaces/vscode-github-actions/.devcontainer/.npmrc /workspaces/
-cp /workspaces/vscode-github-actions/.devcontainer/update-package-locks.sh /workspaces/
-cp /workspaces/vscode-github-actions/.devcontainer/watch.sh /workspaces/
+/workspaces/vscode-github-actions/script/bootstrap
 
 # Setup npm auth
 echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" > ~/.npmrc
