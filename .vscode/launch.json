@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Watch & Launch Extension",
+      "name": "Watch & Launch extension",
       "type": "extensionHost",
       "request": "launch",
       "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
@@ -21,6 +21,17 @@
       "sourceMaps": true
     },
     {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to language-server with delay",
+      "address": "localhost",
+      "protocol": "inspector",
+      "port": 6010,
+      "smartStep": true,
+      "sourceMaps": true,
+      "preLaunchTask": "delay"
+    },
+    {
       "name": "Run Web Extension in VS Code",
       "type": "extensionHost",
       "debugWebWorkerHost": true,
@@ -28,6 +39,12 @@
       "args": ["--extensionDevelopmentPath=${workspaceFolder}", "--extensionDevelopmentKind=web"],
       "outFiles": ["${workspaceFolder}/dist/web/**/*.js"],
       "preLaunchTask": "npm: watch"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Watch & Launch extension & Language-Server",
+      "configurations": ["Watch & Launch extension", "Attach to language-server with delay"]
     }
   ]
 }
