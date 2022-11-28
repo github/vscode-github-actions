@@ -20,7 +20,8 @@
       "group": "none",
       "presentation": {
         "reveal": "silent",
-        "panel": "new"
+        "panel": "dedicated",
+        "close": true
       }
     }
   ]
