@@ -43,7 +43,7 @@
   ],
   "compounds": [
     {
-      "name": "Watch & Launch extension & Language-Server",
+      "name": "Watch & Launch extension + language-server",
       "configurations": ["Watch & Launch extension", "Attach to language-server with delay"]
     }
   ]

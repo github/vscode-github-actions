@@ -1,9 +1,78 @@
 {
   "folders": [
-    { "path": "./actions-expressions/typescript", "name": "actions-expressions/typescript" },
-    { "path": "./actions-workflow-parser/typescript", "name": "actions-workflow-parser/typescript" },
-    { "path": "./actions-languageservices/actions-languageservice"},
-    { "path": "./actions-languageservices/actions-languageserver"},
-    { "path": "./vscode-github-actions"}
-  ]
+    {"path": "./actions-expressions/typescript", "name": "actions-expressions/typescript"},
+    {"path": "./actions-workflow-parser/typescript", "name": "actions-workflow-parser/typescript"},
+    {"path": "./actions-languageservices/actions-languageservice"},
+    {"path": "./actions-languageservices/actions-languageserver"},
+    {"path": "./vscode-github-actions"}
+  ],
+  "extensions": {
+    "recommendations": ["firsttris.vscode-jest-runner"]
+  },
+  "settings": {
+    "jestrunner.jestCommand": "node --experimental-vm-modules ${workspaceFolder:vscode-github-actions}/../node_modules/jest/bin/jest.js",
+    "jestrunner.debugOptions": {
+      "program": "${workspaceFolder:vscode-github-actions}/../node_modules/jest/bin/jest.js",
+      "env": {
+        "NODE_OPTIONS": "--experimental-vm-modules"
+      }
+    }
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Watch all & Launch extension",
+        "type": "extensionHost",
+        "request": "launch",
+        "args": ["--extensionDevelopmentPath=${workspaceFolder:vscode-github-actions}"],
+        "cwd": "${workspaceFolder:vscode-github-actions}",
+        "preLaunchTask": "watch",
+        "smartStep": true,
+        "sourceMaps": true
+      }
+    ],
+    "compounds": [
+      {
+        "name": "Watch all & Launch extension + language-server",
+        "configurations": ["Watch all & Launch extension", "Attach to language-server with delay"]
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "watch",
+        "command": "./watch.sh",
+        "options": {
+          "cwd": "${workspaceFolder:vscode-github-actions}/.."
+        },
+        "type": "shell",
+        "isBackground": true,
+        "problemMatcher": ["$ts-webpack-watch", "$tsc"],
+        "presentation": {
+          "reveal": "always",
+          "clear": true,
+          "close": true
+        },
+        "group": "build"
+      },
+      {
+        "label": "update package-lock",
+        "command": "./update-package-locks.sh",
+        "options": {
+          "cwd": "${workspaceFolder:vscode-github-actions}/.."
+        },
+        "type": "shell",
+        "problemMatcher": ["$ts-webpack-watch", "$tsc"],
+        "presentation": {
+          "reveal": "always",
+          "clear": true,
+          "close": true
+        },
+        "group": "build"
+      }
+    ]
+  }
 }
