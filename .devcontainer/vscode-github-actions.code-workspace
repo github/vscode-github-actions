@@ -10,7 +10,7 @@
     "recommendations": ["firsttris.vscode-jest-runner", "Orta.vscode-jest"]
   },
   "settings": {
-    "jestrunner.jestCommand": "node --experimental-vm-modules ${workspaceFolder:vscode-github-actions}/../node_modules/jest/bin/jest.js",
+    "jestrunner.jestCommand": "npm test --",
     "jestrunner.debugOptions": {
       "program": "${workspaceFolder:vscode-github-actions}/../node_modules/jest/bin/jest.js",
       "env": {
