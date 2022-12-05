@@ -1,11 +1,11 @@
 import * as path from "path";
 import * as vscode from "vscode";
 
+import {InitializationOptions, LogLevel} from "@github/actions-languageserver/initializationOptions";
 import {LanguageClient, LanguageClientOptions, ServerOptions, TransportKind} from "vscode-languageclient/node";
-import {InitializationOptions} from "@github/actions-languageserver/initializationOptions";
 import {getSession} from "../auth/auth";
-import {WorkflowSelector} from "./documentSelector";
 import {getGitHubContext} from "../git/repository";
+import {WorkflowSelector} from "./documentSelector";
 
 let client: LanguageClient;
 
@@ -22,7 +22,6 @@ export async function initLanguageServer(context: vscode.ExtensionContext) {
       options: debugOptions
     }
   };
-
   const session = await getSession();
 
   const ghContext = await getGitHubContext();
@@ -33,15 +32,12 @@ export async function initLanguageServer(context: vscode.ExtensionContext) {
       owner: repo.owner,
       name: repo.name,
       workspaceUri: repo.workspaceUri.toString()
-    }))
+    })),
+    logLevel: PRODUCTION ? LogLevel.Warn : LogLevel.Debug
   };
 
   const clientOptions: LanguageClientOptions = {
     documentSelector: [WorkflowSelector],
-    synchronize: {
-      // // Notify the server about file changes to '.clientrc files contained in the workspace
-      // fileEvents: workspace.createFileSystemWatcher("**/.clientrc"),
-    },
     initializationOptions: initializationOptions
   };
 

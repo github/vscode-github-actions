@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 
 enum LogLevel {
-  Debug,
-  Info
+  Debug = 0,
+  Info = 1
 }
 
 let logger: vscode.OutputChannel;

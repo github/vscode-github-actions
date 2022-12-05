@@ -16,6 +16,9 @@ const config = {
   plugins: [
     new webpack.ProvidePlugin({
       Buffer: ["buffer", "Buffer"]
+    }),
+    new webpack.DefinePlugin({
+      PRODUCTION: JSON.stringify(process.env.NODE_ENV)
     })
   ],
   resolve: {
