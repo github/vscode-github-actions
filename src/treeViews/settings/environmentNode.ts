@@ -18,7 +18,7 @@ export class EnvironmentNode extends vscode.TreeItem {
     });
 
     const data = result.data.secrets;
-    if (!data) {
+    if (!data || data.length === 0) {
       return [new EmptyEnvironmentSecretsNode()];
     }
 
