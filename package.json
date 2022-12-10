@@ -29,6 +29,15 @@
   "main": "./dist/extension-node.js",
   "browser": "./dist/extension-web.js",
   "contributes": {
+    "grammars": [
+      {
+        "scopeName": "source.yaml.github-actions-expression",
+        "path": "./syntaxes/expressions.tmGrammar.json",
+        "injectTo": [
+          "source.yaml"
+        ]
+      }
+    ],
     "configuration": {
       "title": "GitHub Actions",
       "properties": {
