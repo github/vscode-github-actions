@@ -58,7 +58,7 @@
     "string": {
       "name": "string.quoted.single.github-actions-expression",
       "begin": "'",
-      "end": "'",
+      "end": "'"
     },
     "number": {
       "name": "constant.numeric.github-actions-expression",
