@@ -1,6 +1,6 @@
 {
   "scopeName": "source.yaml.github-actions-expression",
-  "injectionSelector": "L:source",
+  "injectionSelector": "L:string",
   "patterns": [
     {
       "include": "#expression"
