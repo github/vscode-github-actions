@@ -72,7 +72,7 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
               for (const definedInput of Object.keys(definedInputs)) {
                 const value = await vscode.window.showInputBox({
                   prompt: `Value for input ${definedInput} ${definedInputs[definedInput].required ? "[required]" : ""}`,
-                  value: definedInputs[definedInput].default.toString()
+                  value: definedInputs[definedInput].default?.toString() || ""
                 });
                 if (!value && definedInputs[definedInput].required) {
                   return vscode.window.showErrorMessage(`Input ${definedInput} is required`);
