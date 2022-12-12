@@ -1,0 +1,76 @@
+{
+  "scopeName": "source.yaml.github-actions-expression",
+  "injectionSelector": "L:string",
+  "patterns": [
+    {
+      "include": "#expression"
+    }
+  ],
+  "repository": {
+    "expression": {
+      "match": "\\$\\{\\{(.*?)\\}\\}",
+      "name": "meta.embedded.block.github-actions-expression",
+      "captures": {
+        "1": {
+          "patterns": [
+            {
+              "include": "#function-call"
+            },
+            {
+              "include": "#context"
+            },
+            {
+              "include": "#string"
+            },
+            {
+              "include": "#number"
+            },
+            {
+              "include": "#boolean"
+            },
+            {
+              "include": "#null"
+            }
+          ]
+        }
+      }
+    },
+    "function-call": {
+      "patterns": [
+        {
+          "match": "\\b([A-Za-z]*)\\(",
+          "captures": {
+            "1": {
+              "name": "support.function.github-actions-expression"
+            }
+          }
+        }
+      ]
+    },
+    "context": {
+      "patterns": [
+        {
+          "name": "variable.other.read.github-actions-expression",
+          "match": "\\b[A-Za-z][A-Za-z0-9]*\\b"
+        }
+      ]
+    },
+    "string": {
+      "name": "string.quoted.single.github-actions-expression",
+      "begin": "'",
+      "end": "'"
+    },
+    "number": {
+      "name": "constant.numeric.github-actions-expression",
+      "match": "\\b[0-9]+(?:.[0-9]+)?\\b"
+    },
+    "boolean": {
+      "name": "constant.language.boolean.github-actions-expression",
+      "match": "\\b(true|false)\\b"
+    },
+    "null": {
+      "name": "constant.language.null.github-actions-expression",
+      "match": "\\bnull\\b"
+    }
+  }
+}
