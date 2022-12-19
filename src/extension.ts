@@ -15,12 +15,14 @@ import {registerUpdateSecret} from "./commands/secrets/updateSecret";
 import {registerTriggerWorkflowRun} from "./commands/triggerWorkflowRun";
 import {registerUnPinWorkflow} from "./commands/unpinWorkflow";
 import {initConfiguration} from "./configuration/configuration";
-import {getGitHubContext} from "./git/repository";
+import {getGitHubContext, GitHubRepoContext} from "./git/repository";
 import {LogScheme} from "./logs/constants";
 import {WorkflowStepLogProvider} from "./logs/fileProvider";
 import {WorkflowStepLogFoldingProvider} from "./logs/foldingProvider";
 import {WorkflowStepLogSymbolProvider} from "./logs/symbolProvider";
+import {WorkflowRun} from "./model";
 import {initPinnedWorkflows} from "./pinnedWorkflows/pinnedWorkflows";
+import {RunStore} from "./store/store";
 import {initWorkflowDocumentTracking} from "./tracker/workflowDocumentTracker";
 import {CurrentBranchTreeProvider} from "./treeViews/currentBranch";
 import {initResources} from "./treeViews/icons";
@@ -44,14 +46,15 @@ export async function activate(context: vscode.ExtensionContext) {
   await initWorkflowDocumentTracking(context);
 
   // Tree views
+  const store = new RunStore();
 
-  const workflowTreeProvider = new WorkflowsTreeProvider();
+  const workflowTreeProvider = new WorkflowsTreeProvider(store);
   context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.workflows", workflowTreeProvider));
 
   const settingsTreeProvider = new SettingsTreeProvider();
   context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.settings", settingsTreeProvider));
 
-  const currentBranchTreeProvider = new CurrentBranchTreeProvider();
+  const currentBranchTreeProvider = new CurrentBranchTreeProvider(store);
   context.subscriptions.push(
     vscode.window.registerTreeDataProvider("github-actions.current-branch", currentBranchTreeProvider)
   );
@@ -61,6 +64,14 @@ export async function activate(context: vscode.ExtensionContext) {
       workflowTreeProvider.refresh();
       settingsTreeProvider.refresh();
     })
+  );
+
+  // TODO: CS: Remove!
+  vscode.commands.registerCommand(
+    "github-actions.explorer.poll",
+    (args: {gitHubRepoContext: GitHubRepoContext; run: WorkflowRun}) => {
+      store.pollRun(args.run.id, args.gitHubRepoContext, 2000, 10);
+    }
   );
 
   context.subscriptions.push(

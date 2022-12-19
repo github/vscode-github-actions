@@ -6,7 +6,7 @@ enum LogLevel {
 }
 
 let logger: vscode.OutputChannel;
-const level: LogLevel = LogLevel.Debug;
+const level: LogLevel = PRODUCTION ? LogLevel.Info : LogLevel.Debug;
 
 export function init() {
   logger = vscode.window.createOutputChannel("GitHub Actions");

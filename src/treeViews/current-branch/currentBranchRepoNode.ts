@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
 
-import {GitHubRepoContext, getCurrentBranch} from "../../git/repository";
+import {getCurrentBranch, GitHubRepoContext} from "../../git/repository";
 
-import {NoRunForBranchNode} from "./noRunForBranchNode";
-import {WorkflowRunNode} from "../workflows/workflowRunNode";
 import {logDebug} from "../../log";
+import {WorkflowRunNode} from "../shared/workflowRunNode";
+import {NoRunForBranchNode} from "./noRunForBranchNode";
 
 export class CurrentBranchRepoNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext, public readonly currentBranchName: string) {

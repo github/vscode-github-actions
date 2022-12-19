@@ -2,10 +2,8 @@ import * as vscode from "vscode";
 
 import {getPinnedWorkflows} from "../../configuration/configuration";
 import {GitHubRepoContext} from "../../git/repository";
-import {logDebug} from "../../log";
 import {Workflow} from "../../model";
 import {getWorkflowUri} from "../../workflow/workflow";
-import {WorkflowRunNode} from "./workflowRunNode";
 
 export class WorkflowNode extends vscode.TreeItem {
   constructor(
@@ -34,20 +32,5 @@ export class WorkflowNode extends vscode.TreeItem {
     if (this.workflowContext) {
       this.contextValue += this.workflowContext;
     }
-  }
-
-  async getRuns(): Promise<WorkflowRunNode[]> {
-    logDebug("Getting workflow runs");
-
-    const result = await this.gitHubRepoContext.client.actions.listWorkflowRuns({
-      owner: this.gitHubRepoContext.owner,
-      repo: this.gitHubRepoContext.name,
-      workflow_id: this.wf.id
-    });
-
-    const resp = result.data;
-    const runs = resp.workflow_runs;
-
-    return runs.map(wr => new WorkflowRunNode(this.gitHubRepoContext, wr));
   }
 }

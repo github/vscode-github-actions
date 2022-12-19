@@ -1,28 +1,43 @@
 import * as vscode from "vscode";
 
-import {WorkflowsRepoNode, getWorkflowNodes} from "./workflows/workflowsRepoNode";
 import {log, logDebug, logError} from "../log";
+import {getWorkflowNodes, WorkflowsRepoNode} from "./workflows/workflowsRepoNode";
 
+import {getGitHubContext} from "../git/repository";
+import {RunStore} from "../store/store";
 import {AuthenticationNode} from "./shared/authenticationNode";
 import {ErrorNode} from "./shared/errorNode";
 import {NoGitHubRepositoryNode} from "./shared/noGitHubRepositoryNode";
-import {WorkflowJobNode} from "./workflows/workflowJobNode";
+import {NoWorkflowJobsNode} from "./shared/noWorkflowJobsNode";
+import {WorkflowJobNode} from "./shared/workflowJobNode";
+import {WorkflowRunNode} from "./shared/workflowRunNode";
+import {WorkflowRunTreeDataProvider} from "./workflowRunTreeDataProvider";
 import {WorkflowNode} from "./workflows/workflowNode";
-import {WorkflowRunNode} from "./workflows/workflowRunNode";
 import {WorkflowStepNode} from "./workflows/workflowStepNode";
-import {getGitHubContext} from "../git/repository";
 
 type WorkflowsTreeNode =
   | AuthenticationNode
   | NoGitHubRepositoryNode
   | WorkflowNode
   | WorkflowJobNode
+  | NoWorkflowJobsNode
   | WorkflowRunNode
   | WorkflowStepNode;
 
-export class WorkflowsTreeProvider implements vscode.TreeDataProvider<WorkflowsTreeNode> {
+export class WorkflowsTreeProvider
+  extends WorkflowRunTreeDataProvider
+  implements vscode.TreeDataProvider<WorkflowsTreeNode>
+{
   private _onDidChangeTreeData = new vscode.EventEmitter<WorkflowsTreeNode | null>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
+
+  constructor(store: RunStore) {
+    super(store);
+  }
+
+  protected _updateNode(node: WorkflowRunNode): void {
+    this._onDidChangeTreeData.fire(node);
+  }
 
   refresh(): void {
     logDebug("Refreshing workflow tree");
@@ -68,7 +83,7 @@ export class WorkflowsTreeProvider implements vscode.TreeDataProvider<WorkflowsT
     if (element instanceof WorkflowsRepoNode) {
       return element.getWorkflows();
     } else if (element instanceof WorkflowNode) {
-      return element.getRuns();
+      return this.getRuns(element);
     } else if (element instanceof WorkflowRunNode) {
       return element.getJobs();
     } else if (element instanceof WorkflowJobNode) {
@@ -76,5 +91,25 @@ export class WorkflowsTreeProvider implements vscode.TreeDataProvider<WorkflowsT
     }
 
     return [];
+  }
+
+  private async getRuns(wfNode: WorkflowNode): Promise<WorkflowRunNode[]> {
+    logDebug("Getting workflow runs");
+
+    const result = await wfNode.gitHubRepoContext.client.actions.listWorkflowRuns({
+      owner: wfNode.gitHubRepoContext.owner,
+      repo: wfNode.gitHubRepoContext.name,
+      workflow_id: wfNode.wf.id
+    });
+
+    const resp = result.data;
+    const runs = resp.workflow_runs;
+
+    return runs.map(wr => {
+      this.store.updateRun(wr);
+      const node = new WorkflowRunNode(wfNode.gitHubRepoContext, wr);
+      this._runNodes.set(wr.id, node);
+      return node;
+    });
   }
 }

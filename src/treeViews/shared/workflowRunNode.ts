@@ -3,19 +3,26 @@ import * as vscode from "vscode";
 import {WorkflowJob, WorkflowRun} from "../../model";
 
 import {GitHubRepoContext} from "../../git/repository";
-import {WorkflowJobNode} from "./workflowJobNode";
-import {getIconForWorkflowRun} from "../icons";
 import {logDebug} from "../../log";
+import {getIconForWorkflowRun} from "../icons";
+import {NoWorkflowJobsNode} from "./noWorkflowJobsNode";
+import {WorkflowJobNode} from "./workflowJobNode";
 
 export class WorkflowRunNode extends vscode.TreeItem {
   constructor(
     public readonly gitHubRepoContext: GitHubRepoContext,
-    public readonly run: WorkflowRun,
+    public run: WorkflowRun,
     public readonly workflowName?: string
   ) {
-    super(`${workflowName ? workflowName + " " : ""}#${run.id}`, vscode.TreeItemCollapsibleState.Collapsed);
+    super(WorkflowRunNode._getLabel(run, workflowName), vscode.TreeItemCollapsibleState.Collapsed);
 
-    this.description = `${run.event} (${(run.head_sha || "").substr(0, 7)})`;
+    this.updateRun(run);
+  }
+
+  updateRun(run: WorkflowRun) {
+    this.run = run;
+
+    this.label = WorkflowRunNode._getLabel(run, this.workflowName);
 
     this.contextValue = "run";
     if (this.run.status !== "completed") {
@@ -34,7 +41,7 @@ export class WorkflowRunNode extends vscode.TreeItem {
     this.tooltip = `${this.run.status || ""} ${this.run.conclusion || ""}`;
   }
 
-  async getJobs(): Promise<WorkflowJobNode[]> {
+  async getJobs(): Promise<(WorkflowJobNode | NoWorkflowJobsNode)[]> {
     logDebug("Getting workflow jobs");
 
     const result = await this.gitHubRepoContext.client.actions.listJobsForWorkflowRun({
@@ -45,7 +52,14 @@ export class WorkflowRunNode extends vscode.TreeItem {
 
     const resp = result.data;
     const jobs: WorkflowJob[] = resp.jobs;
+    if (jobs.length === 0) {
+      return [new NoWorkflowJobsNode()];
+    }
 
     return jobs.map(job => new WorkflowJobNode(this.gitHubRepoContext, job));
+  }
+
+  private static _getLabel(run: WorkflowRun, workflowName?: string): string {
+    return `${workflowName ? workflowName + " " : ""}#${run.id}`;
   }
 }

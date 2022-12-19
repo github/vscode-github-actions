@@ -1,24 +1,39 @@
 import * as vscode from "vscode";
 
-import {CurrentBranchRepoNode, getCurrentBranchWorkflowRunNodes} from "./current-branch/currentBranchRepoNode";
-import {getCurrentBranch, getGitHubContext} from "../git/repository";
+import {getCurrentBranch, getGitHubContext, GitHubRepoContext} from "../git/repository";
+import {CurrentBranchRepoNode} from "./current-branch/currentBranchRepoNode";
 
+import {log, logDebug} from "../log";
+import {RunStore} from "../store/store";
 import {NoRunForBranchNode} from "./current-branch/noRunForBranchNode";
-import {WorkflowJobNode} from "./workflows/workflowJobNode";
-import {WorkflowRunNode} from "./workflows/workflowRunNode";
+import {NoWorkflowJobsNode} from "./shared/noWorkflowJobsNode";
+import {WorkflowJobNode} from "./shared/workflowJobNode";
+import {WorkflowRunNode} from "./shared/workflowRunNode";
+import {WorkflowRunTreeDataProvider} from "./workflowRunTreeDataProvider";
 import {WorkflowStepNode} from "./workflows/workflowStepNode";
-import {logDebug} from "../log";
 
 type CurrentBranchTreeNode =
   | CurrentBranchRepoNode
   | WorkflowRunNode
   | WorkflowJobNode
+  | NoWorkflowJobsNode
   | WorkflowStepNode
   | NoRunForBranchNode;
 
-export class CurrentBranchTreeProvider implements vscode.TreeDataProvider<CurrentBranchTreeNode> {
-  private _onDidChangeTreeData = new vscode.EventEmitter<CurrentBranchTreeNode | null>();
+export class CurrentBranchTreeProvider
+  extends WorkflowRunTreeDataProvider
+  implements vscode.TreeDataProvider<CurrentBranchTreeNode>
+{
+  protected _onDidChangeTreeData = new vscode.EventEmitter<CurrentBranchTreeNode | null>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
+
+  constructor(store: RunStore) {
+    super(store);
+  }
+
+  protected _updateNode(node: WorkflowRunNode): void {
+    this._onDidChangeTreeData.fire(node);
+  }
 
   refresh(): void {
     this._onDidChangeTreeData.fire(null);
@@ -36,15 +51,22 @@ export class CurrentBranchTreeProvider implements vscode.TreeDataProvider<Curren
       }
 
       if (gitHubContext.repos.length === 1) {
-        return (await getCurrentBranchWorkflowRunNodes(gitHubContext.repos[0])) || [];
+        const repoContext = gitHubContext.repos[0];
+        const currentBranch = getCurrentBranch(repoContext.repositoryState);
+        if (!currentBranch) {
+          log(`Could not find current branch for ${repoContext.name}`);
+          return [];
+        }
+
+        return (await this.getRuns(repoContext, currentBranch)) || [];
       }
 
-      if (gitHubContext.repos.length > 1) {
+      if (gitHubContext.repos.length === 1) {
         return gitHubContext.repos
           .map((repoContext): CurrentBranchRepoNode | undefined => {
             const currentBranch = getCurrentBranch(repoContext.repositoryState);
             if (!currentBranch) {
-              logDebug(`Could not find current branch for ${repoContext.name}`);
+              log(`Could not find current branch for ${repoContext.name}`);
               return undefined;
             }
 
@@ -53,7 +75,7 @@ export class CurrentBranchTreeProvider implements vscode.TreeDataProvider<Curren
           .filter(x => x !== undefined) as CurrentBranchRepoNode[];
       }
     } else if (element instanceof CurrentBranchRepoNode) {
-      return element.getRuns();
+      return this.getRuns(element.gitHubRepoContext, element.currentBranchName);
     } else if (element instanceof WorkflowRunNode) {
       return element.getJobs();
     } else if (element instanceof WorkflowJobNode) {
@@ -61,5 +83,25 @@ export class CurrentBranchTreeProvider implements vscode.TreeDataProvider<Curren
     }
 
     return [];
+  }
+
+  private async getRuns(gitHubRepoContext: GitHubRepoContext, currentBranchName: string): Promise<WorkflowRunNode[]> {
+    logDebug("Getting workflow runs");
+
+    const result = await gitHubRepoContext.client.actions.listWorkflowRunsForRepo({
+      owner: gitHubRepoContext.owner,
+      repo: gitHubRepoContext.name,
+      branch: currentBranchName
+    });
+
+    const resp = result.data;
+    const runs = resp.workflow_runs;
+
+    return runs.map(wr => {
+      this.store.updateRun(wr);
+      const node = new WorkflowRunNode(gitHubRepoContext, wr);
+      this._runNodes.set(wr.id, node);
+      return node;
+    });
   }
 }
