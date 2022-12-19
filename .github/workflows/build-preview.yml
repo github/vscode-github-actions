@@ -1,9 +1,10 @@
-name: Build CI version
+name: Build Preview version
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
