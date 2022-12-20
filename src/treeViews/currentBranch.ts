@@ -97,6 +97,6 @@ export class CurrentBranchTreeProvider
     const resp = result.data;
     const runs = resp.workflow_runs;
 
-    return this.runNodes(gitHubRepoContext, runs);
+    return this.runNodes(gitHubRepoContext, runs, true);
   }
 }

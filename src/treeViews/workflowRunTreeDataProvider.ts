@@ -17,10 +17,19 @@ export abstract class WorkflowRunTreeDataProvider {
     });
   }
 
-  protected runNodes(gitHubRepoContext: GitHubRepoContext, runData: WorkflowRun[]): WorkflowRunNode[] {
+  protected runNodes(
+    gitHubRepoContext: GitHubRepoContext,
+    runData: WorkflowRun[],
+    includeWorkflowName = false
+  ): WorkflowRunNode[] {
     return runData.map(runData => {
       const workflowRun = this.store.addRun(gitHubRepoContext, runData);
-      const node = new WorkflowRunNode(this.store, gitHubRepoContext, workflowRun);
+      const node = new WorkflowRunNode(
+        this.store,
+        gitHubRepoContext,
+        workflowRun,
+        includeWorkflowName ? workflowRun.run.name || undefined : undefined
+      );
       this._runNodes.set(runData.id, node);
       return node;
     });
