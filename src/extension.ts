@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import {init as initLogger, log, logDebug, revealLog} from "./log";
+import {init as initLogger, log, revealLog} from "./log";
 
 import {registerCancelWorkflowRun} from "./commands/cancelWorkflowRun";
 import {registerOpenWorkflowFile} from "./commands/openWorkflowFile";
@@ -23,14 +23,13 @@ import {WorkflowStepLogSymbolProvider} from "./logs/symbolProvider";
 import {initPinnedWorkflows} from "./pinnedWorkflows/pinnedWorkflows";
 import {RunStore} from "./store/store";
 import {initWorkflowDocumentTracking} from "./tracker/workflowDocumentTracker";
-import {CurrentBranchTreeProvider} from "./treeViews/currentBranch";
 import {initResources} from "./treeViews/icons";
-import {SettingsTreeProvider} from "./treeViews/settings";
-import {WorkflowsTreeProvider} from "./treeViews/workflows";
+import {initTreeViews} from "./treeViews/treeViews";
 import {deactivateLanguageServer, initLanguageServer} from "./workflow/languageServer";
 
 export async function activate(context: vscode.ExtensionContext) {
   initLogger();
+
   log("Activating GitHub Actions extension...");
 
   // Prefetch git repository origin url
@@ -39,7 +38,7 @@ export async function activate(context: vscode.ExtensionContext) {
   initResources(context);
   initConfiguration(context);
 
-  // Track workflow
+  // Track workflow documents
   await initWorkflowDocumentTracking(context);
 
   const store = new RunStore();
@@ -48,61 +47,9 @@ export async function activate(context: vscode.ExtensionContext) {
   await initPinnedWorkflows(store);
 
   // Tree views
-  const workflowTreeProvider = new WorkflowsTreeProvider(store);
-  context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.workflows", workflowTreeProvider));
-
-  const settingsTreeProvider = new SettingsTreeProvider();
-  context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.settings", settingsTreeProvider));
-
-  const currentBranchTreeProvider = new CurrentBranchTreeProvider(store);
-  context.subscriptions.push(
-    vscode.window.registerTreeDataProvider("github-actions.current-branch", currentBranchTreeProvider)
-  );
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand("github-actions.explorer.refresh", () => {
-      workflowTreeProvider.refresh();
-      settingsTreeProvider.refresh();
-    })
-  );
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand("github-actions.explorer.current-branch.refresh", () => {
-      currentBranchTreeProvider.refresh();
-    })
-  );
-
-  await (async () => {
-    const context = await getGitHubContext();
-    if (!context) {
-      logDebug("Could not register branch change event handler");
-      return;
-    }
-
-    for (const repo of context.repos) {
-      if (!repo.repositoryState) {
-        continue;
-      }
-
-      let currentAhead = repo.repositoryState.HEAD?.ahead;
-      let currentHeadName = repo.repositoryState.HEAD?.name;
-      repo.repositoryState.onDidChange(() => {
-        // When the current head/branch changes, or the number of commits ahead changes (which indicates
-        // a push), refresh the current-branch view
-        if (
-          repo.repositoryState?.HEAD?.name !== currentHeadName ||
-          (repo.repositoryState?.HEAD?.ahead || 0) < (currentAhead || 0)
-        ) {
-          currentHeadName = repo.repositoryState?.HEAD?.name;
-          currentAhead = repo.repositoryState?.HEAD?.ahead;
-          currentBranchTreeProvider.refresh();
-        }
-      });
-    }
-  })();
+  await initTreeViews(context, store);
 
   // Commands
-
   registerOpenWorkflowRun(context);
   registerOpenWorkflowFile(context);
   registerOpenWorkflowJobLogs(context);
@@ -119,7 +66,6 @@ export async function activate(context: vscode.ExtensionContext) {
   registerUnPinWorkflow(context);
 
   // Log providers
-
   context.subscriptions.push(
     vscode.workspace.registerTextDocumentContentProvider(LogScheme, new WorkflowStepLogProvider())
   );
@@ -143,6 +89,7 @@ export async function activate(context: vscode.ExtensionContext) {
   log("...initialized");
 
   if (!PRODUCTION) {
+    // In debugging mode, always open the log for the extension in the `Output` window
     revealLog();
   }
 }
