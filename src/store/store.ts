@@ -46,12 +46,12 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
    * Start polling for updates for the given run
    */
   pollRun(runId: number, repoContext: GitHubRepoContext, intervalMs: number, attempts = 10) {
-    let updater: Updater | undefined = this.updaters.get(runId);
-    if (updater) {
-      clearInterval(updater.handle);
+    const existingUpdater: Updater | undefined = this.updaters.get(runId);
+    if (existingUpdater) {
+      clearInterval(existingUpdater.handle);
     }
 
-    updater = {
+    const updater: Updater = {
       intervalMs,
       repoContext,
       runId,
@@ -59,13 +59,13 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
       handle: undefined
     };
 
-    updater.handle = setInterval(async () => this.fetchRun(updater!), intervalMs);
+    updater.handle = setInterval(() => void this.fetchRun(updater), intervalMs);
 
     this.updaters.set(runId, updater);
   }
 
   private async fetchRun(updater: Updater) {
-    logDebug("Updating run: " + updater.runId);
+    logDebug("Updating run: ", updater.runId);
 
     updater.remainingAttempts--;
     if (updater.remainingAttempts === 0) {
