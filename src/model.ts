@@ -1,3 +1,4 @@
+import {components} from "@octokit/openapi-types";
 import {RestEndpointMethods} from "@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types";
 
 // Type helpers
@@ -20,11 +21,12 @@ type OctokitRepoData<
 > = GetElementType<Await<ReturnType<RestEndpointMethods["repos"][Operation]>>["data"][ResultProperty]>;
 
 //
-// Domain types
+// Domain contracts
 //
 
 export type Workflow = OctokitData<"listRepoWorkflows", "workflows">;
-export type WorkflowRun = OctokitData<"listWorkflowRuns", "workflow_runs">;
+export type WorkflowRun = components["schemas"]["workflow-run"];
+export type WorkflowRunAttempt = WorkflowRun;
 
 export type WorkflowJob = OctokitData<"listJobsForWorkflowRun", "jobs">;
 

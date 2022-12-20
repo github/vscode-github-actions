@@ -5,10 +5,12 @@ import {getWorkflowNodes, WorkflowsRepoNode} from "./workflows/workflowsRepoNode
 
 import {getGitHubContext} from "../git/repository";
 import {RunStore} from "../store/store";
+import {AttemptNode} from "./shared/attemptNode";
 import {AuthenticationNode} from "./shared/authenticationNode";
 import {ErrorNode} from "./shared/errorNode";
 import {NoGitHubRepositoryNode} from "./shared/noGitHubRepositoryNode";
 import {NoWorkflowJobsNode} from "./shared/noWorkflowJobsNode";
+import {PreviousAttemptsNode} from "./shared/previousAttemptsNode";
 import {WorkflowJobNode} from "./shared/workflowJobNode";
 import {WorkflowRunNode} from "./shared/workflowRunNode";
 import {WorkflowRunTreeDataProvider} from "./workflowRunTreeDataProvider";
@@ -19,9 +21,11 @@ type WorkflowsTreeNode =
   | AuthenticationNode
   | NoGitHubRepositoryNode
   | WorkflowNode
+  | WorkflowRunNode
+  | PreviousAttemptsNode
+  | AttemptNode
   | WorkflowJobNode
   | NoWorkflowJobsNode
-  | WorkflowRunNode
   | WorkflowStepNode;
 
 export class WorkflowsTreeProvider
@@ -86,6 +90,10 @@ export class WorkflowsTreeProvider
     } else if (element instanceof WorkflowNode) {
       return this.getRuns(element);
     } else if (element instanceof WorkflowRunNode) {
+      return element.getJobs();
+    } else if (element instanceof PreviousAttemptsNode) {
+      return element.getAttempts();
+    } else if (element instanceof AttemptNode) {
       return element.getJobs();
     } else if (element instanceof WorkflowJobNode) {
       return element.getSteps();
