@@ -25,17 +25,10 @@ export class WorkflowRunNode extends vscode.TreeItem {
     this.run = run;
     this.label = WorkflowRunNode._getLabel(run, this.workflowName);
 
-    this.contextValue = "run";
-    if (this.run.run.status !== "completed") {
-      this.contextValue += " cancelable";
-    }
-
     if (this.run.run.status === "completed") {
-      this.contextValue += " rerunnable";
-    }
-
-    if (this.run.run.status === "completed") {
-      this.contextValue += " completed";
+      this.contextValue = "run rerunnable completed";
+    } else {
+      this.contextValue = "run cancelable";
     }
 
     this.iconPath = getIconForWorkflowRun(this.run.run);
