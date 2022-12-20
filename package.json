@@ -364,7 +364,7 @@
     "package": "npm run clean && vsce package",
     "build": "webpack --mode production",
     "vscode:prepublish": "npm run build",
-    "watch": "webpack --watch  --mode development --env esbuild",
+    "watch": "webpack --watch --mode development --env esbuild",
     "open-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix; prettier --config .prettierrc.json 'src/**/*.ts' '*.json' --write",
