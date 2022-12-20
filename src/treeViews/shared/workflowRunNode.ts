@@ -1,15 +1,17 @@
 import * as vscode from "vscode";
 
 import {GitHubRepoContext} from "../../git/repository";
+import {RunStore} from "../../store/store";
 import {WorkflowRun} from "../../store/workflowRun";
 import {getIconForWorkflowRun} from "../icons";
 import {NoWorkflowJobsNode} from "./noWorkflowJobsNode";
 import {WorkflowJobNode} from "./workflowJobNode";
 
-export type WorkflowRunCommandArgs = Pick<WorkflowRunNode, "gitHubRepoContext" | "run">;
+export type WorkflowRunCommandArgs = Pick<WorkflowRunNode, "gitHubRepoContext" | "run" | "store">;
 
 export class WorkflowRunNode extends vscode.TreeItem {
   constructor(
+    public readonly store: RunStore,
     public readonly gitHubRepoContext: GitHubRepoContext,
     public run: WorkflowRun,
     public readonly workflowName?: string

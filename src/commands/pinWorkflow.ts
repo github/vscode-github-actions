@@ -1,9 +1,9 @@
 import * as vscode from "vscode";
 
+import {pinWorkflow} from "../configuration/configuration";
 import {GitHubRepoContext} from "../git/repository";
 import {Workflow} from "../model";
 import {getWorkflowUri} from "../workflow/workflow";
-import {pinWorkflow} from "../configuration/configuration";
 
 interface PinWorkflowCommandOptions {
   gitHubRepoContext: GitHubRepoContext;
@@ -30,6 +30,8 @@ export function registerPinWorkflow(context: vscode.ExtensionContext) {
       await pinWorkflow(relativeWorkflowPath);
 
       args.updateContextValue();
+
+      // Refresh tree to reflect updated `pin/unpin` icon
       await vscode.commands.executeCommand("github-actions.explorer.refresh");
     })
   );

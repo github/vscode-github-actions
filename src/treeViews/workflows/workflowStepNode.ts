@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import {GitHubRepoContext} from "../../git/repository";
 import {WorkflowStep} from "../../model";
-import {WorkflowJob} from "../../store/workflowRun";
+import {WorkflowJob} from "../../store/WorkflowJob";
 import {getIconForWorkflowRun} from "../icons";
 
 export class WorkflowStepNode extends vscode.TreeItem {

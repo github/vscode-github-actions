@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import {GitHubRepoContext} from "../../git/repository";
-import {WorkflowJob} from "../../store/workflowRun";
+import {WorkflowJob} from "../../store/WorkflowJob";
 import {getIconForWorkflowRun} from "../icons";
 import {WorkflowStepNode} from "../workflows/workflowStepNode";
 

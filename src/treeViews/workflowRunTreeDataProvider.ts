@@ -17,10 +17,10 @@ export abstract class WorkflowRunTreeDataProvider {
     });
   }
 
-  protected async runNodes(gitHubRepoContext: GitHubRepoContext, runData: WorkflowRun[]): Promise<WorkflowRunNode[]> {
+  protected runNodes(gitHubRepoContext: GitHubRepoContext, runData: WorkflowRun[]): WorkflowRunNode[] {
     return runData.map(runData => {
       const workflowRun = this.store.addRun(gitHubRepoContext, runData);
-      const node = new WorkflowRunNode(gitHubRepoContext, workflowRun);
+      const node = new WorkflowRunNode(this.store, gitHubRepoContext, workflowRun);
       this._runNodes.set(runData.id, node);
       return node;
     });

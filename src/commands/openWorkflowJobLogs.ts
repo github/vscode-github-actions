@@ -4,7 +4,7 @@ import {updateDecorations} from "../logs/formatProvider";
 import {getLogInfo} from "../logs/logInfoProvider";
 import {buildLogURI} from "../logs/scheme";
 import {WorkflowStep} from "../model";
-import {WorkflowJob} from "../store/workflowRun";
+import {WorkflowJob} from "../store/WorkflowJob";
 
 export interface OpenWorkflowJobLogsCommandArgs {
   gitHubRepoContext: GitHubRepoContext;

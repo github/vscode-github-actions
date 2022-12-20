@@ -1,6 +1,7 @@
 import {GitHubRepoContext} from "../git/repository";
 import {logDebug} from "../log";
 import * as model from "../model";
+import {WorkflowJob} from "./WorkflowJob";
 
 export class WorkflowRun {
   private _gitHubRepoContext: GitHubRepoContext;
@@ -45,15 +46,5 @@ export class WorkflowRun {
     const resp = result.data;
     const jobs: model.WorkflowJob[] = resp.jobs;
     return jobs.map(j => new WorkflowJob(this._gitHubRepoContext, j));
-  }
-}
-
-export class WorkflowJob {
-  readonly job: model.WorkflowJob;
-  private gitHubRepoContext: GitHubRepoContext;
-
-  constructor(gitHubRepoContext: GitHubRepoContext, job: model.WorkflowJob) {
-    this.gitHubRepoContext = gitHubRepoContext;
-    this.job = job;
   }
 }
