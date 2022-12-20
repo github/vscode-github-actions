@@ -30,7 +30,7 @@ export class WorkflowRunNode extends vscode.TreeItem {
       this.contextValue += " cancelable";
     }
 
-    if (this.run.run.status === "completed" && this.run.run.conclusion !== "success") {
+    if (this.run.run.status === "completed") {
       this.contextValue += " rerunnable";
     }
 
