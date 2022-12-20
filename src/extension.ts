@@ -38,16 +38,17 @@ export async function activate(context: vscode.ExtensionContext) {
   await getGitHubContext();
 
   initResources(context);
-
   initConfiguration(context);
-  await initPinnedWorkflows();
 
   // Track workflow
   await initWorkflowDocumentTracking(context);
 
-  // Tree views
   const store = new RunStore();
 
+  // Pinned workflows
+  await initPinnedWorkflows(store);
+
+  // Tree views
   const workflowTreeProvider = new WorkflowsTreeProvider(store);
   context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.workflows", workflowTreeProvider));
 
