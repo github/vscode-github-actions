@@ -1,8 +1,9 @@
 import {setInterval} from "timers";
 import {EventEmitter} from "vscode";
 import {GitHubRepoContext} from "../git/repository";
-import {logDebug} from "../log";
-import {WorkflowRun} from "../model";
+import {log, logDebug} from "../log";
+import * as model from "../model";
+import {WorkflowRun} from "./workflowRun";
 
 export interface RunStoreEvent {
   run: WorkflowRun;
@@ -20,12 +21,25 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
   private runs = new Map<number, WorkflowRun>();
   private updaters = new Map<number, Updater>();
 
-  /**
-   * Update the given run and inform any listener
-   */
-  updateRun(run: WorkflowRun) {
-    this.runs.set(run.id, run);
+  getRun(runId: number): WorkflowRun | undefined {
+    return this.runs.get(runId);
+  }
+
+  addRun(gitHubRepoContext: GitHubRepoContext, runData: model.WorkflowRun): WorkflowRun {
+    let run = this.runs.get(runData.id);
+    if (!run) {
+      run = new WorkflowRun(gitHubRepoContext, runData);
+
+      log("Adding run: ", runData.id, runData.updated_at);
+    } else {
+      run.updateRun(runData);
+
+      log("Updating run: ", runData.id, runData.updated_at);
+    }
+
+    this.runs.set(runData.id, run);
     this.fire({run});
+    return run;
   }
 
   /**
@@ -66,6 +80,6 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
     });
 
     const run = result.data;
-    this.updateRun(run);
+    this.addRun(updater.repoContext, run);
   }
 }

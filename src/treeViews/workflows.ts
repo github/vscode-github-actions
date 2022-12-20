@@ -49,9 +49,9 @@ export class WorkflowsTreeProvider
   }
 
   async getChildren(element?: WorkflowsTreeNode | undefined): Promise<WorkflowsTreeNode[]> {
-    logDebug("Getting root children");
-
     if (!element) {
+      logDebug("Getting root children");
+
       try {
         const gitHubContext = await getGitHubContext();
         if (!gitHubContext) {
@@ -60,6 +60,7 @@ export class WorkflowsTreeProvider
         }
 
         if (gitHubContext.repos.length > 0) {
+          // Special case, if there is only one repo, return workflow nodes directly
           if (gitHubContext.repos.length == 1) {
             return getWorkflowNodes(gitHubContext.repos[0]);
           }
@@ -94,7 +95,7 @@ export class WorkflowsTreeProvider
   }
 
   private async getRuns(wfNode: WorkflowNode): Promise<WorkflowRunNode[]> {
-    logDebug("Getting workflow runs");
+    logDebug("Getting workflow runs for workflow");
 
     const result = await wfNode.gitHubRepoContext.client.actions.listWorkflowRuns({
       owner: wfNode.gitHubRepoContext.owner,
@@ -102,14 +103,6 @@ export class WorkflowsTreeProvider
       workflow_id: wfNode.wf.id
     });
 
-    const resp = result.data;
-    const runs = resp.workflow_runs;
-
-    return runs.map(wr => {
-      this.store.updateRun(wr);
-      const node = new WorkflowRunNode(wfNode.gitHubRepoContext, wr);
-      this._runNodes.set(wr.id, node);
-      return node;
-    });
+    return this.runNodes(wfNode.gitHubRepoContext, result.data.workflow_runs);
   }
 }

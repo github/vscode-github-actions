@@ -1,11 +1,11 @@
 import * as vscode from "vscode";
 
-import {init as initLogger, log, logDebug} from "./log";
+import {init as initLogger, log, logDebug, revealLog} from "./log";
 
 import {registerCancelWorkflowRun} from "./commands/cancelWorkflowRun";
 import {registerOpenWorkflowFile} from "./commands/openWorkflowFile";
+import {registerOpenWorkflowJobLogs} from "./commands/openWorkflowJobLogs";
 import {registerOpenWorkflowRun} from "./commands/openWorkflowRun";
-import {registerOpenWorkflowRunLogs} from "./commands/openWorkflowRunLogs";
 import {registerPinWorkflow} from "./commands/pinWorkflow";
 import {registerReRunWorkflowRun} from "./commands/rerunWorkflowRun";
 import {registerAddSecret} from "./commands/secrets/addSecret";
@@ -20,9 +20,9 @@ import {LogScheme} from "./logs/constants";
 import {WorkflowStepLogProvider} from "./logs/fileProvider";
 import {WorkflowStepLogFoldingProvider} from "./logs/foldingProvider";
 import {WorkflowStepLogSymbolProvider} from "./logs/symbolProvider";
-import {WorkflowRun} from "./model";
 import {initPinnedWorkflows} from "./pinnedWorkflows/pinnedWorkflows";
 import {RunStore} from "./store/store";
+import {WorkflowRun} from "./store/workflowRun";
 import {initWorkflowDocumentTracking} from "./tracker/workflowDocumentTracker";
 import {CurrentBranchTreeProvider} from "./treeViews/currentBranch";
 import {initResources} from "./treeViews/icons";
@@ -70,7 +70,7 @@ export async function activate(context: vscode.ExtensionContext) {
   vscode.commands.registerCommand(
     "github-actions.explorer.poll",
     (args: {gitHubRepoContext: GitHubRepoContext; run: WorkflowRun}) => {
-      store.pollRun(args.run.id, args.gitHubRepoContext, 2000, 10);
+      store.pollRun(args.run.run.id, args.gitHubRepoContext, 2000, 100);
     }
   );
 
@@ -113,7 +113,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   registerOpenWorkflowRun(context);
   registerOpenWorkflowFile(context);
-  registerOpenWorkflowRunLogs(context);
+  registerOpenWorkflowJobLogs(context);
   registerTriggerWorkflowRun(context);
   registerReRunWorkflowRun(context);
   registerCancelWorkflowRun(context);
@@ -149,6 +149,10 @@ export async function activate(context: vscode.ExtensionContext) {
   await initLanguageServer(context);
 
   log("...initialized");
+
+  if (!PRODUCTION) {
+    revealLog();
+  }
 }
 
 export function deactivate(): Thenable<void> | undefined {

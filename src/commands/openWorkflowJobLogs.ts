@@ -3,25 +3,26 @@ import {GitHubRepoContext} from "../git/repository";
 import {updateDecorations} from "../logs/formatProvider";
 import {getLogInfo} from "../logs/logInfoProvider";
 import {buildLogURI} from "../logs/scheme";
-import {WorkflowJob, WorkflowStep} from "../model";
+import {WorkflowStep} from "../model";
+import {WorkflowJob} from "../store/workflowRun";
 
-export interface OpenWorkflowRunLogsCommandArgs {
+export interface OpenWorkflowJobLogsCommandArgs {
   gitHubRepoContext: GitHubRepoContext;
   job: WorkflowJob;
   step?: WorkflowStep;
 }
 
-export function registerOpenWorkflowRunLogs(context: vscode.ExtensionContext) {
+export function registerOpenWorkflowJobLogs(context: vscode.ExtensionContext) {
   context.subscriptions.push(
-    vscode.commands.registerCommand("github-actions.workflow.logs", async (args: OpenWorkflowRunLogsCommandArgs) => {
+    vscode.commands.registerCommand("github-actions.workflow.logs", async (args: OpenWorkflowJobLogsCommandArgs) => {
       const gitHubRepoContext = args.gitHubRepoContext;
       const job = args.job;
       const step = args.step;
       const uri = buildLogURI(
-        `%23${job.run_id} - ${job.name}`,
+        `%23${job.job.run_id} - ${job.job.name}`,
         gitHubRepoContext.owner,
         gitHubRepoContext.name,
-        job.id
+        job.job.id
       );
 
       const doc = await vscode.workspace.openTextDocument(uri);

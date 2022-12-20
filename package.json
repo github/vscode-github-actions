@@ -108,6 +108,16 @@
         }
       },
       {
+        "command": "github-actions.explorer.poll",
+        "category": "GitHub Actions",
+        "title": "Poll",
+        "when": "viewItem =~ /run/",
+        "icon": {
+          "dark": "resources/icons/dark/run.svg",
+          "light": "resources/icons/light/run.svg"
+        }
+      },
+      {
         "command": "github-actions.workflow.run.open",
         "category": "GitHub Actions",
         "title": "Open workflow run",
@@ -286,6 +296,11 @@
           "when": "viewItem =~ /run/ && viewItem =~ /rerunnable/"
         },
         {
+          "command": "github-actions.explorer.poll",
+          "when": "viewItem =~ /run/",
+          "group": "inline"
+        },
+        {
           "command": "github-actions.settings.secret.add",
           "group": "inline",
           "when": "viewItem == 'secrets'"
@@ -364,7 +379,7 @@
     "package": "npm run clean && vsce package",
     "build": "webpack --mode production",
     "vscode:prepublish": "npm run build",
-    "watch": "webpack --watch --mode development --env esbuild",
+    "watch": "webpack --watch  --mode development --env esbuild",
     "open-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix; prettier --config .prettierrc.json 'src/**/*.ts' '*.json' --write",
@@ -404,6 +419,7 @@
     "libsodium-wrappers": "^0.7.10",
     "ssh-config": "^3.0.0",
     "stream-browserify": "^3.0.0",
+    "timers-browserify": "^2.0.12",
     "tunnel": "0.0.6",
     "util": "^0.12.1",
     "uuid": "^3.3.3",

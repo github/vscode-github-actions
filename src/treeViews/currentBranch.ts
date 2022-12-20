@@ -86,7 +86,7 @@ export class CurrentBranchTreeProvider
   }
 
   private async getRuns(gitHubRepoContext: GitHubRepoContext, currentBranchName: string): Promise<WorkflowRunNode[]> {
-    logDebug("Getting workflow runs");
+    logDebug("Getting workflow runs for branch");
 
     const result = await gitHubRepoContext.client.actions.listWorkflowRunsForRepo({
       owner: gitHubRepoContext.owner,
@@ -97,11 +97,6 @@ export class CurrentBranchTreeProvider
     const resp = result.data;
     const runs = resp.workflow_runs;
 
-    return runs.map(wr => {
-      this.store.updateRun(wr);
-      const node = new WorkflowRunNode(gitHubRepoContext, wr);
-      this._runNodes.set(wr.id, node);
-      return node;
-    });
+    return this.runNodes(gitHubRepoContext, runs);
   }
 }

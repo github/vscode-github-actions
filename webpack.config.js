@@ -30,7 +30,8 @@ const config = {
       buffer: require.resolve("buffer/"),
       path: require.resolve("path-browserify"),
       crypto: require.resolve("crypto-browserify"),
-      stream: require.resolve("stream-browserify")
+      stream: require.resolve("stream-browserify"),
+      timers: require.resolve("timers-browserify")
     }
   },
   module: {
