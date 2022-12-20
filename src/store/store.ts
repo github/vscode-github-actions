@@ -47,7 +47,7 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
    */
   pollRun(runId: number, repoContext: GitHubRepoContext, intervalMs: number, attempts = 10) {
     const existingUpdater: Updater | undefined = this.updaters.get(runId);
-    if (existingUpdater) {
+    if (existingUpdater && existingUpdater.handle) {
       clearInterval(existingUpdater.handle);
     }
 
@@ -69,7 +69,10 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
 
     updater.remainingAttempts--;
     if (updater.remainingAttempts === 0) {
-      clearInterval(updater.handle);
+      if (updater.handle) {
+        clearInterval(updater.handle);
+      }
+
       this.updaters.delete(updater.runId);
     }
 
