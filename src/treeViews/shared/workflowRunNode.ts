@@ -5,6 +5,7 @@ import {RunStore} from "../../store/store";
 import {WorkflowRun} from "../../store/workflowRun";
 import {getIconForWorkflowRun} from "../icons";
 import {NoWorkflowJobsNode} from "./noWorkflowJobsNode";
+import {PreviousAttemptsNode} from "./previousAttemptsNode";
 import {WorkflowJobNode} from "./workflowJobNode";
 
 export type WorkflowRunCommandArgs = Pick<WorkflowRunNode, "gitHubRepoContext" | "run" | "store">;
@@ -35,10 +36,18 @@ export class WorkflowRunNode extends vscode.TreeItem {
     this.tooltip = `${this.run.run.status || ""} ${this.run.run.conclusion || ""}`;
   }
 
-  async getJobs(): Promise<(WorkflowJobNode | NoWorkflowJobsNode)[]> {
+  async getJobs(): Promise<(WorkflowJobNode | NoWorkflowJobsNode | PreviousAttemptsNode)[]> {
     const jobs = await this.run.jobs();
 
-    return jobs.map(job => new WorkflowJobNode(this.gitHubRepoContext, job));
+    const children: (WorkflowJobNode | NoWorkflowJobsNode | PreviousAttemptsNode)[] = jobs.map(
+      job => new WorkflowJobNode(this.gitHubRepoContext, job)
+    );
+
+    if (this.run.hasPreviousAttempts) {
+      children.push(new PreviousAttemptsNode(this.gitHubRepoContext, this.run));
+    }
+
+    return children;
   }
 
   private static _getLabel(run: WorkflowRun, workflowName?: string): string {

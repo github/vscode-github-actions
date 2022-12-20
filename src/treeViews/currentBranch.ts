@@ -6,7 +6,9 @@ import {CurrentBranchRepoNode} from "./current-branch/currentBranchRepoNode";
 import {log, logDebug} from "../log";
 import {RunStore} from "../store/store";
 import {NoRunForBranchNode} from "./current-branch/noRunForBranchNode";
+import {AttemptNode} from "./shared/attemptNode";
 import {NoWorkflowJobsNode} from "./shared/noWorkflowJobsNode";
+import {PreviousAttemptsNode} from "./shared/previousAttemptsNode";
 import {WorkflowJobNode} from "./shared/workflowJobNode";
 import {WorkflowRunNode} from "./shared/workflowRunNode";
 import {WorkflowRunTreeDataProvider} from "./workflowRunTreeDataProvider";
@@ -15,6 +17,8 @@ import {WorkflowStepNode} from "./workflows/workflowStepNode";
 type CurrentBranchTreeNode =
   | CurrentBranchRepoNode
   | WorkflowRunNode
+  | PreviousAttemptsNode
+  | AttemptNode
   | WorkflowJobNode
   | NoWorkflowJobsNode
   | WorkflowStepNode
@@ -77,6 +81,10 @@ export class CurrentBranchTreeProvider
     } else if (element instanceof CurrentBranchRepoNode) {
       return this.getRuns(element.gitHubRepoContext, element.currentBranchName);
     } else if (element instanceof WorkflowRunNode) {
+      return element.getJobs();
+    } else if (element instanceof PreviousAttemptsNode) {
+      return element.getAttempts();
+    } else if (element instanceof AttemptNode) {
       return element.getJobs();
     } else if (element instanceof WorkflowJobNode) {
       return element.getSteps();
