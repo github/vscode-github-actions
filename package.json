@@ -108,16 +108,6 @@
         }
       },
       {
-        "command": "github-actions.explorer.poll",
-        "category": "GitHub Actions",
-        "title": "Poll",
-        "when": "viewItem =~ /run/",
-        "icon": {
-          "dark": "resources/icons/dark/run.svg",
-          "light": "resources/icons/light/run.svg"
-        }
-      },
-      {
         "command": "github-actions.workflow.run.open",
         "category": "GitHub Actions",
         "title": "Open workflow run",
@@ -294,11 +284,6 @@
         {
           "command": "github-actions.workflow.run.rerun",
           "when": "viewItem =~ /run/ && viewItem =~ /rerunnable/"
-        },
-        {
-          "command": "github-actions.explorer.poll",
-          "when": "viewItem =~ /run/",
-          "group": "inline"
         },
         {
           "command": "github-actions.settings.secret.add",

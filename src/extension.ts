@@ -15,14 +15,13 @@ import {registerUpdateSecret} from "./commands/secrets/updateSecret";
 import {registerTriggerWorkflowRun} from "./commands/triggerWorkflowRun";
 import {registerUnPinWorkflow} from "./commands/unpinWorkflow";
 import {initConfiguration} from "./configuration/configuration";
-import {getGitHubContext, GitHubRepoContext} from "./git/repository";
+import {getGitHubContext} from "./git/repository";
 import {LogScheme} from "./logs/constants";
 import {WorkflowStepLogProvider} from "./logs/fileProvider";
 import {WorkflowStepLogFoldingProvider} from "./logs/foldingProvider";
 import {WorkflowStepLogSymbolProvider} from "./logs/symbolProvider";
 import {initPinnedWorkflows} from "./pinnedWorkflows/pinnedWorkflows";
 import {RunStore} from "./store/store";
-import {WorkflowRun} from "./store/workflowRun";
 import {initWorkflowDocumentTracking} from "./tracker/workflowDocumentTracker";
 import {CurrentBranchTreeProvider} from "./treeViews/currentBranch";
 import {initResources} from "./treeViews/icons";
@@ -65,14 +64,6 @@ export async function activate(context: vscode.ExtensionContext) {
       workflowTreeProvider.refresh();
       settingsTreeProvider.refresh();
     })
-  );
-
-  // TODO: CS: Remove!
-  vscode.commands.registerCommand(
-    "github-actions.explorer.poll",
-    (args: {gitHubRepoContext: GitHubRepoContext; run: WorkflowRun}) => {
-      store.pollRun(args.run.run.id, args.gitHubRepoContext, 2000, 100);
-    }
   );
 
   context.subscriptions.push(
