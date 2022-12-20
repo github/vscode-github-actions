@@ -18,7 +18,7 @@ export function registerReRunWorkflowRun(context: vscode.ExtensionContext) {
       }
 
       // Start refreshing the run to reflect rerunning in UI
-      args.store.pollRun(run.run.id, gitHubRepoContext, 1000, 10);
+      args.store.pollRun(run.run.id, gitHubRepoContext, 1000, 20);
     })
   );
 }
