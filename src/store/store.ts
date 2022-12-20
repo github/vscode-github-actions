@@ -1,7 +1,7 @@
 import {setInterval} from "timers";
 import {EventEmitter} from "vscode";
 import {GitHubRepoContext} from "../git/repository";
-import {log, logDebug} from "../log";
+import {logDebug} from "../log";
 import * as model from "../model";
 import {WorkflowRun} from "./workflowRun";
 
@@ -30,11 +30,11 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
     if (!run) {
       run = new WorkflowRun(gitHubRepoContext, runData);
 
-      log("Adding run: ", runData.id, runData.updated_at);
+      logDebug("[Store]: adding run: ", runData.id, runData.updated_at);
     } else {
       run.updateRun(runData);
 
-      log("Updating run: ", runData.id, runData.updated_at);
+      logDebug("[Store]: updating run: ", runData.id, runData.updated_at);
     }
 
     this.runs.set(runData.id, run);

@@ -19,7 +19,10 @@ export class WorkflowRun {
 
   updateRun(run: model.WorkflowRun) {
     if (this._run.updated_at !== run.updated_at) {
-      // Run has changed, reset jobs
+      // Run has changed, reset jobs. Note: this doesn't work in all cases, there might be race conditions
+      // where the run update_at field isn't set but the jobs change, but in the vast majority of cases the
+      // combined status/conclusion of the run is updated whenever a job changes, so this should be good enough
+      // for now to reduce the # of API calls
       this._jobs = undefined;
     }
 
