@@ -6,6 +6,7 @@ import {
   parseWorkflow,
   WorkflowTemplate
 } from "@github/actions-workflow-parser";
+import {ErrorPolicy} from "@github/actions-workflow-parser/model/convert";
 import {basename} from "path";
 import {GitHubRepoContext} from "../git/repository";
 
@@ -28,7 +29,7 @@ export async function getContextStringForWorkflow(workflowUri: vscode.Uri): Prom
     );
 
     if (result.value) {
-      const template = convertWorkflowTemplate(result.context, result.value);
+      const template = convertWorkflowTemplate(result.context, result.value, ErrorPolicy.TryConversion);
 
       const context: string[] = [];
 

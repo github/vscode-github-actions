@@ -1,32 +1,24 @@
 import * as vscode from "vscode";
-import {GitHubRepoContext} from "../git/repository";
-import {WorkflowRun} from "../model";
-
-interface CancelWorkflowRunLogsCommandArgs {
-  gitHubRepoContext: GitHubRepoContext;
-  run: WorkflowRun;
-}
+import {WorkflowRunCommandArgs} from "../treeViews/shared/workflowRunNode";
 
 export function registerCancelWorkflowRun(context: vscode.ExtensionContext) {
   context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "github-actions.workflow.run.cancel",
-      async (args: CancelWorkflowRunLogsCommandArgs) => {
-        const gitHubContext = args.gitHubRepoContext;
-        const run = args.run;
+    vscode.commands.registerCommand("github-actions.workflow.run.cancel", async (args: WorkflowRunCommandArgs) => {
+      const gitHubRepoContext = args.gitHubRepoContext;
+      const run = args.run;
 
-        try {
-          await gitHubContext.client.actions.cancelWorkflowRun({
-            owner: gitHubContext.owner,
-            repo: gitHubContext.name,
-            run_id: run.id
-          });
-        } catch (e) {
-          await vscode.window.showErrorMessage(`Could not cancel workflow: '${(e as Error).message}'`);
-        }
-
-        await vscode.commands.executeCommand("github-actions.explorer.refresh");
+      try {
+        await gitHubRepoContext.client.actions.cancelWorkflowRun({
+          owner: gitHubRepoContext.owner,
+          repo: gitHubRepoContext.name,
+          run_id: run.run.id
+        });
+      } catch (e) {
+        await vscode.window.showErrorMessage(`Could not cancel workflow: '${(e as Error).message}'`);
       }
-    )
+
+      // Start refreshing the run to reflect cancellation in UI
+      args.store.pollRun(run.run.id, gitHubRepoContext, 1000, 10);
+    })
   );
 }

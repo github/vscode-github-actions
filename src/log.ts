@@ -6,17 +6,17 @@ enum LogLevel {
 }
 
 let logger: vscode.OutputChannel;
-const level: LogLevel = LogLevel.Debug;
+const level: LogLevel = PRODUCTION ? LogLevel.Info : LogLevel.Debug;
 
 export function init() {
   logger = vscode.window.createOutputChannel("GitHub Actions");
 }
 
-export function log(...values: string[]) {
+export function log(...values: unknown[]) {
   logger.appendLine(values.join(" "));
 }
 
-export function logDebug(...values: string[]) {
+export function logDebug(...values: unknown[]) {
   if (level > LogLevel.Debug) {
     return;
   }
@@ -24,10 +24,14 @@ export function logDebug(...values: string[]) {
   logger.appendLine(values.join(" "));
 }
 
-export function logError(e: Error, ...values: string[]) {
+export function logError(e: Error, ...values: unknown[]) {
   logger.appendLine(values.join(" "));
   logger.appendLine(e.message);
   if (e.stack) {
     logger.appendLine(e.stack);
   }
+}
+
+export function revealLog() {
+  logger.show();
 }

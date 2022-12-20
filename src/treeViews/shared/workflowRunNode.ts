@@ -1,0 +1,47 @@
+import * as vscode from "vscode";
+
+import {GitHubRepoContext} from "../../git/repository";
+import {RunStore} from "../../store/store";
+import {WorkflowRun} from "../../store/workflowRun";
+import {getIconForWorkflowRun} from "../icons";
+import {NoWorkflowJobsNode} from "./noWorkflowJobsNode";
+import {WorkflowJobNode} from "./workflowJobNode";
+
+export type WorkflowRunCommandArgs = Pick<WorkflowRunNode, "gitHubRepoContext" | "run" | "store">;
+
+export class WorkflowRunNode extends vscode.TreeItem {
+  constructor(
+    public readonly store: RunStore,
+    public readonly gitHubRepoContext: GitHubRepoContext,
+    public run: WorkflowRun,
+    public readonly workflowName?: string
+  ) {
+    super(WorkflowRunNode._getLabel(run, workflowName), vscode.TreeItemCollapsibleState.Collapsed);
+
+    this.updateRun(run);
+  }
+
+  updateRun(run: WorkflowRun) {
+    this.run = run;
+    this.label = WorkflowRunNode._getLabel(run, this.workflowName);
+
+    if (this.run.run.status === "completed") {
+      this.contextValue = "run rerunnable completed";
+    } else {
+      this.contextValue = "run cancelable";
+    }
+
+    this.iconPath = getIconForWorkflowRun(this.run.run);
+    this.tooltip = `${this.run.run.status || ""} ${this.run.run.conclusion || ""}`;
+  }
+
+  async getJobs(): Promise<(WorkflowJobNode | NoWorkflowJobsNode)[]> {
+    const jobs = await this.run.jobs();
+
+    return jobs.map(job => new WorkflowJobNode(this.gitHubRepoContext, job));
+  }
+
+  private static _getLabel(run: WorkflowRun, workflowName?: string): string {
+    return `${workflowName ? workflowName + " " : ""}#${run.run.id}`;
+  }
+}
