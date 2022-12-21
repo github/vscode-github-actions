@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import {GitHubRepoContext} from "../git/repository";
 import {updateDecorations} from "../logs/formatProvider";
-import {getLogInfo} from "../logs/logInfoProvider";
+import {getLogInfo} from "../logs/logInfo";
 import {buildLogURI} from "../logs/scheme";
 import {WorkflowStep} from "../model";
 import {WorkflowJob} from "../store/WorkflowJob";

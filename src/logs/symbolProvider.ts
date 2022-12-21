@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import {getLogInfo} from "./logInfoProvider";
+import {getLogInfo} from "./logInfo";
 
 export class WorkflowStepLogSymbolProvider implements vscode.DocumentSymbolProvider {
   provideDocumentSymbols(
