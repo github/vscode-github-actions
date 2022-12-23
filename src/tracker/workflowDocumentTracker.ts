@@ -1,6 +1,9 @@
 import * as vscode from "vscode";
 
 import {extname} from "path";
+import {LogScheme} from "../logs/constants";
+import {updateDecorations} from "../logs/formatProvider";
+import {getLogInfo} from "../logs/logInfo";
 import {getContextStringForWorkflow} from "../workflow/workflow";
 
 export async function initWorkflowDocumentTracking(context: vscode.ExtensionContext) {
@@ -17,19 +20,25 @@ async function onDidChangeActiveTextEditor(editor?: vscode.TextEditor) {
 
   // Check if the file is saved and could be a workflow
   if (
-    !editor.document.uri?.fsPath ||
-    editor.document.uri.scheme !== "file" ||
-    !extname(editor.document.fileName).match(/\.ya?ml/) ||
-    editor.document.fileName.indexOf(".github/workflows") === -1
+    editor.document.uri?.fsPath &&
+    editor.document.uri.scheme === "file" &&
+    extname(editor.document.fileName).match(/\.ya?ml/) &&
+    editor.document.fileName.indexOf(".github/workflows") !== -1
   ) {
-    return;
+    await vscode.commands.executeCommand(
+      "setContext",
+      "githubActions:activeFile",
+      await getContextStringForWorkflow(editor.document.uri)
+    );
   }
 
-  await vscode.commands.executeCommand(
-    "setContext",
-    "githubActions:activeFile",
-    await getContextStringForWorkflow(editor.document.uri)
-  );
+  // Is is a log file?
+  if (editor.document.uri?.scheme === LogScheme) {
+    const logInfo = getLogInfo(editor.document.uri);
+    if (logInfo) {
+      updateDecorations(editor, logInfo);
+    }
+  }
 }
 
 // Adapted from from https://github.com/eamodio/vscode-gitlens/blob/f22a9cd4199ac498c217643282a6a412e1fc01ae/src/constants.ts#L74

@@ -1,7 +1,7 @@
 import {OctokitResponse} from "@octokit/types";
 import * as vscode from "vscode";
 import {getGitHubContextForRepo} from "../git/repository";
-import {cacheLogInfo} from "./logInfoProvider";
+import {cacheLogInfo} from "./logInfo";
 import {parseLog} from "./model";
 import {parseUri} from "./scheme";
 
