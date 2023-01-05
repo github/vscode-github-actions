@@ -15,8 +15,6 @@ mkdir ~/vscode
 cd ~/vscode
 ```
 
-This directory will replace `/workspace/` below in the instructions on how to make changes.
-
 Then, clone this repository and run `script/bootstrap` to pull in the other repositories.
 
 ```shell
@@ -41,9 +39,10 @@ npm run build -ws
 
 ## Make changes
 
-1. Open the workspace in VS Code `File -> Open Workspace from File...`: `/workspace/vscode-github-actions.code-workspace`
+1. Open the workspace in VS Code `File -> Open Workspace from File...`: `/workspaces/vscode-github-actions.code-workspace`
+    - If you're doing local development, replace `workspaces` with the folder you created above (`vscode` in the example)
 1. Make change to any of the packages
-1. Build them all with `npm run build -ws` in `/workspace/`
+1. Build them all with `npm run build -ws` in `/workspaces/` or your local dev folder
 1. Uninstall or disable the Actions extension in your development instance of VS Code
 1. Start and debug extension with the `Watch & Launch Extension` configuration from the "Run and Debug" side panel menu
 1. Open a workspace in the remote extension host that contains workflow files in the `.github/workflows` directory
@@ -52,9 +51,9 @@ npm run build -ws
 
 Once you're happy with your changes, publish the changes to the respective packages. You might have to adjust package versions, so if you made a change to `actions-workflow-parser` and increase the version there, you will have to consume the updated package in `actions-languageservice`.
 
-`npm workspaces` hoists all dependencies into a shared `node_modules` folder at the root directory (`/workspace/node_modules`) and also creates a single `package-lock.json` file there for the whole workspace. We don't want that when pushing changes back to the individual repos.
+`npm workspaces` hoists all dependencies into a shared `node_modules` folder at the root directory (`/workspaces/node_modules` or your local dev folder) and also creates a single `package-lock.json` file there for the whole workspace. We don't want that when pushing changes back to the individual repos.
 
-There is a script in `/workspace`: `update-package-locks.sh` that does an `npm install` in every package directory _without_ using workspaces. That way, the local `package-lock.json` file is generated correctly and can be pushed to the repository.
+There is a script in `/workspaces` (or your local dev folder): `update-package-locks.sh` that does an `npm install` in every package directory _without_ using workspaces. That way, the local `package-lock.json` file is generated correctly and can be pushed to the repository.
 
 ## Debugging
 
