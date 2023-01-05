@@ -51,9 +51,9 @@ npm run build -ws
 
 Once you're happy with your changes, publish the changes to the respective packages. You might have to adjust package versions, so if you made a change to `actions-workflow-parser` and increase the version there, you will have to consume the updated package in `actions-languageservice`.
 
-`npm workspaces` hoists all dependencies into a shared `node_modules` folder at the root directory (`/workspaces/node_modules` or 'vscode` for local dev) and also creates a single `package-lock.json` file there for the whole workspace. We don't want that when pushing changes back to the individual repos.
+`npm workspaces` hoists all dependencies into a shared `node_modules` folder at the root directory (`/workspaces/node_modules` or `/vscode/node_modules` for local dev) and also creates a single `package-lock.json` file there for the whole workspace. We don't want that when pushing changes back to the individual repos.
 
-There is a script in `/workspaces` (or `vscode` for local dev): `update-package-locks.sh` that does an `npm install` in every package directory _without_ using workspaces. That way, the local `package-lock.json` file is generated correctly and can be pushed to the repository.
+There is a script in `/workspaces` (or `/vscode` for local dev): `update-package-locks.sh` that does an `npm install` in every package directory _without_ using workspaces. That way, the local `package-lock.json` file is generated correctly and can be pushed to the repository.
 
 ## Debugging
 
