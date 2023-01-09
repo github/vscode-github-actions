@@ -13,22 +13,6 @@
   "customizations": {
     "codespaces": {
       "repositories": {
-        "github/actions-expressions": {
-          "permissions": {
-            "contents": "write",
-            "packages": "read",
-            "pull_requests": "write",
-            "workflows": "write"
-          }
-        },
-        "github/actions-workflow-parser": {
-          "permissions": {
-            "contents": "write",
-            "packages": "read",
-            "pull_requests": "write",
-            "workflows": "write"
-          }
-        },
         "github/actions-languageservices": {
           "permissions": {
             "contents": "write",
