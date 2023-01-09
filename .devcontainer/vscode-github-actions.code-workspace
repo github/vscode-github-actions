@@ -1,7 +1,7 @@
 {
   "folders": [
-    {"path": "./actions-expressions/typescript", "name": "actions-expressions/typescript"},
-    {"path": "./actions-workflow-parser/typescript", "name": "actions-workflow-parser/typescript"},
+    {"path": "./actions-languageservices/actions-expressions"},
+    {"path": "./actions-languageservices/actions-workflow-parser"},
     {"path": "./actions-languageservices/actions-languageservice"},
     {"path": "./actions-languageservices/actions-languageserver"},
     {"path": "./vscode-github-actions"}

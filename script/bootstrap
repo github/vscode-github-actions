@@ -17,8 +17,6 @@ root="$(dirname "$repo_root")"
 
 # Clone dependent repos
 echo "Cloning dependent repos..."
-clone_repo https://github.com/github/actions-expressions "$root"/actions-expressions
-clone_repo https://github.com/github/actions-workflow-parser "$root"/actions-workflow-parser
 clone_repo https://github.com/github/actions-languageservices "$root"/actions-languageservices
 
 
