@@ -1,6 +1,6 @@
 {
   "scopeName": "source.yaml.github-actions-expression",
-  "injectionSelector": "L:string",
+  "injectionSelector": "L:source.yaml",
   "patterns": [
     {
       "include": "#expression"
@@ -51,7 +51,7 @@
       "patterns": [
         {
           "name": "variable.other.read.github-actions-expression",
-          "match": "\\b[A-Za-z][A-Za-z0-9]*\\b"
+          "match": "\\b[A-Za-z][A-Za-z0-9_]*\\b"
         }
       ]
     },
