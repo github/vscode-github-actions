@@ -51,7 +51,7 @@
       "patterns": [
         {
           "name": "variable.other.read.github-actions-expression",
-          "match": "\\b[A-Za-z][A-Za-z0-9]*\\b"
+          "match": "\\b[A-Za-z][A-Za-z0-9_]*\\b"
         }
       ]
     },
