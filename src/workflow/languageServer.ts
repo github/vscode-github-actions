@@ -1,6 +1,7 @@
 import * as path from "path";
 import * as vscode from "vscode";
 
+import {Commands} from "@github/actions-languageserver/commands";
 import {InitializationOptions, LogLevel} from "@github/actions-languageserver/initializationOptions";
 import {LanguageClient, LanguageClientOptions, ServerOptions, TransportKind} from "vscode-languageclient/node";
 import {getSession} from "../auth/auth";
@@ -53,4 +54,12 @@ export function deactivateLanguageServer(): Promise<void> {
   }
 
   return client.stop();
+}
+
+export function executeCacheClearCommand(): Promise<void> {
+  if (!client) {
+    return Promise.resolve();
+  }
+
+  return client.sendRequest("workspace/executeCommand", {command: Commands.ClearCache});
 }

@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import {executeCacheClearCommand} from "../workflow/languageServer";
 import {getGitHubContext} from "../git/repository";
 import {logDebug} from "../log";
 import {RunStore} from "../store/store";
@@ -19,9 +20,10 @@ export async function initTreeViews(context: vscode.ExtensionContext, store: Run
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("github-actions.explorer.refresh", () => {
+    vscode.commands.registerCommand("github-actions.explorer.refresh", async () => {
       workflowTreeProvider.refresh();
       settingsTreeProvider.refresh();
+      await executeCacheClearCommand();
     })
   );
 
