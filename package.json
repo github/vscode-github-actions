@@ -8,7 +8,7 @@
     "url": "https://github.com/cschleiden/vscode-github-actions"
   },
   "description": "GitHub Actions workflows and runs for github.com hosted repositories in VS Code",
-  "version": "0.24.1",
+  "version": "0.25.0",
   "engines": {
     "vscode": "^1.72.0"
   },
@@ -35,7 +35,10 @@
         "path": "./syntaxes/expressions.tmGrammar.json",
         "injectTo": [
           "source.yaml"
-        ]
+        ],
+        "embeddedLanguages": {
+          "source.js": "javascript"
+        }
       }
     ],
     "configuration": {
