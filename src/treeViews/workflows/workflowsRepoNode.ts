@@ -23,7 +23,8 @@ export class WorkflowsRepoNode extends vscode.TreeItem {
 export async function getWorkflowNodes(gitHubRepoContext: GitHubRepoContext) {
   const opts = gitHubRepoContext.client.actions.listRepoWorkflows.endpoint.merge({
     owner: gitHubRepoContext.owner,
-    repo: gitHubRepoContext.name
+    repo: gitHubRepoContext.name,
+    per_page: 100
   })
 
   // retrieve all pages
