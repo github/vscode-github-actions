@@ -81,7 +81,7 @@ export class WorkflowsTreeProvider
           return [new AuthenticationNode()];
         }
 
-        return [new ErrorNode(`An error has occured: ${(e as Error).message}`)];
+        return [new ErrorNode(`An error has occurred: ${(e as Error).message}`)];
       }
     }
 
