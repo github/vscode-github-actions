@@ -10,9 +10,11 @@ import {getGitHubContextForWorkspaceUri, GitHubRepoContext} from "../git/reposit
 
 import {sep} from "path";
 import {logError} from "../log";
-import {Workflow, WorkflowRun} from "../model";
+import {Workflow} from "../model";
 import {RunStore} from "../store/store";
+import {WorkflowRun} from "../store/workflowRun";
 import {getCodIconForWorkflowrun} from "../treeViews/icons";
+import {WorkflowRunCommandArgs} from "../treeViews/shared/workflowRunNode";
 
 interface PinnedWorkflow {
   /** Displayed name */
@@ -42,7 +44,7 @@ export async function initPinnedWorkflows(store: RunStore) {
     const workflowId = run.run.workflow_id;
     for (const pinnedWorkflow of pinnedWorkflows) {
       if (pinnedWorkflow.workflowId === workflowId && pinnedWorkflow.lastRunId === run.run.id) {
-        updatePinnedWorkflow(pinnedWorkflow, run.run);
+        updatePinnedWorkflow(pinnedWorkflow, run);
         break;
       }
     }
@@ -169,7 +171,7 @@ async function refreshPinnedWorkflow(pinnedWorkflow: PinnedWorkflow) {
 
     const mostRecentRun = workflow_runs?.[0];
 
-    updatePinnedWorkflow(pinnedWorkflow, mostRecentRun);
+    updatePinnedWorkflow(pinnedWorkflow, mostRecentRun && runStore.getRun(mostRecentRun.id));
   } catch (e) {
     logError(e as Error, "Error updating pinned workflow");
   }
@@ -183,9 +185,9 @@ function updatePinnedWorkflow(pinnedWorkflow: PinnedWorkflow, run: WorkflowRun |
     // Can't do anything without a run
     pinnedWorkflow.statusBarItem.command = undefined;
   } else {
-    pinnedWorkflow.statusBarItem.text = `$(${getCodIconForWorkflowrun(run)}) ${pinnedWorkflow.workflowName}`;
+    pinnedWorkflow.statusBarItem.text = `$(${getCodIconForWorkflowrun(run.run)}) ${pinnedWorkflow.workflowName}`;
 
-    if (run.conclusion === "failure") {
+    if (run.run.conclusion === "failure") {
       pinnedWorkflow.statusBarItem.backgroundColor = new vscode.ThemeColor("statusBarItem.errorBackground");
     } else {
       pinnedWorkflow.statusBarItem.backgroundColor = undefined;
@@ -196,13 +198,15 @@ function updatePinnedWorkflow(pinnedWorkflow: PinnedWorkflow, run: WorkflowRun |
       command: "github-actions.workflow.run.open",
       arguments: [
         {
-          run: run
-        }
+          run: run,
+          store: runStore,
+          gitHubRepoContext: pinnedWorkflow.gitHubRepoContext
+        } as WorkflowRunCommandArgs
       ]
     };
   }
 
-  pinnedWorkflow.lastRunId = run?.id;
+  pinnedWorkflow.lastRunId = run?.run.id;
 
   // Ensure the status bar item is visible
   pinnedWorkflow.statusBarItem.show();
