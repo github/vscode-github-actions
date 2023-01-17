@@ -4,6 +4,7 @@ import {GitHubRepoContext} from "../../git/repository";
 import {logDebug} from "../../log";
 import {getContextStringForWorkflow, getWorkflowUri} from "../../workflow/workflow";
 import {WorkflowNode} from "./workflowNode";
+import {Workflow} from "../../model";
 
 export class WorkflowsRepoNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext) {
@@ -20,13 +21,13 @@ export class WorkflowsRepoNode extends vscode.TreeItem {
 }
 
 export async function getWorkflowNodes(gitHubRepoContext: GitHubRepoContext) {
-  const result = await gitHubRepoContext.client.actions.listRepoWorkflows({
+  const opts = gitHubRepoContext.client.actions.listRepoWorkflows.endpoint.merge({
     owner: gitHubRepoContext.owner,
     repo: gitHubRepoContext.name
-  });
+  })
 
-  const resp = result.data;
-  const workflows = resp.workflows;
+  // retrieve all pages
+  const workflows = await gitHubRepoContext.client.paginate<Workflow>(opts)
 
   workflows.sort((a, b) => a.name.localeCompare(b.name));
 
