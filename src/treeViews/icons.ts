@@ -36,6 +36,7 @@ function _getIconForWorkflowrun(
         case "failure":
           return getAbsoluteIconPath("conclusions/failure.svg");
 
+        case "skipped":
         case "cancelled":
           return getAbsoluteIconPath("conclusions/cancelled.svg");
       }
@@ -71,6 +72,7 @@ export function getCodIconForWorkflowrun(runOrJob?: IStatusAndConclusion): strin
         case "failure":
           return "error";
 
+        case "skipped":
         case "cancelled":
           return "circle-slash";
       }
