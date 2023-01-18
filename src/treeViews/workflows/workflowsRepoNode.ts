@@ -25,10 +25,10 @@ export async function getWorkflowNodes(gitHubRepoContext: GitHubRepoContext) {
     owner: gitHubRepoContext.owner,
     repo: gitHubRepoContext.name,
     per_page: 100
-  })
+  });
 
   // retrieve all pages
-  const workflows = await gitHubRepoContext.client.paginate<Workflow>(opts)
+  const workflows = await gitHubRepoContext.client.paginate<Workflow>(opts);
 
   workflows.sort((a, b) => a.name.localeCompare(b.name));
 
