@@ -58,3 +58,17 @@ There is a script in `/workspaces` (or `~/vscode` for local dev): `update-packag
 ## Debugging
 
 Launching and debugging the extension should just work. If you need to debug the language server, start the extension first, then execute the `Attach to language-server` target to also attach to the language server.
+
+## Troubleshooting
+
+### npm error: "This command does not support workspaces"
+
+Upgrade to a newer version of npm. You can use `npm install npm@latest -g`, `brew upgrade node` or other methods.
+
+### npm error: "Web login not supported"
+
+Add `--auth-type=legacy` to the end of the command-line:
+
+```shell
+npm login --scope=@github --registry=https://npm.pkg.github.com --auth-type=legacy
+```
