@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import {GitHubRepoContext} from "../../git/repository";
 import {WorkflowRunAttempt} from "../../store/workflowRun";
 import {getIconForWorkflowRun} from "../icons";
+import {getEventString, getStatusString} from "./runTooltipHelper";
 import {WorkflowJobNode} from "./workflowJobNode";
 
 export class AttemptNode extends vscode.TreeItem {
@@ -9,7 +10,17 @@ export class AttemptNode extends vscode.TreeItem {
     super(`Attempt #${attempt.attempt}`, vscode.TreeItemCollapsibleState.Collapsed);
 
     this.iconPath = getIconForWorkflowRun(this.attempt.run);
-    this.tooltip = `#${this.attempt.attempt}: ${this.attempt.run.status || ""} ${this.attempt.run.conclusion || ""}`;
+    this.tooltip = this.getTooltip();
+  }
+
+  getTooltip(): vscode.MarkdownString {
+    let markdownString = `#${this.attempt.attempt}: `;
+
+    markdownString += getStatusString(this.attempt);
+    markdownString += `\n\n`;
+    markdownString += getEventString(this.attempt);
+
+    return new vscode.MarkdownString(markdownString);
   }
 
   async getJobs(): Promise<WorkflowJobNode[]> {

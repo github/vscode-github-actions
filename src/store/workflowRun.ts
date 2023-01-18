@@ -22,6 +22,16 @@ abstract class WorkflowRunBase {
     return (this.run.run_attempt || 1) > 1;
   }
 
+  duration(): number {
+    if (this.run.run_started_at) {
+      const started_at = new Date(this.run.run_started_at);
+
+      const updated_at = new Date(this.run.updated_at);
+      return updated_at.getTime() - started_at.getTime();
+    }
+    return 0;
+  }
+
   updateRun(run: model.WorkflowRun) {
     if (this._run.updated_at !== run.updated_at) {
       // Run has changed, reset jobs. Note: this doesn't work in all cases, there might be race conditions

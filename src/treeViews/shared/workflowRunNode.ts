@@ -4,6 +4,7 @@ import {GitHubRepoContext} from "../../git/repository";
 import {RunStore} from "../../store/store";
 import {WorkflowRun} from "../../store/workflowRun";
 import {getIconForWorkflowRun} from "../icons";
+import {getEventString, getStatusString} from "./runTooltipHelper";
 import {NoWorkflowJobsNode} from "./noWorkflowJobsNode";
 import {PreviousAttemptsNode} from "./previousAttemptsNode";
 import {WorkflowJobNode} from "./workflowJobNode";
@@ -33,7 +34,7 @@ export class WorkflowRunNode extends vscode.TreeItem {
     }
 
     this.iconPath = getIconForWorkflowRun(this.run.run);
-    this.tooltip = `${this.run.run.status || ""} ${this.run.run.conclusion || ""}`;
+    this.tooltip = this.getTooltip();
   }
 
   async getJobs(): Promise<(WorkflowJobNode | NoWorkflowJobsNode | PreviousAttemptsNode)[]> {
@@ -50,7 +51,21 @@ export class WorkflowRunNode extends vscode.TreeItem {
     return children;
   }
 
+  getTooltip(): vscode.MarkdownString {
+    let markdownString = "";
+
+    if (this.run.hasPreviousAttempts) {
+      markdownString += `Attempt #${this.run.run.run_attempt} `;
+    }
+
+    markdownString += getStatusString(this.run, markdownString.length == 0);
+    markdownString += `\n\n`;
+    markdownString += getEventString(this.run);
+
+    return new vscode.MarkdownString(markdownString);
+  }
+
   private static _getLabel(run: WorkflowRun, workflowName?: string): string {
-    return `${workflowName ? workflowName + " " : ""}#${run.run.id}`;
+    return `${workflowName ? workflowName + " " : ""}#${run.run.run_number}`;
   }
 }
