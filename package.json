@@ -35,10 +35,7 @@
         "path": "./syntaxes/expressions.tmGrammar.json",
         "injectTo": [
           "source.yaml"
-        ],
-        "embeddedLanguages": {
-          "source.js": "javascript"
-        }
+        ]
       }
     ],
     "configuration": {
