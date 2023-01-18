@@ -90,5 +90,6 @@ export function getCodIconForWorkflowrun(runOrJob?: IStatusAndConclusion): strin
       return "sync~spin";
   }
 
-  return "";
+  // Default to circle if there is no match
+  return "circle";
 }
