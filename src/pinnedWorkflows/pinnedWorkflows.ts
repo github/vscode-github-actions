@@ -201,7 +201,7 @@ function updatePinnedWorkflow(pinnedWorkflow: PinnedWorkflow, run: WorkflowRun |
           run: run,
           store: runStore,
           gitHubRepoContext: pinnedWorkflow.gitHubRepoContext
-        } as WorkflowRunCommandArgs
+        } satisfies WorkflowRunCommandArgs
       ]
     };
   }
