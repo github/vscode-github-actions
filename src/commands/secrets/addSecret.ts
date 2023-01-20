@@ -38,7 +38,7 @@ export function registerAddSecret(context: vscode.ExtensionContext) {
             repo: gitHubContext.name,
             secret_name: name,
             key_id: key_id,
-            encrypted_value: encodeSecret(key, value)
+            encrypted_value: await encodeSecret(key, value)
           });
         } catch (e) {
           await vscode.window.showErrorMessage((e as Error).message);
