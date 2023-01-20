@@ -4,6 +4,9 @@
   "patterns": [
     {
       "include": "#expression"
+    },
+    {
+      "include": "#if-expression"
     }
   ],
   "repository": {
@@ -12,6 +15,41 @@
       "name": "meta.embedded.block.github-actions-expression",
       "captures": {
         "1": {
+          "patterns": [
+            {
+              "include": "#function-call"
+            },
+            {
+              "include": "#context"
+            },
+            {
+              "include": "#string"
+            },
+            {
+              "include": "#number"
+            },
+            {
+              "include": "#boolean"
+            },
+            {
+              "include": "#null"
+            }
+          ]
+        }
+      }
+    },
+    "if-expression": {
+      "match": "\\b(if:) (.*?)$",
+      "contentName": "meta.embedded.block.github-actions-expression",
+      "captures": {
+        "1": {
+          "patterns": [
+            {
+              "include": "source.yaml"
+            }
+          ]
+        },
+        "2": {
           "patterns": [
             {
               "include": "#function-call"
