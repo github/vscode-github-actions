@@ -13,7 +13,7 @@ import {GitHubRepoContext} from "../git/repository";
 export async function getContextStringForWorkflow(workflowUri: vscode.Uri): Promise<string> {
   try {
     const content = await vscode.workspace.fs.readFile(workflowUri);
-    const file = Buffer.from(content).toString("utf8");
+    const file = new TextDecoder().decode(content);
 
     const fileName = "";
 
@@ -62,7 +62,7 @@ export function getWorkflowUri(gitHubRepoContext: GitHubRepoContext, path: strin
 export async function parseWorkflowFile(uri: vscode.Uri, _: GitHubRepoContext): Promise<WorkflowTemplate | undefined> {
   try {
     const b = await vscode.workspace.fs.readFile(uri);
-    const workflowInput = Buffer.from(b).toString("utf-8");
+    const workflowInput = new TextDecoder().decode(b);
 
     const fileName = basename(uri.fsPath);
 
