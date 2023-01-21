@@ -3,26 +3,21 @@ import * as vscode from "vscode";
 
 import {Commands} from "@github/actions-languageserver/commands";
 import {InitializationOptions, LogLevel} from "@github/actions-languageserver/initializationOptions";
-import {LanguageClient, LanguageClientOptions, ServerOptions, TransportKind} from "vscode-languageclient/node";
+import {BaseLanguageClient, LanguageClientOptions} from "vscode-languageclient";
+import {LanguageClient as BrowserLanguageClient} from "vscode-languageclient/browser";
+import {LanguageClient as NodeLanguageClient, ServerOptions, TransportKind} from "vscode-languageclient/node";
 import {getSession} from "../auth/auth";
 import {getGitHubContext} from "../git/repository";
 import {WorkflowSelector} from "./documentSelector";
 
-let client: LanguageClient;
+let client: BaseLanguageClient;
+
+/** Helper function determining whether we are executing with node runtime */
+function isNode(): boolean {
+  return typeof process !== "undefined" && process.versions?.node != null;
+}
 
 export async function initLanguageServer(context: vscode.ExtensionContext) {
-  const serverModule = context.asAbsolutePath(path.join("dist", "server-node.js"));
-
-  const debugOptions = {execArgv: ["--nolazy", "--inspect=6010"]};
-
-  const serverOptions: ServerOptions = {
-    run: {module: serverModule, transport: TransportKind.ipc},
-    debug: {
-      module: serverModule,
-      transport: TransportKind.ipc,
-      options: debugOptions
-    }
-  };
   const session = await getSession();
 
   const ghContext = await getGitHubContext();
@@ -39,13 +34,32 @@ export async function initLanguageServer(context: vscode.ExtensionContext) {
 
   const clientOptions: LanguageClientOptions = {
     documentSelector: [WorkflowSelector],
-    initializationOptions: initializationOptions
+    initializationOptions: initializationOptions,
+    progressOnInitialization: true
   };
 
   // Create the language client and start the client.
-  client = new LanguageClient("actions-language", "GitHub Actions Language Server", serverOptions, clientOptions);
+  if (isNode()) {
+    const debugOptions = {execArgv: ["--nolazy", "--inspect=6010"]};
 
-  await client.start();
+    const serverModule = context.asAbsolutePath(path.join("dist", "server-node.js"));
+    const serverOptions: ServerOptions = {
+      run: {module: serverModule, transport: TransportKind.ipc},
+      debug: {
+        module: serverModule,
+        transport: TransportKind.ipc,
+        options: debugOptions
+      }
+    };
+
+    client = new NodeLanguageClient("actions-language", "GitHub Actions Language Server", serverOptions, clientOptions);
+  } else {
+    const serverModule = vscode.Uri.joinPath(context.extensionUri, "dist", "server-web.js");
+    const worker = new Worker(serverModule.toString());
+    client = new BrowserLanguageClient("actions-language", "GitHub Actions Language Server", clientOptions, worker);
+  }
+
+  return client.start();
 }
 
 export function deactivateLanguageServer(): Promise<void> {

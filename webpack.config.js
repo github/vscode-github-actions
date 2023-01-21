@@ -93,12 +93,19 @@ const webConfig = {
 };
 
 const serverConfig = {
-  target: "node",
   entry: "./src/langserver.ts",
   devtool: "inline-source-map",
   externals: {
     vscode: "commonjs vscode"
   },
+  plugins: [
+    new webpack.ProvidePlugin({
+      Buffer: ["buffer", "Buffer"]
+    }),
+    new webpack.DefinePlugin({
+      PRODUCTION: JSON.stringify(process.env.NODE_ENV)
+    })
+  ],
   module: {
     rules: [
       {
@@ -137,8 +144,17 @@ const serverConfig = {
       ".ts": [".js", ".ts"],
       ".cts": [".cjs", ".cts"],
       ".mts": [".mjs", ".mts"]
+    },
+    fallback: {
+      buffer: require.resolve("buffer/"),
+      path: require.resolve("path-browserify")
     }
-  },
+  }
+};
+
+const serverNodeConfig = {
+  ...serverConfig,
+  target: "node",
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "server-node.js",
@@ -147,4 +163,14 @@ const serverConfig = {
   }
 };
 
-module.exports = [nodeConfig, webConfig, serverConfig];
+const serverWebConfig = {
+  ...serverConfig,
+  target: "webworker",
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "server-web.js",
+    devtoolModuleFilenameTemplate: "../[resource-path]"
+  }
+};
+
+module.exports = [nodeConfig, webConfig, serverNodeConfig, serverWebConfig];
