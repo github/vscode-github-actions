@@ -368,7 +368,7 @@
     "watch": "webpack --watch --mode development --env esbuild",
     "open-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
     "lint": "eslint . --ext .ts",
-    "lint-fix": "eslint . --ext .ts --fix; prettier --config .prettierrc.json 'src/**/*.ts' '*.json' --write",
+    "lint-fix": "eslint . --ext .ts --fix",
     "prettier": "prettier .",
     "prettier-fix": "prettier --write .",
     "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest",
