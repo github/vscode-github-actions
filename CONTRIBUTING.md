@@ -121,8 +121,6 @@ Here are a few things you can do that will increase the likelihood of your pull 
 - Keep your change as focused as possible. If there are multiple changes you would like to make that are not dependent upon each other, consider submitting them as separate pull requests.
 - Write a [good commit message](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html).
 
-Please also look at the `README.md` files for each package for additional notes on contributing.
-
 ## Resources
 
 - [How to Contribute to Open Source](https://opensource.guide/how-to-contribute/)
