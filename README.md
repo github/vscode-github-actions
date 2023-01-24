@@ -58,3 +58,11 @@ See runs for workflows in the repository, drill into jobs and steps, and inspect
 - View registered self-hosted runners and environments for the current repository
 - View, edit, and add secrets
 - Pin workflow to the VS Code status bar
+
+## Contributing
+
+See [CONTRIBUTING.md](../CONTRIBUTING.md).
+
+## License
+
+This project is licensed under the terms of the MIT open source license. Please refer to [MIT](../LICENSE) for the full terms.
