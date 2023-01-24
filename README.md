@@ -1,17 +1,12 @@
-> **Note**
->
-> GitHub is currently working on officially supporting this extension. Read more about our plans in our [public roadmap issue](https://github.com/github/roadmap/issues/564). We will be dedicating resources to cleaning up the extension, squashing bugs, and more so your experience with Actions in VS Code is better than ever!
-
-
 # GitHub Actions for VS Code
 
-[![Build](https://github.com/cschleiden/vscode-github-actions/actions/workflows/build.yml/badge.svg)](https://github.com/cschleiden/vscode-github-actions/actions/workflows/build.yml)
+[![Build](https://github.com/github/vscode-github-actions/actions/workflows/build.yml/badge.svg)](https://github.com/github/vscode-github-actions/actions/workflows/build.yml)
 
 Simple extension to interact with GitHub Actions from within VS Code.
 
 ## Setup
 
-1. Install the extension from the [Marketplace](https://marketplace.visualstudio.com/items?itemName=cschleiden.vscode-github-actions)
+1. Install the extension from the [Marketplace](https://marketplace.visualstudio.com/items?itemName=github.vscode-github-actions)
 2. Open a repository with a `github.com` `origin` git remote
 3. When prompted, allow `GitHub Actions` access to your GitHub account:
 
