@@ -5,7 +5,7 @@
   "icon": "resources/logo.png",
   "license": "MIT",
   "repository": {
-    "url": "https://github.com/cschleiden/vscode-github-actions"
+    "url": "https://github.com/github/vscode-github-actions"
   },
   "description": "GitHub Actions workflows and runs for github.com hosted repositories in VS Code",
   "version": "0.25.0",
@@ -368,7 +368,7 @@
     "watch": "webpack --watch --mode development --env esbuild",
     "open-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
     "lint": "eslint . --ext .ts",
-    "lint-fix": "eslint . --ext .ts --fix; prettier --config .prettierrc.json 'src/**/*.ts' '*.json' --write",
+    "lint-fix": "eslint . --ext .ts --fix",
     "prettier": "prettier .",
     "prettier-fix": "prettier --write .",
     "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest",
