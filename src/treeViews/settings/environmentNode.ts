@@ -1,8 +1,9 @@
 import * as vscode from "vscode";
 import {GitHubRepoContext} from "../../git/repository";
 import {Environment} from "../../model";
-import {EmptyEnvironmentSecretsNode} from "./emptyEnvironmentSecretsNode";
-import {EnvironmentSecretNode} from "./environmentSecretNode";
+import {EnvironmentSecretsNode} from "./environmentSecretsNode";
+import {EnvironmentVariablesNode} from "./environmentVariablesNode";
+import {SettingsExplorerNode} from "./types";
 
 export class EnvironmentNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext, public readonly environment: Environment) {
@@ -11,17 +12,10 @@ export class EnvironmentNode extends vscode.TreeItem {
     this.contextValue = "environment";
   }
 
-  async getSecrets(): Promise<(EnvironmentSecretNode | EmptyEnvironmentSecretsNode)[]> {
-    const result = await this.gitHubRepoContext.client.actions.listEnvironmentSecrets({
-      repository_id: this.gitHubRepoContext.id,
-      environment_name: this.environment.name
-    });
-
-    const data = result.data.secrets;
-    if (!data || data.length === 0) {
-      return [new EmptyEnvironmentSecretsNode()];
-    }
-
-    return data.map(s => new EnvironmentSecretNode(this.gitHubRepoContext, s));
+  getNodes(): SettingsExplorerNode[] {
+    return [
+      new EnvironmentSecretsNode(this.gitHubRepoContext, this.environment),
+      new EnvironmentVariablesNode(this.gitHubRepoContext, this.environment)
+    ];
   }
 }

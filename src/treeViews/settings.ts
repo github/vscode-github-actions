@@ -11,6 +11,8 @@ import {SettingsExplorerNode} from "./settings/types";
 import {getGitHubContext} from "../git/repository";
 import {RepoVariablesNode} from "./settings/repoVariablesNode";
 import {VariablesNode} from "./settings/variablesNode";
+import {EnvironmentSecretsNode} from "./settings/environmentSecretsNode";
+import {EnvironmentVariablesNode} from "./settings/environmentVariablesNode";
 
 export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExplorerNode> {
   private _onDidChangeTreeData = new vscode.EventEmitter<SettingsExplorerNode | null>();
@@ -82,7 +84,15 @@ export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExp
     }
 
     if (element instanceof EnvironmentNode) {
+      return element.getNodes();
+    }
+
+    if (element instanceof EnvironmentSecretsNode) {
       return element.getSecrets();
+    }
+
+    if (element instanceof EnvironmentVariablesNode) {
+      return element.getVariables();
     }
 
     return [];
