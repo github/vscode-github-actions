@@ -400,7 +400,7 @@
   "dependencies": {
     "@github/actions-languageserver": "*",
     "@github/actions-workflow-parser": "*",
-    "@octokit/rest": "^19.0.5",
+    "@octokit/rest": "^19.0.7",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
     "dayjs": "^1.11.7",
