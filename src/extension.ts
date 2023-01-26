@@ -14,6 +14,7 @@ import {registerDeleteSecret} from "./commands/secrets/deleteSecret";
 import {registerUpdateSecret} from "./commands/secrets/updateSecret";
 import {registerTriggerWorkflowRun} from "./commands/triggerWorkflowRun";
 import {registerUnPinWorkflow} from "./commands/unpinWorkflow";
+import {registerAddVariable} from "./commands/variables/addVariable";
 import {initConfiguration} from "./configuration/configuration";
 import {getGitHubContext} from "./git/repository";
 import {LogScheme} from "./logs/constants";
@@ -26,7 +27,6 @@ import {initWorkflowDocumentTracking} from "./tracker/workflowDocumentTracker";
 import {initResources} from "./treeViews/icons";
 import {initTreeViews} from "./treeViews/treeViews";
 import {deactivateLanguageServer, initLanguageServer} from "./workflow/languageServer";
-import {registerAddVariable} from "./commands/secrets/addVariable";
 
 export async function activate(context: vscode.ExtensionContext) {
   initLogger();
