@@ -2,11 +2,13 @@ import * as vscode from "vscode";
 import {GitHubRepoContext} from "../../git/repository";
 import {VariableNode} from "./variableNode";
 
+export type RepoVariablesCommandArgs = Pick<RepoVariablesNode, "gitHubRepoContext">;
+
 export class RepoVariablesNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext) {
     super("Repository Variables", vscode.TreeItemCollapsibleState.Collapsed);
 
-    this.contextValue = "variables";
+    this.contextValue = "repo-variables";
   }
 
   async getVariables(): Promise<vscode.TreeItem[]> {

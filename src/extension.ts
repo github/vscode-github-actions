@@ -26,6 +26,7 @@ import {initWorkflowDocumentTracking} from "./tracker/workflowDocumentTracker";
 import {initResources} from "./treeViews/icons";
 import {initTreeViews} from "./treeViews/treeViews";
 import {deactivateLanguageServer, initLanguageServer} from "./workflow/languageServer";
+import {registerAddVariable} from "./commands/secrets/addVariable";
 
 export async function activate(context: vscode.ExtensionContext) {
   initLogger();
@@ -61,6 +62,8 @@ export async function activate(context: vscode.ExtensionContext) {
   registerDeleteSecret(context);
   registerCopySecret(context);
   registerUpdateSecret(context);
+
+  registerAddVariable(context);
 
   registerPinWorkflow(context);
   registerUnPinWorkflow(context);

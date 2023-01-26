@@ -4,11 +4,15 @@ import {Environment} from "../../model";
 import {EmptyNode} from "./emptyNode";
 import {VariableNode} from "./variableNode";
 
+export type EnvironmentVariablesCommandArgs = Pick<EnvironmentVariablesNode, "gitHubRepoContext" | "environment">;
+
 export class EnvironmentVariablesNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext, public readonly environment: Environment) {
     super("Variables", vscode.TreeItemCollapsibleState.Collapsed);
 
     this.iconPath = new vscode.ThemeIcon("symbol-text");
+
+    this.contextValue = "environment-variables";
   }
 
   async getVariables(): Promise<(VariableNode | EmptyNode)[]> {

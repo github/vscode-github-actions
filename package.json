@@ -175,6 +175,15 @@
         }
       },
       {
+        "command": "github-actions.settings.variable.add",
+        "category": "GitHub Actions",
+        "title": "Add new variable",
+        "icon": {
+          "dark": "resources/icons/dark/add.svg",
+          "light": "resources/icons/light/add.svg"
+        }
+      },
+      {
         "command": "github-actions.workflow.pin",
         "category": "GitHub Actions",
         "title": "Pin workflow",
@@ -307,6 +316,11 @@
           "group": "inline@2"
         },
         {
+          "command": "github-actions.settings.variable.add",
+          "group": "inline",
+          "when": "viewItem == 'repo-variables' || viewItem == 'environment-variables'"
+        },
+        {
           "command": "github-actions.workflow.run.open",
           "when": "viewItem =~ /run\\s/",
           "group": "inline"
@@ -347,6 +361,10 @@
         },
         {
           "command": "github-actions.settings.secret.delete",
+          "when": "false"
+        },
+        {
+          "command": "github-actions.settings.variable.add",
           "when": "false"
         },
         {
