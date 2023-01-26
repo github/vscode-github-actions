@@ -10,11 +10,14 @@ export class RepoVariablesNode extends vscode.TreeItem {
   }
 
   async getVariables(): Promise<vscode.TreeItem[]> {
-    const result = await this.gitHubRepoContext.client.actions.listRepoVariables({
-      owner: this.gitHubRepoContext.owner,
-      repo: this.gitHubRepoContext.name
-    });
-
-    return result.data.variables.map(s => new VariableNode(this.gitHubRepoContext, s, "repo"));
+    return await this.gitHubRepoContext.client.paginate(
+      this.gitHubRepoContext.client.actions.listRepoVariables,
+      {
+        owner: this.gitHubRepoContext.owner,
+        repo: this.gitHubRepoContext.name,
+        per_page: 100
+      },
+      response => response.data.map(s => new VariableNode(this.gitHubRepoContext, s, "repo"))
+    );
   }
 }
