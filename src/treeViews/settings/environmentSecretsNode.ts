@@ -12,16 +12,20 @@ export class EnvironmentSecretsNode extends vscode.TreeItem {
   }
 
   async getSecrets(): Promise<(EnvironmentSecretNode | EmptyNode)[]> {
-    const result = await this.gitHubRepoContext.client.actions.listEnvironmentSecrets({
-      repository_id: this.gitHubRepoContext.id,
-      environment_name: this.environment.name
-    });
+    const secrets = await this.gitHubRepoContext.client.paginate(
+      this.gitHubRepoContext.client.actions.listEnvironmentSecrets,
+      {
+        repository_id: this.gitHubRepoContext.id,
+        environment_name: this.environment.name,
+        per_page: 100
+      },
+      response => response.data.map(s => new EnvironmentSecretNode(this.gitHubRepoContext, s))
+    );
 
-    const data = result.data.secrets;
-    if (!data || data.length === 0) {
+    if (!secrets || secrets.length === 0) {
       return [new EmptyNode("No environment secrets defined")];
     }
 
-    return data.map(s => new EnvironmentSecretNode(this.gitHubRepoContext, s));
+    return secrets;
   }
 }

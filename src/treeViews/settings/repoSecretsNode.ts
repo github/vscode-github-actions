@@ -10,11 +10,14 @@ export class RepoSecretsNode extends vscode.TreeItem {
   }
 
   async getSecrets(): Promise<vscode.TreeItem[]> {
-    const result = await this.gitHubRepoContext.client.actions.listRepoSecrets({
-      owner: this.gitHubRepoContext.owner,
-      repo: this.gitHubRepoContext.name
-    });
-
-    return result.data.secrets.map(s => new RepoSecretNode(this.gitHubRepoContext, s));
+    return await this.gitHubRepoContext.client.paginate(
+      this.gitHubRepoContext.client.actions.listRepoSecrets,
+      {
+        owner: this.gitHubRepoContext.owner,
+        repo: this.gitHubRepoContext.name,
+        per_page: 100
+      },
+      response => response.data.map(s => new RepoSecretNode(this.gitHubRepoContext, s))
+    );
   }
 }
