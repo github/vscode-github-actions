@@ -40,4 +40,6 @@ export type Environment = OctokitRepoData<"getAllEnvironments", "environments">;
 
 export type EnvironmentSecret = OctokitData<"listEnvironmentSecrets", "secrets">;
 
+export type EnvironmentVariable = OctokitData<"listEnvironmentVariables", "variables">;
+
 export type SelfHostedRunner = OctokitData<"listSelfHostedRunnersForRepo", "runners">;
