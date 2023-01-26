@@ -382,7 +382,7 @@
           "when": "false"
         },
         {
-          "command": "github-actions.settings.variable.add",
+          "command": "github-actions.settings.variable.update",
           "when": "false"
         },
         {
