@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import {GitHubRepoContext} from "../../git/repository";
 import {Environment} from "../../model";
 import {EmptyNode} from "./emptyNode";
-import {EnvironmentVariableNode} from "./environmentVariableNode";
+import {VariableNode} from "./variableNode";
 
 export class EnvironmentVariablesNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext, public readonly environment: Environment) {
@@ -11,7 +11,7 @@ export class EnvironmentVariablesNode extends vscode.TreeItem {
     this.iconPath = new vscode.ThemeIcon("symbol-text");
   }
 
-  async getVariables(): Promise<(EnvironmentVariableNode | EmptyNode)[]> {
+  async getVariables(): Promise<(VariableNode | EmptyNode)[]> {
     const result = await this.gitHubRepoContext.client.actions.listEnvironmentVariables({
       repository_id: this.gitHubRepoContext.id,
       environment_name: this.environment.name
@@ -22,6 +22,6 @@ export class EnvironmentVariablesNode extends vscode.TreeItem {
       return [new EmptyNode("No environment variables defined")];
     }
 
-    return data.map(s => new EnvironmentVariableNode(this.gitHubRepoContext, s));
+    return data.map(s => new VariableNode(this.gitHubRepoContext, s, "env"));
   }
 }

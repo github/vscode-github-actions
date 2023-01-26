@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import {GitHubRepoContext} from "../../git/repository";
-import {RepoVariableNode} from "./repoVariableNode";
+import {VariableNode} from "./variableNode";
 
 export class RepoVariablesNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext) {
@@ -15,6 +15,6 @@ export class RepoVariablesNode extends vscode.TreeItem {
       repo: this.gitHubRepoContext.name
     });
 
-    return result.data.variables.map(s => new RepoVariableNode(this.gitHubRepoContext, s));
+    return result.data.variables.map(s => new VariableNode(this.gitHubRepoContext, s, "repo"));
   }
 }
