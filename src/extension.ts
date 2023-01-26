@@ -15,6 +15,7 @@ import {registerUpdateSecret} from "./commands/secrets/updateSecret";
 import {registerTriggerWorkflowRun} from "./commands/triggerWorkflowRun";
 import {registerUnPinWorkflow} from "./commands/unpinWorkflow";
 import {registerAddVariable} from "./commands/variables/addVariable";
+import {registerUpdateVariable} from "./commands/variables/updateVariable";
 import {initConfiguration} from "./configuration/configuration";
 import {getGitHubContext} from "./git/repository";
 import {LogScheme} from "./logs/constants";
@@ -64,6 +65,7 @@ export async function activate(context: vscode.ExtensionContext) {
   registerUpdateSecret(context);
 
   registerAddVariable(context);
+  registerUpdateVariable(context);
 
   registerPinWorkflow(context);
   registerUnPinWorkflow(context);
