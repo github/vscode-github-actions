@@ -9,6 +9,8 @@ import {SecretsNode} from "./settings/secretsNode";
 import {SelfHostedRunnersNode} from "./settings/selfHostedRunnersNode";
 import {SettingsExplorerNode} from "./settings/types";
 import {getGitHubContext} from "../git/repository";
+import {RepoVariablesNode} from "./settings/repoVariablesNode";
+import {VariablesNode} from "./settings/variablesNode";
 
 export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExplorerNode> {
   private _onDidChangeTreeData = new vscode.EventEmitter<SettingsExplorerNode | null>();
@@ -53,6 +55,20 @@ export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExp
       return element.getSecrets();
     }
 
+    //
+    // Variables
+    //
+    if (element instanceof VariablesNode) {
+      return [new RepoVariablesNode(element.gitHubRepoContext)];
+    }
+
+    if (element instanceof RepoVariablesNode) {
+      return element.getVariables();
+    }
+
+    //
+    // Self-hosted runners
+    //
     if (element instanceof SelfHostedRunnersNode) {
       return element.getRunners();
     }

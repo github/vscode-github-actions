@@ -5,6 +5,7 @@ import {GitHubRepoContext} from "../../git/repository";
 import {SecretsNode} from "./secretsNode";
 import {SelfHostedRunnersNode} from "./selfHostedRunnersNode";
 import {SettingsExplorerNode} from "./types";
+import {VariablesNode} from "./variablesNode";
 
 export class SettingsRepoNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext) {
@@ -23,6 +24,7 @@ export function getSettingNodes(gitHubContext: GitHubRepoContext): SettingsExplo
 
   nodes.push(new EnvironmentsNode(gitHubContext));
   nodes.push(new SecretsNode(gitHubContext));
+  nodes.push(new VariablesNode(gitHubContext));
   nodes.push(new SelfHostedRunnersNode(gitHubContext));
 
   return nodes;

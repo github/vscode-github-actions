@@ -3,8 +3,10 @@ import {EnvironmentNode} from "./environmentNode";
 import {EnvironmentSecretNode} from "./environmentSecretNode";
 import {EnvironmentsNode} from "./environmentsNode";
 import {RepoSecretNode} from "./repoSecretNode";
+import {RepoVariableNode} from "./repoVariableNode";
 import {SecretsNode} from "./secretsNode";
 import {SelfHostedRunnersNode} from "./selfHostedRunnersNode";
+import {VariablesNode} from "./variablesNode";
 
 export type SettingsExplorerNode =
   | SelfHostedRunnersNode
@@ -13,4 +15,6 @@ export type SettingsExplorerNode =
   | EnvironmentsNode
   | EnvironmentNode
   | EnvironmentSecretNode
-  | EmptyEnvironmentSecretsNode;
+  | EmptyEnvironmentSecretsNode
+  | VariablesNode
+  | RepoVariableNode;
