@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import {GitHubRepoContext} from "../../git/repository";
 import {Environment} from "../../model";
 import {EmptyNode} from "./emptyNode";
-import {EnvironmentSecretNode} from "./environmentSecretNode";
+import {SecretNode} from "./secretNode";
 
 export class EnvironmentSecretsNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext, public readonly environment: Environment) {
@@ -11,7 +11,7 @@ export class EnvironmentSecretsNode extends vscode.TreeItem {
     this.iconPath = new vscode.ThemeIcon("lock");
   }
 
-  async getSecrets(): Promise<(EnvironmentSecretNode | EmptyNode)[]> {
+  async getSecrets(): Promise<(SecretNode | EmptyNode)[]> {
     const secrets = await this.gitHubRepoContext.client.paginate(
       this.gitHubRepoContext.client.actions.listEnvironmentSecrets,
       {
@@ -19,7 +19,7 @@ export class EnvironmentSecretsNode extends vscode.TreeItem {
         environment_name: this.environment.name,
         per_page: 100
       },
-      response => response.data.map(s => new EnvironmentSecretNode(this.gitHubRepoContext, s))
+      response => response.data.map(s => new SecretNode(this.gitHubRepoContext, s, this.environment))
     );
 
     if (!secrets || secrets.length === 0) {

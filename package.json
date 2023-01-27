@@ -330,17 +330,17 @@
         },
         {
           "command": "github-actions.settings.secret.update",
-          "when": "viewItem == 'secret'",
+          "when": "viewItem == 'repo-secret'",
           "group": "inline@1"
         },
         {
           "command": "github-actions.settings.secret.copy",
-          "when": "viewItem == 'secret'",
+          "when": "viewItem == 'repo-secret'",
           "group": "context"
         },
         {
           "command": "github-actions.settings.secret.delete",
-          "when": "viewItem == 'secret'",
+          "when": "viewItem == 'repo-secret'",
           "group": "inline@2"
         },
         {

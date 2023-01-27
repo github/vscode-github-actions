@@ -1,15 +1,9 @@
 import * as vscode from "vscode";
-import {GitHubRepoContext} from "../../git/repository";
-import {EnvironmentSecret, RepoSecret} from "../../model";
-
-interface CopySecretCommandArgs {
-  gitHubRepoContext: GitHubRepoContext;
-  secret: RepoSecret | EnvironmentSecret;
-}
+import {SecretCommandArgs} from "../../treeViews/settings/secretNode";
 
 export function registerCopySecret(context: vscode.ExtensionContext) {
   context.subscriptions.push(
-    vscode.commands.registerCommand("github-actions.settings.secret.copy", async (args: CopySecretCommandArgs) => {
+    vscode.commands.registerCommand("github-actions.settings.secret.copy", async (args: SecretCommandArgs) => {
       const {secret} = args;
 
       await vscode.env.clipboard.writeText(secret.name);
