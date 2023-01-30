@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import {GitHubRepoContext} from "../../git/repository";
-import {RepoSecretNode} from "./repoSecretNode";
+import {SecretNode} from "./secretNode";
 
 export class RepoSecretsNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext) {
@@ -17,7 +17,7 @@ export class RepoSecretsNode extends vscode.TreeItem {
         repo: this.gitHubRepoContext.name,
         per_page: 100
       },
-      response => response.data.map(s => new RepoSecretNode(this.gitHubRepoContext, s))
+      response => response.data.map(s => new SecretNode(this.gitHubRepoContext, s))
     );
   }
 }

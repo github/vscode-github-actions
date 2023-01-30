@@ -1,15 +1,9 @@
 import * as vscode from "vscode";
-import {GitHubRepoContext} from "../../git/repository";
-import {RepoSecret} from "../../model";
-
-interface DeleteSecretCommandArgs {
-  gitHubRepoContext: GitHubRepoContext;
-  secret: RepoSecret;
-}
+import {SecretCommandArgs} from "../../treeViews/settings/secretNode";
 
 export function registerDeleteSecret(context: vscode.ExtensionContext) {
   context.subscriptions.push(
-    vscode.commands.registerCommand("github-actions.settings.secret.delete", async (args: DeleteSecretCommandArgs) => {
+    vscode.commands.registerCommand("github-actions.settings.secret.delete", async (args: SecretCommandArgs) => {
       const gitHubContext = args.gitHubRepoContext;
       const secret = args.secret;
 
