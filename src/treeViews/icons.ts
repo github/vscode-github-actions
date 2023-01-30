@@ -43,6 +43,10 @@ export function getIconForWorkflowRun({
       break;
     }
 
+    case "pending":
+      return getAbsoluteIconPath("workflowruns/wr_pending.svg");
+
+    case "requested":
     case "queued":
       return getAbsoluteIconPath("workflowruns/wr_queued.svg");
 
