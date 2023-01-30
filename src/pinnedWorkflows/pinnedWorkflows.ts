@@ -13,7 +13,7 @@ import {logError} from "../log";
 import {Workflow} from "../model";
 import {RunStore} from "../store/store";
 import {WorkflowRun} from "../store/workflowRun";
-import {getCodIconForWorkflowrun} from "../treeViews/icons";
+import {getCodIconForWorkflowRun} from "../treeViews/icons";
 import {WorkflowRunCommandArgs} from "../treeViews/shared/workflowRunNode";
 
 interface PinnedWorkflow {
@@ -180,12 +180,12 @@ async function refreshPinnedWorkflow(pinnedWorkflow: PinnedWorkflow) {
 function updatePinnedWorkflow(pinnedWorkflow: PinnedWorkflow, run: WorkflowRun | undefined) {
   if (!run) {
     // Workflow has never run, set default text
-    pinnedWorkflow.statusBarItem.text = `$(${getCodIconForWorkflowrun()}) ${pinnedWorkflow.workflowName}`;
+    pinnedWorkflow.statusBarItem.text = `$(${getCodIconForWorkflowRun()}) ${pinnedWorkflow.workflowName}`;
 
     // Can't do anything without a run
     pinnedWorkflow.statusBarItem.command = undefined;
   } else {
-    pinnedWorkflow.statusBarItem.text = `$(${getCodIconForWorkflowrun(run.run)}) ${pinnedWorkflow.workflowName}`;
+    pinnedWorkflow.statusBarItem.text = `$(${getCodIconForWorkflowRun(run.run)}) ${pinnedWorkflow.workflowName}`;
 
     if (run.run.conclusion === "failure") {
       pinnedWorkflow.statusBarItem.backgroundColor = new vscode.ThemeColor("statusBarItem.errorBackground");

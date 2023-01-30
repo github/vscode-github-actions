@@ -58,7 +58,7 @@ function _getIconForWorkflowrun(
 }
 
 /** Get one of the built-in VS Code icons */
-export function getCodIconForWorkflowrun(runOrJob?: IStatusAndConclusion): string {
+export function getCodIconForWorkflowRun(runOrJob?: IStatusAndConclusion): string {
   if (!runOrJob) {
     return "circle-outline";
   }
