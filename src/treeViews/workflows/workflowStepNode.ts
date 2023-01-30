@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import {GitHubRepoContext} from "../../git/repository";
 import {WorkflowStep} from "../../model";
 import {WorkflowJob} from "../../store/WorkflowJob";
-import {getIconForWorkflowRun} from "../icons";
+import {getIconForWorkflowStep} from "../icons";
 
 export class WorkflowStepNode extends vscode.TreeItem {
   constructor(
@@ -23,6 +23,6 @@ export class WorkflowStepNode extends vscode.TreeItem {
       arguments: [this]
     };
 
-    this.iconPath = getIconForWorkflowRun(this.step);
+    this.iconPath = getIconForWorkflowStep(this.step);
   }
 }

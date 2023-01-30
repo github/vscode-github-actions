@@ -1,0 +1,7 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path opacity="0.5" fill-rule="evenodd" clip-rule="evenodd" d="M8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16ZM8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z" fill="#9A6700"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M16 8C16 8.33866 15.979 8.67241 15.9381 9H13.917C13.9716 8.67479 14 8.34071 14 8C14 4.68629 11.3137 2 8 2V0C12.4183 0 16 3.58172 16 8Z" fill="#9A6700">
+<animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 8 8" to="360 8 8" dur="2s" additive="sum" repeatCount="indefinite" />
+</path>
+<circle cx="8" cy="8" r="4" fill="#D29922"/>
+</svg>
