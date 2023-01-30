@@ -15,6 +15,7 @@ import {registerUpdateSecret} from "./commands/secrets/updateSecret";
 import {registerTriggerWorkflowRun} from "./commands/triggerWorkflowRun";
 import {registerUnPinWorkflow} from "./commands/unpinWorkflow";
 import {registerAddVariable} from "./commands/variables/addVariable";
+import {registerCopyVariable} from "./commands/variables/copyVariable";
 import {registerDeleteVariable} from "./commands/variables/deleteVariable";
 import {registerUpdateVariable} from "./commands/variables/updateVariable";
 import {initConfiguration} from "./configuration/configuration";
@@ -68,6 +69,7 @@ export async function activate(context: vscode.ExtensionContext) {
   registerAddVariable(context);
   registerUpdateVariable(context);
   registerDeleteVariable(context);
+  registerCopyVariable(context);
 
   registerPinWorkflow(context);
   registerUnPinWorkflow(context);
