@@ -193,6 +193,15 @@
         }
       },
       {
+        "command": "github-actions.settings.variable.delete",
+        "category": "GitHub Actions",
+        "title": "Update variable",
+        "icon": {
+          "dark": "resources/icons/dark/remove.svg",
+          "light": "resources/icons/light/remove.svg"
+        }
+      },
+      {
         "command": "github-actions.workflow.pin",
         "category": "GitHub Actions",
         "title": "Pin workflow",
@@ -331,7 +340,12 @@
         },
         {
           "command": "github-actions.settings.variable.update",
-          "group": "inline",
+          "group": "inline@1",
+          "when": "viewItem == 'repo-variable' || viewItem == 'env-variable'"
+        },
+        {
+          "command": "github-actions.settings.variable.delete",
+          "group": "inline@2",
           "when": "viewItem == 'repo-variable' || viewItem == 'env-variable'"
         },
         {
@@ -383,6 +397,10 @@
         },
         {
           "command": "github-actions.settings.variable.update",
+          "when": "false"
+        },
+        {
+          "command": "github-actions.settings.variable.delete",
           "when": "false"
         },
         {
