@@ -19,7 +19,7 @@ export class RepoVariablesNode extends vscode.TreeItem {
         repo: this.gitHubRepoContext.name,
         per_page: 100
       },
-      response => response.data.map(s => new VariableNode(this.gitHubRepoContext, s, "repo"))
+      response => response.data.map(s => new VariableNode(this.gitHubRepoContext, s))
     );
   }
 }
