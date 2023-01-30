@@ -127,6 +127,8 @@ export interface GitHubRepoContext {
   owner: string;
   name: string;
 
+  organizationOwned: boolean;
+
   defaultBranch: string;
 }
 
@@ -173,7 +175,8 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
           name: protocolInfo.protocol.repositoryName,
           owner: protocolInfo.protocol.owner,
           id: repoInfo.data.id,
-          defaultBranch: `refs/heads/${repoInfo.data.default_branch}`
+          defaultBranch: `refs/heads/${repoInfo.data.default_branch}`,
+          organizationOwned: repoInfo.data.owner.type === "Organization"
         };
       })
     );

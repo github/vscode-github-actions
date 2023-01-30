@@ -27,7 +27,8 @@ export async function initLanguageServer(context: vscode.ExtensionContext) {
       id: repo.id,
       owner: repo.owner,
       name: repo.name,
-      workspaceUri: repo.workspaceUri.toString()
+      workspaceUri: repo.workspaceUri.toString(),
+      organizationOwned: repo.organizationOwned
     })),
     logLevel: PRODUCTION ? LogLevel.Warn : LogLevel.Debug
   };
