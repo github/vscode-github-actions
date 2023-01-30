@@ -81,7 +81,7 @@ export function getIconForWorkflowStep({
     }
 
     case "queued":
-      return getAbsoluteIconPath("statuses/step_queued.svg");
+      return getAbsoluteIconPath("steps/step_queued.svg");
 
     case "inprogress":
     case "in_progress":
