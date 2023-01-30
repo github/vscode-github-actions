@@ -5,7 +5,7 @@ export function initResources(context: vscode.ExtensionContext) {
   _context = context;
 }
 
-export interface IStatusAndConclusion {
+export interface StatusAndConclusion {
   status: string | null;
   conclusion: string | null;
 }
@@ -20,16 +20,13 @@ export function getAbsoluteIconPath(relativeIconPath: string): {
   };
 }
 
-export function getIconForWorkflowRun(runOrJob: IStatusAndConclusion) {
-  return _getIconForWorkflowrun(runOrJob);
-}
-
-function _getIconForWorkflowrun(
-  runOrJob: IStatusAndConclusion
-): string | vscode.ThemeIcon | {light: string | vscode.Uri; dark: string | vscode.Uri} {
-  switch (runOrJob.status) {
+export function getIconForWorkflowRun({
+  status,
+  conclusion
+}: StatusAndConclusion): string | vscode.ThemeIcon | {light: string | vscode.Uri; dark: string | vscode.Uri} {
+  switch (status) {
     case "completed": {
-      switch (runOrJob.conclusion) {
+      switch (conclusion) {
         case "success":
           return getAbsoluteIconPath("conclusions/success.svg");
 
@@ -58,7 +55,7 @@ function _getIconForWorkflowrun(
 }
 
 /** Get one of the built-in VS Code icons */
-export function getCodIconForWorkflowRun(runOrJob?: IStatusAndConclusion): string {
+export function getCodIconForWorkflowRun(runOrJob?: StatusAndConclusion): string {
   if (!runOrJob) {
     return "circle-outline";
   }
