@@ -16,15 +16,20 @@ export class EnvironmentVariablesNode extends vscode.TreeItem {
   }
 
   async getVariables(): Promise<(VariableNode | EmptyNode)[]> {
-    const variables = await this.gitHubRepoContext.client.paginate(
-      this.gitHubRepoContext.client.actions.listEnvironmentVariables,
-      {
-        repository_id: this.gitHubRepoContext.id,
-        environment_name: this.environment.name,
-        per_page: 100
-      },
-      response => response.data.map(v => new VariableNode(this.gitHubRepoContext, v, this.environment))
-    );
+    let variables: VariableNode[] = [];
+    try {
+      variables = await this.gitHubRepoContext.client.paginate(
+        this.gitHubRepoContext.client.actions.listEnvironmentVariables,
+        {
+          repository_id: this.gitHubRepoContext.id,
+          environment_name: this.environment.name,
+          per_page: 100
+        },
+        response => response.data.map(v => new VariableNode(this.gitHubRepoContext, v, this.environment))
+      );
+    } catch (e) {
+      await vscode.window.showErrorMessage((e as Error).message);
+    }
 
     if (!variables || variables.length === 0) {
       return [new EmptyNode("No environment variables defined")];
