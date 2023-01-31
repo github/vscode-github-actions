@@ -33,11 +33,9 @@ abstract class WorkflowRunBase {
   }
 
   updateRun(run: model.WorkflowRun) {
-    if (this._run.updated_at !== run.updated_at) {
-      // Run has changed, reset jobs. Note: this doesn't work in all cases, there might be race conditions
-      // where the run update_at field isn't set but the jobs change, but in the vast majority of cases the
-      // combined status/conclusion of the run is updated whenever a job changes, so this should be good enough
-      // for now to reduce the # of API calls
+    if (this._run.status !== "completed" || this._run.updated_at !== run.updated_at) {
+      // Refresh jobs if the run is not completed or it was updated (i.e. re-run)
+      // For in-progress runs, we can't rely on updated at to change when jobs change
       this._jobs = undefined;
     }
 
