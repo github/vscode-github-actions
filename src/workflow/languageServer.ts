@@ -6,6 +6,7 @@ import {InitializationOptions, LogLevel} from "@github/actions-languageserver/in
 import {BaseLanguageClient, LanguageClientOptions} from "vscode-languageclient";
 import {LanguageClient as BrowserLanguageClient} from "vscode-languageclient/browser";
 import {LanguageClient as NodeLanguageClient, ServerOptions, TransportKind} from "vscode-languageclient/node";
+import {userAgent} from "../api/api";
 import {getSession} from "../auth/auth";
 import {getGitHubContext} from "../git/repository";
 import {WorkflowSelector} from "./documentSelector";
@@ -23,6 +24,7 @@ export async function initLanguageServer(context: vscode.ExtensionContext) {
   const ghContext = await getGitHubContext();
   const initializationOptions: InitializationOptions = {
     sessionToken: session.accessToken,
+    userAgent: userAgent,
     repos: ghContext?.repos.map(repo => ({
       id: repo.id,
       owner: repo.owner,
