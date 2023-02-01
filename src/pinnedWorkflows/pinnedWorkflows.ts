@@ -9,7 +9,7 @@ import {
 import {getGitHubContextForWorkspaceUri, GitHubRepoContext} from "../git/repository";
 
 import {sep} from "path";
-import {logError} from "../log";
+import {log, logError} from "../log";
 import {Workflow} from "../model";
 import {RunStore} from "../store/store";
 import {WorkflowRun} from "../store/workflowRun";
@@ -105,15 +105,25 @@ async function updatePinnedWorkflows() {
     }
 
     // Get all workflows to resolve names. We could do this locally, but for now, let's make the API call.
-    const workflows = await gitHubRepoContext.client.actions.listRepoWorkflows({
-      owner: gitHubRepoContext.owner,
-      repo: gitHubRepoContext.name
-    });
+    const workflows = await gitHubRepoContext.client.paginate(
+      gitHubRepoContext.client.actions.listRepoWorkflows,
+      {
+        owner: gitHubRepoContext.owner,
+        repo: gitHubRepoContext.name,
+        per_page: 100
+      },
+      response => response.data
+    );
 
     const workflowByPath: {[id: string]: Workflow} = {};
-    workflows.data.workflows.forEach(w => (workflowByPath[w.path] = w));
+    workflows.forEach(w => (workflowByPath[w.path] = w));
 
     for (const pinnedWorkflow of workflowsByWorkspace.get(workspaceName) || []) {
+      if (!workflowByPath[pinnedWorkflow]) {
+        log(`Unable to find pinned workflow ${pinnedWorkflow} in ${workspaceName}, ignoring`);
+        continue;
+      }
+
       const pW = createPinnedWorkflow(gitHubRepoContext, workflowByPath[pinnedWorkflow]);
       await refreshPinnedWorkflow(pW);
     }
