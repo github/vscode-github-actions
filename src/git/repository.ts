@@ -1,13 +1,11 @@
 import * as vscode from "vscode";
-
-import {logDebug, logError} from "../log";
-import {API, GitExtension, RefType, RepositoryState} from "../typings/git";
-
 import {Octokit} from "@octokit/rest";
-import {getClient} from "../api/api";
-import {getSession} from "../auth/auth";
+
+import {handleSamlError} from "../api/handleSamlError";
 import {getRemoteName} from "../configuration/configuration";
 import {Protocol} from "../external/protocol";
+import {logDebug, logError} from "../log";
+import {API, GitExtension, RefType, RepositoryState} from "../typings/git";
 
 interface GitHubUrls {
   workspaceUri: vscode.Uri;
@@ -146,8 +144,6 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
 
   try {
     const git = await getGitExtension();
-    const session = await getSession();
-    const client = getClient(session.accessToken);
 
     const protocolInfos = await getGitHubUrls();
     if (!protocolInfos) {
@@ -157,29 +153,31 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
 
     logDebug("Found protocol infos", protocolInfos.length.toString());
 
-    const repos = await Promise.all(
-      protocolInfos.map(async (protocolInfo): Promise<GitHubRepoContext> => {
-        logDebug("Getting infos for repository", protocolInfo.url);
+    const repos = await handleSamlError(async (client: Octokit) => {
+      return await Promise.all(
+        protocolInfos.map(async (protocolInfo): Promise<GitHubRepoContext> => {
+          logDebug("Getting infos for repository", protocolInfo.url);
 
-        const repoInfo = await client.repos.get({
-          repo: protocolInfo.protocol.repositoryName,
-          owner: protocolInfo.protocol.owner
-        });
+          const repoInfo = await client.repos.get({
+            repo: protocolInfo.protocol.repositoryName,
+            owner: protocolInfo.protocol.owner
+          });
 
-        const repo = git && git.getRepository(protocolInfo.workspaceUri);
+          const repo = git && git.getRepository(protocolInfo.workspaceUri);
 
-        return {
-          workspaceUri: protocolInfo.workspaceUri,
-          client,
-          repositoryState: repo?.state,
-          name: protocolInfo.protocol.repositoryName,
-          owner: protocolInfo.protocol.owner,
-          id: repoInfo.data.id,
-          defaultBranch: `refs/heads/${repoInfo.data.default_branch}`,
-          organizationOwned: repoInfo.data.owner.type === "Organization"
-        };
-      })
-    );
+          return {
+            workspaceUri: protocolInfo.workspaceUri,
+            client,
+            repositoryState: repo?.state,
+            name: protocolInfo.protocol.repositoryName,
+            owner: protocolInfo.protocol.owner,
+            id: repoInfo.data.id,
+            defaultBranch: `refs/heads/${repoInfo.data.default_branch}`,
+            organizationOwned: repoInfo.data.owner.type === "Organization"
+          };
+        })
+      );
+    });
 
     gitHubContext = Promise.resolve({
       repos,
