@@ -13,6 +13,8 @@ import {RepoVariablesNode} from "./settings/repoVariablesNode";
 import {VariablesNode} from "./settings/variablesNode";
 import {EnvironmentSecretsNode} from "./settings/environmentSecretsNode";
 import {EnvironmentVariablesNode} from "./settings/environmentVariablesNode";
+import {OrgVariablesNode} from "./settings/orgVariablesNode";
+import {OrgSecretsNode} from "./settings/orgSecretsNode";
 
 export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExplorerNode> {
   private _onDidChangeTreeData = new vscode.EventEmitter<SettingsExplorerNode | null>();
@@ -50,10 +52,10 @@ export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExp
     // Secrets
     //
     if (element instanceof SecretsNode) {
-      return [new RepoSecretsNode(element.gitHubRepoContext)];
+      return element.nodes;
     }
 
-    if (element instanceof RepoSecretsNode) {
+    if (element instanceof RepoSecretsNode || element instanceof OrgSecretsNode) {
       return element.getSecrets();
     }
 
@@ -61,10 +63,10 @@ export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExp
     // Variables
     //
     if (element instanceof VariablesNode) {
-      return [new RepoVariablesNode(element.gitHubRepoContext)];
+      return element.nodes;
     }
 
-    if (element instanceof RepoVariablesNode) {
+    if (element instanceof RepoVariablesNode || element instanceof OrgVariablesNode) {
       return element.getVariables();
     }
 

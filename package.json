@@ -335,7 +335,7 @@
         },
         {
           "command": "github-actions.settings.secret.copy",
-          "when": "viewItem == 'repo-secret'",
+          "when": "viewItem == 'repo-secret' || viewItem == 'env-secret' || viewItem == 'org-secret'",
           "group": "context"
         },
         {
@@ -360,12 +360,12 @@
         },
         {
           "command": "github-actions.settings.variable.copy-name",
-          "when": "viewItem == 'repo-variable' || viewItem == 'env-variable'",
+          "when": "viewItem == 'repo-variable' || viewItem == 'env-variable' || viewItem == 'org-variable'",
           "group": "context"
         },
         {
           "command": "github-actions.settings.variable.copy-value",
-          "when": "viewItem == 'repo-variable' || viewItem == 'env-variable'",
+          "when": "viewItem == 'repo-variable' || viewItem == 'env-variable' || viewItem == 'org-variable'",
           "group": "context"
         },
         {
