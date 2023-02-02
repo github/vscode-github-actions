@@ -9,10 +9,11 @@ const DEFAULT_SCOPES = ["repo", "workflow"];
  * @returns A {@link vscode.AuthenticationSession}
  */
 export async function getSession(forceMessage?: string): Promise<vscode.AuthenticationSession> {
-  const existingSession = await vscode.authentication.getSession(AUTH_PROVIDER_ID, getScopes(), {
-    createIfNone: true,
-    forceNewSession: forceMessage ? {detail: forceMessage} : false
-  });
+  // forceNewSession and createIfNone are mutually exclusive
+  const options: vscode.AuthenticationGetSessionOptions = forceMessage
+    ? {forceNewSession: {detail: forceMessage}}
+    : {createIfNone: true};
+  const existingSession = await vscode.authentication.getSession(AUTH_PROVIDER_ID, getScopes(), options);
 
   if (!existingSession) {
     throw new Error("Could not get token from the GitHub authentication provider. \nPlease sign-in and allow access.");
