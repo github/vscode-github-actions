@@ -3,13 +3,7 @@ const groupMarker = "##[group]";
 
 import {Parser, IStyle} from "./parser";
 
-export enum Type {
-  Setup,
-  Step
-}
-
 export interface LogSection {
-  type: Type;
   start: number;
   end: number;
   name?: string;
@@ -30,7 +24,6 @@ export interface LogInfo {
 export function parseLog(log: string): LogInfo {
   let firstSection: LogSection | null = {
     name: "Setup",
-    type: Type.Setup,
     start: 0,
     end: 1
   };
@@ -65,7 +58,6 @@ export function parseLog(log: string): LogInfo {
 
       currentRange = {
         name,
-        type: Type.Step,
         start: lineIdx,
         end: lineIdx + 1
       };
