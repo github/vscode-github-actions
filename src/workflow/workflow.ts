@@ -18,18 +18,15 @@ export async function getContextStringForWorkflow(workflowUri: vscode.Uri): Prom
     const fileName = "";
 
     const result = parseWorkflow(
-      fileName,
-      [
-        {
-          name: fileName,
-          content: file
-        }
-      ],
+      {
+        name: fileName,
+        content: file
+      },
       new NoOperationTraceWriter()
     );
 
     if (result.value) {
-      const template = convertWorkflowTemplate(result.context, result.value, ErrorPolicy.TryConversion);
+      const template = await convertWorkflowTemplate(result.context, result.value, ErrorPolicy.TryConversion);
 
       const context: string[] = [];
 
@@ -67,18 +64,15 @@ export async function parseWorkflowFile(uri: vscode.Uri, _: GitHubRepoContext): 
     const fileName = basename(uri.fsPath);
 
     const result = parseWorkflow(
-      fileName,
-      [
-        {
-          name: fileName,
-          content: workflowInput
-        }
-      ],
+      {
+        name: fileName,
+        content: workflowInput
+      },
       new NoOperationTraceWriter()
     );
 
     if (result.value) {
-      return convertWorkflowTemplate(result.context, result.value);
+      return await convertWorkflowTemplate(result.context, result.value);
     }
   } catch {
     // Ignore error here
