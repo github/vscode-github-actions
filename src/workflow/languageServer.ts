@@ -62,6 +62,16 @@ export async function initLanguageServer(context: vscode.ExtensionContext) {
     client = new BrowserLanguageClient("actions-language", "GitHub Actions Language Server", clientOptions, worker);
   }
 
+  client.onRequest("actions/readFile", async (event: {path: string}) => {
+    if (typeof event?.path !== "string") {
+      return null;
+    }
+
+    const uri = vscode.Uri.parse(event?.path);
+    const content = await vscode.workspace.fs.readFile(uri);
+    return new TextDecoder().decode(content);
+  });
+
   return client.start();
 }
 
