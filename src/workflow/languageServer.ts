@@ -2,6 +2,7 @@ import * as path from "path";
 import * as vscode from "vscode";
 
 import {Commands} from "@github/actions-languageserver/commands";
+import {ReadFileRequest, Requests} from "@github/actions-languageserver/request";
 import {InitializationOptions, LogLevel} from "@github/actions-languageserver/initializationOptions";
 import {BaseLanguageClient, LanguageClientOptions} from "vscode-languageclient";
 import {LanguageClient as BrowserLanguageClient} from "vscode-languageclient/browser";
@@ -62,7 +63,7 @@ export async function initLanguageServer(context: vscode.ExtensionContext) {
     client = new BrowserLanguageClient("actions-language", "GitHub Actions Language Server", clientOptions, worker);
   }
 
-  client.onRequest("actions/readFile", async (event: {path: string}) => {
+  client.onRequest(Requests.ReadFile, async (event: ReadFileRequest) => {
     if (typeof event?.path !== "string") {
       return null;
     }
