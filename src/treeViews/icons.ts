@@ -30,6 +30,7 @@ export function getIconForWorkflowRun({
         case "success":
           return getAbsoluteIconPath("workflowruns/wr_success.svg");
 
+        case "startup_failure":
         case "failure":
           return getAbsoluteIconPath("workflowruns/wr_failure.svg");
 
