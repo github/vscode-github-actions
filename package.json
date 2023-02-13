@@ -112,7 +112,8 @@
         "command": "github-actions.workflow.run.open",
         "category": "GitHub Actions",
         "title": "Open workflow run",
-        "when": "viewItem =~ /run/"
+        "when": "viewItem =~ /run/",
+        "icon": "$(globe)"
       },
       {
         "command": "github-actions.workflow.logs",
@@ -222,11 +223,6 @@
         "category": "GitHub Actions",
         "title": "Unpin workflow",
         "icon": "$(pinned)"
-      },
-      {
-        "command": "github-actions.workflow.run.open",
-        "title": "Open in browser",
-        "icon": "$(globe)"
       }
     ],
     "views": {
@@ -308,7 +304,8 @@
         },
         {
           "command": "github-actions.workflow.run.open",
-          "when": "viewItem =~ /run/"
+          "when": "viewItem =~ /run\\s/",
+          "group": "inline"
         },
         {
           "command": "github-actions.workflow.logs",
@@ -367,11 +364,6 @@
           "command": "github-actions.settings.variable.copy-value",
           "when": "viewItem == 'repo-variable' || viewItem == 'env-variable' || viewItem == 'org-variable'",
           "group": "context"
-        },
-        {
-          "command": "github-actions.workflow.run.open",
-          "when": "viewItem =~ /run\\s/",
-          "group": "inline"
         }
       ],
       "commandPalette": [
