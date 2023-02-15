@@ -26,7 +26,9 @@ export async function getContextStringForWorkflow(workflowUri: vscode.Uri): Prom
     );
 
     if (result.value) {
-      const template = await convertWorkflowTemplate(result.context, result.value, ErrorPolicy.TryConversion);
+      const template = await convertWorkflowTemplate(result.context, result.value, undefined, {
+        errorPolicy: ErrorPolicy.TryConversion
+      });
 
       const context: string[] = [];
 
