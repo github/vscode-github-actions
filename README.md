@@ -50,7 +50,6 @@ See runs for workflows in the repository, drill into jobs and steps, and inspect
 ### Other features
 
 - Trigger `repository_dispatch` or `workflow_dispatch` workflow runs
-- View registered self-hosted runners and environments for the current repository
 - View, edit, and add secrets
 - Pin workflow to the VS Code status bar
 
