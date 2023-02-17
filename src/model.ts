@@ -45,5 +45,3 @@ export type EnvironmentVariable = OctokitData<"listEnvironmentVariables", "varia
 export type OrgSecret = {name: string};
 
 export type OrgVariable = {name: string; value: string};
-
-export type SelfHostedRunner = OctokitData<"listSelfHostedRunnersForRepo", "runners">;

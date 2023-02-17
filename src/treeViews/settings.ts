@@ -6,7 +6,6 @@ import {EnvironmentNode} from "./settings/environmentNode";
 import {EnvironmentsNode} from "./settings/environmentsNode";
 import {RepoSecretsNode} from "./settings/repoSecretsNode";
 import {SecretsNode} from "./settings/secretsNode";
-import {SelfHostedRunnersNode} from "./settings/selfHostedRunnersNode";
 import {SettingsExplorerNode} from "./settings/types";
 import {getGitHubContext} from "../git/repository";
 import {RepoVariablesNode} from "./settings/repoVariablesNode";
@@ -68,13 +67,6 @@ export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExp
 
     if (element instanceof RepoVariablesNode || element instanceof OrgVariablesNode) {
       return element.getVariables();
-    }
-
-    //
-    // Self-hosted runners
-    //
-    if (element instanceof SelfHostedRunnersNode) {
-      return element.getRunners();
     }
 
     //

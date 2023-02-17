@@ -6,7 +6,6 @@ import {VariableNode} from "./variableNode";
 import {EnvironmentVariablesNode} from "./environmentVariablesNode";
 import {SecretNode} from "./secretNode";
 import {SecretsNode} from "./secretsNode";
-import {SelfHostedRunnersNode} from "./selfHostedRunnersNode";
 import {VariablesNode} from "./variablesNode";
 import {RepoVariablesNode} from "./repoVariablesNode";
 import {OrgVariablesNode} from "./orgVariablesNode";
@@ -14,7 +13,6 @@ import {OrgSecretsNode} from "./orgSecretsNode";
 import {RepoSecretsNode} from "./repoSecretsNode";
 
 export type SettingsExplorerNode =
-  | SelfHostedRunnersNode
   | SecretsNode
   | SecretNode
   | EnvironmentsNode
