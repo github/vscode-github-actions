@@ -12,8 +12,8 @@ import {WorkflowRunNode} from "./shared/workflowRunNode";
 import {WorkflowRunTreeDataProvider} from "./workflowRunTreeDataProvider";
 import {WorkflowNode} from "./workflows/workflowNode";
 import {getWorkflowNodes, WorkflowsRepoNode} from "./workflows/workflowsRepoNode";
-import {WorkflowsTreeNode} from "./settings/types"
-import { NoInternetConnectivityNode } from "./shared/noInternetConnectivityNode";
+import {WorkflowsTreeNode} from "./settings/types";
+import {NoInternetConnectivityNode} from "./shared/noInternetConnectivityNode";
 
 export class WorkflowsTreeProvider
   extends WorkflowRunTreeDataProvider
