@@ -6,17 +6,17 @@ import {RunStore} from "../store/store";
 import {AttemptNode} from "./shared/attemptNode";
 import {AuthenticationNode} from "./shared/authenticationNode";
 import {ErrorNode} from "./shared/errorNode";
+import {NoInternetConnectivityNode} from "./shared/noInternetConnectivityNode";
+import {NoGitHubRepositoryNode} from "./shared/noGitHubRepositoryNode";
+import {NoWorkflowJobsNode} from "./shared/noWorkflowJobsNode";
 import {PreviousAttemptsNode} from "./shared/previousAttemptsNode";
 import {WorkflowJobNode} from "./shared/workflowJobNode";
 import {WorkflowRunNode} from "./shared/workflowRunNode";
 import {WorkflowRunTreeDataProvider} from "./workflowRunTreeDataProvider";
 import {WorkflowNode} from "./workflows/workflowNode";
 import {getWorkflowNodes, WorkflowsRepoNode} from "./workflows/workflowsRepoNode";
-import {NoInternetConnectivityNode} from "./shared/noInternetConnectivityNode";
-import {hasInternetConnectivity} from "../util";
-import {NoWorkflowJobsNode} from "./shared/noWorkflowJobsNode";
 import {WorkflowStepNode} from "./workflows/workflowStepNode";
-import {NoGitHubRepositoryNode} from "./shared/noGitHubRepositoryNode";
+import {hasInternetConnectivity} from "../util";
 
 type WorkflowsTreeNode =
   | AuthenticationNode
