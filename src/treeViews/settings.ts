@@ -15,7 +15,7 @@ import {EnvironmentVariablesNode} from "./settings/environmentVariablesNode";
 import {OrgVariablesNode} from "./settings/orgVariablesNode";
 import {OrgSecretsNode} from "./settings/orgSecretsNode";
 import {NoInternetConnectivityNode} from "./shared/noInternetConnectivityNode";
-import {hasInternetConnectivity} from "../util"
+import {hasInternetConnectivity} from "../util";
 
 export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExplorerNode> {
   private _onDidChangeTreeData = new vscode.EventEmitter<SettingsExplorerNode | null>();
@@ -25,9 +25,8 @@ export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExp
     // Don't delete all the nodes if we don't have internet connectivity
     if (await hasInternetConnectivity()) {
       this._onDidChangeTreeData.fire(null);
-    }
-    else {
-      await vscode.window.showWarningMessage("Unable to refresh, you are not connected to the internet")
+    } else {
+      await vscode.window.showWarningMessage("Unable to refresh, you are not connected to the internet");
     }
   }
 

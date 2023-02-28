@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
 /**
- * When no github.com remote can be found in the current workspace.
+ * Shown when no calls to the github API can be made.
  */
 export class NoInternetConnectivityNode extends vscode.TreeItem {
   constructor() {

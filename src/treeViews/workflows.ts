@@ -12,9 +12,23 @@ import {WorkflowRunNode} from "./shared/workflowRunNode";
 import {WorkflowRunTreeDataProvider} from "./workflowRunTreeDataProvider";
 import {WorkflowNode} from "./workflows/workflowNode";
 import {getWorkflowNodes, WorkflowsRepoNode} from "./workflows/workflowsRepoNode";
-import {WorkflowsTreeNode} from "./settings/types";
 import {NoInternetConnectivityNode} from "./shared/noInternetConnectivityNode";
-import {hasInternetConnectivity} from "../util"
+import {hasInternetConnectivity} from "../util";
+import {NoWorkflowJobsNode} from "./shared/noWorkflowJobsNode";
+import {WorkflowStepNode} from "./workflows/workflowStepNode";
+import {NoGitHubRepositoryNode} from "./shared/noGitHubRepositoryNode";
+
+type WorkflowsTreeNode =
+  | AuthenticationNode
+  | NoGitHubRepositoryNode
+  | WorkflowNode
+  | WorkflowRunNode
+  | PreviousAttemptsNode
+  | AttemptNode
+  | WorkflowJobNode
+  | NoWorkflowJobsNode
+  | WorkflowStepNode
+  | NoInternetConnectivityNode;
 
 export class WorkflowsTreeProvider
   extends WorkflowRunTreeDataProvider
@@ -35,9 +49,8 @@ export class WorkflowsTreeProvider
     // Don't delete all the nodes if we don't have internet connectivity
     if (await hasInternetConnectivity()) {
       this._onDidChangeTreeData.fire(null);
-    }
-    else {
-      await vscode.window.showWarningMessage("Unable to refresh, you are not connected to the internet")
+    } else {
+      await vscode.window.showWarningMessage("Unable to refresh, you are not connected to the internet");
     }
   }
 

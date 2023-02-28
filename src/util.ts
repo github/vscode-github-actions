@@ -4,14 +4,13 @@ import {logError} from "./log";
 
 export async function hasInternetConnectivity() {
   try {
-    const octokit = new Octokit()
-    await octokit.request('GET /', {
+    const octokit = new Octokit();
+    await octokit.request("GET /", {
       headers: {
-        'X-GitHub-Api-Version': '2022-11-28'
+        "X-GitHub-Api-Version": "2022-11-28"
       }
-    })
-  }
-  catch {
+    });
+  } catch {
     logError(new Error("Unable to connect to the internet"));
     return false;
   }
