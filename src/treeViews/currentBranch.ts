@@ -7,7 +7,7 @@ import {NoRunForBranchNode} from "./current-branch/noRunForBranchNode";
 import {log, logDebug} from "../log";
 import {RunStore} from "../store/store";
 import {AttemptNode} from "./shared/attemptNode";
-import {NoInternetConnectivityNode} from "./shared/noInternetConnectivityNode";
+import {GitHubAPIUnreachableNode} from "./shared/gitHubApiUnreachableNode";
 import {NoWorkflowJobsNode} from "./shared/noWorkflowJobsNode";
 import {PreviousAttemptsNode} from "./shared/previousAttemptsNode";
 import {WorkflowJobNode} from "./shared/workflowJobNode";
@@ -25,7 +25,7 @@ type CurrentBranchTreeNode =
   | NoWorkflowJobsNode
   | WorkflowStepNode
   | NoRunForBranchNode
-  | NoInternetConnectivityNode;
+  | GitHubAPIUnreachableNode;
 
 export class CurrentBranchTreeProvider
   extends WorkflowRunTreeDataProvider
@@ -59,7 +59,7 @@ export class CurrentBranchTreeProvider
     if (!element) {
       const gitHubContext = await getGitHubContext();
       if (!gitHubContext) {
-        return [new NoInternetConnectivityNode()];
+        return [new GitHubAPIUnreachableNode()];
       }
 
       if (gitHubContext.repos.length === 1) {

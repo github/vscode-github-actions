@@ -14,7 +14,7 @@ import {EnvironmentSecretsNode} from "./settings/environmentSecretsNode";
 import {EnvironmentVariablesNode} from "./settings/environmentVariablesNode";
 import {OrgVariablesNode} from "./settings/orgVariablesNode";
 import {OrgSecretsNode} from "./settings/orgSecretsNode";
-import {NoInternetConnectivityNode} from "./shared/noInternetConnectivityNode";
+import {GitHubAPIUnreachableNode} from "./shared/gitHubApiUnreachableNode";
 import {canReachGitHubAPI} from "../util";
 
 export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExplorerNode> {
@@ -37,7 +37,7 @@ export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExp
   async getChildren(element?: SettingsExplorerNode | undefined): Promise<SettingsExplorerNode[]> {
     const gitHubContext = await getGitHubContext();
     if (!gitHubContext) {
-      return [new NoInternetConnectivityNode()];
+      return [new GitHubAPIUnreachableNode()];
     }
 
     if (!element) {

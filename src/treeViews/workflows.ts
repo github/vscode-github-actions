@@ -6,7 +6,7 @@ import {RunStore} from "../store/store";
 import {AttemptNode} from "./shared/attemptNode";
 import {AuthenticationNode} from "./shared/authenticationNode";
 import {ErrorNode} from "./shared/errorNode";
-import {NoInternetConnectivityNode} from "./shared/noInternetConnectivityNode";
+import {GitHubAPIUnreachableNode} from "./shared/gitHubApiUnreachableNode";
 import {NoGitHubRepositoryNode} from "./shared/noGitHubRepositoryNode";
 import {NoWorkflowJobsNode} from "./shared/noWorkflowJobsNode";
 import {PreviousAttemptsNode} from "./shared/previousAttemptsNode";
@@ -28,7 +28,7 @@ type WorkflowsTreeNode =
   | WorkflowJobNode
   | NoWorkflowJobsNode
   | WorkflowStepNode
-  | NoInternetConnectivityNode;
+  | GitHubAPIUnreachableNode;
 
 export class WorkflowsTreeProvider
   extends WorkflowRunTreeDataProvider
@@ -66,7 +66,7 @@ export class WorkflowsTreeProvider
         const gitHubContext = await getGitHubContext();
         if (!gitHubContext) {
           logDebug("could not get github context for workflows");
-          return [new NoInternetConnectivityNode()];
+          return [new GitHubAPIUnreachableNode()];
         }
 
         if (gitHubContext.repos.length > 0) {
