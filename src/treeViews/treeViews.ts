@@ -21,15 +21,15 @@ export async function initTreeViews(context: vscode.ExtensionContext, store: Run
 
   context.subscriptions.push(
     vscode.commands.registerCommand("github-actions.explorer.refresh", async () => {
-      workflowTreeProvider.refresh();
-      settingsTreeProvider.refresh();
+      await workflowTreeProvider.refresh();
+      await settingsTreeProvider.refresh();
       await executeCacheClearCommand();
     })
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("github-actions.explorer.current-branch.refresh", () => {
-      currentBranchTreeProvider.refresh();
+    vscode.commands.registerCommand("github-actions.explorer.current-branch.refresh", async () => {
+      await currentBranchTreeProvider.refresh();
     })
   );
 
@@ -46,7 +46,7 @@ export async function initTreeViews(context: vscode.ExtensionContext, store: Run
 
     let currentAhead = repo.repositoryState.HEAD?.ahead;
     let currentHeadName = repo.repositoryState.HEAD?.name;
-    repo.repositoryState.onDidChange(() => {
+    repo.repositoryState.onDidChange(async () => {
       // When the current head/branch changes, or the number of commits ahead changes (which indicates
       // a push), refresh the current-branch view
       if (
@@ -55,7 +55,7 @@ export async function initTreeViews(context: vscode.ExtensionContext, store: Run
       ) {
         currentHeadName = repo.repositoryState?.HEAD?.name;
         currentAhead = repo.repositoryState?.HEAD?.ahead;
-        currentBranchTreeProvider.refresh();
+        await currentBranchTreeProvider.refresh();
       }
     });
   }

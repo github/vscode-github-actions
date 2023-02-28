@@ -6,6 +6,7 @@ import {getRemoteName} from "../configuration/configuration";
 import {Protocol} from "../external/protocol";
 import {logDebug, logError} from "../log";
 import {API, GitExtension, RefType, RepositoryState} from "../typings/git";
+import {hasInternetConnectivity} from "../util"
 
 interface GitHubUrls {
   workspaceUri: vscode.Uri;
@@ -142,17 +143,8 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
     return gitHubContext;
   }
 
-  // Check internet connectivity
-  try {
-    const octokit = new Octokit()
-    await octokit.request('GET /', {
-      headers: {
-        'X-GitHub-Api-Version': '2022-11-28'
-      }
-    })
-  }
-  catch {
-    logError(new Error("Cannot fetch github context, unable to connect to the internet"));
+  if (!(await hasInternetConnectivity())) {
+    logError(new Error("Cannot fetch github context"));
     return undefined;
   }
 

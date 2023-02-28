@@ -14,6 +14,7 @@ import {WorkflowNode} from "./workflows/workflowNode";
 import {getWorkflowNodes, WorkflowsRepoNode} from "./workflows/workflowsRepoNode";
 import {WorkflowsTreeNode} from "./settings/types";
 import {NoInternetConnectivityNode} from "./shared/noInternetConnectivityNode";
+import {hasInternetConnectivity} from "../util"
 
 export class WorkflowsTreeProvider
   extends WorkflowRunTreeDataProvider
@@ -30,9 +31,14 @@ export class WorkflowsTreeProvider
     this._onDidChangeTreeData.fire(node);
   }
 
-  refresh(): void {
-    logDebug("Refreshing workflow tree");
-    this._onDidChangeTreeData.fire(null);
+  async refresh(): Promise<void> {
+    // Don't delete all the nodes if we don't have internet connectivity
+    if (await hasInternetConnectivity()) {
+      this._onDidChangeTreeData.fire(null);
+    }
+    else {
+      await vscode.window.showWarningMessage("Unable to refresh, you are not connected to the internet")
+    }
   }
 
   getTreeItem(element: WorkflowsTreeNode): vscode.TreeItem | Thenable<vscode.TreeItem> {

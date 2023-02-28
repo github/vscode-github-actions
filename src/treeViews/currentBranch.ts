@@ -12,6 +12,7 @@ import {WorkflowRunNode} from "./shared/workflowRunNode";
 import {WorkflowRunTreeDataProvider} from "./workflowRunTreeDataProvider";
 import {NoInternetConnectivityNode} from "./shared/noInternetConnectivityNode";
 import {CurrentBranchTreeNode} from "./settings/types";
+import {hasInternetConnectivity} from "../util"
 
 export class CurrentBranchTreeProvider
   extends WorkflowRunTreeDataProvider
@@ -28,8 +29,14 @@ export class CurrentBranchTreeProvider
     this._onDidChangeTreeData.fire(node);
   }
 
-  refresh(): void {
-    this._onDidChangeTreeData.fire(null);
+  async refresh(): Promise<void> {
+    // Don't delete all the nodes if we don't have internet connectivity
+    if (await hasInternetConnectivity()) {
+      this._onDidChangeTreeData.fire(null);
+    }
+    else {
+      await vscode.window.showWarningMessage("Unable to refresh, you are not connected to the internet")
+    }
   }
 
   getTreeItem(element: CurrentBranchTreeNode): vscode.TreeItem | Thenable<vscode.TreeItem> {
