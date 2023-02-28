@@ -11,6 +11,7 @@ import {RepoVariablesNode} from "./repoVariablesNode";
 import {OrgVariablesNode} from "./orgVariablesNode";
 import {OrgSecretsNode} from "./orgSecretsNode";
 import {RepoSecretsNode} from "./repoSecretsNode";
+import {GitHubAPIUnreachableNode} from "../shared/gitHubApiUnreachableNode";
 
 export type SettingsExplorerNode =
   | SecretsNode
@@ -25,4 +26,5 @@ export type SettingsExplorerNode =
   | RepoVariablesNode
   | VariableNode
   | VariablesNode
-  | EmptyNode;
+  | EmptyNode
+  | GitHubAPIUnreachableNode;

@@ -1,7 +1,5 @@
 import * as vscode from "vscode";
 
-import {init as initLogger, log, revealLog} from "./log";
-
 import {registerCancelWorkflowRun} from "./commands/cancelWorkflowRun";
 import {registerOpenWorkflowFile} from "./commands/openWorkflowFile";
 import {registerOpenWorkflowJobLogs} from "./commands/openWorkflowJobLogs";
@@ -20,6 +18,7 @@ import {registerDeleteVariable} from "./commands/variables/deleteVariable";
 import {registerUpdateVariable} from "./commands/variables/updateVariable";
 import {initConfiguration} from "./configuration/configuration";
 import {getGitHubContext} from "./git/repository";
+import {init as initLogger, log, revealLog} from "./log";
 import {LogScheme} from "./logs/constants";
 import {WorkflowStepLogProvider} from "./logs/fileProvider";
 import {WorkflowStepLogFoldingProvider} from "./logs/foldingProvider";

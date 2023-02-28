@@ -1,13 +1,12 @@
 import * as vscode from "vscode";
 
-import {log, logDebug, logError} from "../log";
-import {getWorkflowNodes, WorkflowsRepoNode} from "./workflows/workflowsRepoNode";
-
 import {getGitHubContext} from "../git/repository";
+import {log, logDebug, logError} from "../log";
 import {RunStore} from "../store/store";
 import {AttemptNode} from "./shared/attemptNode";
 import {AuthenticationNode} from "./shared/authenticationNode";
 import {ErrorNode} from "./shared/errorNode";
+import {GitHubAPIUnreachableNode} from "./shared/gitHubApiUnreachableNode";
 import {NoGitHubRepositoryNode} from "./shared/noGitHubRepositoryNode";
 import {NoWorkflowJobsNode} from "./shared/noWorkflowJobsNode";
 import {PreviousAttemptsNode} from "./shared/previousAttemptsNode";
@@ -15,7 +14,9 @@ import {WorkflowJobNode} from "./shared/workflowJobNode";
 import {WorkflowRunNode} from "./shared/workflowRunNode";
 import {WorkflowRunTreeDataProvider} from "./workflowRunTreeDataProvider";
 import {WorkflowNode} from "./workflows/workflowNode";
+import {getWorkflowNodes, WorkflowsRepoNode} from "./workflows/workflowsRepoNode";
 import {WorkflowStepNode} from "./workflows/workflowStepNode";
+import {canReachGitHubAPI} from "../util";
 
 type WorkflowsTreeNode =
   | AuthenticationNode
@@ -26,7 +27,8 @@ type WorkflowsTreeNode =
   | AttemptNode
   | WorkflowJobNode
   | NoWorkflowJobsNode
-  | WorkflowStepNode;
+  | WorkflowStepNode
+  | GitHubAPIUnreachableNode;
 
 export class WorkflowsTreeProvider
   extends WorkflowRunTreeDataProvider
@@ -43,9 +45,13 @@ export class WorkflowsTreeProvider
     this._onDidChangeTreeData.fire(node);
   }
 
-  refresh(): void {
-    logDebug("Refreshing workflow tree");
-    this._onDidChangeTreeData.fire(null);
+  async refresh(): Promise<void> {
+    // Don't delete all the nodes if we can't reach GitHub API
+    if (await canReachGitHubAPI()) {
+      this._onDidChangeTreeData.fire(null);
+    } else {
+      await vscode.window.showWarningMessage("Unable to refresh, could not reach GitHub API");
+    }
   }
 
   getTreeItem(element: WorkflowsTreeNode): vscode.TreeItem | Thenable<vscode.TreeItem> {
@@ -59,8 +65,8 @@ export class WorkflowsTreeProvider
       try {
         const gitHubContext = await getGitHubContext();
         if (!gitHubContext) {
-          logDebug("could not get github context");
-          return [];
+          logDebug("could not get github context for workflows");
+          return [new GitHubAPIUnreachableNode()];
         }
 
         if (gitHubContext.repos.length > 0) {

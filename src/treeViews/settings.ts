@@ -14,13 +14,20 @@ import {EnvironmentSecretsNode} from "./settings/environmentSecretsNode";
 import {EnvironmentVariablesNode} from "./settings/environmentVariablesNode";
 import {OrgVariablesNode} from "./settings/orgVariablesNode";
 import {OrgSecretsNode} from "./settings/orgSecretsNode";
+import {GitHubAPIUnreachableNode} from "./shared/gitHubApiUnreachableNode";
+import {canReachGitHubAPI} from "../util";
 
 export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExplorerNode> {
   private _onDidChangeTreeData = new vscode.EventEmitter<SettingsExplorerNode | null>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
-  refresh(): void {
-    this._onDidChangeTreeData.fire(null);
+  async refresh(): Promise<void> {
+    // Don't delete all the nodes if we can't reach GitHub API
+    if (await canReachGitHubAPI()) {
+      this._onDidChangeTreeData.fire(null);
+    } else {
+      await vscode.window.showWarningMessage("Unable to refresh, could not reach GitHub API");
+    }
   }
 
   getTreeItem(element: SettingsExplorerNode): vscode.TreeItem | Thenable<vscode.TreeItem> {
@@ -30,7 +37,7 @@ export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExp
   async getChildren(element?: SettingsExplorerNode | undefined): Promise<SettingsExplorerNode[]> {
     const gitHubContext = await getGitHubContext();
     if (!gitHubContext) {
-      return [];
+      return [new GitHubAPIUnreachableNode()];
     }
 
     if (!element) {

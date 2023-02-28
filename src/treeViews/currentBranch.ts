@@ -3,16 +3,18 @@ import * as vscode from "vscode";
 import {getCurrentBranch, getGitHubContext, GitHubRepoContext} from "../git/repository";
 import {CurrentBranchRepoNode} from "./current-branch/currentBranchRepoNode";
 
+import {NoRunForBranchNode} from "./current-branch/noRunForBranchNode";
 import {log, logDebug} from "../log";
 import {RunStore} from "../store/store";
-import {NoRunForBranchNode} from "./current-branch/noRunForBranchNode";
 import {AttemptNode} from "./shared/attemptNode";
+import {GitHubAPIUnreachableNode} from "./shared/gitHubApiUnreachableNode";
 import {NoWorkflowJobsNode} from "./shared/noWorkflowJobsNode";
 import {PreviousAttemptsNode} from "./shared/previousAttemptsNode";
 import {WorkflowJobNode} from "./shared/workflowJobNode";
 import {WorkflowRunNode} from "./shared/workflowRunNode";
 import {WorkflowRunTreeDataProvider} from "./workflowRunTreeDataProvider";
 import {WorkflowStepNode} from "./workflows/workflowStepNode";
+import {canReachGitHubAPI} from "../util";
 
 type CurrentBranchTreeNode =
   | CurrentBranchRepoNode
@@ -22,7 +24,8 @@ type CurrentBranchTreeNode =
   | WorkflowJobNode
   | NoWorkflowJobsNode
   | WorkflowStepNode
-  | NoRunForBranchNode;
+  | NoRunForBranchNode
+  | GitHubAPIUnreachableNode;
 
 export class CurrentBranchTreeProvider
   extends WorkflowRunTreeDataProvider
@@ -39,8 +42,13 @@ export class CurrentBranchTreeProvider
     this._onDidChangeTreeData.fire(node);
   }
 
-  refresh(): void {
-    this._onDidChangeTreeData.fire(null);
+  async refresh(): Promise<void> {
+    // Don't delete all the nodes if we can't reach GitHub API
+    if (await canReachGitHubAPI()) {
+      this._onDidChangeTreeData.fire(null);
+    } else {
+      await vscode.window.showWarningMessage("Unable to refresh, could not reach GitHub API");
+    }
   }
 
   getTreeItem(element: CurrentBranchTreeNode): vscode.TreeItem | Thenable<vscode.TreeItem> {
@@ -51,7 +59,7 @@ export class CurrentBranchTreeProvider
     if (!element) {
       const gitHubContext = await getGitHubContext();
       if (!gitHubContext) {
-        return [];
+        return [new GitHubAPIUnreachableNode()];
       }
 
       if (gitHubContext.repos.length === 1) {
