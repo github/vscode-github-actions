@@ -1,32 +1,19 @@
 import * as vscode from "vscode";
 
-import {log, logDebug, logError} from "../log";
-import {getWorkflowNodes, WorkflowsRepoNode} from "./workflows/workflowsRepoNode";
-
 import {getGitHubContext} from "../git/repository";
+import {log, logDebug, logError} from "../log";
 import {RunStore} from "../store/store";
 import {AttemptNode} from "./shared/attemptNode";
 import {AuthenticationNode} from "./shared/authenticationNode";
 import {ErrorNode} from "./shared/errorNode";
-import {NoGitHubRepositoryNode} from "./shared/noGitHubRepositoryNode";
-import {NoWorkflowJobsNode} from "./shared/noWorkflowJobsNode";
 import {PreviousAttemptsNode} from "./shared/previousAttemptsNode";
 import {WorkflowJobNode} from "./shared/workflowJobNode";
 import {WorkflowRunNode} from "./shared/workflowRunNode";
 import {WorkflowRunTreeDataProvider} from "./workflowRunTreeDataProvider";
 import {WorkflowNode} from "./workflows/workflowNode";
-import {WorkflowStepNode} from "./workflows/workflowStepNode";
-
-type WorkflowsTreeNode =
-  | AuthenticationNode
-  | NoGitHubRepositoryNode
-  | WorkflowNode
-  | WorkflowRunNode
-  | PreviousAttemptsNode
-  | AttemptNode
-  | WorkflowJobNode
-  | NoWorkflowJobsNode
-  | WorkflowStepNode;
+import {getWorkflowNodes, WorkflowsRepoNode} from "./workflows/workflowsRepoNode";
+import {WorkflowsTreeNode} from "./settings/types"
+import { NoInternetConnectivityNode } from "./shared/noInternetConnectivityNode";
 
 export class WorkflowsTreeProvider
   extends WorkflowRunTreeDataProvider
@@ -59,8 +46,8 @@ export class WorkflowsTreeProvider
       try {
         const gitHubContext = await getGitHubContext();
         if (!gitHubContext) {
-          logDebug("could not get github context");
-          return [];
+          logDebug("could not get github context for workflows");
+          return [new NoInternetConnectivityNode()];
         }
 
         if (gitHubContext.repos.length > 0) {

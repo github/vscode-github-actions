@@ -5,24 +5,13 @@ import {CurrentBranchRepoNode} from "./current-branch/currentBranchRepoNode";
 
 import {log, logDebug} from "../log";
 import {RunStore} from "../store/store";
-import {NoRunForBranchNode} from "./current-branch/noRunForBranchNode";
 import {AttemptNode} from "./shared/attemptNode";
-import {NoWorkflowJobsNode} from "./shared/noWorkflowJobsNode";
 import {PreviousAttemptsNode} from "./shared/previousAttemptsNode";
 import {WorkflowJobNode} from "./shared/workflowJobNode";
 import {WorkflowRunNode} from "./shared/workflowRunNode";
 import {WorkflowRunTreeDataProvider} from "./workflowRunTreeDataProvider";
-import {WorkflowStepNode} from "./workflows/workflowStepNode";
-
-type CurrentBranchTreeNode =
-  | CurrentBranchRepoNode
-  | WorkflowRunNode
-  | PreviousAttemptsNode
-  | AttemptNode
-  | WorkflowJobNode
-  | NoWorkflowJobsNode
-  | WorkflowStepNode
-  | NoRunForBranchNode;
+import {NoInternetConnectivityNode} from "./shared/noInternetConnectivityNode";
+import {CurrentBranchTreeNode} from "./settings/types";
 
 export class CurrentBranchTreeProvider
   extends WorkflowRunTreeDataProvider
@@ -51,7 +40,7 @@ export class CurrentBranchTreeProvider
     if (!element) {
       const gitHubContext = await getGitHubContext();
       if (!gitHubContext) {
-        return [];
+        return [new NoInternetConnectivityNode()];
       }
 
       if (gitHubContext.repos.length === 1) {
