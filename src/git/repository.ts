@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import * as dns from "dns";
 import {Octokit} from "@octokit/rest";
 
 import {handleSamlError} from "../api/handleSamlError";
@@ -140,6 +141,13 @@ let gitHubContext: Promise<GitHubContext | undefined> | undefined;
 export async function getGitHubContext(): Promise<GitHubContext | undefined> {
   if (gitHubContext) {
     return gitHubContext;
+  }
+
+  // Check internet connectivity
+  const isConnected = !!await dns.promises.resolve('google.com').catch(() => undefined);
+  if (!isConnected) {
+    logError(new Error("Cannot fetch github context, unable to connect to the internet"));
+    return undefined;
   }
 
   try {
