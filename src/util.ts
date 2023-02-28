@@ -2,7 +2,7 @@ import {Octokit} from "@octokit/rest";
 
 import {logError} from "./log";
 
-export async function hasInternetConnectivity() {
+export async function canReachGitHubAPI() {
   try {
     const octokit = new Octokit();
     await octokit.request("GET /", {

@@ -3,18 +3,18 @@ import * as vscode from "vscode";
 import {getCurrentBranch, getGitHubContext, GitHubRepoContext} from "../git/repository";
 import {CurrentBranchRepoNode} from "./current-branch/currentBranchRepoNode";
 
+import {NoRunForBranchNode} from "./current-branch/noRunForBranchNode";
 import {log, logDebug} from "../log";
 import {RunStore} from "../store/store";
 import {AttemptNode} from "./shared/attemptNode";
+import {NoInternetConnectivityNode} from "./shared/noInternetConnectivityNode";
+import {NoWorkflowJobsNode} from "./shared/noWorkflowJobsNode";
 import {PreviousAttemptsNode} from "./shared/previousAttemptsNode";
 import {WorkflowJobNode} from "./shared/workflowJobNode";
 import {WorkflowRunNode} from "./shared/workflowRunNode";
 import {WorkflowRunTreeDataProvider} from "./workflowRunTreeDataProvider";
-import {NoInternetConnectivityNode} from "./shared/noInternetConnectivityNode";
-import {hasInternetConnectivity} from "../util";
-import {NoRunForBranchNode} from "./current-branch/noRunForBranchNode";
-import {NoWorkflowJobsNode} from "./shared/noWorkflowJobsNode";
 import {WorkflowStepNode} from "./workflows/workflowStepNode";
+import {canReachGitHubAPI} from "../util";
 
 type CurrentBranchTreeNode =
   | CurrentBranchRepoNode
@@ -43,8 +43,8 @@ export class CurrentBranchTreeProvider
   }
 
   async refresh(): Promise<void> {
-    // Don't delete all the nodes if we don't have internet connectivity
-    if (await hasInternetConnectivity()) {
+    // Don't delete all the nodes if we can't reach GitHub API
+    if (await canReachGitHubAPI()) {
       this._onDidChangeTreeData.fire(null);
     } else {
       await vscode.window.showWarningMessage("Unable to refresh, could not reach GitHub API");

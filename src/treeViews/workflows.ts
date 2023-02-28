@@ -16,7 +16,7 @@ import {WorkflowRunTreeDataProvider} from "./workflowRunTreeDataProvider";
 import {WorkflowNode} from "./workflows/workflowNode";
 import {getWorkflowNodes, WorkflowsRepoNode} from "./workflows/workflowsRepoNode";
 import {WorkflowStepNode} from "./workflows/workflowStepNode";
-import {hasInternetConnectivity} from "../util";
+import {canReachGitHubAPI} from "../util";
 
 type WorkflowsTreeNode =
   | AuthenticationNode
@@ -46,8 +46,8 @@ export class WorkflowsTreeProvider
   }
 
   async refresh(): Promise<void> {
-    // Don't delete all the nodes if we don't have internet connectivity
-    if (await hasInternetConnectivity()) {
+    // Don't delete all the nodes if we can't reach GitHub API
+    if (await canReachGitHubAPI()) {
       this._onDidChangeTreeData.fire(null);
     } else {
       await vscode.window.showWarningMessage("Unable to refresh, could not reach GitHub API");

@@ -6,7 +6,7 @@ import {getRemoteName} from "../configuration/configuration";
 import {Protocol} from "../external/protocol";
 import {logDebug, logError} from "../log";
 import {API, GitExtension, RefType, RepositoryState} from "../typings/git";
-import {hasInternetConnectivity as canReachGitHubAPI} from "../util";
+import {canReachGitHubAPI} from "../util";
 
 interface GitHubUrls {
   workspaceUri: vscode.Uri;
