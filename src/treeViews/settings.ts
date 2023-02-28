@@ -26,7 +26,7 @@ export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExp
     if (await hasInternetConnectivity()) {
       this._onDidChangeTreeData.fire(null);
     } else {
-      await vscode.window.showWarningMessage("Unable to refresh, you are not connected to the internet");
+      await vscode.window.showWarningMessage("Unable to refresh, could not reach GitHub API");
     }
   }
 

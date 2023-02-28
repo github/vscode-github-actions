@@ -6,7 +6,7 @@ import {getRemoteName} from "../configuration/configuration";
 import {Protocol} from "../external/protocol";
 import {logDebug, logError} from "../log";
 import {API, GitExtension, RefType, RepositoryState} from "../typings/git";
-import {hasInternetConnectivity} from "../util";
+import {hasInternetConnectivity as canReachGitHubAPI} from "../util";
 
 interface GitHubUrls {
   workspaceUri: vscode.Uri;
@@ -143,7 +143,7 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
     return gitHubContext;
   }
 
-  if (!(await hasInternetConnectivity())) {
+  if (!(await canReachGitHubAPI())) {
     logError(new Error("Cannot fetch github context"));
     return undefined;
   }

@@ -11,7 +11,7 @@ export async function hasInternetConnectivity() {
       }
     });
   } catch {
-    logError(new Error("Unable to connect to the internet"));
+    logError(new Error("Unable to connect to GitHub API"));
     return false;
   }
   return true;
