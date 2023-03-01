@@ -73,7 +73,7 @@ export class CurrentBranchTreeProvider
         return (await this.getRuns(repoContext, currentBranch)) || [];
       }
 
-      if (gitHubContext.repos.length === 1) {
+      if (gitHubContext.repos.length > 1) {
         return gitHubContext.repos
           .map((repoContext): CurrentBranchRepoNode | undefined => {
             const currentBranch = getCurrentBranch(repoContext.repositoryState);
