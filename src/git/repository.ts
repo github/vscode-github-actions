@@ -2,12 +2,12 @@ import * as vscode from "vscode";
 import {Octokit} from "@octokit/rest";
 
 import {handleSamlError} from "../api/handleSamlError";
+import {getSession} from "../auth/auth";
 import {getRemoteName} from "../configuration/configuration";
 import {Protocol} from "../external/protocol";
 import {logDebug, logError} from "../log";
 import {API, GitExtension, RefType, RepositoryState} from "../typings/git";
 import {canReachGitHubAPI} from "../util";
-import {getUsername} from "./username";
 import {RepositoryPermission, getRepositoryPermission} from "./repository-permissions";
 
 interface GitHubUrls {
@@ -162,9 +162,8 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
 
     logDebug("Found protocol infos", protocolInfos.length.toString());
 
-    const username = await handleSamlError(async (client: Octokit) => {
-      return getUsername(client);
-    });
+    const session = await getSession();
+    const username = session.account.label;
 
     const repos = await handleSamlError(async (client: Octokit) => {
       return await Promise.all(
