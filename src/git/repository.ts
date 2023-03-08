@@ -2,11 +2,13 @@ import * as vscode from "vscode";
 import {Octokit} from "@octokit/rest";
 
 import {handleSamlError} from "../api/handleSamlError";
+import {getSession} from "../auth/auth";
 import {getRemoteName} from "../configuration/configuration";
 import {Protocol} from "../external/protocol";
 import {logDebug, logError} from "../log";
 import {API, GitExtension, RefType, RepositoryState} from "../typings/git";
 import {canReachGitHubAPI} from "../util";
+import {RepositoryPermission, getRepositoryPermission} from "./repository-permissions";
 
 interface GitHubUrls {
   workspaceUri: vscode.Uri;
@@ -127,13 +129,14 @@ export interface GitHubRepoContext {
   name: string;
 
   organizationOwned: boolean;
-
   defaultBranch: string;
+  permissionLevel: RepositoryPermission;
 }
 
 export interface GitHubContext {
   repos: GitHubRepoContext[];
   reposByUri: Map<string, GitHubRepoContext>;
+  username: string;
 }
 
 let gitHubContext: Promise<GitHubContext | undefined> | undefined;
@@ -159,6 +162,9 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
 
     logDebug("Found protocol infos", protocolInfos.length.toString());
 
+    const session = await getSession();
+    const username = session.account.label;
+
     const repos = await handleSamlError(async (client: Octokit) => {
       return await Promise.all(
         protocolInfos.map(async (protocolInfo): Promise<GitHubRepoContext> => {
@@ -179,7 +185,8 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
             owner: protocolInfo.protocol.owner,
             id: repoInfo.data.id,
             defaultBranch: `refs/heads/${repoInfo.data.default_branch}`,
-            organizationOwned: repoInfo.data.owner.type === "Organization"
+            organizationOwned: repoInfo.data.owner.type === "Organization",
+            permissionLevel: getRepositoryPermission(repoInfo.data.permissions)
           };
         })
       );
@@ -187,7 +194,8 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
 
     gitHubContext = Promise.resolve({
       repos,
-      reposByUri: new Map(repos.map(r => [r.workspaceUri.toString(), r]))
+      reposByUri: new Map(repos.map(r => [r.workspaceUri.toString(), r])),
+      username
     });
   } catch (e) {
     // Reset the context so the next attempt will try this flow again
