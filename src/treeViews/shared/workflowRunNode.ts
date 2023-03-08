@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
 import {GitHubRepoContext} from "../../git/repository";
-import {RepositoryPermission, hasWritePermission} from "../../git/repository-permissions";
+import {hasWritePermission} from "../../git/repository-permissions";
 import {RunStore} from "../../store/store";
 import {WorkflowRun} from "../../store/workflowRun";
 import {getIconForWorkflowRun} from "../icons";
@@ -21,16 +21,16 @@ export class WorkflowRunNode extends vscode.TreeItem {
   ) {
     super(WorkflowRunNode._getLabel(run, workflowName), vscode.TreeItemCollapsibleState.Collapsed);
 
-    this.updateRun(run, gitHubRepoContext.permissionLevel);
+    this.updateRun(run);
   }
 
-  updateRun(run: WorkflowRun, permissionLevel: RepositoryPermission) {
+  updateRun(run: WorkflowRun) {
     this.run = run;
     this.label = WorkflowRunNode._getLabel(run, this.workflowName);
 
     const contextValues = ["run"];
     const completed = this.run.run.status === "completed";
-    if (hasWritePermission(permissionLevel)) {
+    if (hasWritePermission(this.gitHubRepoContext.permissionLevel)) {
       contextValues.push(completed ? "rerunnable" : "cancelable");
     }
     if (completed) {
