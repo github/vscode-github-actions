@@ -21,7 +21,3 @@ export function hasAdminPermission(permission: RepositoryPermission): boolean {
 export function hasWritePermission(permission: RepositoryPermission): boolean {
   return permission === "admin" || permission === "write";
 }
-
-export function hasReadPermission(permission: RepositoryPermission): boolean {
-  return permission === "admin" || permission === "write" || permission === "read";
-}
