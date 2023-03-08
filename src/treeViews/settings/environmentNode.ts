@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import {GitHubRepoContext} from "../../git/repository";
-import {hasAdminPermission} from "../../git/repository-permissions";
+import {hasWritePermission} from "../../git/repository-permissions";
 import {Environment} from "../../model";
 import {EnvironmentSecretsNode} from "./environmentSecretsNode";
 import {EnvironmentVariablesNode} from "./environmentVariablesNode";
@@ -8,7 +8,7 @@ import {SettingsExplorerNode} from "./types";
 
 export class EnvironmentNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext, public readonly environment: Environment) {
-    const state = hasAdminPermission(gitHubRepoContext.permissionLevel)
+    const state = hasWritePermission(gitHubRepoContext.permissionLevel)
       ? vscode.TreeItemCollapsibleState.Collapsed
       : vscode.TreeItemCollapsibleState.None;
     super(environment.name, state);
