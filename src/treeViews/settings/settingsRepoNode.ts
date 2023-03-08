@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 
 import {EnvironmentsNode} from "./environmentsNode";
 import {GitHubRepoContext} from "../../git/repository";
+import {hasWritePermission} from "../../git/repository-permissions";
 import {SecretsNode} from "./secretsNode";
 import {SettingsExplorerNode} from "./types";
 import {VariablesNode} from "./variablesNode";
@@ -22,8 +23,11 @@ export function getSettingNodes(gitHubContext: GitHubRepoContext): SettingsExplo
   const nodes: SettingsExplorerNode[] = [];
 
   nodes.push(new EnvironmentsNode(gitHubContext));
-  nodes.push(new SecretsNode(gitHubContext));
-  nodes.push(new VariablesNode(gitHubContext));
+
+  if (hasWritePermission(gitHubContext.permissionLevel)) {
+    nodes.push(new SecretsNode(gitHubContext));
+    nodes.push(new VariablesNode(gitHubContext));
+  }
 
   return nodes;
 }
