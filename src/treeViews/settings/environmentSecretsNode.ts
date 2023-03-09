@@ -4,11 +4,15 @@ import {Environment} from "../../model";
 import {EmptyNode} from "./emptyNode";
 import {SecretNode} from "./secretNode";
 
+export type EnvironmentSecretsCommandArgs = Pick<EnvironmentSecretsNode, "gitHubRepoContext" | "environment">;
+
 export class EnvironmentSecretsNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext, public readonly environment: Environment) {
     super("Secrets", vscode.TreeItemCollapsibleState.Collapsed);
 
     this.iconPath = new vscode.ThemeIcon("lock");
+
+    this.contextValue = "environment-secrets";
   }
 
   async getSecrets(): Promise<(SecretNode | EmptyNode)[]> {

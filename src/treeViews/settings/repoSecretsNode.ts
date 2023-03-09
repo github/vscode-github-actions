@@ -3,6 +3,8 @@ import {GitHubRepoContext} from "../../git/repository";
 import {EmptyNode} from "./emptyNode";
 import {SecretNode} from "./secretNode";
 
+export type RepoSecretsCommandArgs = Pick<RepoSecretsNode, "gitHubRepoContext">;
+
 export class RepoSecretsNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext) {
     super("Repository Secrets", vscode.TreeItemCollapsibleState.Collapsed);

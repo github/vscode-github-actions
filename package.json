@@ -323,11 +323,11 @@
         {
           "command": "github-actions.settings.secret.add",
           "group": "inline",
-          "when": "viewItem == 'secrets'"
+          "when": "viewItem == 'secrets' || viewItem == 'environment-secrets'"
         },
         {
           "command": "github-actions.settings.secret.update",
-          "when": "viewItem == 'repo-secret'",
+          "when": "viewItem == 'repo-secret' || viewItem == 'env-secret'",
           "group": "inline@1"
         },
         {
@@ -337,7 +337,7 @@
         },
         {
           "command": "github-actions.settings.secret.delete",
-          "when": "viewItem == 'repo-secret'",
+          "when": "viewItem == 'repo-secret' || viewItem == 'env-secret' ",
           "group": "inline@2"
         },
         {
