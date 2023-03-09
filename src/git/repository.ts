@@ -210,6 +210,10 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
   return gitHubContext;
 }
 
+export function resetGitHubContext() {
+  gitHubContext = undefined;
+}
+
 export async function getGitHubContextForRepo(owner: string, name: string): Promise<GitHubRepoContext | undefined> {
   const gitHubContext = await getGitHubContext();
   if (!gitHubContext) {
