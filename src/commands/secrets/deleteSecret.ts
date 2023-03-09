@@ -4,8 +4,8 @@ import {SecretCommandArgs} from "../../treeViews/settings/secretNode";
 export function registerDeleteSecret(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("github-actions.settings.secret.delete", async (args: SecretCommandArgs) => {
-      const gitHubContext = args.gitHubRepoContext;
-      const secret = args.secret;
+      const {gitHubRepoContext, secret, environment} = args;
+
       const acceptText = "Yes, delete this secret";
       try {
         await vscode.window
@@ -16,11 +16,19 @@ export function registerDeleteSecret(context: vscode.ExtensionContext) {
           )
           .then(async answer => {
             if (answer === acceptText) {
-              await gitHubContext.client.actions.deleteRepoSecret({
-                owner: gitHubContext.owner,
-                repo: gitHubContext.name,
-                secret_name: secret.name
-              });
+              if (environment) {
+                await gitHubRepoContext.client.actions.deleteEnvironmentSecret({
+                  repository_id: gitHubRepoContext.id,
+                  environment_name: environment.name,
+                  secret_name: secret.name
+                });
+              } else {
+                await gitHubRepoContext.client.actions.deleteRepoSecret({
+                  owner: gitHubRepoContext.owner,
+                  repo: gitHubRepoContext.name,
+                  secret_name: secret.name
+                });
+              }
             }
           });
       } catch (e) {
