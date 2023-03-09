@@ -58,7 +58,7 @@ export function getWorkflowUri(gitHubRepoContext: GitHubRepoContext, path: strin
   return vscode.Uri.joinPath(gitHubRepoContext.workspaceUri, path);
 }
 
-export async function parseWorkflowFile(uri: vscode.Uri, _: GitHubRepoContext): Promise<WorkflowTemplate | undefined> {
+export async function parseWorkflowFile(uri: vscode.Uri): Promise<WorkflowTemplate | undefined> {
   try {
     const b = await vscode.workspace.fs.readFile(uri);
     const workflowInput = new TextDecoder().decode(b);

@@ -42,7 +42,7 @@ export async function activate(context: vscode.ExtensionContext) {
   initResources(context);
   initConfiguration(context);
 
-  // Track workflow documents and the workspace
+  // Track workflow documents and workspace changes
   initWorkspaceChangeTracker(context);
   await initWorkflowDocumentTracking(context);
 
