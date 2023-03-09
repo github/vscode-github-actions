@@ -30,12 +30,30 @@
   "main": "./dist/extension-node.js",
   "browser": "./dist/extension-web.js",
   "contributes": {
+    "languages": [
+      {
+        "id": "github-actions-workflow",
+        "aliases": [
+          "GitHub Actions Workflow"
+        ],
+        "filenamePatterns": [
+          "**/.github/workflows/**/*.yml",
+          "**/.github/workflows/**/*.yaml"
+        ],
+        "configuration": "./language/language-configuration.json"
+      }
+    ],
     "grammars": [
       {
-        "scopeName": "source.yaml.github-actions-expression",
-        "path": "./syntaxes/expressions.tmGrammar.json",
+        "language": "github-actions-workflow",
+        "scopeName": "source.github-actions-workflow",
+        "path": "./language/syntaxes/yaml.tmLanguage.json"
+      },
+      {
+        "scopeName": "source.github-actions-workflow.github-actions-expression",
+        "path": "./language/syntaxes/expressions.tmGrammar.json",
         "injectTo": [
-          "source.yaml"
+          "source.github-actions-workflow"
         ]
       }
     ],
