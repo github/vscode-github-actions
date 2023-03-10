@@ -28,15 +28,7 @@ export class WorkflowRunNode extends vscode.TreeItem {
     this.run = run;
     this.label = WorkflowRunNode._getLabel(run, this.workflowName);
 
-    const contextValues = ["run"];
-    const completed = this.run.run.status === "completed";
-    if (hasWritePermission(this.gitHubRepoContext.permissionLevel)) {
-      contextValues.push(completed ? "rerunnable" : "cancelable");
-    }
-    if (completed) {
-      contextValues.push("completed");
-    }
-    this.contextValue = contextValues.join(" ");
+    this.contextValue = this.run.contextValue(this.gitHubRepoContext.permissionLevel);
 
     this.iconPath = getIconForWorkflowRun(this.run.run);
     this.tooltip = this.getTooltip();
