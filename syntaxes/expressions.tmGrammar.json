@@ -11,7 +11,7 @@
   ],
   "repository": {
     "expression": {
-      "match": "[^|\\G]?\\$\\{\\{(.*?)\\}\\}",
+      "match": "[|-]?\\$\\{\\{(.*?)\\}\\}",
       "name": "meta.embedded.block.github-actions-expression",
       "captures": {
         "1": {
