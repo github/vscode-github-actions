@@ -163,9 +163,13 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
     logDebug("Found protocol infos", protocolInfos.length.toString());
 
     const session = await getSession();
+    if (!session) {
+      // User is not signed in, getSession will prompt them to sign in
+      return undefined;
+    }
     const username = session.account.label;
 
-    const repos = await handleSamlError(async (client: Octokit) => {
+    const repos = await handleSamlError(session, async (client: Octokit) => {
       return await Promise.all(
         protocolInfos.map(async (protocolInfo): Promise<GitHubRepoContext> => {
           logDebug("Getting infos for repository", protocolInfo.url);

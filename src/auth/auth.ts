@@ -3,23 +3,56 @@ import * as vscode from "vscode";
 const AUTH_PROVIDER_ID = "github";
 const DEFAULT_SCOPES = ["repo", "workflow"];
 
+let signInPrompted = false;
+
+const SESSION_ERROR = "Could not get token from the GitHub authentication provider. \nPlease sign-in and allow access.";
+
 /**
- * Retrieves a session from the GitHub authentication provider
- * @param forceMessage Force a new session with a prompt to the user
+ * Creates a session from the GitHub authentication provider
+ * @param forceMessage Prompt to the user when forcing a new session
  * @returns A {@link vscode.AuthenticationSession}
  */
-export async function getSession(forceMessage?: string): Promise<vscode.AuthenticationSession> {
-  // forceNewSession and createIfNone are mutually exclusive
-  const options: vscode.AuthenticationGetSessionOptions = forceMessage
-    ? {forceNewSession: {detail: forceMessage}}
-    : {createIfNone: true};
-  const existingSession = await vscode.authentication.getSession(AUTH_PROVIDER_ID, getScopes(), options);
+export async function newSession(forceMessage: string): Promise<vscode.AuthenticationSession> {
+  const session = await getSessionInternal(forceMessage);
+  if (session) {
+    return session;
+  }
+  throw new Error(SESSION_ERROR);
+}
 
-  if (!existingSession) {
-    throw new Error("Could not get token from the GitHub authentication provider. \nPlease sign-in and allow access.");
+/**
+ * Retrieves a session from the GitHub authentication provider or prompts the user to sign in
+ * @returns A {@link vscode.AuthenticationSession} or undefined
+ */
+export async function getSession(): Promise<vscode.AuthenticationSession | undefined> {
+  const session = await getSessionInternal(false);
+  if (session || signInPrompted) {
+    return session;
   }
 
-  return existingSession;
+  signInPrompted = true;
+  const signInAction = "Sign in to GitHub";
+  const result = await vscode.window.showInformationMessage(
+    "Sign in to GitHub to access your repositories and GitHub Actions workflows.",
+    signInAction
+  );
+  if (result === signInAction) {
+    return await getSessionInternal(true);
+  }
+  throw new Error(SESSION_ERROR);
+}
+
+async function getSessionInternal(forceNewMessage: string): Promise<vscode.AuthenticationSession | undefined>;
+async function getSessionInternal(createIfNone: boolean): Promise<vscode.AuthenticationSession | undefined>;
+async function getSessionInternal(
+  createOrForceMessage: string | boolean = false
+): Promise<vscode.AuthenticationSession | undefined> {
+  // forceNewSession and createIfNone are mutually exclusive
+  const options: vscode.AuthenticationGetSessionOptions =
+    typeof createOrForceMessage === "string"
+      ? {forceNewSession: {detail: createOrForceMessage}}
+      : {createIfNone: createOrForceMessage};
+  return await vscode.authentication.getSession(AUTH_PROVIDER_ID, getScopes(), options);
 }
 
 function getScopes(): string[] {
