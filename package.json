@@ -223,24 +223,42 @@
         "category": "GitHub Actions",
         "title": "Unpin workflow",
         "icon": "$(pinned)"
+      },
+      {
+        "command": "github-actions.sign-in",
+        "title": "Sign in to GitHub"
       }
     ],
     "views": {
       "github-actions": [
         {
           "id": "github-actions.current-branch",
-          "name": "Current Branch"
+          "name": "Current Branch",
+          "when": "github-actions.signed-in"
         },
         {
           "id": "github-actions.workflows",
-          "name": "Workflows"
+          "name": "Workflows",
+          "when": "github-actions.signed-in"
         },
         {
           "id": "github-actions.settings",
-          "name": "Settings"
+          "name": "Settings",
+          "when": "github-actions.signed-in"
+        },
+        {
+          "id": "github-actions.empty-view",
+          "name": "Sign in to GitHub",
+          "when": "!github-actions.signed-in"
         }
       ]
     },
+    "viewsWelcome": [
+      {
+        "view": "github-actions.empty-view",
+        "contents": "Sign in to GitHub to display runs, workflows, and configure Actions settings\n[Sign in to GitHub](command:github-actions.sign-in)"
+      }
+    ],
     "viewsContainers": {
       "activitybar": [
         {
@@ -422,6 +440,10 @@
         {
           "command": "github-actions.workflow.unpin",
           "when": "false"
+        },
+        {
+          "command": "github-actions.sign-in",
+          "when": "!github-actions.signed-in"
         }
       ]
     }

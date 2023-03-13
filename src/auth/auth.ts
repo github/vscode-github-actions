@@ -24,10 +24,15 @@ export async function newSession(forceMessage: string): Promise<vscode.Authentic
  * Retrieves a session from the GitHub authentication provider or prompts the user to sign in
  * @returns A {@link vscode.AuthenticationSession} or undefined
  */
-export async function getSession(): Promise<vscode.AuthenticationSession | undefined> {
-  const session = await getSessionInternal(false);
-  if (session || signInPrompted) {
+export async function getSession(skipPrompt = false): Promise<vscode.AuthenticationSession | undefined> {
+  const session = await getSessionInternal(skipPrompt);
+  if (session) {
+    await vscode.commands.executeCommand("setContext", "github-actions.signed-in", true);
     return session;
+  }
+
+  if (signInPrompted || skipPrompt) {
+    return undefined;
   }
 
   signInPrompted = true;

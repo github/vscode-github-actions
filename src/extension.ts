@@ -30,11 +30,15 @@ import {initWorkspaceChangeTracker} from "./tracker/workspaceTracker";
 import {initResources} from "./treeViews/icons";
 import {initTreeViews} from "./treeViews/treeViews";
 import {deactivateLanguageServer, initLanguageServer} from "./workflow/languageServer";
+import {registerSignIn} from "./commands/signIn";
 
 export async function activate(context: vscode.ExtensionContext) {
   initLogger();
 
   log("Activating GitHub Actions extension...");
+
+  await vscode.commands.executeCommand("setContext", "github-actions.signed-in", false);
+  registerSignIn(context);
 
   // Prefetch git repository origin url
   await getGitHubContext();
