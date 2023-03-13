@@ -39,7 +39,9 @@ export async function getSession(): Promise<vscode.AuthenticationSession | undef
   if (result === signInAction) {
     return await getSessionInternal(true);
   }
-  throw new Error(SESSION_ERROR);
+
+  // User chose to not sign in
+  return undefined;
 }
 
 async function getSessionInternal(forceNewMessage: string): Promise<vscode.AuthenticationSession | undefined>;
