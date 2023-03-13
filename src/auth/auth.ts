@@ -32,15 +32,23 @@ export async function getSession(): Promise<vscode.AuthenticationSession | undef
 
   signInPrompted = true;
   const signInAction = "Sign in to GitHub";
-  const result = await vscode.window.showInformationMessage(
-    "Sign in to GitHub to access your repositories and GitHub Actions workflows.",
-    signInAction
-  );
-  if (result === signInAction) {
-    return await getSessionInternal(true);
-  }
+  vscode.window
+    .showInformationMessage("Sign in to GitHub to access your repositories and GitHub Actions workflows.", signInAction)
+    .then(
+      async result => {
+        if (result === signInAction) {
+          const session = await getSessionInternal(true);
+          if (session) {
+            await vscode.commands.executeCommand("setContext", "github-actions.signed-in", true);
+          }
+        }
+      },
+      () => {
+        // Ignore rejected promise
+      }
+    );
 
-  // User chose to not sign in
+  // User chose to not sign in or hasn't signed in yet
   return undefined;
 }
 
