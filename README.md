@@ -28,7 +28,7 @@ Be more confident when authoring and modifying workflows. Find errors before com
 
 ![Validation for YAML keys and expressions](media/validation.png)
 
-**Smart validation and code completion for actions and reusable workflows**: the extension automatically parses parameters, inputs, and outputs for referenced actions and called _reusable workflows_ for code-completion and validation.
+**Smart validation and code completion for actions and reusable workflows**: the extension automatically parses parameters, inputs, and outputs for referenced actions and called reusable workflows for code-completion and validation.
 
 ![Video showing workflow validation and auto-completion](./media/authoring.gif)
 
@@ -36,7 +36,7 @@ Be more confident when authoring and modifying workflows. Find errors before com
 
 1. Install the extension from the [Marketplace](https://marketplace.visualstudio.com/items?itemName=github.vscode-github-actions)
 1. Sign in with your GitHub account and when prompted allow `GitHub Actions` access to your GitHub account.
-1. Open a repository with a `github.com` `origin` remote
+1. Open a GitHub repository
 
 ## Contributing
 
