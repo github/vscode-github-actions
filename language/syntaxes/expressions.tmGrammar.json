@@ -1,6 +1,6 @@
 {
-  "scopeName": "source.yaml.github-actions-expression",
-  "injectionSelector": "L:source.yaml",
+  "scopeName": "source.github-actions-workflow.github-actions-expression",
+  "injectionSelector": "L:source.github-actions-workflow",
   "patterns": [
     {
       "include": "#expression"
@@ -45,7 +45,7 @@
         "1": {
           "patterns": [
             {
-              "include": "source.yaml"
+              "include": "source.github-actions-workflow"
             }
           ]
         },
@@ -89,7 +89,7 @@
       "patterns": [
         {
           "name": "variable.other.read.github-actions-expression",
-          "match": "\\b[A-Za-z][A-Za-z0-9_]*\\b"
+          "match": "\\b[A-Za-z][A-Za-z0-9_\\-]*\\b"
         }
       ]
     },

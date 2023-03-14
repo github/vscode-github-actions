@@ -5,7 +5,7 @@ const DEFAULT_SCOPES = ["repo", "workflow"];
 
 let signInPrompted = false;
 
-const SESSION_ERROR = "Could not get token from the GitHub authentication provider. \nPlease sign-in and allow access.";
+const SESSION_ERROR = "Could not get token from the GitHub authentication provider.\nPlease sign in and allow access.";
 
 /**
  * Creates a session from the GitHub authentication provider
