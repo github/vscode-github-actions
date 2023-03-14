@@ -24,7 +24,7 @@ export async function initLanguageServer(context: vscode.ExtensionContext) {
 
   const ghContext = await getGitHubContext();
   const initializationOptions: InitializationOptions = {
-    sessionToken: session.accessToken,
+    sessionToken: session?.accessToken,
     userAgent: userAgent,
     repos: ghContext?.repos.map(repo => ({
       id: repo.id,

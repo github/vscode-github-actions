@@ -1,12 +1,11 @@
 import * as vscode from "vscode";
-import {encodeSecret} from "../../secrets";
 import {SecretCommandArgs} from "../../treeViews/settings/secretNode";
+import {createOrUpdateEnvSecret, createOrUpdateRepoSecret} from "./addSecret";
 
 export function registerUpdateSecret(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("github-actions.settings.secret.update", async (args: SecretCommandArgs) => {
-      const gitHubContext = args.gitHubRepoContext;
-      const secret = args.secret;
+      const {gitHubRepoContext, secret, environment} = args;
 
       const value = await vscode.window.showInputBox({
         prompt: "Enter the new secret value"
@@ -17,21 +16,11 @@ export function registerUpdateSecret(context: vscode.ExtensionContext) {
       }
 
       try {
-        const keyResponse = await gitHubContext.client.actions.getRepoPublicKey({
-          owner: gitHubContext.owner,
-          repo: gitHubContext.name
-        });
-
-        const key_id = keyResponse.data.key_id;
-        const key = keyResponse.data.key;
-
-        await gitHubContext.client.actions.createOrUpdateRepoSecret({
-          owner: gitHubContext.owner,
-          repo: gitHubContext.name,
-          secret_name: secret.name,
-          key_id: key_id,
-          encrypted_value: await encodeSecret(key, value)
-        });
+        if (environment) {
+          await createOrUpdateEnvSecret(gitHubRepoContext, environment.name, secret.name, value);
+        } else {
+          await createOrUpdateRepoSecret(gitHubRepoContext, secret.name, value);
+        }
       } catch (e) {
         await vscode.window.showErrorMessage((e as Error).message);
       }

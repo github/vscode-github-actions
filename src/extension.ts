@@ -26,6 +26,7 @@ import {WorkflowStepLogSymbolProvider} from "./logs/symbolProvider";
 import {initPinnedWorkflows} from "./pinnedWorkflows/pinnedWorkflows";
 import {RunStore} from "./store/store";
 import {initWorkflowDocumentTracking} from "./tracker/workflowDocumentTracker";
+import {initWorkspaceChangeTracker} from "./tracker/workspaceTracker";
 import {initResources} from "./treeViews/icons";
 import {initTreeViews} from "./treeViews/treeViews";
 import {deactivateLanguageServer, initLanguageServer} from "./workflow/languageServer";
@@ -41,7 +42,8 @@ export async function activate(context: vscode.ExtensionContext) {
   initResources(context);
   initConfiguration(context);
 
-  // Track workflow documents
+  // Track workflow documents and workspace changes
+  initWorkspaceChangeTracker(context);
   await initWorkflowDocumentTracking(context);
 
   const store = new RunStore();

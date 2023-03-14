@@ -18,9 +18,13 @@ export function registerOpenWorkflowFile(context: vscode.ExtensionContext) {
 
         const fileUri = getWorkflowUri(gitHubRepoContext, wf.path);
         if (fileUri) {
-          const textDocument = await vscode.workspace.openTextDocument(fileUri);
-          await vscode.window.showTextDocument(textDocument);
-          return;
+          try {
+            const textDocument = await vscode.workspace.openTextDocument(fileUri);
+            await vscode.window.showTextDocument(textDocument);
+            return;
+          } catch (e) {
+            // Ignore error and show error message below
+          }
         }
 
         // File not found in workspace

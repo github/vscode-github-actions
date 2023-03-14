@@ -38,7 +38,7 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
           return;
         }
 
-        const workflow = await parseWorkflowFile(workflowUri, gitHubRepoContext);
+        const workflow = await parseWorkflowFile(workflowUri);
         if (!workflow) {
           return;
         }

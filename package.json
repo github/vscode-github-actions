@@ -30,12 +30,30 @@
   "main": "./dist/extension-node.js",
   "browser": "./dist/extension-web.js",
   "contributes": {
+    "languages": [
+      {
+        "id": "github-actions-workflow",
+        "aliases": [
+          "GitHub Actions Workflow"
+        ],
+        "filenamePatterns": [
+          "**/.github/workflows/**/*.yml",
+          "**/.github/workflows/**/*.yaml"
+        ],
+        "configuration": "./language/language-configuration.json"
+      }
+    ],
     "grammars": [
       {
-        "scopeName": "source.yaml.github-actions-expression",
-        "path": "./syntaxes/expressions.tmGrammar.json",
+        "language": "github-actions-workflow",
+        "scopeName": "source.github-actions-workflow",
+        "path": "./language/syntaxes/yaml.tmLanguage.json"
+      },
+      {
+        "scopeName": "source.github-actions-workflow.github-actions-expression",
+        "path": "./language/syntaxes/expressions.tmGrammar.json",
         "injectTo": [
-          "source.yaml"
+          "source.github-actions-workflow"
         ]
       }
     ],
@@ -323,11 +341,11 @@
         {
           "command": "github-actions.settings.secret.add",
           "group": "inline",
-          "when": "viewItem == 'secrets'"
+          "when": "viewItem == 'secrets' || viewItem == 'environment-secrets'"
         },
         {
           "command": "github-actions.settings.secret.update",
-          "when": "viewItem == 'repo-secret'",
+          "when": "viewItem == 'repo-secret' || viewItem == 'env-secret'",
           "group": "inline@1"
         },
         {
@@ -337,7 +355,7 @@
         },
         {
           "command": "github-actions.settings.secret.delete",
-          "when": "viewItem == 'repo-secret'",
+          "when": "viewItem == 'repo-secret' || viewItem == 'env-secret' ",
           "group": "inline@2"
         },
         {
