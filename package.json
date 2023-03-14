@@ -266,7 +266,7 @@
         },
         {
           "id": "github-actions.empty-view",
-          "name": "Sign in to GitHub",
+          "name": "",
           "when": "!github-actions.signed-in"
         }
       ]
