@@ -252,29 +252,40 @@
         {
           "id": "github-actions.current-branch",
           "name": "Current Branch",
-          "when": "github-actions.signed-in"
+          "when": "github-actions.internet-access && github-actions.signed-in && github-actions.has-repos"
         },
         {
           "id": "github-actions.workflows",
           "name": "Workflows",
-          "when": "github-actions.signed-in"
+          "when": "github-actions.internet-access && github-actions.signed-in && github-actions.has-repos"
         },
         {
           "id": "github-actions.settings",
           "name": "Settings",
-          "when": "github-actions.signed-in"
+          "when": "github-actions.internet-access && github-actions.signed-in && github-actions.has-repos"
         },
         {
           "id": "github-actions.empty-view",
           "name": "",
-          "when": "!github-actions.signed-in"
+          "when": "!github-actions.internet-access || !github-actions.signed-in || !github-actions.has-repos"
         }
       ]
     },
     "viewsWelcome": [
       {
         "view": "github-actions.empty-view",
-        "contents": "Sign in to GitHub to display runs, workflows, and configure Actions settings\n[Sign in to GitHub](command:github-actions.sign-in)"
+        "contents": "Unable to connect to the GitHub API, please check your internet connection.\n[Refresh](command:github-actions.explorer.refresh)",
+        "when": "!github-actions.internet-access"
+      },
+      {
+        "view": "github-actions.empty-view",
+        "contents": "Sign in to GitHub to display runs, workflows, and configure Actions settings.\n[Sign in to GitHub](command:github-actions.sign-in)",
+        "when": "github-actions.internet-access && !github-actions.signed-in"
+      },
+      {
+        "view": "github-actions.empty-view",
+        "contents": "No GitHub repositories found. Please open a folder that contains a GitHub repository.",
+        "when": "github-actions.internet-access && github-actions.signed-in && !github-actions.has-repos"
       }
     ],
     "viewsContainers": {

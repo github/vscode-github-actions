@@ -3,6 +3,7 @@ import {executeCacheClearCommand} from "../workflow/languageServer";
 import {getGitHubContext} from "../git/repository";
 import {logDebug} from "../log";
 import {RunStore} from "../store/store";
+import {canReachGitHubAPI} from "../util";
 import {CurrentBranchTreeProvider} from "./currentBranch";
 import {SettingsTreeProvider} from "./settings";
 import {WorkflowsTreeProvider} from "./workflows";
@@ -21,8 +22,12 @@ export async function initTreeViews(context: vscode.ExtensionContext, store: Run
 
   context.subscriptions.push(
     vscode.commands.registerCommand("github-actions.explorer.refresh", async () => {
-      await workflowTreeProvider.refresh();
-      await settingsTreeProvider.refresh();
+      const canReachAPI = await canReachGitHubAPI();
+      await vscode.commands.executeCommand("setContext", "github-actions.internet-access", canReachAPI);
+      if (canReachAPI) {
+        await workflowTreeProvider.refresh();
+        await settingsTreeProvider.refresh();
+      }
       await executeCacheClearCommand();
     })
   );
