@@ -1,57 +1,42 @@
 # GitHub Actions for VS Code
 
-[![Build](https://github.com/github/vscode-github-actions/actions/workflows/build.yml/badge.svg)](https://github.com/github/vscode-github-actions/actions/workflows/build.yml)
+The GitHub Actions extension lets you manage you manage your workflows, view the workflow run history, and helps with authoring workflows.
 
-Simple extension to interact with GitHub Actions from within VS Code.
-
-## Setup
-
-1. Install the extension from the [Marketplace](https://marketplace.visualstudio.com/items?itemName=github.vscode-github-actions)
-2. Open a repository with a `github.com` `origin` git remote
-3. When prompted, allow `GitHub Actions` access to your GitHub account:
-
-    ![Sign in via Accounts menu](./media/allow-access.png)
+![](./media/header.png)
 
 ## Features
 
-The extension provides a convenient way to monitor workflows and workflow runs from VS Code as well as language-server features for editing workflow YAML files.
+### Manage workflows and runs
 
-### Auto-complete and documentation
+Manage your workflows and runs without leaving your editor. Keep track of your CI builds and deployments. Investigate failures and view logs.
 
-No additional YAML extension needed, this extension includes a built-in language server with support for the workflow schema:
+![View workflow runs and logs](./media/workflows.png)
 
-![Workflow auto-complete](./media/workflow-auto-complete.gif)
+### Workflow authoring
 
-Auto-completion and validation for every action you reference in `uses`:
+Be more confident when authoring and modifying workflows. Find errors before committing workflows with:
 
-![Actions auto-complete](./media/actions-auto-complete.gif)
+**Syntax highlighting** for workflows and GitHub Actions Expressions makes it clear where values are inserted at execution time:
 
-Auto-completion and validation of labels for hosted and self-hosted runners:
+![Syntax highlighting](media/highlight.png)
 
-![Auto-complete runner label](./media/runs-on-auto-complete.gif)
+**Integrated documentation** for the workflow schema, expression functions, and even event payloads:
 
-#### Expressions auto-complete
+![Tooltip showing description for a pull_request payload](media/docs.png)
 
-Auto-completion, validation, and evaluation of expressions:
+**Validation and code completion** for the YAML schema and GitHub Action Expressions. Get instant validation and code completion for the workflow schema, expression functions, event payloads, and job or step `outputs`:
 
-![Auto-complete and evaluation of expressions](./media/env-auto-complete.gif)
+![Validation for YAML keys and expressions](media/validation.png)
 
-Auto-complete and validate all webhook event payloads:
+**Smart validation and code completion for actions and reusable workflows**: the extension automatically parses parameters, inputs, and outputs for referenced actions and called _reusable workflows_ for code-completion and validation.
 
-![Auto-complete github event expressions](./media/github-auto-complete.gif)
+![Video showing workflow validation and auto-completion](./media/authoring.gif)
 
-### Monitor workflow runs
+## Getting started
 
-See runs for workflows in the repository, drill into jobs and steps, and inspect logs:
-
-![See workflows and runs for the current repository](./media/logs.gif)
-
-
-### Other features
-
-- Trigger `repository_dispatch` or `workflow_dispatch` workflow runs
-- View, edit, and add secrets
-- Pin workflow to the VS Code status bar
+1. Install the extension from the [Marketplace](https://marketplace.visualstudio.com/items?itemName=github.vscode-github-actions)
+1. Sign in with your GitHub account and when prompted allow `GitHub Actions` access to your GitHub account.
+1. Open a repository with a `github.com` `origin` remote
 
 ## Contributing
 
