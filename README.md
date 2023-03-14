@@ -8,7 +8,9 @@ The GitHub Actions extension lets you manage you manage your workflows, view the
 
 ### Manage workflows and runs
 
-Manage your workflows and runs without leaving your editor. Keep track of your CI builds and deployments. Investigate failures and view logs.
+* Manage your workflows and runs without leaving your editor.
+* Keep track of your CI builds and deployments.
+* Investigate failures and view logs.
 
 ![View workflow runs and logs](./media/workflows.png)
 
@@ -24,7 +26,7 @@ Be more confident when authoring and modifying workflows. Find errors before com
 
 ![Tooltip showing description for a pull_request payload](media/docs.png)
 
-**Validation and code completion** for the YAML schema and GitHub Action Expressions. Get instant validation and code completion for the workflow schema, expression functions, event payloads, and job or step `outputs`:
+**Validation and code completion** for the YAML schema and GitHub Actions Expressions. Get instant validation and code completion for the workflow schema, expression functions, event payloads, and job or step `outputs`:
 
 ![Validation for YAML keys and expressions](media/validation.png)
 
