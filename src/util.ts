@@ -10,8 +10,8 @@ export async function canReachGitHubAPI() {
         "X-GitHub-Api-Version": "2022-11-28"
       }
     });
-  } catch {
-    logError(new Error("Unable to connect to GitHub API"));
+  } catch (e) {
+    logError(e as Error, "Error getting GitHub context");
     return false;
   }
   return true;
