@@ -461,7 +461,7 @@
         },
         {
           "command": "github-actions.sign-in",
-          "when": "!github-actions.signed-in"
+          "when": "false"
         }
       ]
     }
