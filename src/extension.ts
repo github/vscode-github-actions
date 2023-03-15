@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 
+import {getSession} from "./auth/auth";
 import {registerCancelWorkflowRun} from "./commands/cancelWorkflowRun";
 import {registerOpenWorkflowFile} from "./commands/openWorkflowFile";
 import {registerOpenWorkflowJobLogs} from "./commands/openWorkflowJobLogs";
@@ -31,17 +32,23 @@ import {initResources} from "./treeViews/icons";
 import {initTreeViews} from "./treeViews/treeViews";
 import {deactivateLanguageServer, initLanguageServer} from "./workflow/languageServer";
 import {registerSignIn} from "./commands/signIn";
+import {canReachGitHubAPI} from "./util";
 
 export async function activate(context: vscode.ExtensionContext) {
   initLogger();
 
   log("Activating GitHub Actions extension...");
 
-  // Set signed-in context before other initializations use the session
-  await vscode.commands.executeCommand("setContext", "github-actions.signed-in", false);
+  const canReachAPI = await canReachGitHubAPI();
+  const hasSession = canReachAPI && !!(await getSession());
 
   // Prefetch git repository origin url
-  await getGitHubContext();
+  const ghContext = hasSession && (await getGitHubContext());
+  const hasGitHubRepos = ghContext && ghContext.repos.length > 0;
+
+  await vscode.commands.executeCommand("setContext", "github-actions.internet-access", canReachAPI);
+  await vscode.commands.executeCommand("setContext", "github-actions.signed-in", hasSession);
+  await vscode.commands.executeCommand("setContext", "github-actions.has-repos", hasGitHubRepos);
 
   initResources(context);
   initConfiguration(context);
