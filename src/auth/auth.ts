@@ -24,22 +24,37 @@ export async function newSession(forceMessage: string): Promise<vscode.Authentic
  * Retrieves a session from the GitHub authentication provider or prompts the user to sign in
  * @returns A {@link vscode.AuthenticationSession} or undefined
  */
-export async function getSession(): Promise<vscode.AuthenticationSession | undefined> {
-  const session = await getSessionInternal(false);
-  if (session || signInPrompted) {
+export async function getSession(skipPrompt = false): Promise<vscode.AuthenticationSession | undefined> {
+  const session = await getSessionInternal(skipPrompt);
+  if (session) {
+    await vscode.commands.executeCommand("setContext", "github-actions.signed-in", true);
     return session;
+  }
+
+  if (signInPrompted || skipPrompt) {
+    return undefined;
   }
 
   signInPrompted = true;
   const signInAction = "Sign in to GitHub";
-  const result = await vscode.window.showInformationMessage(
-    "Sign in to GitHub to access your repositories and GitHub Actions workflows.",
-    signInAction
-  );
-  if (result === signInAction) {
-    return await getSessionInternal(true);
-  }
-  throw new Error(SESSION_ERROR);
+  vscode.window
+    .showInformationMessage("Sign in to GitHub to access your repositories and GitHub Actions workflows.", signInAction)
+    .then(
+      async result => {
+        if (result === signInAction) {
+          const session = await getSessionInternal(true);
+          if (session) {
+            await vscode.commands.executeCommand("setContext", "github-actions.signed-in", true);
+          }
+        }
+      },
+      () => {
+        // Ignore rejected promise
+      }
+    );
+
+  // User chose to not sign in or hasn't signed in yet
+  return undefined;
 }
 
 async function getSessionInternal(forceNewMessage: string): Promise<vscode.AuthenticationSession | undefined>;
