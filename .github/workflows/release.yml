@@ -41,7 +41,6 @@ jobs:
             });
 
             const path = "./vscode-github-actions-${{ github.event.inputs.version }}.vsix";
-            const vsix = fs.readFileSync(path);
             await octokit.repos.uploadReleaseAsset({
               owner: context.repo.owner,
               repo: context.repo.repo,
