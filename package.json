@@ -214,7 +214,7 @@
       {
         "command": "github-actions.settings.variable.delete",
         "category": "GitHub Actions",
-        "title": "Update variable",
+        "title": "Delete variable",
         "icon": {
           "dark": "resources/icons/dark/remove.svg",
           "light": "resources/icons/light/remove.svg"
@@ -415,6 +415,10 @@
       ],
       "commandPalette": [
         {
+          "command": "github-actions.explorer.openRun",
+          "when": "false"
+        },
+        {
           "command": "github-actions.explorer.openWorkflowFile",
           "when": "false"
         },
@@ -427,11 +431,15 @@
           "when": "false"
         },
         {
-          "command": "github-actions.workflow.run.cancel",
+          "command": "github-actions.workflow.logs",
           "when": "false"
         },
         {
           "command": "github-actions.workflow.run.rerun",
+          "when": "false"
+        },
+        {
+          "command": "github-actions.workflow.run.cancel",
           "when": "false"
         },
         {
@@ -440,6 +448,10 @@
         },
         {
           "command": "github-actions.settings.secret.add",
+          "when": "false"
+        },
+        {
+          "command": "github-actions.settings.secret.copy",
           "when": "false"
         },
         {
@@ -460,6 +472,14 @@
         },
         {
           "command": "github-actions.settings.variable.delete",
+          "when": "false"
+        },
+        {
+          "command": "github-actions.settings.variable.copy-name",
+          "when": "false"
+        },
+        {
+          "command": "github-actions.settings.variable.copy-value",
           "when": "false"
         },
         {
