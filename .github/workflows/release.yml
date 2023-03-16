@@ -23,7 +23,17 @@ jobs:
         with:
           node-version: "16"
 
-      - run: npm version ${{ github.event.inputs.version }}
+      - name: Bump version and push
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+          npm version ${{ github.event.inputs.version }} --no-git-tag-version
+          git add package.json package-lock.json
+          git commit -m "Bump version to ${{ github.event.inputs.version }}"
+
+          git push
+
       - run: npm ci
       - run: npm run package
 
@@ -59,9 +69,3 @@ jobs:
           pat: ${{ secrets.PUBLISHER_KEY }}
           registryUrl: https://marketplace.visualstudio.com
           extensionFile: ./vscode-github-actions-${{ github.event.inputs.version }}.vsix
-
-      - name: Push version bump
-        run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
-          git push
