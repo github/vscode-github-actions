@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 
+import {canReachGitHubAPI} from "../api/canReachGitHubAPI";
 import {getCurrentBranch, getGitHubContext, GitHubRepoContext} from "../git/repository";
 import {CurrentBranchRepoNode} from "./current-branch/currentBranchRepoNode";
 
@@ -14,7 +15,6 @@ import {WorkflowJobNode} from "./shared/workflowJobNode";
 import {WorkflowRunNode} from "./shared/workflowRunNode";
 import {WorkflowRunTreeDataProvider} from "./workflowRunTreeDataProvider";
 import {WorkflowStepNode} from "./workflows/workflowStepNode";
-import {canReachGitHubAPI} from "../util";
 
 type CurrentBranchTreeNode =
   | CurrentBranchRepoNode
