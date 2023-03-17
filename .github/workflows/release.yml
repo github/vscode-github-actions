@@ -25,12 +25,12 @@ jobs:
 
       - name: Bump version and push
         run: |
-          git config --global user.email "actions@github.com"
+          git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
 
           npm version ${{ github.event.inputs.version }} --no-git-tag-version
           git add package.json package-lock.json
-          git commit -m "Bump version to ${{ github.event.inputs.version }}"
+          git commit -m "Release extension version ${{ github.event.inputs.version }}"
 
           git push
 
@@ -41,7 +41,9 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const release = await octokit.repos.createRelease({
+            const fs = require("fs");
+
+            const release = await github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: "release-v${{ github.event.inputs.version }}",
@@ -51,7 +53,7 @@ jobs:
             });
 
             const path = "./vscode-github-actions-${{ github.event.inputs.version }}.vsix";
-            await octokit.repos.uploadReleaseAsset({
+            await github.rest.repos.uploadReleaseAsset({
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: release.data.id,
@@ -61,6 +63,7 @@ jobs:
                 "content-type": "application/vsix",
                 "content-length": fs.statSync(path).size
               }
+            });
 
       - name: Publish to marketplace
         # https://github.com/HaaLeo/publish-vscode-extension/releases/tag/v1.2.0
