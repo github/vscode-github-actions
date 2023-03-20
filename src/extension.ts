@@ -46,9 +46,11 @@ export async function activate(context: vscode.ExtensionContext) {
   const ghContext = hasSession && (await getGitHubContext());
   const hasGitHubRepos = ghContext && ghContext.repos.length > 0;
 
-  await vscode.commands.executeCommand("setContext", "github-actions.signed-in", hasSession);
-  await vscode.commands.executeCommand("setContext", "github-actions.internet-access", canReachAPI);
-  await vscode.commands.executeCommand("setContext", "github-actions.has-repos", hasGitHubRepos);
+  await Promise.all([
+    vscode.commands.executeCommand("setContext", "github-actions.signed-in", hasSession),
+    vscode.commands.executeCommand("setContext", "github-actions.internet-access", canReachAPI),
+    vscode.commands.executeCommand("setContext", "github-actions.has-repos", hasGitHubRepos)
+  ]);
 
   initResources(context);
   initConfiguration(context);
