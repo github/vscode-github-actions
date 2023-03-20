@@ -1,9 +1,10 @@
 import * as vscode from "vscode";
+
+import {canReachGitHubAPI} from "../api/canReachGitHubAPI";
 import {executeCacheClearCommand} from "../workflow/languageServer";
 import {getGitHubContext} from "../git/repository";
 import {logDebug} from "../log";
 import {RunStore} from "../store/store";
-import {canReachGitHubAPI} from "../util";
 import {CurrentBranchTreeProvider} from "./currentBranch";
 import {SettingsTreeProvider} from "./settings";
 import {WorkflowsTreeProvider} from "./workflows";
