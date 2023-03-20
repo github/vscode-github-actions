@@ -22,8 +22,8 @@ clone_repo https://github.com/github/actions-languageservices "$root"/actions-la
 
 # Copy workspace files
 echo "Copying workspace files..."
-cp "$repo_root"/.devcontainer/package.json "$root"
-cp "$repo_root"/.devcontainer/vscode-github-actions.code-workspace "$root"
-cp "$repo_root"/.devcontainer/.npmrc "$root"
-cp "$repo_root"/.devcontainer/update-package-locks.sh "$root"
-cp "$repo_root"/.devcontainer/watch.sh "$root"
+cp "$repo_root"/script/workspace/package.json "$root"
+cp "$repo_root"/script/workspace/vscode-github-actions.code-workspace "$root"
+cp "$repo_root"/script/workspace/.npmrc "$root"
+cp "$repo_root"/script/workspace/update-package-locks.sh "$root"
+cp "$repo_root"/script/workspace/watch.sh "$root"
