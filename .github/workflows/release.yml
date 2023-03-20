@@ -1,4 +1,6 @@
-name: Release new version
+name: Release and publish extension
+
+run-name: Release v${{ github.event.inputs.version }}
 
 on:
   workflow_dispatch:
