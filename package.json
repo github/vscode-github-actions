@@ -40,7 +40,11 @@
           "**/.github/workflows/**/*.yml",
           "**/.github/workflows/**/*.yaml"
         ],
-        "configuration": "./language/language-configuration.json"
+        "configuration": "./language/language-configuration.json",
+        "icon": {
+          "dark": "resources/icons/dark/lang.svg",
+          "light": "resources/icons/light/lang.svg"
+        }
       }
     ],
     "grammars": [
