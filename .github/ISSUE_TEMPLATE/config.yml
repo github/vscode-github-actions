@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Ask a question or provide feedback about the Actions VS Code extension
+    about: For general Q&A and feedback, see the Discussions tab.
+    url: https://github.com/github/vscode-github-actions/discussions
+  - name: Ask a question or provide feedback about GitHub Actions
+    about: Please check out the GitHub community forum for discussions about GitHub Actions
+    url: https://github.com/orgs/community/discussions/categories/actions

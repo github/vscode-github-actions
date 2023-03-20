@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 
+import {canReachGitHubAPI} from "../api/canReachGitHubAPI";
 import {getGitHubContext} from "../git/repository";
 import {log, logDebug, logError} from "../log";
 import {RunStore} from "../store/store";
@@ -16,7 +17,6 @@ import {WorkflowRunTreeDataProvider} from "./workflowRunTreeDataProvider";
 import {WorkflowNode} from "./workflows/workflowNode";
 import {getWorkflowNodes, WorkflowsRepoNode} from "./workflows/workflowsRepoNode";
 import {WorkflowStepNode} from "./workflows/workflowStepNode";
-import {canReachGitHubAPI} from "../util";
 
 type WorkflowsTreeNode =
   | AuthenticationNode

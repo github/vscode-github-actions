@@ -1,13 +1,13 @@
 import * as vscode from "vscode";
 import {Octokit} from "@octokit/rest";
 
+import {canReachGitHubAPI} from "../api/canReachGitHubAPI";
 import {handleSamlError} from "../api/handleSamlError";
 import {getSession} from "../auth/auth";
 import {getRemoteName} from "../configuration/configuration";
 import {Protocol} from "../external/protocol";
 import {logDebug, logError} from "../log";
 import {API, GitExtension, RefType, RepositoryState} from "../typings/git";
-import {canReachGitHubAPI} from "../util";
 import {RepositoryPermission, getRepositoryPermission} from "./repository-permissions";
 
 interface GitHubUrls {

@@ -10,7 +10,7 @@ dayjs.extend(relativeTime);
 
 // Returns a string like "**Succeeded** in **1m 2s**"
 // For use in markdown tooltip
-export function getStatusString(item: WorkflowRun | WorkflowRunAttempt, capitalize: boolean = false): string {
+export function getStatusString(item: WorkflowRun | WorkflowRunAttempt, capitalize = false): string {
   let statusText = item.run.conclusion || item.run.status || "";
   switch (statusText) {
     case "success":
@@ -70,7 +70,7 @@ export function getEventString(item: WorkflowRun | WorkflowRunAttempt): string {
   }
 
   if (item.run.run_started_at) {
-    let started_at = dayjs(item.run.run_started_at);
+    const started_at = dayjs(item.run.run_started_at);
     eventString += ` ${started_at.fromNow()} *(${started_at.format("LLL")})*`;
   }
 

@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
+import {canReachGitHubAPI} from "../api/canReachGitHubAPI";
 import {SettingsRepoNode, getSettingNodes} from "./settings/settingsRepoNode";
-
 import {EnvironmentNode} from "./settings/environmentNode";
 import {EnvironmentsNode} from "./settings/environmentsNode";
 import {RepoSecretsNode} from "./settings/repoSecretsNode";
@@ -15,7 +15,6 @@ import {EnvironmentVariablesNode} from "./settings/environmentVariablesNode";
 import {OrgVariablesNode} from "./settings/orgVariablesNode";
 import {OrgSecretsNode} from "./settings/orgSecretsNode";
 import {GitHubAPIUnreachableNode} from "./shared/gitHubApiUnreachableNode";
-import {canReachGitHubAPI} from "../util";
 
 export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExplorerNode> {
   private _onDidChangeTreeData = new vscode.EventEmitter<SettingsExplorerNode | null>();

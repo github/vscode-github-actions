@@ -40,7 +40,11 @@
           "**/.github/workflows/**/*.yml",
           "**/.github/workflows/**/*.yaml"
         ],
-        "configuration": "./language/language-configuration.json"
+        "configuration": "./language/language-configuration.json",
+        "icon": {
+          "dark": "resources/icons/dark/lang.svg",
+          "light": "resources/icons/light/lang.svg"
+        }
       }
     ],
     "grammars": [
@@ -214,7 +218,7 @@
       {
         "command": "github-actions.settings.variable.delete",
         "category": "GitHub Actions",
-        "title": "Update variable",
+        "title": "Delete variable",
         "icon": {
           "dark": "resources/icons/dark/remove.svg",
           "light": "resources/icons/light/remove.svg"
@@ -274,13 +278,13 @@
     "viewsWelcome": [
       {
         "view": "github-actions.empty-view",
-        "contents": "Unable to connect to the GitHub API, please check your internet connection.\n[Refresh](command:github-actions.explorer.refresh)",
-        "when": "!github-actions.internet-access"
+        "contents": "Sign in to GitHub to display runs, workflows, and configure Actions settings.\n[Sign in to GitHub](command:github-actions.sign-in)",
+        "when": "!github-actions.signed-in"
       },
       {
         "view": "github-actions.empty-view",
-        "contents": "Sign in to GitHub to display runs, workflows, and configure Actions settings.\n[Sign in to GitHub](command:github-actions.sign-in)",
-        "when": "github-actions.internet-access && !github-actions.signed-in"
+        "contents": "Unable to connect to the GitHub API, please check your internet connection.\n[Refresh](command:github-actions.explorer.refresh)",
+        "when": "github-actions.signed-in && !github-actions.internet-access"
       },
       {
         "view": "github-actions.empty-view",
@@ -415,6 +419,10 @@
       ],
       "commandPalette": [
         {
+          "command": "github-actions.explorer.openRun",
+          "when": "false"
+        },
+        {
           "command": "github-actions.explorer.openWorkflowFile",
           "when": "false"
         },
@@ -427,11 +435,15 @@
           "when": "false"
         },
         {
-          "command": "github-actions.workflow.run.cancel",
+          "command": "github-actions.workflow.logs",
           "when": "false"
         },
         {
           "command": "github-actions.workflow.run.rerun",
+          "when": "false"
+        },
+        {
+          "command": "github-actions.workflow.run.cancel",
           "when": "false"
         },
         {
@@ -440,6 +452,10 @@
         },
         {
           "command": "github-actions.settings.secret.add",
+          "when": "false"
+        },
+        {
+          "command": "github-actions.settings.secret.copy",
           "when": "false"
         },
         {
@@ -460,6 +476,14 @@
         },
         {
           "command": "github-actions.settings.variable.delete",
+          "when": "false"
+        },
+        {
+          "command": "github-actions.settings.variable.copy-name",
+          "when": "false"
+        },
+        {
+          "command": "github-actions.settings.variable.copy-value",
           "when": "false"
         },
         {
@@ -486,8 +510,8 @@
     "open-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix",
-    "prettier": "prettier .",
-    "prettier-fix": "prettier --write .",
+    "format": "prettier --write '**/*.ts'",
+    "format-check": "prettier --check '**/*.ts'",
     "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest",
     "test-watch": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --watch"
   },
@@ -504,14 +528,14 @@
     "eslint-plugin-prettier": "^4.2.1",
     "jest": "^29.0.3",
     "node-loader": "^0.6.0",
-    "prettier": "^2.7.1",
+    "prettier": "^2.8.3",
     "rimraf": "^3.0.1",
     "source-map-loader": "^4.0.1",
     "ts-jest": "^29.0.3",
     "ts-loader": "^9.4.1",
     "typescript": "^4.9.4",
     "vsce": "^2.11.0",
-    "webpack": "^5.74.0",
+    "webpack": "^5.76.0",
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {

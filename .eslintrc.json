@@ -9,6 +9,7 @@
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "prettier"
   ],
+  "ignorePatterns": ["src/external"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "./tsconfig.json"
@@ -16,10 +17,5 @@
   "plugins": ["@typescript-eslint", "prettier"],
   "reportUnusedDisableDirectives": true,
   "root": true,
-  "rules": {
-    "no-control-regex": "off",
-    "@typescript-eslint/ban-ts-comment": "off",
-    "@typescript-eslint/no-inferrable-types": ["warn", {"ignoreParameters": true, "ignoreProperties": true}],
-    "@typescript-eslint/triple-slash-reference": "off"
-  }
+  "rules": {}
 }

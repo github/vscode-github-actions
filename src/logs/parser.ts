@@ -16,6 +16,7 @@ export const URLRegex = /([{([]*https?:\/\/[a-z0-9]+(?:-[a-z0-9]+)*\.[^\s<>|'",]
  * (?:(?:;[0-9]{0,3})*)?: Match one or more occurances of the format we want with semicolon
  */
 
+// eslint-disable-next-line no-control-regex
 const _ansiEscapeCodeRegex = /(?:\u001b\[)(?:[?|#])?(?:(?:[0-9]{1,3})?(?:(?:;[0-9]{0,3})*)?[A-Z|a-z])/;
 
 /**
