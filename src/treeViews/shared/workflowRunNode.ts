@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 
 import {GitHubRepoContext} from "../../git/repository";
-import {hasWritePermission} from "../../git/repository-permissions";
 import {RunStore} from "../../store/store";
 import {WorkflowRun} from "../../store/workflowRun";
 import {getIconForWorkflowRun} from "../icons";
@@ -51,7 +50,7 @@ export class WorkflowRunNode extends vscode.TreeItem {
   getTooltip(): vscode.MarkdownString {
     let markdownString = "";
 
-    if (this.run.hasPreviousAttempts) {
+    if (this.run.hasPreviousAttempts && this.run.run.run_attempt) {
       markdownString += `Attempt #${this.run.run.run_attempt} `;
     }
 
