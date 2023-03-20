@@ -58,7 +58,7 @@ jobs:
               repo: context.repo.repo,
               release_id: release.data.id,
               data: fs.readFileSync(path).toString(),
-              name: "vscode-github-actions-1.0.0.vsix",
+              name: "vscode-github-actions-${{ github.event.inputs.version }}.vsix",
               headers: {
                 "content-type": "application/vsix",
                 "content-length": fs.statSync(path).size
