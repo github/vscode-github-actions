@@ -1,0 +1,136 @@
+name: Release and publish extension
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - package.json
+
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release"
+        required: true
+jobs:
+  check-version-change:
+    outputs:
+      changed: ${{ steps.check-version.outputs.result }}
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check if version has changed
+        id: check-version
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const version = '${{ github.event.inputs.version }}' || require('./package.json').version;
+            // Find a release for that version
+            const release = await github.rest.repos.getReleaseByTag({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag: `release-v${version}`,
+            }).catch(() => null);
+
+            // If the release exists, the version has not changed
+            if (release) {
+              console.log(`Version ${version} has an existing release`);
+              console.log(release.data.html_url);
+              core.summary.addLink(`Release v${version}`, release.data.html_url);
+              await core.summary.write();
+              return "false";
+            }
+            console.log(`Version ${version} does not have a release`);
+            return true;
+
+  release:
+    needs: check-version-change
+    if: ${{ needs.check-version-change.outputs.changed == 'true' }}
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    env:
+      EXT_VERSION: "" # will be set in the workflow
+
+    outputs:
+      version: ${{ env.EXT_VERSION }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+
+      - name: Parse version from package.json
+        run: |
+          echo "EXT_VERSION=$(node -p -e "require('./package.json').version")" >> $GITHUB_ENV
+
+      - run: npm ci
+
+      - run: npm run package
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: vscode-github-actions-${{ env.EXT_VERSION }}.vsix
+          path: ./vscode-github-actions-${{ env.EXT_VERSION }}.vsix
+
+      - name: Create release and upload release asset
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require("fs");
+
+            const release = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: "release-v${{ env.EXT_VERSION }}",
+              name: "v${{ env.EXT_VERSION }}",
+              draft: false,
+              prerelease: false
+            });
+
+            const path = "./vscode-github-actions-${{ env.EXT_VERSION }}.vsix";
+            await github.rest.repos.uploadReleaseAsset({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: release.data.id,
+              data: fs.readFileSync(path).toString(),
+              name: "vscode-github-actions-${{ env.EXT_VERSION }}.vsix",
+              headers: {
+                "content-type": "application/vsix",
+                "content-length": fs.statSync(path).size
+              }
+            });
+
+            core.summary.addLink(`Release v${version}`, release.data.html_url);
+            await core.summary.write();
+
+  publish:
+    environment: publish
+
+    needs: release
+
+    runs-on: ubuntu-latest
+    permissions: {}
+
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: vscode-github-actions-${{ needs.release.outputs.version }}.vsix
+
+      - name: Publish to marketplace
+        # https://github.com/HaaLeo/publish-vscode-extension/releases/tag/v1.2.0
+        uses: HaaLeo/publish-vscode-extension@c1a0486c5a3eed24e8c21d4e37889a7c4c60c443
+        with:
+          pat: ${{ secrets.PUBLISHER_KEY }}
+          registryUrl: https://marketplace.visualstudio.com
+          extensionFile: ./vscode-github-actions-${{ needs.release.outputs.version }}.vsix

@@ -1,6 +1,6 @@
-name: Release and publish extension
+name: Create release PR
 
-run-name: Release v${{ github.event.inputs.version }}
+run-name: Create release PR for v${{ github.event.inputs.version }}
 
 on:
   workflow_dispatch:
@@ -10,11 +10,14 @@ on:
         description: "Version to bump `package.json` to (format: x.y.z)"
 
 jobs:
-  release:
+  create-release-pr:
+    name: Create release PR
+
     runs-on: ubuntu-latest
 
     permissions:
       contents: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v3
@@ -28,65 +31,20 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
 
-          npm version ${{ github.event.inputs.version }} --no-git-tag-version
+          git checkout -b release/${{ inputs.version }}
+
+          npm version ${{ inputs.version }} --no-git-tag-version
           git add package.json package-lock.json
-          git commit -m "Release extension version ${{ github.event.inputs.version }}"
+          git commit -m "Release extension version ${{ inputs.version }}"
 
-          git push
+          git push --set-upstream origin release/${{ inputs.version }}
 
-      - run: npm ci
-      - run: npm run package
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: vscode-github-actions-${{ github.event.inputs.version }}.vsix
-          path: ./vscode-github-actions-${{ github.event.inputs.version }}.vsix
-
-      - name: Create release and upload release asset
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const fs = require("fs");
-
-            const release = await github.rest.repos.createRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag_name: "release-v${{ github.event.inputs.version }}",
-              name: "v${{ github.event.inputs.version }}",
-              draft: false,
-              prerelease: false
-            });
-
-            const path = "./vscode-github-actions-${{ github.event.inputs.version }}.vsix";
-            await github.rest.repos.uploadReleaseAsset({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: release.data.id,
-              data: fs.readFileSync(path).toString(),
-              name: "vscode-github-actions-${{ github.event.inputs.version }}.vsix",
-              headers: {
-                "content-type": "application/vsix",
-                "content-length": fs.statSync(path).size
-              }
-            });
-
-  publish:
-    environment: publish
-
-    needs: release
-
-    runs-on: ubuntu-latest
-    permissions: {}
-
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          name: vscode-github-actions-${{ github.event.inputs.version }}.vsix
-
-      - name: Publish to marketplace
-        # https://github.com/HaaLeo/publish-vscode-extension/releases/tag/v1.2.0
-        uses: HaaLeo/publish-vscode-extension@c1a0486c5a3eed24e8c21d4e37889a7c4c60c443
-        with:
-          pat: ${{ secrets.PUBLISHER_KEY }}
-          registryUrl: https://marketplace.visualstudio.com
-          extensionFile: ./vscode-github-actions-${{ github.event.inputs.version }}.vsix
+      - name: Create PR
+        run: |
+          gh pr create \
+            --title "Release version ${{ inputs.version }}" \
+            --body "Release version ${{ inputs.version }}" \
+            --base main \
+            --head release/${{ inputs.version }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
