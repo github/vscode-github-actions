@@ -115,7 +115,7 @@ jobs:
               }
             });
 
-            core.summary.addLink(`Release v${version}`, release.data.html_url);
+            core.summary.addLink(`Release v${{ env.EXT_VERSION }}`, release.data.html_url);
             await core.summary.write();
 
   publish:
