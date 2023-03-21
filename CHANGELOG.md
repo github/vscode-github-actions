@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.9.0
+## [0.25.0]
 - Public beta release of the official GitHub Actions extension
 
 ## Community extension
