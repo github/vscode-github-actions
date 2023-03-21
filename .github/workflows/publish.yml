@@ -107,7 +107,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: release.data.id,
-              data: fs.readFileSync(path).toString(),
+              data: fs.readFileSync(path),
               name: "vscode-github-actions-${{ env.EXT_VERSION }}.vsix",
               headers: {
                 "content-type": "application/vsix",
