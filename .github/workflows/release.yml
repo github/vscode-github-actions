@@ -1,6 +1,6 @@
-name: Release and publish extension
+name: Create release PR
 
-run-name: Release new version
+run-name: Create release PR for v${{ github.event.inputs.version }}
 
 on:
   workflow_dispatch:
@@ -37,7 +37,7 @@ jobs:
           git add package.json package-lock.json
           git commit -m "Release extension version ${{ inputs.version }}"
 
-          git push
+          git push --set-upstream origin release/${{ inputs.version }}
 
       - name: Create PR
         run: |
@@ -46,3 +46,5 @@ jobs:
             --body "Release version ${{ inputs.version }}" \
             --base main \
             --head release/${{ inputs.version }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

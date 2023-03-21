@@ -7,8 +7,51 @@ on:
     paths:
       - package.json
 
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release"
+        required: true
 jobs:
+  check-version-change:
+    outputs:
+      changed: ${{ steps.check-version.outputs.result }}
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check if version has changed
+        id: check-version
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const version = '${{ github.event.inputs.version }}' || require('./package.json').version;
+            // Find a release for that version
+            const release = await github.rest.repos.getReleaseByTag({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag: `release-v${version}`,
+            }).catch(() => null);
+
+            // If the release exists, the version has not changed
+            if (release) {
+              console.log(`Version ${version} has an existing release`);
+              console.log(release.data.html_url);
+              core.summary.addLink(`Release v${version}`, release.data.html_url);
+              await core.summary.write();
+              return "false";
+            }
+            console.log(`Version ${version} does not have a release`);
+            return true;
+
   release:
+    needs: check-version-change
+    if: ${{ needs.check-version-change.outputs.changed == 'true' }}
+
     runs-on: ubuntu-latest
 
     permissions:
@@ -67,6 +110,9 @@ jobs:
                 "content-length": fs.statSync(path).size
               }
             });
+
+            core.summary.addLink(`Release v${version}`, release.data.html_url);
+            await core.summary.write();
 
   publish:
     environment: publish
