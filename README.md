@@ -42,8 +42,8 @@ Be more confident when authoring and modifying workflows. Find errors before com
 
 ## Contributing
 
-See [CONTRIBUTING.md](../CONTRIBUTING.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-This project is licensed under the terms of the MIT open source license. Please refer to [MIT](../LICENSE) for the full terms.
+This project is licensed under the terms of the MIT open source license. Please refer to [MIT](LICENSE) for the full terms.
