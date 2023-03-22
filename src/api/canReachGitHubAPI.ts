@@ -15,11 +15,7 @@ export async function canReachGitHubAPI() {
   return await cache.get("canReachGitHubAPI", undefined, async () => {
     try {
       const octokit = getClient(session.accessToken);
-      await octokit.request("GET /", {
-        headers: {
-          "X-GitHub-Api-Version": "2022-11-28"
-        }
-      });
+      await octokit.request("GET /");
     } catch (e) {
       logError(e as Error, "Error getting GitHub context");
       return false;
