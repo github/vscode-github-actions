@@ -5,7 +5,7 @@ registries:
     url: https://npm.pkg.github.com
     token: ${{secrets.DEPENDABOT_TOKEN}}
 updates:
-- package-ecosystem: npm
-  directory: "/"
-  registries:
-    - npm-github
+  - package-ecosystem: npm
+    directory: "/"
+    registries:
+      - npm-github
