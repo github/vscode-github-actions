@@ -5,8 +5,8 @@ import {
   NoOperationTraceWriter,
   parseWorkflow,
   WorkflowTemplate
-} from "@github/actions-workflow-parser";
-import {ErrorPolicy} from "@github/actions-workflow-parser/model/convert";
+} from "@actions/workflow-parser";
+import {ErrorPolicy} from "@actions/workflow-parser/model/convert";
 import {basename} from "path";
 import {GitHubRepoContext} from "../git/repository";
 

@@ -539,8 +539,8 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
-    "@github/actions-languageserver": "*",
-    "@github/actions-workflow-parser": "*",
+    "@actions/languageserver": "*",
+    "@actions/workflow-parser": "*",
     "@octokit/rest": "^19.0.7",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
