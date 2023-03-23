@@ -15,8 +15,8 @@ export function getAbsoluteIconPath(relativeIconPath: string): {
   dark: string | vscode.Uri;
 } {
   return {
-    light: _context.asAbsolutePath(`resources/icons/light/${relativeIconPath}`),
-    dark: _context.asAbsolutePath(`resources/icons/dark/${relativeIconPath}`)
+    light: vscode.Uri.joinPath(_context.extensionUri, "resources", "icons", "light", relativeIconPath),
+    dark: vscode.Uri.joinPath(_context.extensionUri, "resources", "icons", "dark", relativeIconPath)
   };
 }
 
