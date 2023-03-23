@@ -1,4 +1,4 @@
-import {TTLCache} from "@github/actions-languageserver/utils/cache";
+import {TTLCache} from "@actions/languageserver/utils/cache";
 
 import {getSession} from "../auth/auth";
 import {logError} from "../log";

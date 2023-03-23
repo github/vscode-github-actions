@@ -1,9 +1,9 @@
 import * as path from "path";
 import * as vscode from "vscode";
 
-import {Commands} from "@github/actions-languageserver/commands";
-import {ReadFileRequest, Requests} from "@github/actions-languageserver/request";
-import {InitializationOptions, LogLevel} from "@github/actions-languageserver/initializationOptions";
+import {Commands} from "@actions/languageserver/commands";
+import {InitializationOptions, LogLevel} from "@actions/languageserver/initializationOptions";
+import {ReadFileRequest, Requests} from "@actions/languageserver/request";
 import {BaseLanguageClient, LanguageClientOptions} from "vscode-languageclient";
 import {LanguageClient as BrowserLanguageClient} from "vscode-languageclient/browser";
 import {LanguageClient as NodeLanguageClient, ServerOptions, TransportKind} from "vscode-languageclient/node";
