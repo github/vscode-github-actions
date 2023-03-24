@@ -25,8 +25,5 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: npm run format-check
       - run: npm run lint
-      - name: build
-        run: npm run build
-        env:
-          CI: true
+      - run: npm run build
       - run: npm run test
