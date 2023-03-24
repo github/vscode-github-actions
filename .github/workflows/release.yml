@@ -7,7 +7,7 @@ on:
     inputs:
       version:
         required: true
-        description: "Version to bump `package.json` to (format: x.y.z)"
+        description: 'Version to bump `package.json` to (format: x.y.z)'
 
 jobs:
   create-release-pr:
@@ -24,7 +24,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: "16"
+          node-version: '16'
 
       - name: Bump version and push
         run: |

@@ -15,8 +15,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: "npm"
-          registry-url: "https://npm.pkg.github.com"
+          cache: 'npm'
+          registry-url: 'https://npm.pkg.github.com'
       - run: rm package-lock.json
       - run: npm --no-git-tag-version version 1.0.${{ github.run_number }}
       - run: npm install

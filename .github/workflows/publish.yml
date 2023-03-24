@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version to release"
+        description: 'Version to release'
         required: true
 jobs:
   check-version-change:
@@ -59,7 +59,7 @@ jobs:
       packages: read
 
     env:
-      EXT_VERSION: "" # will be set in the workflow
+      EXT_VERSION: '' # will be set in the workflow
 
     outputs:
       version: ${{ env.EXT_VERSION }}
@@ -70,8 +70,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: "npm"
-          registry-url: "https://npm.pkg.github.com"
+          cache: 'npm'
+          registry-url: 'https://npm.pkg.github.com'
 
       - name: Parse version from package.json
         run: |

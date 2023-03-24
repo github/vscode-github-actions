@@ -1,10 +1,10 @@
 // #region ANSII section
 
-const ESC = "\u001b";
-const BrightClassPostfix = "-br";
+const ESC = '\u001b'
+const BrightClassPostfix = '-br'
 
 // match characters that could be enclosing url to cleanly handle url formatting
-export const URLRegex = /([{([]*https?:\/\/[a-z0-9]+(?:-[a-z0-9]+)*\.[^\s<>|'",]{2,})/gi;
+export const URLRegex = /([{([]*https?:\/\/[a-z0-9]+(?:-[a-z0-9]+)*\.[^\s<>|'",]{2,})/gi
 
 /**
  * Regex for matching ANSII escape codes
@@ -17,7 +17,7 @@ export const URLRegex = /([{([]*https?:\/\/[a-z0-9]+(?:-[a-z0-9]+)*\.[^\s<>|'",]
  */
 
 // eslint-disable-next-line no-control-regex
-const _ansiEscapeCodeRegex = /(?:\u001b\[)(?:[?|#])?(?:(?:[0-9]{1,3})?(?:(?:;[0-9]{0,3})*)?[A-Z|a-z])/;
+const _ansiEscapeCodeRegex = /(?:\u001b\[)(?:[?|#])?(?:(?:[0-9]{1,3})?(?:(?:;[0-9]{0,3})*)?[A-Z|a-z])/
 
 /**
  * https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters
@@ -52,80 +52,80 @@ const _ansiEscapeCodeRegex = /(?:\u001b\[)(?:[?|#])?(?:(?:[0-9]{1,3})?(?:(?:;[0-
 
 // #region commands
 enum Resets {
-  Reset = "0",
-  Bold = "22",
-  Italic = "23",
-  Underline = "24",
-  Set_Fg = "38",
-  Default_Fg = "39",
-  Set_Bg = "48",
-  Default_Bg = "49"
+  Reset = '0',
+  Bold = '22',
+  Italic = '23',
+  Underline = '24',
+  Set_Fg = '38',
+  Default_Fg = '39',
+  Set_Bg = '48',
+  Default_Bg = '49',
 }
 
 const specials = {
-  "1": "bold",
-  "3": "italic",
-  "4": "underline"
-} as {[key: string]: string};
+  '1': 'bold',
+  '3': 'italic',
+  '4': 'underline',
+} as {[key: string]: string}
 
 const bgColors = {
   // 40 (black), 41 (red), 42 (green), 43 (yellow), 44 (blue), 45 (magenta), 46 (cyan), 47 (white), 100 (grey)
-  "40": "b",
-  "41": "r",
-  "42": "g",
-  "43": "y",
-  "44": "bl",
-  "45": "m",
-  "46": "c",
-  "47": "w",
-  "100": "gr"
-} as {[key: string]: string};
+  '40': 'b',
+  '41': 'r',
+  '42': 'g',
+  '43': 'y',
+  '44': 'bl',
+  '45': 'm',
+  '46': 'c',
+  '47': 'w',
+  '100': 'gr',
+} as {[key: string]: string}
 
 const fgColors = {
   // 30 (black), 31 (red), 32 (green), 33 (yellow), 34 (blue), 35 (magenta), 36 (cyan), 37 (white), 90 (grey)
-  "30": "b",
-  "31": "r",
-  "32": "g",
-  "33": "y",
-  "34": "bl",
-  "35": "m",
-  "36": "c",
-  "37": "w",
-  "90": "gr"
-} as {[key: string]: string};
+  '30': 'b',
+  '31': 'r',
+  '32': 'g',
+  '33': 'y',
+  '34': 'bl',
+  '35': 'm',
+  '36': 'c',
+  '37': 'w',
+  '90': 'gr',
+} as {[key: string]: string}
 
 const base8BitColors = {
   // 0 (black), 1 (red), 2 (green), 3 (yellow), 4 (blue), 5 (magenta), 6 (cyan), 7 (white), 8 (grey)
-  "0": "b",
-  "1": "r",
-  "2": "g",
-  "3": "y",
-  "4": "bl",
-  "5": "m",
-  "6": "c",
-  "7": "w"
-} as Record<string, string>;
+  '0': 'b',
+  '1': 'r',
+  '2': 'g',
+  '3': 'y',
+  '4': 'bl',
+  '5': 'm',
+  '6': 'c',
+  '7': 'w',
+} as Record<string, string>
 
 // VS Code default values taken from this table: https://en.wikipedia.org/wiki/ANSI_escape_code#3-bit_and_4-bit
 export const VSCodeDefaultColors = {
-  b: "#000000", // '30/40',
-  r: "#cd3131", // '31/41',
-  g: "#0dbc79", // '32/42',
-  y: "#e5e510", // '33/43',
-  bl: "#2472c8", // '34/44',
-  m: "#bc3fbc", // '35/45',
-  c: "#11a8cd", // '36/46',
-  w: "#e5e5e5", // '37/47',
-  gr: "#666666", // '90/100'
-  "b-br": "#666666", // '90/100',
-  "r-br": "#f14c4c", // '91/101',
-  "g-br": "#23d18b", // '92/102',
-  "y-br": "#f5f543", // '93/103',
-  "bl-br": "#3b8eea", // '94/104',
-  "m-br": "#d670d6", // '95/105',
-  "c-br": "#21b8db", // '96/106',
-  "w-br": "#e5e5e5" // '97/107',
-} as Record<string, string>;
+  b: '#000000', // '30/40',
+  r: '#cd3131', // '31/41',
+  g: '#0dbc79', // '32/42',
+  y: '#e5e510', // '33/43',
+  bl: '#2472c8', // '34/44',
+  m: '#bc3fbc', // '35/45',
+  c: '#11a8cd', // '36/46',
+  w: '#e5e5e5', // '37/47',
+  gr: '#666666', // '90/100'
+  'b-br': '#666666', // '90/100',
+  'r-br': '#f14c4c', // '91/101',
+  'g-br': '#23d18b', // '92/102',
+  'y-br': '#f5f543', // '93/103',
+  'bl-br': '#3b8eea', // '94/104',
+  'm-br': '#d670d6', // '95/105',
+  'c-br': '#21b8db', // '96/106',
+  'w-br': '#e5e5e5', // '97/107',
+} as Record<string, string>
 
 //0-255 in 6 increments, used to generate 216 equally incrementing colors
 const colorIncrements216 = {
@@ -134,31 +134,31 @@ const colorIncrements216 = {
   2: 102,
   3: 153,
   4: 204,
-  5: 255
-} as Record<number, number>;
+  5: 255,
+} as Record<number, number>
 
 // #endregion commands
 
 export interface IStyle {
-  fg: string;
-  bg: string;
-  isFgRGB: boolean;
-  isBgRGB: boolean;
-  bold: boolean;
-  italic: boolean;
-  underline: boolean;
-  [key: string]: boolean | string;
+  fg: string
+  bg: string
+  isFgRGB: boolean
+  isBgRGB: boolean
+  bold: boolean
+  italic: boolean
+  underline: boolean
+  [key: string]: boolean | string
 }
 
 interface IRGBColor {
-  r: number;
-  g: number;
-  b: number;
+  r: number
+  g: number
+  b: number
 }
 
 interface IAnsiEscapeCodeState {
-  output: string;
-  style?: IStyle;
+  output: string
+  style?: IStyle
 }
 
 export class Parser {
@@ -167,196 +167,196 @@ export class Parser {
    * @param content content to parse
    */
   public getStates(content: string): IAnsiEscapeCodeState[] {
-    const result: IAnsiEscapeCodeState[] = [];
+    const result: IAnsiEscapeCodeState[] = []
     // Eg: "ESC[0KESC[33;1mWorker informationESC[0m
     if (!_ansiEscapeCodeRegex.test(content)) {
       // Not of interest, don't touch content
       return [
         {
-          output: content
-        }
-      ];
+          output: content,
+        },
+      ]
     }
 
-    let command = "";
-    let currentText = "";
-    let code = "";
-    let state = {} as IAnsiEscapeCodeState;
-    let isCommandActive = false;
-    let codes = [];
+    let command = ''
+    let currentText = ''
+    let code = ''
+    let state = {} as IAnsiEscapeCodeState
+    let isCommandActive = false
+    let codes = []
     for (let index = 0; index < content.length; index++) {
-      const character = content[index];
+      const character = content[index]
       if (isCommandActive) {
-        if (character === ";") {
+        if (character === ';') {
           if (code) {
-            codes.push(code);
-            code = "";
+            codes.push(code)
+            code = ''
           }
-        } else if (character === "m") {
+        } else if (character === 'm') {
           if (code) {
-            isCommandActive = false;
+            isCommandActive = false
             // done
-            codes.push(code);
-            state.style = state.style || ({} as IStyle);
+            codes.push(code)
+            state.style = state.style || ({} as IStyle)
 
-            let setForeground = false;
-            let setBackground = false;
-            let isSingleColorCode = false;
-            let isRGBColorCode = false;
-            const rgbColors: number[] = [];
+            let setForeground = false
+            let setBackground = false
+            let isSingleColorCode = false
+            let isRGBColorCode = false
+            const rgbColors: number[] = []
 
             for (const currentCode of codes) {
-              const style = state.style;
-              const codeNumber = parseInt(currentCode);
+              const style = state.style
+              const codeNumber = parseInt(currentCode)
               if (setForeground && isSingleColorCode) {
                 // set foreground color using 8-bit (256 color) palette - Esc[ 38:5:<n> m
                 if (codeNumber >= 0 && codeNumber < 16) {
-                  style.fg = this._get8BitColorClasses(codeNumber);
+                  style.fg = this._get8BitColorClasses(codeNumber)
                 } else if (codeNumber >= 16 && codeNumber < 256) {
-                  style.fg = this._get8BitRGBColors(codeNumber);
-                  style.isFgRGB = true;
+                  style.fg = this._get8BitRGBColors(codeNumber)
+                  style.isFgRGB = true
                 }
-                setForeground = false;
-                isSingleColorCode = false;
+                setForeground = false
+                isSingleColorCode = false
               } else if (setForeground && isRGBColorCode) {
                 // set foreground color using 24-bit (true color) palette - Esc[ 38:2:<r>:<g>:<b> m
                 if (codeNumber >= 0 && codeNumber < 256) {
-                  rgbColors.push(codeNumber);
+                  rgbColors.push(codeNumber)
                   if (rgbColors.length === 3) {
-                    style.fg = `${rgbColors[0]},${rgbColors[1]},${rgbColors[2]}`;
-                    style.isFgRGB = true;
-                    rgbColors.length = 0; // clear array
-                    setForeground = false;
-                    isRGBColorCode = false;
+                    style.fg = `${rgbColors[0]},${rgbColors[1]},${rgbColors[2]}`
+                    style.isFgRGB = true
+                    rgbColors.length = 0 // clear array
+                    setForeground = false
+                    isRGBColorCode = false
                   }
                 }
               } else if (setBackground && isSingleColorCode) {
                 // set background color using 8-bit (256 color) palette - Esc[ 48:5:<n> m
                 if (codeNumber >= 0 && codeNumber < 16) {
-                  style.bg = this._get8BitColorClasses(codeNumber);
+                  style.bg = this._get8BitColorClasses(codeNumber)
                 } else if (codeNumber >= 16 && codeNumber < 256) {
-                  style.bg = this._get8BitRGBColors(codeNumber);
-                  style.isBgRGB = true;
+                  style.bg = this._get8BitRGBColors(codeNumber)
+                  style.isBgRGB = true
                 }
-                setBackground = false;
-                isSingleColorCode = false;
+                setBackground = false
+                isSingleColorCode = false
               } else if (setBackground && isRGBColorCode) {
                 // set background color using 24-bit (true color) palette - Esc[ 48:2:<r>:<g>:<b> m
                 if (codeNumber >= 0 && codeNumber < 256) {
-                  rgbColors.push(codeNumber);
+                  rgbColors.push(codeNumber)
                   if (rgbColors.length === 3) {
-                    style.bg = `${rgbColors[0]},${rgbColors[1]},${rgbColors[2]}`;
-                    style.isBgRGB = true;
-                    rgbColors.length = 0; // clear array
-                    setBackground = false;
-                    isRGBColorCode = false;
+                    style.bg = `${rgbColors[0]},${rgbColors[1]},${rgbColors[2]}`
+                    style.isBgRGB = true
+                    rgbColors.length = 0 // clear array
+                    setBackground = false
+                    isRGBColorCode = false
                   }
                 }
               } else if (setForeground || setBackground) {
                 if (codeNumber === 5) {
-                  isSingleColorCode = true;
+                  isSingleColorCode = true
                 } else if (codeNumber === 2) {
-                  isRGBColorCode = true;
+                  isRGBColorCode = true
                 }
               } else if (fgColors[currentCode]) {
-                style.fg = fgColors[currentCode];
+                style.fg = fgColors[currentCode]
               } else if (bgColors[currentCode]) {
-                style.bg = bgColors[currentCode];
+                style.bg = bgColors[currentCode]
               } else if (currentCode === Resets.Reset) {
                 // reset
-                state.style = {} as IStyle;
+                state.style = {} as IStyle
               } else if (currentCode === Resets.Set_Bg) {
-                setBackground = true;
+                setBackground = true
               } else if (currentCode === Resets.Set_Fg) {
-                setForeground = true;
+                setForeground = true
               } else if (currentCode === Resets.Default_Fg) {
-                style.fg = "";
+                style.fg = ''
               } else if (currentCode === Resets.Default_Bg) {
-                style.bg = "";
+                style.bg = ''
               } else if (codeNumber >= 91 && codeNumber <= 97) {
-                style.fg = fgColors[codeNumber - 60] + BrightClassPostfix;
+                style.fg = fgColors[codeNumber - 60] + BrightClassPostfix
               } else if (codeNumber >= 101 && codeNumber <= 107) {
-                style.bg = bgColors[codeNumber - 60] + BrightClassPostfix;
+                style.bg = bgColors[codeNumber - 60] + BrightClassPostfix
               } else if (specials[currentCode]) {
-                style[specials[currentCode]] = true;
+                style[specials[currentCode]] = true
               } else if (currentCode === Resets.Bold) {
-                style.bold = false;
+                style.bold = false
               } else if (currentCode === Resets.Italic) {
-                style.italic = false;
+                style.italic = false
               } else if (currentCode === Resets.Underline) {
-                style.underline = false;
+                style.underline = false
               }
             }
 
             // clear
-            command = "";
-            currentText = "";
-            code = "";
+            command = ''
+            currentText = ''
+            code = ''
           } else {
             // To handle ESC[m, we should just ignore them
-            isCommandActive = false;
-            command = "";
-            state.style = {} as IStyle;
+            isCommandActive = false
+            command = ''
+            state.style = {} as IStyle
           }
 
-          codes = [];
+          codes = []
         } else if (isNaN(parseInt(character))) {
           // if this is not a number, eg: 0K, this isn't something we support
-          code = "";
-          isCommandActive = false;
-          command = "";
+          code = ''
+          isCommandActive = false
+          command = ''
         } else if (code.length === 4) {
           // we probably got code that we don't support, ignore
-          code = "";
-          isCommandActive = false;
+          code = ''
+          isCommandActive = false
           if (character !== ESC) {
             // if this is not an ESC, let's not consider command from now on
             // eg: ESC[0Ksometexthere, at this point, code would be 0K, character would be 's'
-            command = "";
-            currentText += character;
+            command = ''
+            currentText += character
           }
         } else {
-          code += character;
+          code += character
         }
 
-        continue;
+        continue
       } else if (command) {
-        if (command === ESC && character === "[") {
-          isCommandActive = true;
+        if (command === ESC && character === '[') {
+          isCommandActive = true
           // push state
           if (currentText) {
-            state.output = currentText;
-            result.push(state);
+            state.output = currentText
+            result.push(state)
             // deep copy exisiting style for the line to preserve different styles between commands
-            let previousStyle;
+            let previousStyle
             if (state.style) {
-              previousStyle = Object.assign({}, state.style);
+              previousStyle = Object.assign({}, state.style)
             }
-            state = {} as IAnsiEscapeCodeState;
+            state = {} as IAnsiEscapeCodeState
             if (previousStyle) {
-              state.style = previousStyle;
+              state.style = previousStyle
             }
-            currentText = "";
+            currentText = ''
           }
         }
 
-        continue;
+        continue
       }
 
       if (character === ESC) {
-        command = character;
+        command = character
       } else {
-        currentText += character;
+        currentText += character
       }
     }
 
     // still pending text
     if (currentText) {
-      state.output = currentText + (command ? command : "");
-      result.push(state);
+      state.output = currentText + (command ? command : '')
+      result.push(state)
     }
 
-    return result;
+    return result
   }
 
   /**
@@ -365,12 +365,12 @@ export class Parser {
    * @returns a string that is guaranteed to be unique for every different style
    */
   public static styleKey(style: IStyle): string {
-    const fg = style.fg ?? "-";
-    const bg = style.bg ?? "-";
-    const bold = style.bold ? "b" : "n";
-    const ital = style.italic ? "i" : "n";
-    const underline = style.underline ? "u" : "n";
-    return fg + bg + bold + ital + underline;
+    const fg = style.fg ?? '-'
+    const bg = style.bg ?? '-'
+    const bold = style.bold ? 'b' : 'n'
+    const ital = style.italic ? 'i' : 'n'
+    const underline = style.underline ? 'u' : 'n'
+    return fg + bg + bold + ital + underline
   }
 
   /**
@@ -380,13 +380,13 @@ export class Parser {
    * @param codeNumber 16-256 number
    */
   private _get8BitRGBColors(codeNumber: number): string {
-    let rgbColor: IRGBColor;
+    let rgbColor: IRGBColor
     if (codeNumber < 232) {
-      rgbColor = this._get216Color(codeNumber - 16);
+      rgbColor = this._get216Color(codeNumber - 16)
     } else {
-      rgbColor = this._get8bitGrayscale(codeNumber - 232);
+      rgbColor = this._get8bitGrayscale(codeNumber - 232)
     }
-    return `${rgbColor.r},${rgbColor.g},${rgbColor.b}`;
+    return `${rgbColor.r},${rgbColor.g},${rgbColor.b}`
   }
 
   /**
@@ -394,13 +394,13 @@ export class Parser {
    * @param codeNumber 0-15 number that indicates the standard or high intensity color code that should be used
    */
   private _get8BitColorClasses(codeNumber: number): string {
-    let colorClass = "";
+    let colorClass = ''
     if (codeNumber < 8) {
-      colorClass = `${base8BitColors[codeNumber]}`;
+      colorClass = `${base8BitColors[codeNumber]}`
     } else {
-      colorClass = `${base8BitColors[codeNumber - 8] + BrightClassPostfix}`;
+      colorClass = `${base8BitColors[codeNumber - 8] + BrightClassPostfix}`
     }
-    return colorClass;
+    return colorClass
   }
 
   /**
@@ -412,8 +412,8 @@ export class Parser {
     return {
       r: colorIncrements216[Math.floor(increment / 36)],
       g: colorIncrements216[Math.floor(increment / 6) % 6],
-      b: colorIncrements216[increment % 6]
-    };
+      b: colorIncrements216[increment % 6],
+    }
   }
 
   /**
@@ -421,11 +421,11 @@ export class Parser {
    * @param increment 0-23 value
    */
   private _get8bitGrayscale(increment: number): IRGBColor {
-    const colorCode = increment * 10 + 8;
+    const colorCode = increment * 10 + 8
     return {
       r: colorCode,
       g: colorCode,
-      b: colorCode
-    };
+      b: colorCode,
+    }
   }
 }

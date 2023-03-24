@@ -1,67 +1,67 @@
-import * as vscode from "vscode";
+import * as vscode from 'vscode'
 
-import {GitHubRepoContext} from "../../git/repository";
-import {RunStore} from "../../store/store";
-import {WorkflowRun} from "../../store/workflowRun";
-import {getIconForWorkflowRun} from "../icons";
-import {getEventString, getStatusString} from "./runTooltipHelper";
-import {NoWorkflowJobsNode} from "./noWorkflowJobsNode";
-import {PreviousAttemptsNode} from "./previousAttemptsNode";
-import {WorkflowJobNode} from "./workflowJobNode";
+import {GitHubRepoContext} from '../../git/repository'
+import {RunStore} from '../../store/store'
+import {WorkflowRun} from '../../store/workflowRun'
+import {getIconForWorkflowRun} from '../icons'
+import {getEventString, getStatusString} from './runTooltipHelper'
+import {NoWorkflowJobsNode} from './noWorkflowJobsNode'
+import {PreviousAttemptsNode} from './previousAttemptsNode'
+import {WorkflowJobNode} from './workflowJobNode'
 
-export type WorkflowRunCommandArgs = Pick<WorkflowRunNode, "gitHubRepoContext" | "run" | "store">;
+export type WorkflowRunCommandArgs = Pick<WorkflowRunNode, 'gitHubRepoContext' | 'run' | 'store'>
 
 export class WorkflowRunNode extends vscode.TreeItem {
   constructor(
     public readonly store: RunStore,
     public readonly gitHubRepoContext: GitHubRepoContext,
     public run: WorkflowRun,
-    public readonly workflowName?: string
+    public readonly workflowName?: string,
   ) {
-    super(WorkflowRunNode._getLabel(run, workflowName), vscode.TreeItemCollapsibleState.Collapsed);
+    super(WorkflowRunNode._getLabel(run, workflowName), vscode.TreeItemCollapsibleState.Collapsed)
 
-    this.updateRun(run);
+    this.updateRun(run)
   }
 
   updateRun(run: WorkflowRun) {
-    this.run = run;
-    this.label = WorkflowRunNode._getLabel(run, this.workflowName);
+    this.run = run
+    this.label = WorkflowRunNode._getLabel(run, this.workflowName)
 
-    this.contextValue = this.run.contextValue(this.gitHubRepoContext.permissionLevel);
+    this.contextValue = this.run.contextValue(this.gitHubRepoContext.permissionLevel)
 
-    this.iconPath = getIconForWorkflowRun(this.run.run);
-    this.tooltip = this.getTooltip();
+    this.iconPath = getIconForWorkflowRun(this.run.run)
+    this.tooltip = this.getTooltip()
   }
 
   async getJobs(): Promise<(WorkflowJobNode | NoWorkflowJobsNode | PreviousAttemptsNode)[]> {
-    const jobs = await this.run.jobs();
+    const jobs = await this.run.jobs()
 
     const children: (WorkflowJobNode | NoWorkflowJobsNode | PreviousAttemptsNode)[] = jobs.map(
-      job => new WorkflowJobNode(this.gitHubRepoContext, job)
-    );
+      job => new WorkflowJobNode(this.gitHubRepoContext, job),
+    )
 
     if (this.run.hasPreviousAttempts) {
-      children.push(new PreviousAttemptsNode(this.gitHubRepoContext, this.run));
+      children.push(new PreviousAttemptsNode(this.gitHubRepoContext, this.run))
     }
 
-    return children;
+    return children
   }
 
   getTooltip(): vscode.MarkdownString {
-    let markdownString = "";
+    let markdownString = ''
 
     if (this.run.hasPreviousAttempts && this.run.run.run_attempt) {
-      markdownString += `Attempt #${this.run.run.run_attempt} `;
+      markdownString += `Attempt #${this.run.run.run_attempt} `
     }
 
-    markdownString += getStatusString(this.run, markdownString.length == 0);
-    markdownString += `\n\n`;
-    markdownString += getEventString(this.run);
+    markdownString += getStatusString(this.run, markdownString.length == 0)
+    markdownString += `\n\n`
+    markdownString += getEventString(this.run)
 
-    return new vscode.MarkdownString(markdownString);
+    return new vscode.MarkdownString(markdownString)
   }
 
   private static _getLabel(run: WorkflowRun, workflowName?: string): string {
-    return `${workflowName ? workflowName + " " : ""}#${run.run.run_number}`;
+    return `${workflowName ? workflowName + ' ' : ''}#${run.run.run_number}`
   }
 }

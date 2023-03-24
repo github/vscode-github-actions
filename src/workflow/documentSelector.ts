@@ -1,3 +1,3 @@
 export const WorkflowSelector = {
-  pattern: "**/.github/workflows/*.{yaml,yml}"
-};
+  pattern: '**/.github/workflows/*.{yaml,yml}',
+}

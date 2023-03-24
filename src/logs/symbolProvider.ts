@@ -1,24 +1,24 @@
-import * as vscode from "vscode";
-import {getLogInfo} from "./logInfo";
+import * as vscode from 'vscode'
+import {getLogInfo} from './logInfo'
 
 export class WorkflowStepLogSymbolProvider implements vscode.DocumentSymbolProvider {
   provideDocumentSymbols(
-    document: vscode.TextDocument
+    document: vscode.TextDocument,
   ): vscode.ProviderResult<vscode.SymbolInformation[] | vscode.DocumentSymbol[]> {
-    const logInfo = getLogInfo(document.uri);
+    const logInfo = getLogInfo(document.uri)
     if (!logInfo) {
-      return [];
+      return []
     }
 
     return logInfo.sections.map(
       s =>
         new vscode.DocumentSymbol(
-          s.name || "Setup",
-          "Step",
+          s.name || 'Setup',
+          'Step',
           vscode.SymbolKind.Function,
           new vscode.Range(s.start, 0, s.end, 0),
-          new vscode.Range(s.start, 0, s.end, 0)
-        )
-    );
+          new vscode.Range(s.start, 0, s.end, 0),
+        ),
+    )
   }
 }

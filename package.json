@@ -510,12 +510,13 @@
     "open-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix",
-    "format": "prettier --write '**/*.ts'",
-    "format-check": "prettier --check '**/*.ts'",
+    "format": "prettier --write .",
+    "format-check": "prettier --check .",
     "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest",
     "test-watch": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --watch"
   },
   "devDependencies": {
+    "@github/prettier-config": "^0.0.6",
     "@types/jest": "^29.0.3",
     "@types/libsodium-wrappers": "^0.7.10",
     "@types/uuid": "^3.4.6",
@@ -554,5 +555,6 @@
     "util": "^0.12.1",
     "uuid": "^3.3.3",
     "vscode-languageclient": "^8.0.2"
-  }
+  },
+  "prettier": "@github/prettier-config"
 }

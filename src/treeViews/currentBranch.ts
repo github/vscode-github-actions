@@ -1,20 +1,20 @@
-import * as vscode from "vscode";
+import * as vscode from 'vscode'
 
-import {canReachGitHubAPI} from "../api/canReachGitHubAPI";
-import {getCurrentBranch, getGitHubContext, GitHubRepoContext} from "../git/repository";
-import {CurrentBranchRepoNode} from "./current-branch/currentBranchRepoNode";
+import {canReachGitHubAPI} from '../api/canReachGitHubAPI'
+import {getCurrentBranch, getGitHubContext, GitHubRepoContext} from '../git/repository'
+import {CurrentBranchRepoNode} from './current-branch/currentBranchRepoNode'
 
-import {NoRunForBranchNode} from "./current-branch/noRunForBranchNode";
-import {log, logDebug} from "../log";
-import {RunStore} from "../store/store";
-import {AttemptNode} from "./shared/attemptNode";
-import {GitHubAPIUnreachableNode} from "./shared/gitHubApiUnreachableNode";
-import {NoWorkflowJobsNode} from "./shared/noWorkflowJobsNode";
-import {PreviousAttemptsNode} from "./shared/previousAttemptsNode";
-import {WorkflowJobNode} from "./shared/workflowJobNode";
-import {WorkflowRunNode} from "./shared/workflowRunNode";
-import {WorkflowRunTreeDataProvider} from "./workflowRunTreeDataProvider";
-import {WorkflowStepNode} from "./workflows/workflowStepNode";
+import {NoRunForBranchNode} from './current-branch/noRunForBranchNode'
+import {log, logDebug} from '../log'
+import {RunStore} from '../store/store'
+import {AttemptNode} from './shared/attemptNode'
+import {GitHubAPIUnreachableNode} from './shared/gitHubApiUnreachableNode'
+import {NoWorkflowJobsNode} from './shared/noWorkflowJobsNode'
+import {PreviousAttemptsNode} from './shared/previousAttemptsNode'
+import {WorkflowJobNode} from './shared/workflowJobNode'
+import {WorkflowRunNode} from './shared/workflowRunNode'
+import {WorkflowRunTreeDataProvider} from './workflowRunTreeDataProvider'
+import {WorkflowStepNode} from './workflows/workflowStepNode'
 
 type CurrentBranchTreeNode =
   | CurrentBranchRepoNode
@@ -25,94 +25,94 @@ type CurrentBranchTreeNode =
   | NoWorkflowJobsNode
   | WorkflowStepNode
   | NoRunForBranchNode
-  | GitHubAPIUnreachableNode;
+  | GitHubAPIUnreachableNode
 
 export class CurrentBranchTreeProvider
   extends WorkflowRunTreeDataProvider
   implements vscode.TreeDataProvider<CurrentBranchTreeNode>
 {
-  protected _onDidChangeTreeData = new vscode.EventEmitter<CurrentBranchTreeNode | null>();
-  readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
+  protected _onDidChangeTreeData = new vscode.EventEmitter<CurrentBranchTreeNode | null>()
+  readonly onDidChangeTreeData = this._onDidChangeTreeData.event
 
   constructor(store: RunStore) {
-    super(store);
+    super(store)
   }
 
   protected _updateNode(node: WorkflowRunNode): void {
-    this._onDidChangeTreeData.fire(node);
+    this._onDidChangeTreeData.fire(node)
   }
 
   async refresh(): Promise<void> {
     // Don't delete all the nodes if we can't reach GitHub API
     if (await canReachGitHubAPI()) {
-      this._onDidChangeTreeData.fire(null);
+      this._onDidChangeTreeData.fire(null)
     } else {
-      await vscode.window.showWarningMessage("Unable to refresh, could not reach GitHub API");
+      await vscode.window.showWarningMessage('Unable to refresh, could not reach GitHub API')
     }
   }
 
   getTreeItem(element: CurrentBranchTreeNode): vscode.TreeItem | Thenable<vscode.TreeItem> {
-    return element;
+    return element
   }
 
   async getChildren(element?: CurrentBranchTreeNode | undefined): Promise<CurrentBranchTreeNode[]> {
     if (!element) {
-      const gitHubContext = await getGitHubContext();
+      const gitHubContext = await getGitHubContext()
       if (!gitHubContext) {
-        return [new GitHubAPIUnreachableNode()];
+        return [new GitHubAPIUnreachableNode()]
       }
 
       if (gitHubContext.repos.length === 1) {
-        const repoContext = gitHubContext.repos[0];
-        const currentBranch = getCurrentBranch(repoContext.repositoryState);
+        const repoContext = gitHubContext.repos[0]
+        const currentBranch = getCurrentBranch(repoContext.repositoryState)
         if (!currentBranch) {
-          log(`Could not find current branch for ${repoContext.name}`);
-          return [];
+          log(`Could not find current branch for ${repoContext.name}`)
+          return []
         }
 
-        return (await this.getRuns(repoContext, currentBranch)) || [];
+        return (await this.getRuns(repoContext, currentBranch)) || []
       }
 
       if (gitHubContext.repos.length > 1) {
         return gitHubContext.repos
           .map((repoContext): CurrentBranchRepoNode | undefined => {
-            const currentBranch = getCurrentBranch(repoContext.repositoryState);
+            const currentBranch = getCurrentBranch(repoContext.repositoryState)
             if (!currentBranch) {
-              log(`Could not find current branch for ${repoContext.name}`);
-              return undefined;
+              log(`Could not find current branch for ${repoContext.name}`)
+              return undefined
             }
 
-            return new CurrentBranchRepoNode(repoContext, currentBranch);
+            return new CurrentBranchRepoNode(repoContext, currentBranch)
           })
-          .filter(x => x !== undefined) as CurrentBranchRepoNode[];
+          .filter(x => x !== undefined) as CurrentBranchRepoNode[]
       }
     } else if (element instanceof CurrentBranchRepoNode) {
-      return this.getRuns(element.gitHubRepoContext, element.currentBranchName);
+      return this.getRuns(element.gitHubRepoContext, element.currentBranchName)
     } else if (element instanceof WorkflowRunNode) {
-      return element.getJobs();
+      return element.getJobs()
     } else if (element instanceof PreviousAttemptsNode) {
-      return element.getAttempts();
+      return element.getAttempts()
     } else if (element instanceof AttemptNode) {
-      return element.getJobs();
+      return element.getJobs()
     } else if (element instanceof WorkflowJobNode) {
-      return element.getSteps();
+      return element.getSteps()
     }
 
-    return [];
+    return []
   }
 
   private async getRuns(gitHubRepoContext: GitHubRepoContext, currentBranchName: string): Promise<WorkflowRunNode[]> {
-    logDebug("Getting workflow runs for branch");
+    logDebug('Getting workflow runs for branch')
 
     const result = await gitHubRepoContext.client.actions.listWorkflowRunsForRepo({
       owner: gitHubRepoContext.owner,
       repo: gitHubRepoContext.name,
-      branch: currentBranchName
-    });
+      branch: currentBranchName,
+    })
 
-    const resp = result.data;
-    const runs = resp.workflow_runs;
+    const resp = result.data
+    const runs = resp.workflow_runs
 
-    return this.runNodes(gitHubRepoContext, runs, true);
+    return this.runNodes(gitHubRepoContext, runs, true)
   }
 }

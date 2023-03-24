@@ -1,1 +1,1 @@
-export const LogScheme = "gh-actions";
+export const LogScheme = 'gh-actions'
