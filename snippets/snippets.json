@@ -26,5 +26,52 @@
         "body": [
             "${1:expression} || ${2:expression}"
         ]
+    },
+    "bash if": {
+        "description": "if operator",
+        "prefix": "bash:if",
+        "body": [
+            "if ${1:command}; then",
+            "\t$0",
+            "fi"
+        ]
+    },
+    "bash if else": {
+        "description": "if else operator",
+        "prefix": "bash:if-else",
+        "body": [
+            "if ${1:command}; then",
+            "\t${2:echo}",
+            "else",
+            "\t$0",
+            "fi"
+        ]
+    },
+    "bash while": {
+        "description": "while operator",
+        "prefix": "bash:while",
+        "body": [
+            "while ${1:command}; do",
+            "\t$0",
+            "done"
+        ]
+    },
+    "bash until": {
+        "description": "until operator",
+        "prefix": "bash:until",
+        "body": [
+            "until ${1:command}; do",
+            "\t$0",
+            "done"
+        ]
+    },
+    "bash for": {
+        "description": "for operator",
+        "prefix": "bash:for",
+        "body": [
+            "for ${1:variable} in ${2:list}; do",
+            "\t$0",
+            "done"
+        ]
     }
 }
