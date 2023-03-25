@@ -168,6 +168,48 @@
             "}"
         ]
     },
+    "sed filter by pattern": {
+        "description": "pattern filter",
+        "prefix": "sed:filter-by-pattern",
+        "body": [
+            "sed ${1|--regexp-extended,-E|} ${2|--quiet,-n|} '/${3:pattern}/p' ${4:path/to/file}"
+        ]
+    },
+    "sed filter by line number": {
+        "description": "line number filter",
+        "prefix": "sed:filter-by-line-number",
+        "body": [
+            "sed ${1|--regexp-extended,-E|} ${2|--quiet,-n|} '${3:number}p' ${4:path/to/file}"
+        ]
+    },
+    "sed filter by line numbers": {
+        "description": "line number filter",
+        "prefix": "sed:filter-by-line-numbers",
+        "body": [
+            "sed ${1|--regexp-extended,-E|} ${2|--quiet,-n|} '${3:from},${4:to}p' ${5:path/to/file}"
+        ]
+    },
+    "sed replace single": {
+        "description": "singule replacement",
+        "prefix": "sed:single-replacement",
+        "body": [
+            "sed ${1|--regexp-extended,-E|} 's/${2:pattern}/${3:replacement}/' ${4:path/to/file}"
+        ]
+    },
+    "sed replace globally": {
+        "description": "global replacement",
+        "prefix": "sed:global-replacement",
+        "body": [
+            "sed ${1|--regexp-extended,-E|} 's/${2:pattern}/${3:replacement}/g' ${4:path/to/file}"
+        ]
+    },
+    "sed transliterate": {
+        "description": "transliteration",
+        "prefix": "sed:transliteration",
+        "body": [
+            "sed ${1|--regexp-extended,-E|} 'y/${2:source-characters}/${3:replacement-characters}/g' ${4:path/to/file}"
+        ]
+    },
     "step": {
         "description": "step definition",
         "prefix": "step",
