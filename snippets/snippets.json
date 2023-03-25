@@ -245,6 +245,18 @@
             "awk '{ gsub(\"${1:pattern}\", \"${2:replacement}\") }' ${3:path/to/file}"
         ]
     },
+    "trigger": {
+        "description": "trigger definition",
+        "prefix": "trigger",
+        "body": [
+            "on:",
+            "  ${1:event}:",
+            "    branches:",
+            "    - ${2:branch}",
+            "",
+            "  workflow_dispatch:"
+        ]
+    },
     "step": {
         "description": "step definition",
         "prefix": "step",
