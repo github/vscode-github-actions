@@ -1,0 +1,30 @@
+{
+    "not": {
+        "description": "! operator",
+        "prefix": "not",
+        "body": [
+            "!${1:expression}"
+        ]
+    },
+    "compare to": {
+        "description": "comparison operator",
+        "prefix": "compare-to",
+        "body": [
+            "${1:expression} ${2|<,>,<=,>=,==,!=|} ${3:expression}"
+        ]
+    },
+    "and": {
+        "description": "&& operator",
+        "prefix": "and",
+        "body": [
+            "${1:expression} && ${2:expression}"
+        ]
+    },
+    "or": {
+        "description": "|| operator",
+        "prefix": "or",
+        "body": [
+            "${1:expression} || ${2:expression}"
+        ]
+    }
+}

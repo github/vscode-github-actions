@@ -30,6 +30,12 @@
   "main": "./dist/extension-node.js",
   "browser": "./dist/extension-web.js",
   "contributes": {
+    "snippets": [
+      {
+        "language": "github-actions-workflow",
+        "path": "./snippets/snippets.json"
+      }
+    ],
     "languages": [
       {
         "id": "github-actions-workflow",
