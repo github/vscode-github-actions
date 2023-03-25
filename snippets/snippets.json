@@ -210,6 +210,41 @@
             "sed ${1|--regexp-extended,-E|} 'y/${2:source-characters}/${3:replacement-characters}/g' ${4:path/to/file}"
         ]
     },
+    "awk filter by pattern": {
+        "description": "pattern filter",
+        "prefix": "awk:filter-by-pattern",
+        "body": [
+            "awk '/${1:pattern}/' ${2:path/to/file}"
+        ]
+    },
+    "awk filter by line number": {
+        "description": "line number filter",
+        "prefix": "awk:filter-by-line-number",
+        "body": [
+            "awk 'NR == ${1:number}' ${2:path/to/file}"
+        ]
+    },
+    "awk filter by line numbers": {
+        "description": "line number filter",
+        "prefix": "awk:filter-by-line-numbers",
+        "body": [
+            "awk 'NR >= ${1:from} && NR <= ${2:to}' ${3:path/to/file}"
+        ]
+    },
+    "awk replace single": {
+        "description": "singule replacement",
+        "prefix": "awk:single-replacement",
+        "body": [
+            "awk '{ sub(\"${1:pattern}\", \"${2:replacement}\") }' ${3:path/to/file}"
+        ]
+    },
+    "awk replace globally": {
+        "description": "global replacement",
+        "prefix": "awk:global-replacement",
+        "body": [
+            "awk '{ gsub(\"${1:pattern}\", \"${2:replacement}\") }' ${3:path/to/file}"
+        ]
+    },
     "step": {
         "description": "step definition",
         "prefix": "step",
