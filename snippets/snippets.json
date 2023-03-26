@@ -168,6 +168,20 @@
             "}"
         ]
     },
+    "env change directory": {
+        "description": "directory change",
+        "prefix": "env:directory-change",
+        "body": [
+            "sed ${1|--chdir,-C|} ${2:command}"
+        ]
+    },
+    "env ignore environment": {
+        "description": "environment ignore",
+        "prefix": "env:environment-ignore",
+        "body": [
+            "sed ${1|--ignore-environment,-i|} ${2:command}"
+        ]
+    },
     "sed filter by pattern": {
         "description": "pattern filter",
         "prefix": "sed:filter-by-pattern",
