@@ -252,6 +252,13 @@
             "${1|Build,Lint,Test|} with ${2|`,',\"|}${3:tool}$2"
         ]
     },
+    "command": {
+        "description": "command",
+        "prefix": "command",
+        "body": [
+            "echo \"::${1|debug,notice,error,endgroup,echo,add-mask,group,warning|} ${2:parameter=value...}::${3:value}\""
+        ]
+    },
     "trigger": {
         "description": "trigger definition",
         "prefix": "trigger",
