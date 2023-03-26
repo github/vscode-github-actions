@@ -249,7 +249,7 @@
         "description": "step or job description",
         "prefix": "description",
         "body": [
-            "${1|Build,Lint,Test|} with `${2:tool}`"
+            "${1|Build,Lint,Test|} with ${2|`,',\"|}${3:tool}$2"
         ]
     },
     "trigger": {
