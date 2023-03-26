@@ -272,7 +272,7 @@
         "body": [
             "${1:job}:",
             "  name: ${2:name}",
-            "  runs-on: ${3|ubuntu-latest,macos-latest,windows-latest|}",
+            "  runs-on: ${3:os}",
             "  steps:",
             "  - uses: actions/checkout@v${4:3}",
             "  - run: |",
