@@ -245,6 +245,13 @@
             "awk '{ gsub(\"${1:pattern}\", \"${2:replacement}\") }' ${3:path/to/file}"
         ]
     },
+    "description": {
+        "description": "step or job description",
+        "prefix": "description",
+        "body": [
+            "${1|Build,Lint,Test|} with `${2:tool}`"
+        ]
+    },
     "trigger": {
         "description": "trigger definition",
         "prefix": "trigger",
