@@ -34,6 +34,8 @@ Be more confident when authoring and modifying workflows. Find errors before com
 
 ![Video showing workflow validation and auto-completion](./media/authoring.gif)
 
+**Snippets**: the extension provides snippets to speed up creating workflows
+
 ## Getting started
 
 1. Install the extension from the [Marketplace](https://marketplace.visualstudio.com/items?itemName=github.vscode-github-actions)
