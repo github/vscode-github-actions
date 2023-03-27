@@ -17,13 +17,12 @@ root="$(dirname "$repo_root")"
 
 # Clone dependent repos
 echo "Cloning dependent repos..."
-clone_repo https://github.com/github/actions-languageservices "$root"/actions-languageservices
+clone_repo https://github.com/actions/languageservices "$root"/languageservices
 
 
 # Copy workspace files
 echo "Copying workspace files..."
 cp "$repo_root"/script/workspace/package.json "$root"
 cp "$repo_root"/script/workspace/vscode-github-actions.code-workspace "$root"
-cp "$repo_root"/script/workspace/.npmrc "$root"
 cp "$repo_root"/script/workspace/update-package-locks.sh "$root"
 cp "$repo_root"/script/workspace/watch.sh "$root"

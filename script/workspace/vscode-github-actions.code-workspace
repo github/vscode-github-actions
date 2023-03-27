@@ -1,9 +1,9 @@
 {
   "folders": [
-    {"path": "./actions-languageservices/expressions"},
-    {"path": "./actions-languageservices/workflow-parser"},
-    {"path": "./actions-languageservices/languageservice"},
-    {"path": "./actions-languageservices/languageserver"},
+    {"path": "./languageservices/expressions"},
+    {"path": "./languageservices/workflow-parser"},
+    {"path": "./languageservices/languageservice"},
+    {"path": "./languageservices/languageserver"},
     {"path": "./vscode-github-actions"}
   ],
   "extensions": {

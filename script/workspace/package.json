@@ -1,10 +1,10 @@
 {
   "private": true,
   "workspaces": [
-    "./actions-languageservices/expressions",
-    "./actions-languageservices/workflow-parser",
-    "./actions-languageservices/languageservice",
-    "./actions-languageservices/languageserver",
+    "./languageservices/expressions",
+    "./languageservices/workflow-parser",
+    "./languageservices/languageservice",
+    "./languageservices/languageserver",
     "./vscode-github-actions"
   ]
 }
