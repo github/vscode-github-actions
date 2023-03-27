@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-for DIR in "actions-languageservices" "vscode-github-actions"
+for DIR in "languageservices" "vscode-github-actions"
 do
   pushd $DIR
   # Trigger an npm i without workspaces support to update the local package-lock.json
