@@ -182,9 +182,16 @@
             "sed ${1|--ignore-environment,-i|} ${2:command}"
         ]
     },
-    "sed filter by pattern": {
-        "description": "pattern filter",
-        "prefix": "sed:filter-by-pattern",
+    "sed print": {
+        "description": "line print",
+        "prefix": "sed:print",
+        "body": [
+            "sed '' ${1:path/to/file}"
+        ]
+    },
+    "sed filter by line pattern": {
+        "description": "line pattern filter",
+        "prefix": "sed:filter-by-line-pattern",
         "body": [
             "sed ${1|--regexp-extended,-E|} ${2|--quiet,-n|} '/${3:pattern}/p' ${4:path/to/file}"
         ]
@@ -204,7 +211,7 @@
         ]
     },
     "sed replace single": {
-        "description": "singule replacement",
+        "description": "single replacement",
         "prefix": "sed:single-replacement",
         "body": [
             "sed ${1|--regexp-extended,-E|} 's/${2:pattern}/${3:replacement}/' ${4:path/to/file}"
@@ -224,9 +231,16 @@
             "sed ${1|--regexp-extended,-E|} 'y/${2:source-characters}/${3:replacement-characters}/g' ${4:path/to/file}"
         ]
     },
-    "awk filter by pattern": {
-        "description": "pattern filter",
-        "prefix": "awk:filter-by-pattern",
+    "awk print": {
+        "description": "line print",
+        "prefix": "awk:print",
+        "body": [
+            "awk '{ print $0 }' ${1:path/to/file}"
+        ]
+    },
+    "awk filter by line pattern": {
+        "description": "line pattern filter",
+        "prefix": "awk:filter-by-line-pattern",
         "body": [
             "awk '/${1:pattern}/' ${2:path/to/file}"
         ]
@@ -246,7 +260,7 @@
         ]
     },
     "awk replace single": {
-        "description": "singule replacement",
+        "description": "single replacement",
         "prefix": "awk:single-replacement",
         "body": [
             "awk '{ sub(\"${1:pattern}\", \"${2:replacement}\") }' ${3:path/to/file}"
