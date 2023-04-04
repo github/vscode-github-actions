@@ -8,7 +8,8 @@
       "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
       "preLaunchTask": "npm: watch",
       "smartStep": true,
-      "sourceMaps": true
+      "sourceMaps": true,
+      "resolveSourceMapLocations": []
     },
     {
       "type": "node",
