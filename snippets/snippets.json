@@ -31,7 +31,7 @@
         "description": "if operator",
         "prefix": "bash:if",
         "body": [
-            "if ${1:command}; then",
+            "if ${1:condition}; then",
             "\t$0",
             "fi"
         ]
@@ -40,7 +40,7 @@
         "description": "if else operator",
         "prefix": "bash:if-else",
         "body": [
-            "if ${1:command}; then",
+            "if ${1:condition}; then",
             "\t${2:echo}",
             "else",
             "\t$0",
@@ -51,7 +51,7 @@
         "description": "while operator",
         "prefix": "bash:while",
         "body": [
-            "while ${1:command}; do",
+            "while ${1:condition}; do",
             "\t$0",
             "done"
         ]
@@ -60,7 +60,7 @@
         "description": "until operator",
         "prefix": "bash:until",
         "body": [
-            "until ${1:command}; do",
+            "until ${1:condition}; do",
             "\t$0",
             "done"
         ]
@@ -78,7 +78,7 @@
         "description": "if operator",
         "prefix": "cmd:if",
         "body": [
-            "if ${1:command} (",
+            "if ${1:condition} (",
             "\t$0",
             ")"
         ]
@@ -87,7 +87,7 @@
         "description": "if else operator",
         "prefix": "cmd:if-else",
         "body": [
-            "if ${1:command} (",
+            "if ${1:condition} (",
             "\t${2:echo}",
             ") else (",
             "\t$0",
@@ -107,7 +107,7 @@
         "description": "if operator",
         "prefix": "pwsh:if",
         "body": [
-            "if (${1:command})",
+            "if (${1:condition})",
             "{",
             "\t$0",
             "}"
@@ -117,7 +117,7 @@
         "description": "if else operator",
         "prefix": "pwsh:if-else",
         "body": [
-            "if (${1:command})",
+            "if (${1:condition})",
             "{",
             "\t${2:echo}",
             "}",
@@ -131,7 +131,7 @@
         "description": "while operator",
         "prefix": "pwsh:while",
         "body": [
-            "while (${1:command})",
+            "while (${1:condition})",
             "{",
             "\t$0",
             "}"
@@ -145,7 +145,7 @@
             "{",
             "\t$0",
             "}",
-            "while (${1:command})"
+            "while (${1:condition})"
         ]
     },
     "pwsh for": {
