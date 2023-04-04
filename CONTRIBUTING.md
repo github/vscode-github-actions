@@ -97,13 +97,13 @@ $ npm run lint-fix
 Check formatting with [prettier](https://prettier.io/):
 
 ```bash
-$ npm run format
+$ npm run format-check
 ```
 
-Run prettier and check all .ts files:
+Run prettier and automatically format:
 
 ```bash
-$ npm run format-check
+$ npm run format
 ```
 
 ### Package the extension
