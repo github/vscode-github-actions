@@ -42,13 +42,13 @@ The extension is written in TypeScript and built using [webpack](https://webpack
 
 ### Build
 
-Build changes:
+Build changes (one time):
 
 ```bash
 $ npm run build
 ```
 
-or to watch for changes
+Or to watch for changes and automatically rebuild every time on save:
 
 ```bash
 $ npm run watch
@@ -62,13 +62,19 @@ $ npm run watch
   * "Attach to Language-Server" - attach to an instance of the language server running on port `6010`
   * "Run Web Extension in VS Code" - run the [web version](https://code.visualstudio.com/api/extension-guides/web-extensions) of the extension
 
+### Dev loop
+1. Setup `Watch all & Launch Extension` under Debug and hit the green button
+1. `npm run watch`
+1. Make change
+1. Hit the refresh button in the debugger window to reload the extension in the development host
+
 ### Running tests
 
 ```bash
 $ npm test
 ```
 
-or to watch for changes and run tests:
+Or to watch for changes and run tests:
 
 ```bash
 $ npm run test-watch
@@ -91,13 +97,13 @@ $ npm run lint-fix
 Check formatting with [prettier](https://prettier.io/):
 
 ```bash
-$ npm run prettier
+$ npm run format
 ```
 
-Run prettier and automatically format:
+Run prettier and check all .ts files:
 
 ```bash
-$ npm run prettier-fix
+$ npm run format-check
 ```
 
 ### Package the extension
