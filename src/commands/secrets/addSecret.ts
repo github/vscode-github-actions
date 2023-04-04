@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
+import {GitHubRepoContext} from "../../git/repository";
 import {encodeSecret} from "../../secrets";
 import {EnvironmentSecretsCommandArgs} from "../../treeViews/settings/environmentSecretsNode";
 import {RepoSecretsCommandArgs} from "../../treeViews/settings/repoSecretsNode";
-import {GitHubRepoContext} from "../../git/repository";
 
 type AddSecretCommandArgs = RepoSecretsCommandArgs | EnvironmentSecretsCommandArgs;
 
@@ -12,7 +12,8 @@ export function registerAddSecret(context: vscode.ExtensionContext) {
       const {gitHubRepoContext} = args;
 
       const name = await vscode.window.showInputBox({
-        prompt: "Enter name for new secret"
+        prompt: "Enter name for new secret",
+        ignoreFocusOut: true
       });
 
       if (!name) {
@@ -20,7 +21,8 @@ export function registerAddSecret(context: vscode.ExtensionContext) {
       }
 
       const value = await vscode.window.showInputBox({
-        prompt: "Enter the new secret value"
+        prompt: "Enter the new secret value",
+        ignoreFocusOut: true
       });
 
       if (!value) {

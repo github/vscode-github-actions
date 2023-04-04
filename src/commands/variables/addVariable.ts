@@ -11,7 +11,8 @@ export function registerAddVariable(context: vscode.ExtensionContext) {
 
       const name = await vscode.window.showInputBox({
         prompt: "Enter name for new variable",
-        placeHolder: "Variable name"
+        placeHolder: "Variable name",
+        ignoreFocusOut: true
       });
 
       if (!name) {
@@ -19,7 +20,8 @@ export function registerAddVariable(context: vscode.ExtensionContext) {
       }
 
       const value = await vscode.window.showInputBox({
-        prompt: "Enter the new variable value"
+        prompt: "Enter the new variable value",
+        ignoreFocusOut: true
       });
 
       if (!value) {
