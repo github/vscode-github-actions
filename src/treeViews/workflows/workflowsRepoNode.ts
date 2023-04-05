@@ -36,6 +36,10 @@ export async function getWorkflowNodes(gitHubRepoContext: GitHubRepoContext) {
     workflows.map(async wf => {
       const workflowUri = getWorkflowUri(gitHubRepoContext, wf.path);
       const workflowContext = await getContextStringForWorkflow(workflowUri);
+      const nameWithoutNewlines = wf.name.replace(/(\r\n|\n|\r)/gm, " ");
+
+      // We are removing all newline characters from the workflow name for presentation purposes
+      wf.name = nameWithoutNewlines;
 
       return new WorkflowNode(gitHubRepoContext, wf, workflowContext);
     })
