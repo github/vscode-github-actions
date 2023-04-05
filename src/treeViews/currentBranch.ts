@@ -112,7 +112,15 @@ export class CurrentBranchTreeProvider
 
     const resp = result.data;
     const runs = resp.workflow_runs;
+    // We are removing newlines from workflow names for presentation purposes
+    const runsWithNamesWithNoNewlines = runs.map(run => {
+      if (run.name) {
+        run.name = run.name.replace(/(\r\n|\n|\r)/gm, " ");
+      }
 
-    return this.runNodes(gitHubRepoContext, runs, true);
+      return run;
+    });
+
+    return this.runNodes(gitHubRepoContext, runsWithNamesWithNoNewlines, true);
   }
 }
