@@ -50,7 +50,7 @@ Be more confident when authoring and modifying workflows. Find errors before com
 - Investigate failures and view logs
 - Modify settings like Environments, Secrets, and Variables
 
-Unfortunately, at this time we are not able to support the extension with [remote repositories](https://docs.github.com/en/get-started/getting-started-with-git/about-remote-repositories) (including [github.dev](github.dev) and [vscode.dev](vscode.dev)), so please use the extension with locally downloaded Github repositories for the best experience. Please check back here for updates in the future!
+Unfortunately, at this time we are not able to support the extension with [remote repositories](https://docs.github.com/en/get-started/getting-started-with-git/about-remote-repositories) (including [github.dev](https://github.dev/) and [vscode.dev](https://vscode.dev/)), so please use the extension with locally downloaded Github repositories for the best experience. Please check back here for updates in the future!
 
 ## Contributing
 
