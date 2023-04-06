@@ -8,6 +8,7 @@ import {RunStore} from "../store/store";
 import {CurrentBranchTreeProvider} from "./currentBranch";
 import {SettingsTreeProvider} from "./settings";
 import {WorkflowsTreeProvider} from "./workflows";
+import {setViewContexts} from "../viewContexts";
 
 export async function initTreeViews(context: vscode.ExtensionContext, store: RunStore): Promise<void> {
   const workflowTreeProvider = new WorkflowsTreeProvider(store);
@@ -23,8 +24,9 @@ export async function initTreeViews(context: vscode.ExtensionContext, store: Run
 
   context.subscriptions.push(
     vscode.commands.registerCommand("github-actions.explorer.refresh", async () => {
+      await setViewContexts();
+
       const canReachAPI = await canReachGitHubAPI();
-      await vscode.commands.executeCommand("setContext", "github-actions.internet-access", canReachAPI);
       if (canReachAPI) {
         await workflowTreeProvider.refresh();
         await settingsTreeProvider.refresh();

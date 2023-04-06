@@ -278,7 +278,7 @@
     "viewsWelcome": [
       {
         "view": "github-actions.empty-view",
-        "contents": "Sign in to GitHub to display runs, workflows, and configure Actions settings.\n[Sign in to GitHub](command:github-actions.sign-in)",
+        "contents": "Sign in to GitHub to display runs, workflows, and configure Actions settings.\n[Sign in to GitHub](command:sign-in)",
         "when": "!github-actions.signed-in"
       },
       {

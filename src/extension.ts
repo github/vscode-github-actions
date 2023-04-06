@@ -1,7 +1,5 @@
 import * as vscode from "vscode";
 
-import {canReachGitHubAPI} from "./api/canReachGitHubAPI";
-import {getSession} from "./auth/auth";
 import {registerCancelWorkflowRun} from "./commands/cancelWorkflowRun";
 import {registerOpenWorkflowFile} from "./commands/openWorkflowFile";
 import {registerOpenWorkflowJobLogs} from "./commands/openWorkflowJobLogs";
@@ -19,7 +17,6 @@ import {registerCopyVariable} from "./commands/variables/copyVariable";
 import {registerDeleteVariable} from "./commands/variables/deleteVariable";
 import {registerUpdateVariable} from "./commands/variables/updateVariable";
 import {initConfiguration} from "./configuration/configuration";
-import {getGitHubContext} from "./git/repository";
 import {init as initLogger, log, revealLog} from "./log";
 import {LogScheme} from "./logs/constants";
 import {WorkflowStepLogProvider} from "./logs/fileProvider";
@@ -33,24 +30,14 @@ import {initResources} from "./treeViews/icons";
 import {initTreeViews} from "./treeViews/treeViews";
 import {deactivateLanguageServer, initLanguageServer} from "./workflow/languageServer";
 import {registerSignIn} from "./commands/signIn";
+import {setViewContexts} from "./viewContexts";
 
 export async function activate(context: vscode.ExtensionContext) {
   initLogger();
 
   log("Activating GitHub Actions extension...");
 
-  const hasSession = !!(await getSession());
-  const canReachAPI = hasSession && (await canReachGitHubAPI());
-
-  // Prefetch git repository origin url
-  const ghContext = hasSession && (await getGitHubContext());
-  const hasGitHubRepos = ghContext && ghContext.repos.length > 0;
-
-  await Promise.all([
-    vscode.commands.executeCommand("setContext", "github-actions.signed-in", hasSession),
-    vscode.commands.executeCommand("setContext", "github-actions.internet-access", canReachAPI),
-    vscode.commands.executeCommand("setContext", "github-actions.has-repos", hasGitHubRepos)
-  ]);
+  await setViewContexts();
 
   initResources(context);
   initConfiguration(context);
