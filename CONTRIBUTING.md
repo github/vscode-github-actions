@@ -21,7 +21,7 @@ Please avoid:
 
 * Opening pull requests for issues marked `needs-design`, `needs-investigation`, or `blocked`.
 
-Contributions to this project are [released](https://help.github.com/articles/github-terms-of-service/#6-contributions-under-repository-license) to the public under the [project's open source license](LICENSE.md).
+Contributions to this project are [released](https://help.github.com/articles/github-terms-of-service/#6-contributions-under-repository-license) to the public under the [project's open source license](LICENSE).
 
 Please note that this project is released with a [Contributor Code of Conduct][code-of-conduct]. By participating in this project you agree to abide by its terms.
 
@@ -132,3 +132,9 @@ Here are a few things you can do that will increase the likelihood of your pull 
 - [How to Contribute to Open Source](https://opensource.guide/how-to-contribute/)
 - [Using Pull Requests](https://help.github.com/articles/about-pull-requests/)
 - [GitHub Help](https://help.github.com)
+
+
+[bug issues]: https://github.com/github/vscode-github-actions/labels/bug
+[feature request issues]: https://github.com/github/vscode-github-actions/labels/enhancement
+[hw]: https://github.com/github/vscode-github-actions/labels/help%20wanted
+[gfi]: https://github.com/github/vscode-github-actions/labels/good%20first%20issue
