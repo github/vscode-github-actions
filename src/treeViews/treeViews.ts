@@ -25,7 +25,12 @@ export async function initTreeViews(context: vscode.ExtensionContext, store: Run
     vscode.commands.registerCommand("github-actions.explorer.refresh", async () => {
       const canReachAPI = await canReachGitHubAPI();
       await vscode.commands.executeCommand("setContext", "github-actions.internet-access", canReachAPI);
-      if (canReachAPI) {
+
+      const ghContext = await getGitHubContext();
+      const hasGitHubRepos = ghContext && ghContext.repos.length > 0;
+      await vscode.commands.executeCommand("setContext", "github-actions.has-repos", hasGitHubRepos);
+
+      if (canReachAPI && hasGitHubRepos) {
         await workflowTreeProvider.refresh();
         await settingsTreeProvider.refresh();
       }
