@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.25.4]
+- Add branches to merge-group schema 
+- Improve expression validation for short-circuiting expressions 
+- Fix workflow call description parsing
+- Secrets and variables dialog no longer closes when changing focus
+- Remove newline characters from workflow run names
+- Fix sign-in issues
+
 ## [0.25.0]
 - Public beta release of the official GitHub Actions extension
 
