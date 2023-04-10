@@ -33,7 +33,8 @@
         "cwd": "${workspaceFolder:vscode-github-actions}",
         "preLaunchTask": "watch",
         "smartStep": true,
-        "sourceMaps": true
+        "sourceMaps": true,
+        "resolveSourceMapLocations": []
       }
     ],
     "compounds": [
