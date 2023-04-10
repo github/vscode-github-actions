@@ -36,9 +36,21 @@ Be more confident when authoring and modifying workflows. Find errors before com
 
 ## Getting started
 
-1. Install the extension from the [Marketplace](https://marketplace.visualstudio.com/items?itemName=github.vscode-github-actions)
+1. Install the extension from the [Marketplace](https://marketplace.visualstudio.com/items?itemName=github.vscode-github-actions).
 1. Sign in with your GitHub account and when prompted allow `GitHub Actions` access to your GitHub account.
-1. Open a GitHub repository
+1. Open a GitHub repository.
+1. You will be able to utilize the syntax features in Workflow files, and you can find the GitHub Actions icon on the left navigation to manage your Workflows.
+
+
+## Supported Features
+
+- Manage your workflows and runs 
+- Edit workflows (syntax highlighting, auto-completion, hovering, and validation)
+- Keep track of your CI builds and deployments
+- Investigate failures and view logs
+- Modify settings like Environments, Secrets, and Variables
+
+Unfortunately, at this time we are not able to support the extension with [remote repositories](https://docs.github.com/en/get-started/getting-started-with-git/about-remote-repositories) (including [github.dev](https://github.dev/) and [vscode.dev](https://vscode.dev/)), so please use the extension with locally downloaded GitHub repositories for the best experience. Please check back here for updates in the future!
 
 ## Contributing
 
