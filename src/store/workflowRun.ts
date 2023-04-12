@@ -1,3 +1,4 @@
+import * as vscode from "vscode";
 import {GitHubRepoContext} from "../git/repository";
 import {RepositoryPermission, hasWritePermission} from "../git/repository-permissions";
 import {log, logDebug} from "../log";
@@ -76,14 +77,22 @@ export class WorkflowRun extends WorkflowRunBase {
   override async fetchJobs(): Promise<WorkflowJob[]> {
     logDebug("Getting workflow jobs");
 
-    const result = await this._gitHubRepoContext.client.actions.listJobsForWorkflowRun({
-      owner: this._gitHubRepoContext.owner,
-      repo: this._gitHubRepoContext.name,
-      run_id: this.run.id
-    });
+    let jobs: model.WorkflowJob[] = [];
 
-    const resp = result.data;
-    const jobs: model.WorkflowJob[] = resp.jobs;
+    try {
+      jobs = await this._gitHubRepoContext.client.paginate(
+        this._gitHubRepoContext.client.actions.listJobsForWorkflowRun,
+        {
+          owner: this._gitHubRepoContext.owner,
+          repo: this._gitHubRepoContext.name,
+          run_id: this.run.id,
+          per_page: 100
+        }
+      );
+    } catch (e) {
+      await vscode.window.showErrorMessage((e as Error).message);
+    }
+
     return jobs.map(j => new WorkflowJob(this._gitHubRepoContext, j));
   }
 
@@ -139,16 +148,23 @@ export class WorkflowRunAttempt extends WorkflowRunBase {
 
   override async fetchJobs(): Promise<WorkflowJob[]> {
     logDebug("Getting workflow run attempt jobs", this._run.id, "for attempt", this.attempt);
+    let jobs: model.WorkflowJob[] = [];
 
-    const result = await this._gitHubRepoContext.client.actions.listJobsForWorkflowRunAttempt({
-      owner: this._gitHubRepoContext.owner,
-      repo: this._gitHubRepoContext.name,
-      run_id: this._run.id,
-      attempt_number: this.attempt
-    });
+    try {
+      jobs = await this._gitHubRepoContext.client.paginate(
+        this._gitHubRepoContext.client.actions.listJobsForWorkflowRunAttempt,
+        {
+          owner: this._gitHubRepoContext.owner,
+          repo: this._gitHubRepoContext.name,
+          run_id: this.run.id,
+          attempt_number: this.attempt,
+          per_page: 100
+        }
+      );
+    } catch (e) {
+      await vscode.window.showErrorMessage((e as Error).message);
+    }
 
-    const resp = result.data;
-    const jobs: model.WorkflowJob[] = resp.jobs;
     return jobs.map(j => new WorkflowJob(this._gitHubRepoContext, j));
   }
 }
