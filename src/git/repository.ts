@@ -136,6 +136,7 @@ export interface GitHubRepoContext {
 export interface GitHubContext {
   repos: GitHubRepoContext[];
   reposByUri: Map<string, GitHubRepoContext>;
+  reposByOwnerAndName: Map<string, GitHubRepoContext>;
   username: string;
 }
 
@@ -199,6 +200,7 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
     gitHubContext = Promise.resolve({
       repos,
       reposByUri: new Map(repos.map(r => [r.workspaceUri.toString(), r])),
+      reposByOwnerAndName: new Map(repos.map(r => [`${r.owner}/${r.name}`.toLocaleLowerCase(), r])),
       username
     });
   } catch (e) {
@@ -224,7 +226,8 @@ export async function getGitHubContextForRepo(owner: string, name: string): Prom
     return undefined;
   }
 
-  return gitHubContext.repos.find(r => r.owner === owner && r.name === name);
+  const searchKey = `${owner}/${name}`.toLocaleLowerCase();
+  return gitHubContext.reposByOwnerAndName.get(searchKey);
 }
 
 export async function getGitHubContextForWorkspaceUri(
