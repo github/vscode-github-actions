@@ -107,7 +107,8 @@ export class CurrentBranchTreeProvider
     const result = await gitHubRepoContext.client.actions.listWorkflowRunsForRepo({
       owner: gitHubRepoContext.owner,
       repo: gitHubRepoContext.name,
-      branch: currentBranchName
+      branch: currentBranchName,
+      per_page: 100
     });
 
     const resp = result.data;
