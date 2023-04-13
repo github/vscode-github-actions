@@ -224,7 +224,11 @@ export async function getGitHubContextForRepo(owner: string, name: string): Prom
     return undefined;
   }
 
-  return gitHubContext.repos.find(r => r.owner === owner && r.name === name);
+  return gitHubContext.repos.find(
+    r =>
+      r.owner.toLocaleLowerCase() === owner.toLocaleLowerCase() &&
+      r.name.toLocaleLowerCase() === name.toLocaleLowerCase()
+  );
 }
 
 export async function getGitHubContextForWorkspaceUri(
