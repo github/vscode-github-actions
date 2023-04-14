@@ -8,6 +8,8 @@ Hi there! We're thrilled that you'd like to contribute to this project. Your hel
 
 We accept pull requests for bug fixes and features where we've discussed the approach in an issue and given the go-ahead for a community member to work on it. We'd also love to hear about ideas for new features as issues.
 
+We track issues on our project board [here](https://github.com/orgs/github/projects/9557/views/1).
+
 Please do:
 
 * Check existing issues to verify that the [bug][bug issues] or [feature request][feature request issues] has not already been submitted.
