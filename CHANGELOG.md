@@ -1,6 +1,14 @@
 # Changelog
 
+## [0.25.5]
+
+- Fixes errors around "on-error" token parsing
+- Handle auto-completion for string and boolean mappings
+- Get and display all workflows, all jobs per workflow, and last 100 workflow runs in the extension view
+- Show logs for repos with non-lowercase owner name.
+
 ## [0.25.4]
+
 - Add branches to merge-group schema 
 - Improve expression validation for short-circuiting expressions 
 - Fix workflow call description parsing
@@ -9,6 +17,7 @@
 - Fix sign-in issues
 
 ## [0.25.0]
+
 - Public beta release of the official GitHub Actions extension
 
 ## Community extension
