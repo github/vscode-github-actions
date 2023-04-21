@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.25.6]
+
+- Fix Reusable Workflow Reference for Windows by using vscodeURI instead of path.join 
+- Add branches-ignore to merge group schema 
+
 ## [0.25.5]
 
 - Fixes errors around "on-error" token parsing
