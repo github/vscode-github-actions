@@ -46,17 +46,13 @@ export async function initLanguageServer(context: vscode.ExtensionContext) {
   if (isNode()) {
     const debugOptions = {execArgv: ["--nolazy", "--inspect=6010"]};
 
-    const env  = {
-      NODE_EXTRA_CA_CERTS: process.env.NODE_EXTRA_CA_CERTS,
-    }
-
     const serverModule = context.asAbsolutePath(path.join("dist", "server-node.js"));
     const serverOptions: ServerOptions = {
-      run: {module: serverModule, transport: TransportKind.ipc, options: {env}},
+      run: {module: serverModule, transport: TransportKind.ipc},
       debug: {
         module: serverModule,
         transport: TransportKind.ipc,
-        options: {env, ...debugOptions }
+        options: debugOptions
       }
     };
 
