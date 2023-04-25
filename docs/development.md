@@ -23,12 +23,6 @@ cd vscode-github-actions
 script/bootstrap
 ```
 
-For any private NPM packages in `@github`, you'll need to login with NPM. See [Working with the npm registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry) for more details.
-
-```shell
-npm login --scope=@github --registry=https://npm.pkg.github.com
-```
-
 Finally, install packages in the workspace and build
 
 ```shell
