@@ -23,12 +23,6 @@ cd vscode-github-actions
 script/bootstrap
 ```
 
-For any private NPM packages in `@github`, you'll need to login with NPM. See [Working with the npm registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry) for more details.
-
-```shell
-npm login --scope=@github --registry=https://npm.pkg.github.com
-```
-
 Finally, install packages in the workspace and build
 
 ```shell
@@ -64,11 +58,3 @@ Launching and debugging the extension should just work. If you need to debug the
 ### npm error: "This command does not support workspaces"
 
 Upgrade to a newer version of npm. You can use `npm install npm@latest -g`, `brew upgrade node` or other methods.
-
-### npm error: "Web login not supported"
-
-Add `--auth-type=legacy` to the end of the command-line:
-
-```shell
-npm login --scope=@github --registry=https://npm.pkg.github.com --auth-type=legacy
-```
