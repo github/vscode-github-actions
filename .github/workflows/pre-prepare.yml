@@ -6,6 +6,10 @@ on:
     target-branch: 
       description: name of the branch that contains the desired changes
       required: true
+    run: 
+      description: whether or not to run the workflow
+      required: true
+      type: boolean
   workflow_run:
     workflows: ["Create release PR"]
     types:

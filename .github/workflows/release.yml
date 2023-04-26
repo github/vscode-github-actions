@@ -53,3 +53,6 @@ jobs:
             --head release/${{ inputs.version }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        outputs:
+          target-branch: release/${{ github.event.inputs.version }}
+          run: ${{ github.event.inputs.update-language-server}}
