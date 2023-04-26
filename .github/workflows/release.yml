@@ -8,6 +8,11 @@ on:
       version:
         required: true
         description: "Version to bump `package.json` to (format: x.y.z)"
+      update-language-server: 
+        required: false
+        description: "Update the language server to the latest version?"
+        type: boolean
+
 
 jobs:
   create-release-pr:

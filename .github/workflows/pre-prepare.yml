@@ -1,14 +1,15 @@
-name: Pre-Prepare
+name: Pull langauge server changes
 
 on:
  workflow_dispatch:
   inputs:
-    pull-langugageserver:
-      description: "Are there changes to language server?"
-      required: true
     target-branch: 
       description: name of the branch that contains the desired changes
       required: true
+  workflow_run:
+    workflows: ["Create release PR"]
+    types:
+      - completed
     
 permissions:
   contents: write
