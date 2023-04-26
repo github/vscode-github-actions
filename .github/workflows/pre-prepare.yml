@@ -1,0 +1,45 @@
+name: Pre-Prepare
+
+on:
+ workflow_dispatch:
+  inputs:
+    pull-langugageserver:
+      description: "Are there changes to language server?"
+      required: true
+    target-branch: 
+      description: name of the branch that contains the desired changes
+      required: true
+    
+permissions:
+  contents: write
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.inputs.target-branch}} 
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: "npm"
+          registry-url: "https://npm.pkg.github.com"
+      - name: run npm install
+        run: npm install @actions/languageserver@latest @actions/workflow-parser@latest --workspaces=false
+      - name: revert changes to package.json
+        run: git checkout -- package.json
+      - name: debugging
+        run: git diff
+      - name: run npm i
+        run: npm i
+      - name: debugging
+        run: git diff 
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with: 
+          branch: ${{github.event.inputs.target-branch}}
+          
+          
