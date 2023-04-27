@@ -19,7 +19,6 @@ root="$(dirname "$repo_root")"
 echo "Copy lock file to workspace..."
 cp "$repo_root"/script/workspace/package-lock.json "$root"
 
-
 # Clone dependent repos
 echo "Cloning dependent repos..."
 clone_repo https://github.com/actions/languageservices "$root"/languageservices
