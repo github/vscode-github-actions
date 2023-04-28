@@ -2,9 +2,6 @@
 
 VERSION=$(cat package.json | jq -r '.version')
 
-echo "Current version: $VERSION"
-echo "Incrementing $1 version"
-
 MAJOR=$(echo $VERSION | cut -d. -f1) 
 MINOR=$(echo $VERSION | cut -d. -f2)
 PATCH=$(echo $VERSION | cut -d. -f3)
