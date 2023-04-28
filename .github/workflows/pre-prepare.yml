@@ -1,14 +1,19 @@
-name: Pre-Prepare
+name: Pull language server changes
 
 on:
- workflow_dispatch:
-  inputs:
-    pull-langugageserver:
-      description: "Are there changes to language server?"
-      required: true
-    target-branch: 
-      description: name of the branch that contains the desired changes
-      required: true
+  workflow_run:
+    workflows: ["Create release PR"]
+    types:
+      - completed
+    inputs:
+      target-branch: 
+        required: true 
+        type: string
+        description: name of the branch that contains the desired changes
+      run: 
+        required: true
+        type: boolean 
+        description: whether or not to run the workflow
     
 permissions:
   contents: write
@@ -21,25 +26,32 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          ref: ${{github.event.inputs.target-branch}} 
+          ref: ${{inputs.target-branch}} 
+        if: ${{inputs.run == 'true' }}}
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
           node-version: 16.x
           cache: "npm"
           registry-url: "https://npm.pkg.github.com"
+        if: ${{inputs.run == 'true' }}}
       - name: run npm install
         run: npm install @actions/languageserver@latest @actions/workflow-parser@latest --workspaces=false
+        if: ${{inputs.run == 'true' }}}
       - name: revert changes to package.json
         run: git checkout -- package.json
+        if: ${{inputs.run == 'true' }}}
       - name: debugging
         run: git diff
+        if: ${{inputs.run == 'true' }}}
       - name: run npm i
         run: npm i
+        if: ${{inputs.run == 'true' }}}
       - name: debugging
         run: git diff 
+        if: ${{inputs.run == 'true' }}}
       - uses: stefanzweifel/git-auto-commit-action@v4
         with: 
-          branch: ${{github.event.inputs.target-branch}}
-          
+          branch: ${{inputs.target-branch}}
+        if: ${{inputs.run == 'true' }}}
           
