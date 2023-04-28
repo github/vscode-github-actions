@@ -9,7 +9,7 @@ on:
         required: true
         description: "Version to bump `package.json` to (format: x.y.z)"
       update-language-server: 
-        required: false
+        required: true
         description: "Update the language server to the latest version?"
         type: boolean
 
@@ -43,6 +43,18 @@ jobs:
           git commit -m "Release extension version ${{ inputs.version }}"
 
           git push --set-upstream origin release/${{ inputs.version }}
+      
+      - name: Update language server
+        if: ${{ inputs.update-language-server }}
+        run: |
+          npm install @actions/languageserver@latest @actions/workflow-parser@latest --workspaces=false
+          git checkout -- package.json
+          npm i
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with: 
+          branch: release/${{ inputs.version }}
+        if: ${{ inputs.update-language-server }}
 
       - name: Create PR
         run: |
@@ -53,6 +65,3 @@ jobs:
             --head release/${{ inputs.version }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        outputs:
-          target-branch: release/${{ github.event.inputs.version }}
-          run: ${{ github.event.inputs.update-language-server}}
