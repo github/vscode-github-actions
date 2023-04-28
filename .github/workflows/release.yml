@@ -1,6 +1,6 @@
 name: Create release PR
 
-run-name: Create release PR for new v${{ github.event.inputs.version }} version
+run-name: Create release PR for new ${{ github.event.inputs.version }} version
 
 on:
   workflow_dispatch:
