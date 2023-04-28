@@ -13,6 +13,11 @@ on:
           - "major"
           - "minor"
           - "patch"
+      update-language-server: 
+        required: true
+        description: "Update the language server to the latest version?"
+        type: boolean
+
 
 jobs:
   create-release-pr:
@@ -47,6 +52,18 @@ jobs:
           git push --set-upstream origin release/$NEW_VERSION
 
           echo "new_version=$NEW_VERSION" >> $GITHUB_ENV
+      
+      - name: Update language server
+        if: ${{ inputs.update-language-server }}
+        run: |
+          npm install @actions/languageserver@latest @actions/workflow-parser@latest --workspaces=false
+          git checkout -- package.json
+          npm i
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with: 
+          branch: release/${{ env.new_version }}
+        if: ${{ inputs.update-language-server }}
 
       - name: Create PR
         run: |

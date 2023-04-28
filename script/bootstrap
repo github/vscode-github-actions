@@ -15,10 +15,13 @@ function clone_repo() {
 repo_root="$(git rev-parse --show-toplevel)"
 root="$(dirname "$repo_root")"
 
+# Copy working package-lock.json to workspace
+echo "Copy lock file to workspace..."
+cp "$repo_root"/script/workspace/package-lock.json "$root"
+
 # Clone dependent repos
 echo "Cloning dependent repos..."
 clone_repo https://github.com/actions/languageservices "$root"/languageservices
-
 
 # Copy workspace files
 echo "Copying workspace files..."
