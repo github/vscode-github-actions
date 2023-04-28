@@ -45,7 +45,7 @@ jobs:
           git push --set-upstream origin release/${{ inputs.version }}
       
       - name: Update language server
-        if: ${{ inputs.update-language-server == 'true' }}
+        if: ${{ inputs.update-language-server }}
         run: |
           npm install @actions/languageserver@latest @actions/workflow-parser@latest --workspaces=false
           git checkout -- package.json
@@ -54,7 +54,7 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with: 
           branch: release/${{ inputs.version }}
-        if: ${{ inputs.update-language-server == 'true' }}
+        if: ${{ inputs.update-language-server }}
 
       - name: Create PR
         run: |
