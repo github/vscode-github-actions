@@ -70,7 +70,7 @@ export async function getGitHubUrls(): Promise<GitHubUrls[] | null> {
         let remote = r.state.remotes.filter(remote => remote.name === remoteName);
 
         // If "origin" does not exist, automatically get another remote
-        if (remote === undefined || remote.length === 0) {
+        if (r.state.remotes.length !== 0 && remote.length === 0) {
           remote = [r.state.remotes[0]];
         }
 
