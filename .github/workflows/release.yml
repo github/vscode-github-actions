@@ -1,13 +1,18 @@
 name: Create release PR
 
-run-name: Create release PR for v${{ github.event.inputs.version }}
+run-name: Create release PR for new ${{ github.event.inputs.version }} version
 
 on:
   workflow_dispatch:
     inputs:
       version:
         required: true
-        description: "Version to bump `package.json` to (format: x.y.z)"
+        type: choice
+        description: "What type of release is this"
+        options:
+          - "major"
+          - "minor"
+          - "patch"
       update-language-server: 
         required: true
         description: "Update the language server to the latest version?"
@@ -36,13 +41,17 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
 
-          git checkout -b release/${{ inputs.version }}
+          NEW_VERSION=$(./script/workflows/increment-version.sh ${{ inputs.version }})
 
-          npm version ${{ inputs.version }} --no-git-tag-version
+          git checkout -b release/$NEW_VERSION
+
+          npm version $NEW_VERSION --no-git-tag-version
           git add package.json package-lock.json
-          git commit -m "Release extension version ${{ inputs.version }}"
+          git commit -m "Release extension version $NEW_VERSION"
 
-          git push --set-upstream origin release/${{ inputs.version }}
+          git push --set-upstream origin release/$NEW_VERSION
+
+          echo "new_version=$NEW_VERSION" >> $GITHUB_ENV
       
       - name: Update language server
         if: ${{ inputs.update-language-server }}
@@ -51,17 +60,17 @@ jobs:
           git checkout -- package.json
           npm i
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: stefanzweifel/git-auto-commit-action@3ea6ae190baf489ba007f7c92608f33ce20ef04a
         with: 
-          branch: release/${{ inputs.version }}
+          branch: release/${{ env.new_version }}
         if: ${{ inputs.update-language-server }}
 
       - name: Create PR
         run: |
           gh pr create \
-            --title "Release version ${{ inputs.version }}" \
-            --body "Release version ${{ inputs.version }}" \
+            --title "Release version ${{ env.new_version }}" \
+            --body "Release version ${{ env.new_version }}" \
             --base main \
-            --head release/${{ inputs.version }}
+            --head release/${{ env.new_version }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
