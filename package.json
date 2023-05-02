@@ -152,10 +152,7 @@
         "category": "GitHub Actions",
         "title": "View logs",
         "when": "viewItem =~ /step/",
-        "icon": {
-          "dark": "resources/icons/dark/logs.svg",
-          "light": "resources/icons/light/logs.svg"
-        }
+        "icon": "$(globe)"
       },
       {
         "command": "github-actions.workflow.run.rerun",
