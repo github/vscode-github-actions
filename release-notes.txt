@@ -1,0 +1,6 @@
+Release 0.25.7
+ - Add working lock file and update script to add it to the npm workspace root \n
+ - Make pre-prepare run off of hooks \n
+ - @muzimuzhi - Upgrade vsce 2.11.0 to @vscode/vsce version 2.19.0 \n
+ - Update workflow file \n
+ - Release version 0.25.6 \n
