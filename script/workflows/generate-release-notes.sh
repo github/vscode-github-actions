@@ -24,7 +24,7 @@ CHANGELIST=$(gh pr list --repo github/vscode-github-actions --base main --state 
 RELEASE_NOTES="Release $NEW_RELEASE"
 
 UPDATED=$(echo $CHANGELIST | jq -r '.[].title' | while read line; do
-  echo " - $line \n";
+  echo -e " - $line \n";
 done)
 
 RELEASE_NOTES="$RELEASE_NOTES\n$UPDATED"
