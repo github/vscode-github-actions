@@ -1,12 +1,7 @@
 import * as vscode from "vscode";
-import {WorkflowJob, WorkflowStep} from "../model";
+import {WorkflowStepNode} from "../treeViews/workflows/workflowStepNode";
 
-export interface WorkflowStepCommandArgs {
-  job: WorkflowJob;
-  step: WorkflowStep;
-}
-
-// export type WorkflowStepCommandArgs = Pick<WorkflowJobNode, "job">;
+type WorkflowStepCommandArgs = Pick<WorkflowStepNode, "job" | "step" | "gitHubRepoContext">;
 
 export function registerOpenWorkflowStepLogs(context: vscode.ExtensionContext) {
   context.subscriptions.push(

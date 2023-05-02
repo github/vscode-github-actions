@@ -140,7 +140,7 @@
       {
         "command": "github-actions.workflow.logs",
         "category": "GitHub Actions",
-        "title": "View logs",
+        "title": "View job logs",
         "when": "viewItem =~ /job/",
         "icon": {
           "dark": "resources/icons/dark/logs.svg",
@@ -150,7 +150,7 @@
       {
         "command": "github-actions.step.logs",
         "category": "GitHub Actions",
-        "title": "View logs",
+        "title": "View step logs",
         "when": "viewItem =~ /step/",
         "icon": "$(globe)"
       },
