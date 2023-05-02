@@ -31,6 +31,9 @@ npm i
 npm run build -ws
 ```
 
+**Note**: We have included a `package-lock.json` in `script/workspace`. If `npm run build -ws` fails because packages are not installed correctly with `nmp i`, re-run `script/boostrap` and run `npm ci` to
+get working packages.
+
 ## Make changes
 
 1. Open the workspace in VS Code `File -> Open Workspace from File...`: `/workspaces/vscode-github-actions.code-workspace`
