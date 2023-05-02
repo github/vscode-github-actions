@@ -68,10 +68,11 @@ jobs:
       - name: Create PR
         run: |
           LAST_PR=$(gh pr list --repo ${{ github.repository }} --limit 1 --state merged --search "Release version" --json number | jq -r '.[0].number')
-          RELEASE_NOTES=$(cat ./script/workflows/generate-release-notes.sh $LAST_PR ${{ env.new_version }})
+          RELEASE_NOTES=$(./script/workflows/generate-release-notes.sh $LAST_PR ${{ env.new_version }})
+          echo -e "$RELEASE_NOTES" > release-notes.md
           gh pr create \
             --title "Release version ${{ env.new_version }}" \
-            --body '$RELEASE_NOTES' \
+            --body-file release-notes.md \
             --base main \
             --head release/${{ env.new_version }}
         env:
