@@ -71,7 +71,7 @@ jobs:
           RELEASE_NOTES=$(./script/workflows/generate-release-notes.sh $LAST_PR ${{ env.new_version }})
           gh pr create \
             --title "Release version ${{ env.new_version }}" \
-            --body $RELEASE_NOTES \
+            --body "$RELEASE_NOTES" \
             --base main \
             --head release/${{ env.new_version }}
         env:
