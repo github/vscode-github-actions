@@ -155,7 +155,11 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
   try {
     const git = await getGitExtension();
 
-    const protocolInfos = await getGitHubUrls();
+    const allProtocolInfos = await getGitHubUrls();
+
+    // Filter out wiki repositories because the GET call will fail and throw an error
+    const protocolInfos = allProtocolInfos?.filter(info => !info.protocol.repositoryName.match(/\.wiki$/));
+
     if (!protocolInfos) {
       logDebug("Could not get protocol infos");
       return undefined;
