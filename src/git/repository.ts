@@ -66,9 +66,16 @@ export async function getGitHubUrls(): Promise<GitHubUrls[] | null> {
         logDebug("Find `origin` remote for repository", r.rootUri.path);
         await r.status();
 
-        const originRemote = r.state.remotes.filter(remote => remote.name === remoteName);
-        if (originRemote.length > 0 && originRemote[0].pushUrl?.indexOf("github.com") !== -1) {
-          const url = originRemote[0].pushUrl;
+        // Try to get "origin" remote first
+        let remote = r.state.remotes.filter(remote => remote.name === remoteName);
+
+        // If "origin" does not exist, automatically get another remote
+        if (r.state.remotes.length !== 0 && remote.length === 0) {
+          remote = [r.state.remotes[0]];
+        }
+
+        if (remote.length > 0 && remote[0].pushUrl?.indexOf("github.com") !== -1) {
+          const url = remote[0].pushUrl;
 
           return {
             workspaceUri: r.rootUri,
