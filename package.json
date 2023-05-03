@@ -140,12 +140,19 @@
       {
         "command": "github-actions.workflow.logs",
         "category": "GitHub Actions",
-        "title": "View logs",
+        "title": "View job logs",
         "when": "viewItem =~ /job/",
         "icon": {
           "dark": "resources/icons/dark/logs.svg",
           "light": "resources/icons/light/logs.svg"
         }
+      },
+      {
+        "command": "github-actions.step.logs",
+        "category": "GitHub Actions",
+        "title": "View step logs",
+        "when": "viewItem =~ /step/",
+        "icon": "$(globe)"
       },
       {
         "command": "github-actions.workflow.run.rerun",
@@ -364,6 +371,11 @@
           "when": "viewItem =~ /job/ && viewItem =~ /completed/"
         },
         {
+          "command": "github-actions.step.logs",
+          "group": "inline",
+          "when": "viewItem =~ /step/ && viewItem =~ /completed/"
+        },
+        {
           "command": "github-actions.workflow.run.cancel",
           "when": "viewItem =~ /run/ && viewItem =~ /cancelable/"
         },
@@ -436,6 +448,10 @@
         },
         {
           "command": "github-actions.workflow.logs",
+          "when": "false"
+        },
+        {
+          "command": "github-actions.step.logs",
           "when": "false"
         },
         {

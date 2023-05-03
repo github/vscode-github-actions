@@ -5,6 +5,7 @@ import {getSession} from "./auth/auth";
 import {registerCancelWorkflowRun} from "./commands/cancelWorkflowRun";
 import {registerOpenWorkflowFile} from "./commands/openWorkflowFile";
 import {registerOpenWorkflowJobLogs} from "./commands/openWorkflowJobLogs";
+import {registerOpenWorkflowStepLogs} from "./commands/openWorkflowStepLogs";
 import {registerOpenWorkflowRun} from "./commands/openWorkflowRun";
 import {registerPinWorkflow} from "./commands/pinWorkflow";
 import {registerReRunWorkflowRun} from "./commands/rerunWorkflowRun";
@@ -71,6 +72,7 @@ export async function activate(context: vscode.ExtensionContext) {
   registerOpenWorkflowRun(context);
   registerOpenWorkflowFile(context);
   registerOpenWorkflowJobLogs(context);
+  registerOpenWorkflowStepLogs(context);
   registerTriggerWorkflowRun(context);
   registerReRunWorkflowRun(context);
   registerCancelWorkflowRun(context);
