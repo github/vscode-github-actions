@@ -80,7 +80,12 @@ jobs:
       - run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          
+      - name: create a package.json that actions/upload will like 
+        run: |
+          cp package.json package.json.real
+          sed --regexp-extended '/"name"\s*:/ s#@[a-zA-Z\\-]+/##' package.json.real > package.json
+          
       - run: npm run package
 
       - uses: actions/upload-artifact@v3
@@ -88,6 +93,9 @@ jobs:
           name: vscode-github-actions-${{ env.EXT_VERSION }}.vsix
           path: ./vscode-github-actions-${{ env.EXT_VERSION }}.vsix
 
+      - name: restore old package.json
+        run: mv package.json.real package.json
+      
       - name: Create release and upload release asset
         uses: actions/github-script@v6
         with:
