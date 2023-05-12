@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import {deactivateLanguageServer} from "../workflow/languageServer";
+import {deactivateLanguageServer, initLanguageServer} from "../workflow/languageServer";
 
 const settingsKey = "github-actions";
 const DEFAULT_GITHUB_API = "https://api.github.com";
@@ -9,8 +9,11 @@ export function initConfiguration(context: vscode.ExtensionContext) {
     vscode.workspace.onDidChangeConfiguration(e => {
       if (e.affectsConfiguration(getSettingsKey("workflows.pinned"))) {
         pinnedWorkflowsChangeHandlers.forEach(h => h());
-      } else if (e.affectsConfiguration(getSettingsKey("use-enterprise"))) {
-        updateLanguageServerApiUrl();
+      } else if (
+        e.affectsConfiguration(getSettingsKey("use-enterprise")) ||
+        e.affectsConfiguration("github-enterprise.uri")
+      ) {
+        updateLanguageServerApiUrl(context);
       }
     })
   );
@@ -67,8 +70,8 @@ export function getGitHubApiUri(): string {
   return base === DEFAULT_GITHUB_API ? base : `${base}/api/v3`;
 }
 
-function updateLanguageServerApiUrl() {
-  // deactivateLanguageServer();
-  // TODO: restart language server with new URL configured
-  throw new Error("Can't yet change the api url parameter without restart.");
+function updateLanguageServerApiUrl(context: vscode.ExtensionContext) {
+  deactivateLanguageServer();
+
+  initLanguageServer(context);
 }
