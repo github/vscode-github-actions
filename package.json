@@ -562,7 +562,6 @@
   "dependencies": {
     "@actions/languageserver": "*",
     "@actions/workflow-parser": "*",
-    "@octokit/plugin-enterprise-server": "^12.1.0",
     "@octokit/rest": "^19.0.7",
     "@vscode/vsce": "^2.19.0",
     "buffer": "^6.0.3",
