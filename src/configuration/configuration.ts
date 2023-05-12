@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import {deactivateLanguageServer, initLanguageServer} from "../workflow/languageServer";
+import {resetGitHubContext} from "../git/repository";
 
 const settingsKey = "github-actions";
 const DEFAULT_GITHUB_API = "https://api.github.com";
@@ -11,9 +12,12 @@ export function initConfiguration(context: vscode.ExtensionContext) {
         pinnedWorkflowsChangeHandlers.forEach(h => h());
       } else if (
         e.affectsConfiguration(getSettingsKey("use-enterprise")) ||
-        e.affectsConfiguration("github-enterprise.uri")
+        (isUseEnterprise() &&
+          (e.affectsConfiguration("github-enterprise.uri") || e.affectsConfiguration(getSettingsKey("remote-name"))))
       ) {
         updateLanguageServerApiUrl(context);
+        resetGitHubContext();
+        vscode.commands.executeCommand("github-actions.explorer.refresh");
       }
     })
   );
