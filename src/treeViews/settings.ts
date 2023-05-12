@@ -42,10 +42,10 @@ export class SettingsTreeProvider implements vscode.TreeDataProvider<SettingsExp
     if (!element) {
       if (gitHubContext.repos.length > 0) {
         if (gitHubContext.repos.length == 1) {
-          return getSettingNodes(gitHubContext.repos[0]);
+          return getSettingNodes(gitHubContext.repos[0], gitHubContext);
         }
 
-        return gitHubContext.repos.map(r => new SettingsRepoNode(r));
+        return gitHubContext.repos.map(r => new SettingsRepoNode(r, gitHubContext));
       }
     }
 

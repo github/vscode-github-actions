@@ -145,6 +145,8 @@ export interface GitHubContext {
   reposByUri: Map<string, GitHubRepoContext>;
   reposByOwnerAndName: Map<string, GitHubRepoContext>;
   username: string;
+
+  enterpriseServerVersion: string | undefined;
 }
 
 let gitHubContext: Promise<GitHubContext | undefined> | undefined;
@@ -208,11 +210,21 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
       );
     });
 
+    const meta = await handleSamlError(session, async (client: Octokit) => {
+      // using the dynamic request method which returns any, because this could be either of
+      // - the main GitHub meta endpoint
+      //   (https://docs.github.com/en/rest/meta?apiVersion=2022-11-28#get-github-meta-information)
+      // - the GitHub Enterprise Server meta endpoint
+      //   (https://docs.github.com/en/enterprise-server@3.5/rest/meta#get-github-enterprise-server-meta-information)
+      return client.request({url: "/meta", method: "GET"});
+    });
+
     gitHubContext = Promise.resolve({
       repos,
       reposByUri: new Map(repos.map(r => [r.workspaceUri.toString(), r])),
       reposByOwnerAndName: new Map(repos.map(r => [`${r.owner}/${r.name}`.toLocaleLowerCase(), r])),
-      username
+      username,
+      enterpriseServerVersion: meta?.data?.installed_version
     });
   } catch (e) {
     // Reset the context so the next attempt will try this flow again
@@ -281,4 +293,8 @@ export function getCurrentBranch(state: RepositoryState | undefined): string | u
   }
 
   return head.name;
+}
+
+export function hasVariables(context: GitHubContext): boolean {
+  return !!context.enterpriseServerVersion && context.enterpriseServerVersion >= "3.8.0";
 }
