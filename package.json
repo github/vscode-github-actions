@@ -86,6 +86,12 @@
           "description": "The name of the repository's git remote that points to GitHub",
           "default": "origin",
           "scope": "window"
+        },
+        "github-actions.use-enterprise": {
+          "type": "boolean",
+          "markdownDescription": "If this is set to true, use the auth provider for the GitHub Enterprise URL configured in `github-enterprise.uri`",
+          "default": false,
+          "scope": "window"
         }
       }
     },
