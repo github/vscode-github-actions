@@ -296,5 +296,8 @@ export function getCurrentBranch(state: RepositoryState | undefined): string | u
 }
 
 export function hasVariables(context: GitHubContext): boolean {
-  return !!context.enterpriseServerVersion && context.enterpriseServerVersion >= "3.8.0";
+  if (!context.enterpriseServerVersion) return true;
+  const split = context.enterpriseServerVersion.split(".");
+  if (split.length < 2) return true;
+  return +split[0] >= 3 && +split[1] >= 8;
 }
