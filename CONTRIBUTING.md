@@ -33,7 +33,7 @@ These are one time installations required to be able to test your changes locall
 
 1. Install [Node.js](https://nodejs.org/en/download/) for your platform
 1. Install [VS Code](https://code.visualstudio.com/download) for your platform
-1. Install the dependencies. From the repository root run:
+1. Install the dependencies. From the repository root (`~/vscode`) run:
 
 ```bash
 npm i
@@ -70,6 +70,14 @@ npm run watch
 1. Setup `Watch all & Launch Extension (workspace)` under Debug and hit the green button (this will automatically run `npm watch` for you and monitor for changes).
 1. Make change
 1. Hit the refresh button in the debugger window to reload the extension in the development host
+
+## npm commands
+
+For the below make sure that you are in the `vscode-github-actions` directory of your local repo first.
+
+```bash
+cd vscode-github-actions
+```
 
 ### Running tests
 
@@ -120,7 +128,7 @@ npm run package
 ## Submitting a pull request
 
 1. [Fork][fork] and clone the repository
-1. Configure and install the dependencies: `npm i`
+1. Configure and install the dependencies (in the main root folder `~/vscode`): `npm i`
 1. Create a new branch: `git checkout -b my-branch-name`
 1. Make your change, add tests, and make sure the tests and linter still pass
 1. Push to your fork and [submit a pull request][pr]
