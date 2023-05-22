@@ -125,6 +125,12 @@ npm run format
 npm run package
 ```
 
+## VS Code Source Control Repositories
+
+If you don't see `vscode-github-actions` and `languageservices`, please go to `Preferences: Open User Settings` and then search for   `git.openRepositoryInParentFolders` and you can set it to `always` and it will show all of the associated repos for the Workspace. 
+
+![image](https://github.com/github/vscode-github-actions/assets/7976517/c03a1608-df4d-4caf-ba33-0c5eb1802100)
+
 ## Submitting a pull request
 
 1. [Fork][fork] and clone the repository
