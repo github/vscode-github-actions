@@ -54,7 +54,7 @@ Unfortunately, at this time we are not able to support the extension with [remot
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md). A description of the architecture of the extension can be found [here](./docs/project-architecture.md).
 
 ## License
 
