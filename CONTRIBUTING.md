@@ -39,9 +39,25 @@ These are one time installations required to be able to test your changes locall
 npm i
 ```
 
-## Making & testing changes
+### Dev loop & Testing changes
 
 The extension is written in TypeScript and built using [webpack](https://webpack.js.org/).
+
+1. Go to the Debug tab.
+    1. Hit `Watch all & Launch Extension (workspace)` if you want to work on the main VS Code extension like the left sidebar and the UI for the extension.
+    1. Hit `Watch & Launch Extension + language-server (workspace)` If you want to work on the language services code and want to debug and work on the hover, syntax highlighting, and other functionality within the Workflow files.
+        * This will attach to an instance of the language server running on port `6010`
+1. Hit the green button (this will automatically run `npm watch` for you and monitor for changes) which will open a local version of the extension using the _extension development host_.
+1. Make changes
+1. Hit the refresh button in the debugger window to reload the extension in the development host
+
+## npm commands
+
+For the below make sure that you are in the `vscode-github-actions` directory of your local repo first.
+
+```bash
+cd vscode-github-actions
+```
 
 ### Build
 
@@ -55,28 +71,6 @@ Or to watch for changes and automatically rebuild every time on save:
 
 ```bash
 npm run watch
-```
-
-### Testing changes
-
-1. Open the repository in VS Code
-1. Run one of the debug targets:
-  * "Watch & Launch extension" - watch extension files, compile as necessary, and run the extension using the _extension development host_
-  * "Attach to Language-Server" - attach to an instance of the language server running on port `6010`
-  * "Run Web Extension in VS Code" - run the [web version](https://code.visualstudio.com/api/extension-guides/web-extensions) of the extension
-
-### Dev loop
-
-1. Setup `Watch all & Launch Extension (workspace)` under Debug and hit the green button (this will automatically run `npm watch` for you and monitor for changes).
-1. Make change
-1. Hit the refresh button in the debugger window to reload the extension in the development host
-
-## npm commands
-
-For the below make sure that you are in the `vscode-github-actions` directory of your local repo first.
-
-```bash
-cd vscode-github-actions
 ```
 
 ### Running tests
@@ -124,6 +118,10 @@ npm run format
 ```bash
 npm run package
 ```
+
+### Run Web Extension
+
+"Run Web Extension in VS Code" - run the [web version](https://code.visualstudio.com/api/extension-guides/web-extensions) of the extension
 
 ## VS Code Source Control Repositories
 
