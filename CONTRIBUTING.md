@@ -34,8 +34,9 @@ These are one time installations required to be able to test your changes locall
 1. Install [Node.js](https://nodejs.org/en/download/) for your platform
 1. Install [VS Code](https://code.visualstudio.com/download) for your platform
 1. Install the dependencies. From the repository root run:
+
 ```bash
-$ npm i
+npm i
 ```
 
 ## Making & testing changes
@@ -47,13 +48,13 @@ The extension is written in TypeScript and built using [webpack](https://webpack
 Build changes (one time):
 
 ```bash
-$ npm run build
+npm run build
 ```
 
 Or to watch for changes and automatically rebuild every time on save:
 
 ```bash
-$ npm run watch
+npm run watch
 ```
 
 ### Testing changes
@@ -65,33 +66,35 @@ $ npm run watch
   * "Run Web Extension in VS Code" - run the [web version](https://code.visualstudio.com/api/extension-guides/web-extensions) of the extension
 
 ### Dev loop
-1. Setup `Watch all & Launch Extension` under Debug and hit the green button
-1. `npm run watch`
+
+1. Setup `Watch all & Launch Extension (workspace)` under Debug and hit the green button (this will automatically run `npm watch` for you and monitor for changes).
 1. Make change
 1. Hit the refresh button in the debugger window to reload the extension in the development host
 
 ### Running tests
 
+_Note: We added `cross-env` to our package.json so that this works on both Mac and Windows._
+
 ```bash
-$ npm test
+npm test
 ```
 
 Or to watch for changes and run tests:
 
 ```bash
-$ npm run test-watch
+npm run test-watch
 ```
 
 ### Lint
 
 ```bash
-$ npm run lint
+npm run lint
 ```
 
 Run linter and fix errors as possible:
 
 ```bash
-$ npm run lint-fix
+npm run lint-fix
 ```
 
 ### Format
@@ -99,19 +102,19 @@ $ npm run lint-fix
 Check formatting with [prettier](https://prettier.io/):
 
 ```bash
-$ npm run format-check
+npm run format-check
 ```
 
 Run prettier and automatically format:
 
 ```bash
-$ npm run format
+npm run format
 ```
 
 ### Package the extension
 
 ```bash
-$ npm run package
+npm run package
 ```
 
 ## Submitting a pull request
@@ -134,7 +137,6 @@ Here are a few things you can do that will increase the likelihood of your pull 
 - [How to Contribute to Open Source](https://opensource.guide/how-to-contribute/)
 - [Using Pull Requests](https://help.github.com/articles/about-pull-requests/)
 - [GitHub Help](https://help.github.com)
-
 
 [bug issues]: https://github.com/github/vscode-github-actions/labels/bug
 [feature request issues]: https://github.com/github/vscode-github-actions/labels/enhancement
