@@ -39,7 +39,7 @@ These are one time installations required to be able to test your changes locall
 npm i
 ```
 
-### Dev loop & Testing changes
+## Dev loop & Testing changes
 
 The extension is written in TypeScript and built using [webpack](https://webpack.js.org/).
 
