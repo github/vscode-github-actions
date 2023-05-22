@@ -41,7 +41,7 @@ npm i
 
 ## Dev loop & Testing changes
 
-The extension is written in TypeScript and built using [webpack](https://webpack.js.org/).
+The extension is written in TypeScript and built using [webpack](https://webpack.js.org/). The dev loop steps and commands have been tested on both Mac and Windows.
 
 1. Go to the Debug tab.
     1. Hit `Watch all & Launch Extension (workspace)` if you want to work on the main VS Code extension like the left sidebar and the UI for the extension.
