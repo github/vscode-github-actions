@@ -77,8 +77,6 @@ npm run watch
 
 ### Running tests
 
-_Note: We added `cross-env` to our package.json so that this works on both Mac and Windows._
-
 ```bash
 npm test
 ```
