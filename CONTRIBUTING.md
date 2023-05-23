@@ -49,7 +49,7 @@ The extension is written in TypeScript and built using [webpack](https://webpack
         * This will attach to an instance of the language server running on port `6010`
 1. Hit the play button (this will automatically run `npm watch` for you and monitor for changes) which will open a local version of the extension using the _extension development host_.
 1. Make changes.
-1. To get new changes, hit the refresh button in the debugger window to reload the extension in the development host.  _If you don't see the changes, wait long enough for the `npm watch` terminal to rebuild and then try hitting the green button again._
+1. To get new changes, hit the refresh button in the debugger window to reload the extension in the development host.  _If you don't see the changes, wait long enough for the `npm watch` terminal to rebuild and then try hitting the play button again._
 ![image](https://github.com/github/vscode-github-actions/assets/7976517/8dbd3d75-f447-483e-b7e7-ffec3ccd7562)
 
 
