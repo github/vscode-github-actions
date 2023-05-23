@@ -52,6 +52,8 @@ Be more confident when authoring and modifying workflows. Find errors before com
 
 Unfortunately, at this time we are not able to support the extension with [remote repositories](https://docs.github.com/en/get-started/getting-started-with-git/about-remote-repositories) (including [github.dev](https://github.dev/) and [vscode.dev](https://vscode.dev/)), so please use the extension with locally downloaded GitHub repositories for the best experience. Please check back here for updates in the future!
 
+We have enabled experimental functionality to support GitHub Enterprise Server, but this feature is an experimental beta and currently unsupported.
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). A description of the architecture of the extension can be found [here](./docs/project-architecture.md).
