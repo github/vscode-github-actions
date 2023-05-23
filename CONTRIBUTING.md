@@ -34,64 +34,69 @@ These are one time installations required to be able to test your changes locall
 1. Install [Node.js](https://nodejs.org/en/download/) for your platform
 1. Install [VS Code](https://code.visualstudio.com/download) for your platform
 1. Install the dependencies. From the repository root run:
+
 ```bash
-$ npm i
+npm i
 ```
 
-## Making & testing changes
+## Dev loop & Testing changes
 
-The extension is written in TypeScript and built using [webpack](https://webpack.js.org/).
+The extension is written in TypeScript and built using [webpack](https://webpack.js.org/). The dev loop steps and commands have been tested on both Mac and Windows.
+
+1. Go to the Debug tab.
+    1. Hit `Watch all & Launch Extension (workspace)` if you want to work on the main VS Code extension like the left sidebar and the UI for the extension.
+    1. Hit `Watch & Launch Extension + language-server (workspace)` if you want to work on the language services code and want to debug and work on the hover, syntax highlighting, and other functionality within the Workflow files.
+        * This will attach to an instance of the language server running on port `6010`
+1. Hit the play button (this will automatically run `npm watch` for you and monitor for changes) which will open a local version of the extension using the _extension development host_.
+1. Make changes.
+1. To get new changes, hit the refresh button in the debugger window to reload the extension in the development host.  _If you don't see the changes, wait long enough for the `npm watch` terminal to rebuild and then try hitting the play button again._
+![image](https://github.com/github/vscode-github-actions/assets/7976517/8dbd3d75-f447-483e-b7e7-ffec3ccd7562)
+
+
+## npm commands
+
+For the commands below make sure that you are in the `vscode-github-actions` directory of your local repo first.
+
+```bash
+cd vscode-github-actions
+```
 
 ### Build
 
 Build changes (one time):
 
 ```bash
-$ npm run build
+npm run build
 ```
 
 Or to watch for changes and automatically rebuild every time on save:
 
 ```bash
-$ npm run watch
+npm run watch
 ```
-
-### Testing changes
-
-1. Open the repository in VS Code
-1. Run one of the debug targets:
-  * "Watch & Launch extension" - watch extension files, compile as necessary, and run the extension using the _extension development host_
-  * "Attach to Language-Server" - attach to an instance of the language server running on port `6010`
-  * "Run Web Extension in VS Code" - run the [web version](https://code.visualstudio.com/api/extension-guides/web-extensions) of the extension
-
-### Dev loop
-1. Setup `Watch all & Launch Extension` under Debug and hit the green button
-1. `npm run watch`
-1. Make change
-1. Hit the refresh button in the debugger window to reload the extension in the development host
 
 ### Running tests
 
 ```bash
-$ npm test
+npm test
 ```
 
 Or to watch for changes and run tests:
 
 ```bash
-$ npm run test-watch
+npm run test-watch
 ```
 
 ### Lint
 
 ```bash
-$ npm run lint
+npm run lint
 ```
 
 Run linter and fix errors as possible:
 
 ```bash
-$ npm run lint-fix
+npm run lint-fix
 ```
 
 ### Format
@@ -99,25 +104,35 @@ $ npm run lint-fix
 Check formatting with [prettier](https://prettier.io/):
 
 ```bash
-$ npm run format-check
+npm run format-check
 ```
 
 Run prettier and automatically format:
 
 ```bash
-$ npm run format
+npm run format
 ```
 
 ### Package the extension
 
 ```bash
-$ npm run package
+npm run package
 ```
+
+### Run Web Extension
+
+"Run Web Extension in VS Code" - run the [web version](https://code.visualstudio.com/api/extension-guides/web-extensions) of the extension
+
+## VS Code Source Control Repositories
+
+If you don't see `vscode-github-actions` and `languageservices`, please go to `Preferences: Open User Settings` and then search for   `git.openRepositoryInParentFolders` and you can set it to `always` and it will show all of the associated repos for the Workspace. 
+
+![image](https://github.com/github/vscode-github-actions/assets/7976517/c03a1608-df4d-4caf-ba33-0c5eb1802100)
 
 ## Submitting a pull request
 
 1. [Fork][fork] and clone the repository
-1. Configure and install the dependencies: `npm i`
+1. Configure and install the dependencies (in the repository root folder): `npm i`
 1. Create a new branch: `git checkout -b my-branch-name`
 1. Make your change, add tests, and make sure the tests and linter still pass
 1. Push to your fork and [submit a pull request][pr]
@@ -134,7 +149,6 @@ Here are a few things you can do that will increase the likelihood of your pull 
 - [How to Contribute to Open Source](https://opensource.guide/how-to-contribute/)
 - [Using Pull Requests](https://help.github.com/articles/about-pull-requests/)
 - [GitHub Help](https://help.github.com)
-
 
 [bug issues]: https://github.com/github/vscode-github-actions/labels/bug
 [feature request issues]: https://github.com/github/vscode-github-actions/labels/enhancement

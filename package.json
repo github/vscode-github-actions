@@ -526,9 +526,9 @@
     "open-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix",
-    "format": "prettier --write '**/*.ts'",
-    "format-check": "prettier --check '**/*.ts'",
-    "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest",
+    "format": "prettier --write \"**/*.ts\"",
+    "format-check": "prettier --check \"**/*.ts\"",
+    "test": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" jest",
     "test-watch": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --watch"
   },
   "devDependencies": {
@@ -539,6 +539,7 @@
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
     "@vscode/test-web": "*",
+    "cross-env": "^7.0.3",
     "eslint": "^8.25.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
