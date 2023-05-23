@@ -45,7 +45,7 @@ The extension is written in TypeScript and built using [webpack](https://webpack
 
 1. Go to the Debug tab.
     1. Hit `Watch all & Launch Extension (workspace)` if you want to work on the main VS Code extension like the left sidebar and the UI for the extension.
-    1. Hit `Watch & Launch Extension + language-server (workspace)` If you want to work on the language services code and want to debug and work on the hover, syntax highlighting, and other functionality within the Workflow files.
+    1. Hit `Watch & Launch Extension + language-server (workspace)` if you want to work on the language services code and want to debug and work on the hover, syntax highlighting, and other functionality within the Workflow files.
         * This will attach to an instance of the language server running on port `6010`
 1. Hit the green button (this will automatically run `npm watch` for you and monitor for changes) which will open a local version of the extension using the _extension development host_.
 1. Make changes.
