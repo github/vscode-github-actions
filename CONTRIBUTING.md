@@ -55,7 +55,7 @@ The extension is written in TypeScript and built using [webpack](https://webpack
 
 ## npm commands
 
-For the below make sure that you are in the `vscode-github-actions` directory of your local repo first.
+For the commands below make sure that you are in the `vscode-github-actions` directory of your local repo first.
 
 ```bash
 cd vscode-github-actions
