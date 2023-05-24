@@ -13,7 +13,7 @@ The language client and server communicate via the Language Server Protocol. The
 
 ![LSP Illustration](./images/lsp-illustration.png)
 
-By making the extension LSP compliant we have set the extension up to integrate with other text editors in the future.
+By making the language server implementation LSP compliant we have set ourselves up to integrate with other text editors in the future.
 
 Fundamentally, the extension takes in a string of text (YAML specifying a GitHub Actions workflow) and needs to make sense of the text. Conceptually, what this extension does is similar to what other compilers and interpreters (e.g., [LLVM](https://aosabook.org/en/v1/llvm.html)) do. The basic steps form a pipeline, with the output of one step serving as the input to the next step. Broadly speaking the steps involved are:
 
@@ -35,7 +35,7 @@ The open-source language libraries that the extension uses are:
 - The [language service](https://github.com/actions/languageservices/tree/main/languageservice) library uses the workflow parser and expression engine (described below) to implement the core functionality of the extension
     - it calls into the language server for any data that requires an API call
 - the [workflow-parser](https://github.com/actions/languageservices/tree/main/workflow-parser) library parses GitHub Actions workflows into an intermediate representation and validates that the workflow file is syntactically valid
-    - the workflow parser uses a [JSON schema](https://github.com/actions/languageservices/blob/main/workflow-parser/src/workflow-v1.0.json) to parse the workflow file
+    - the workflow parser uses a [schema](https://github.com/actions/languageservices/blob/main/workflow-parser/src/workflow-v1.0.json) to parse the workflow file
     - the schema defines the list of valid tokens and their arguments
 - the [expressions](https://github.com/actions/languageservices/tree/main/expressions) engine is used to parse and evaluate GitHub Actions [expressions](https://docs.github.com/en/actions/learn-github-actions/expressions)
 
