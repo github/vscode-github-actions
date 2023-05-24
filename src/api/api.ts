@@ -8,6 +8,6 @@ export function getClient(token: string): Octokit {
   return new Octokit({
     auth: token,
     userAgent: userAgent,
-    baseUrl: `${getGitHubApiUri()}`
+    baseUrl: getGitHubApiUri()
   });
 }

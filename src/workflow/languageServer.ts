@@ -11,7 +11,7 @@ import {userAgent} from "../api/api";
 import {getSession} from "../auth/auth";
 import {getGitHubContext} from "../git/repository";
 import {WorkflowSelector} from "./documentSelector";
-import {getGitHubApiUri, isUseEnterprise} from "../configuration/configuration";
+import {getGitHubApiUri, useEnterprise} from "../configuration/configuration";
 
 let client: BaseLanguageClient;
 
@@ -27,7 +27,7 @@ export async function initLanguageServer(context: vscode.ExtensionContext) {
   const initializationOptions: InitializationOptions = {
     sessionToken: session?.accessToken,
     userAgent: userAgent,
-    githubApiUrl: isUseEnterprise() ? getGitHubApiUri() : undefined,
+    gitHubApiUrl: useEnterprise() ? getGitHubApiUri() : undefined,
     repos: ghContext?.repos.map(repo => ({
       id: repo.id,
       owner: repo.owner,

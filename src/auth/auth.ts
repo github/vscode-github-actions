@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import {isUseEnterprise} from "../configuration/configuration";
+import {useEnterprise} from "../configuration/configuration";
 
 const AUTH_PROVIDER_ID = "github";
 const AUTH_PROVIDER_ID_ENTERPRISE = "github-enterprise";
@@ -69,7 +69,7 @@ async function getSessionInternal(
     typeof createOrForceMessage === "string"
       ? {forceNewSession: {detail: createOrForceMessage}}
       : {createIfNone: createOrForceMessage};
-  const authProviderId = isUseEnterprise() ? AUTH_PROVIDER_ID_ENTERPRISE : AUTH_PROVIDER_ID;
+  const authProviderId = useEnterprise() ? AUTH_PROVIDER_ID_ENTERPRISE : AUTH_PROVIDER_ID;
   return await vscode.authentication.getSession(authProviderId, getScopes(), options);
 }
 

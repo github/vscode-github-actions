@@ -7,17 +7,17 @@ const DEFAULT_GITHUB_API = "https://api.github.com";
 
 export function initConfiguration(context: vscode.ExtensionContext) {
   context.subscriptions.push(
-    vscode.workspace.onDidChangeConfiguration(e => {
+    vscode.workspace.onDidChangeConfiguration(async e => {
       if (e.affectsConfiguration(getSettingsKey("workflows.pinned"))) {
         pinnedWorkflowsChangeHandlers.forEach(h => h());
       } else if (
         e.affectsConfiguration(getSettingsKey("use-enterprise")) ||
-        (isUseEnterprise() &&
+        (useEnterprise() &&
           (e.affectsConfiguration("github-enterprise.uri") || e.affectsConfiguration(getSettingsKey("remote-name"))))
       ) {
-        updateLanguageServerApiUrl(context);
+        await updateLanguageServerApiUrl(context);
         resetGitHubContext();
-        vscode.commands.executeCommand("github-actions.explorer.refresh");
+        await vscode.commands.executeCommand("github-actions.explorer.refresh");
       }
     })
   );
@@ -64,18 +64,18 @@ export function getRemoteName(): string {
   return getConfiguration().get<string>(getSettingsKey("remote-name"), "origin");
 }
 
-export function isUseEnterprise(): boolean {
+export function useEnterprise(): boolean {
   return getConfiguration().get<boolean>(getSettingsKey("use-enterprise"), false);
 }
 
 export function getGitHubApiUri(): string {
-  if (!isUseEnterprise()) return DEFAULT_GITHUB_API;
+  if (!useEnterprise()) return DEFAULT_GITHUB_API;
   const base = getConfiguration().get<string>("github-enterprise.uri", DEFAULT_GITHUB_API).replace(/\/$/, "");
   return base === DEFAULT_GITHUB_API ? base : `${base}/api/v3`;
 }
 
-function updateLanguageServerApiUrl(context: vscode.ExtensionContext) {
-  deactivateLanguageServer();
+async function updateLanguageServerApiUrl(context: vscode.ExtensionContext) {
+  await deactivateLanguageServer();
 
-  initLanguageServer(context);
+  await initLanguageServer(context);
 }
