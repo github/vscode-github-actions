@@ -4,11 +4,12 @@ import {Octokit} from "@octokit/rest";
 import {canReachGitHubAPI} from "../api/canReachGitHubAPI";
 import {handleSamlError} from "../api/handleSamlError";
 import {getSession} from "../auth/auth";
-import {getRemoteName} from "../configuration/configuration";
+import {getRemoteName, useEnterprise} from "../configuration/configuration";
 import {Protocol} from "../external/protocol";
 import {logDebug, logError} from "../log";
 import {API, GitExtension, RefType, RepositoryState} from "../typings/git";
 import {RepositoryPermission, getRepositoryPermission} from "./repository-permissions";
+import {getGitHubApiUri} from "../configuration/configuration";
 
 interface GitHubUrls {
   workspaceUri: vscode.Uri;
@@ -74,7 +75,11 @@ export async function getGitHubUrls(): Promise<GitHubUrls[] | null> {
           remote = [r.state.remotes[0]];
         }
 
-        if (remote.length > 0 && remote[0].pushUrl?.indexOf("github.com") !== -1) {
+        if (
+          remote.length > 0 &&
+          (remote[0].pushUrl?.indexOf("github.com") !== -1 ||
+            (useEnterprise() && remote[0].pushUrl?.indexOf(new URL(getGitHubApiUri()).host) !== -1))
+        ) {
           const url = remote[0].pushUrl;
 
           return {

@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
+import {useEnterprise} from "../configuration/configuration";
 
 const AUTH_PROVIDER_ID = "github";
+const AUTH_PROVIDER_ID_ENTERPRISE = "github-enterprise";
 const DEFAULT_SCOPES = ["repo", "workflow"];
 
 let signInPrompted = false;
@@ -67,7 +69,8 @@ async function getSessionInternal(
     typeof createOrForceMessage === "string"
       ? {forceNewSession: {detail: createOrForceMessage}}
       : {createIfNone: createOrForceMessage};
-  return await vscode.authentication.getSession(AUTH_PROVIDER_ID, getScopes(), options);
+  const authProviderId = useEnterprise() ? AUTH_PROVIDER_ID_ENTERPRISE : AUTH_PROVIDER_ID;
+  return await vscode.authentication.getSession(authProviderId, getScopes(), options);
 }
 
 function getScopes(): string[] {
