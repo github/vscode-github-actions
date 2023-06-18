@@ -1,4 +1,4 @@
-// #region ANSII section
+// #region ANSI section
 
 const ESC = "\u001b";
 const BrightClassPostfix = "-br";
@@ -7,7 +7,7 @@ const BrightClassPostfix = "-br";
 export const URLRegex = /([{([]*https?:\/\/[a-z0-9]+(?:-[a-z0-9]+)*\.[^\s<>|'",]{2,})/gi;
 
 /**
- * Regex for matching ANSII escape codes
+ * Regex for matching ANSI escape codes
  * \u001b - ESC character
  * ?: Non-capturing group
  * (?:\u001b[) : Match ESC[
@@ -48,7 +48,7 @@ const _ansiEscapeCodeRegex = /(?:\u001b\[)(?:[?|#])?(?:(?:[0-9]{1,3})?(?:(?:;[0-
  *  Esc[48;2;<r>;<g>;<b> To set the background color
  *  Where r,g and b must be between 0-255
  */
-// #endregion ANSII section
+// #endregion ANSI section
 
 // #region commands
 enum Resets {
@@ -163,7 +163,7 @@ interface IAnsiEscapeCodeState {
 
 export class Parser {
   /**
-   * Parses the content into ANSII states
+   * Parses the content into ANSI states
    * @param content content to parse
    */
   public getStates(content: string): IAnsiEscapeCodeState[] {
