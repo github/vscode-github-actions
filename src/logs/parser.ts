@@ -27,9 +27,9 @@ const _ansiEscapeCodeRegex = /(?:\u001b\[)(?:[?|#])?(?:(?:[0-9]{1,3})?(?:(?:;[0-
  *      Where VALUE is SGR parameter https://www.vt100.net/docs/vt510-rm/SGR
  *          We support: 0 (reset), 1 (bold), 3 (italic), 4 (underline), 22 (not bold), 23 (not italic), 24 (not underline), 38 (set fg), 39 (default fg), 48 (set bg), 49 (default bg),
  *                      fg colors - 30 (black), 31 (red), 32 (green), 33 (yellow), 34 (blue), 35 (magenta), 36 (cyan), 37 (white), 90 (grey)
- *                        with more brighness - 91 (red), 92 (green), 93 (yellow), 94 (blue), 95 (magenta), 96 (cyan), 97 (white)
+ *                        with more brightness - 91 (red), 92 (green), 93 (yellow), 94 (blue), 95 (magenta), 96 (cyan), 97 (white)
  *                      bg colors - 40 (black), 41 (red), 42 (green), 43 (yellow), 44 (blue), 45 (magenta), 46 (cyan), 47 (white), 100 (grey)
- *                        with more brighness- 101 (red), 102 (green), 103 (yellow), 104 (blue), 105 (magenta), 106 (cyan), 107 (white)
+ *                        with more brightness- 101 (red), 102 (green), 103 (yellow), 104 (blue), 105 (magenta), 106 (cyan), 107 (white)
  *  Where m refers to the "Graphics mode"
  *
  * 8-bit color is supported
