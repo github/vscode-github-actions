@@ -327,7 +327,7 @@ export class Parser {
           if (currentText) {
             state.output = currentText;
             result.push(state);
-            // deep copy exisiting style for the line to preserve different styles between commands
+            // deep copy existing style for the line to preserve different styles between commands
             let previousStyle;
             if (state.style) {
               previousStyle = Object.assign({}, state.style);
