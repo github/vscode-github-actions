@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.25.8]
+
+- Improve Windows Dev Experience: fix npm commands (cross-env package), fix Source Control Repos, and improve documentation
+- Enable GitHub Enterprise Server
+
+## [0.25.7]
+
+- Add a globe icon to workflow steps that links to the GitHub.com specific step
+- Automatically detect a remote that is not called "origin" so that users don't have to enter the remote name manually
+- Filter out wikis
+- Add working lock file and update script to add it to the npm workspace root
+- @muzimuzhi - Upgrade vsce 2.11.0 to @vscode/vsce version 2.19.0
+
 ## [0.25.6]
 
 - Fix Reusable Workflow Reference for Windows by using vscodeURI instead of path.join 
