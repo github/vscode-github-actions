@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.25.8]
+
+- Improve Windows Dev Experience: fix npm commands (cross-env package), fix Source Control Repos, and improve documentation
+- Enable GitHub Enterprise Server
+
 ## [0.25.6]
 
 - Fix Reusable Workflow Reference for Windows by using vscodeURI instead of path.join 
