@@ -31,7 +31,7 @@ npm i
 npm run build -ws
 ```
 
-**Note**: We have included a `package-lock.json` in `script/workspace`. If `npm run build -ws` fails because packages are not installed correctly with `nmp i`, re-run `script/boostrap` and run `npm ci` to
+**Note**: We have included a `package-lock.json` in `script/workspace`. If `npm run build -ws` fails because packages are not installed correctly with `nmp i`, re-run `script/bootstrap` and run `npm ci` to
 get working packages.
 
 ## Make changes

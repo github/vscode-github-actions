@@ -41,7 +41,7 @@ async function onDidChangeActiveTextEditor(editor?: vscode.TextEditor) {
   }
 }
 
-// Adapted from from https://github.com/eamodio/vscode-gitlens/blob/f22a9cd4199ac498c217643282a6a412e1fc01ae/src/constants.ts#L74
+// Adapted from https://github.com/eamodio/vscode-gitlens/blob/f22a9cd4199ac498c217643282a6a412e1fc01ae/src/constants.ts#L74
 enum DocumentSchemes {
   DebugConsole = "debug",
   Output = "output"
