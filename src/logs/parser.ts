@@ -1,4 +1,4 @@
-// #region ANSII section
+// #region ANSI section
 
 const ESC = "\u001b";
 const BrightClassPostfix = "-br";
@@ -7,13 +7,13 @@ const BrightClassPostfix = "-br";
 export const URLRegex = /([{([]*https?:\/\/[a-z0-9]+(?:-[a-z0-9]+)*\.[^\s<>|'",]{2,})/gi;
 
 /**
- * Regex for matching ANSII escape codes
+ * Regex for matching ANSI escape codes
  * \u001b - ESC character
  * ?: Non-capturing group
  * (?:\u001b[) : Match ESC[
  * (?:[\?|#])??: Match also ? and # formats that we don't supports but want to eat our special characters to get rid of ESC character
- * (?:[0-9]{1,3})?: Match one or more occurances of the simple format we want with out semicolon
- * (?:(?:;[0-9]{0,3})*)?: Match one or more occurances of the format we want with semicolon
+ * (?:[0-9]{1,3})?: Match one or more occurrences of the simple format we want with out semicolon
+ * (?:(?:;[0-9]{0,3})*)?: Match one or more occurrences of the format we want with semicolon
  */
 
 // eslint-disable-next-line no-control-regex
@@ -27,9 +27,9 @@ const _ansiEscapeCodeRegex = /(?:\u001b\[)(?:[?|#])?(?:(?:[0-9]{1,3})?(?:(?:;[0-
  *      Where VALUE is SGR parameter https://www.vt100.net/docs/vt510-rm/SGR
  *          We support: 0 (reset), 1 (bold), 3 (italic), 4 (underline), 22 (not bold), 23 (not italic), 24 (not underline), 38 (set fg), 39 (default fg), 48 (set bg), 49 (default bg),
  *                      fg colors - 30 (black), 31 (red), 32 (green), 33 (yellow), 34 (blue), 35 (magenta), 36 (cyan), 37 (white), 90 (grey)
- *                        with more brighness - 91 (red), 92 (green), 93 (yellow), 94 (blue), 95 (magenta), 96 (cyan), 97 (white)
+ *                        with more brightness - 91 (red), 92 (green), 93 (yellow), 94 (blue), 95 (magenta), 96 (cyan), 97 (white)
  *                      bg colors - 40 (black), 41 (red), 42 (green), 43 (yellow), 44 (blue), 45 (magenta), 46 (cyan), 47 (white), 100 (grey)
- *                        with more brighness- 101 (red), 102 (green), 103 (yellow), 104 (blue), 105 (magenta), 106 (cyan), 107 (white)
+ *                        with more brightness- 101 (red), 102 (green), 103 (yellow), 104 (blue), 105 (magenta), 106 (cyan), 107 (white)
  *  Where m refers to the "Graphics mode"
  *
  * 8-bit color is supported
@@ -48,7 +48,7 @@ const _ansiEscapeCodeRegex = /(?:\u001b\[)(?:[?|#])?(?:(?:[0-9]{1,3})?(?:(?:;[0-
  *  Esc[48;2;<r>;<g>;<b> To set the background color
  *  Where r,g and b must be between 0-255
  */
-// #endregion ANSII section
+// #endregion ANSI section
 
 // #region commands
 enum Resets {
@@ -163,7 +163,7 @@ interface IAnsiEscapeCodeState {
 
 export class Parser {
   /**
-   * Parses the content into ANSII states
+   * Parses the content into ANSI states
    * @param content content to parse
    */
   public getStates(content: string): IAnsiEscapeCodeState[] {
@@ -327,7 +327,7 @@ export class Parser {
           if (currentText) {
             state.output = currentText;
             result.push(state);
-            // deep copy exisiting style for the line to preserve different styles between commands
+            // deep copy existing style for the line to preserve different styles between commands
             let previousStyle;
             if (state.style) {
               previousStyle = Object.assign({}, state.style);
