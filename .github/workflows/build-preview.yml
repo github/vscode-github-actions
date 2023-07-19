@@ -20,6 +20,10 @@ jobs:
       - run: npm --no-git-tag-version version 1.0.${{ github.run_number }}
       - run: npm install @actions/languageserver@latest @actions/workflow-parser@latest @actions/expressions@latest @actions/languageservice@latest
       - run: npm ci
+      - name: create a package.json without scoped name
+        run: |
+          cp package.json package.json.real
+          sed --regexp-extended '/"name"\s*:/ s#@[a-zA-Z\\-]+/##' package.json.real > package.json
       - run: npm run package
       - uses: actions/upload-artifact@v3
         with:
