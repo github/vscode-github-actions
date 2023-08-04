@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.26.1]
+- Update CHANGELOG
+
+## [0.26.0]
+- Update publish.yml to publish to OpenVSX
+- Fix preview run
+- Fix spelling in documentation and comments using the check-spelling action
+- Correctly indent completion options
+
 ## [0.25.8]
 
 - Improve Windows Dev Experience: fix npm commands (cross-env package), fix Source Control Repos, and improve documentation
