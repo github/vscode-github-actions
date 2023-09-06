@@ -2,7 +2,7 @@
 
 ## [0.26.2]
 - Bump word-wrap from 1.2.3 to 1.2.4 
-- Update github context properties
+- @muzimuzhi - Update github context properties
 
 ## [0.26.1]
 - Update CHANGELOG
