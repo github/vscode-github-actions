@@ -55,6 +55,8 @@ Unfortunately, at this time we are not able to support the extension with [remot
 We have enabled experimental functionality to support GitHub Enterprise Server, but this feature is an experimental beta and currently unsupported. To try this out, enable the `use-enterprise` setting to authenticate with your `GitHub Enterprise Server Authentication Provider` settings
 <img width="975" alt="Use-enterprise setting checkbox" src="https://github.com/github/vscode-github-actions/assets/34719884/be76adc6-64af-47ed-84d0-627786cc4eea">
 
+We currently do not have the capability to support Operating System (OS) certificates or enterprise proxies (we plan to support pulling from the VS Code proxy settings), but we have plans for it in the future and it is on our backlog! 
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). A description of the architecture of the extension can be found [here](./docs/project-architecture.md).
