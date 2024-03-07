@@ -32,7 +32,8 @@ module.exports = (env, argv) => {
         path: require.resolve("path-browserify"),
         crypto: require.resolve("crypto-browserify"),
         stream: require.resolve("stream-browserify"),
-        timers: require.resolve("timers-browserify")
+        timers: require.resolve("timers-browserify"),
+        vm: require.resolve("vm-browserify")
       }
     },
     module: {
