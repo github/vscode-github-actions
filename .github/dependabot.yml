@@ -5,9 +5,13 @@ registries:
     url: https://npm.pkg.github.com
     token: ${{secrets.DEPENDABOT_TOKEN}}
 updates:
-  - package-ecosystem: npm
+  - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: weekly
+      interval: "weekly"
     registries:
       - npm-github
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
