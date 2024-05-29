@@ -544,7 +544,7 @@
     "@types/vscode": "^1.72.0",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
-    "@vscode/test-web": "*",
+    "@vscode/test-web": "^0.0.54",
     "cross-env": "^7.0.3",
     "eslint": "^8.25.0",
     "eslint-config-prettier": "^8.5.0",
@@ -576,6 +576,7 @@
     "tunnel": "0.0.6",
     "util": "^0.12.1",
     "uuid": "^3.3.3",
-    "vscode-languageclient": "^8.0.2"
+    "vscode-languageclient": "^8.0.2",
+    "yaml": "^2.4.2"
   }
 }
