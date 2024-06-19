@@ -142,7 +142,7 @@ jobs:
 
       - name: Publish to marketplace
         # https://github.com/HaaLeo/publish-vscode-extension/releases/tag/v1.2.0
-        uses: HaaLeo/publish-vscode-extension@c1a0486c5a3eed24e8c21d4e37889a7c4c60c443
+        uses: HaaLeo/publish-vscode-extension@28e2d3f5817fccf23c1f219eb0cecc903132d1a2
         with:
           pat: ${{ secrets.PUBLISHER_KEY }}
           registryUrl: https://marketplace.visualstudio.com
