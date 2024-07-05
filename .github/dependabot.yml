@@ -6,7 +6,9 @@ registries:
     token: ${{secrets.DEPENDABOT_TOKEN}}
 updates:
   - package-ecosystem: "npm"
-    directory: "/"
+    directories: 
+      - "/"
+      - "script/workspace"
     schedule:
       interval: "weekly"
     registries:
