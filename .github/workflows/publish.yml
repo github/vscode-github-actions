@@ -136,7 +136,7 @@ jobs:
     permissions: {}
 
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: vscode-github-actions-${{ needs.release.outputs.version }}.vsix
 
@@ -157,7 +157,7 @@ jobs:
       OPEN_VSX_TOKEN: ${{ secrets.OPEN_VSX_TOKEN }}
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: vscode-github-actions-${{ needs.release.outputs.version }}.vsix
 
