@@ -84,7 +84,7 @@ export async function getGitHubUrls(): Promise<GitHubUrls[] | null> {
             return {
               workspaceUri: r.rootUri,
               url,
-              protocol: new Protocol(url as string)
+              protocol: new Protocol(url)
             };
           }
         }
