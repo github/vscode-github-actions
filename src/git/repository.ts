@@ -75,18 +75,18 @@ export async function getGitHubUrls(): Promise<GitHubUrls[] | null> {
           remote = [r.state.remotes[0]];
         }
 
-        if (
-          remote.length > 0 &&
-          (remote[0].pushUrl?.indexOf("github.com") !== -1 ||
-            (useEnterprise() && remote[0].pushUrl?.indexOf(new URL(getGitHubApiUri()).host) !== -1))
-        ) {
-          const url = remote[0].pushUrl;
+        if (remote.length > 0 && remote[0].pushUrl) {
+          const host = new URL(remote[0].pushUrl).host;
+          const apiUri = new URL(getGitHubApiUri()).host;
+          if (host === "github.com" || (useEnterprise() && host === apiUri)) {
+            const url = remote[0].pushUrl;
 
-          return {
-            workspaceUri: r.rootUri,
-            url,
-            protocol: new Protocol(url as string)
-          };
+            return {
+              workspaceUri: r.rootUri,
+              url,
+              protocol: new Protocol(url as string)
+            };
+          }
         }
 
         logDebug(`Remote "${remoteName}" not found, skipping repository`);
