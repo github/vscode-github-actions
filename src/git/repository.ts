@@ -287,3 +287,36 @@ export function getCurrentBranch(state: RepositoryState | undefined): string | u
 
   return head.name;
 }
+
+/**
+ * Get the Git repository folder URI
+ * @param startUri The starting URI to search from
+ * @returns The URI of the Git repository folder, or undefined if not found
+ */
+export async function getGitRepositoryFolderUri(startUri: vscode.Uri): Promise<vscode.Uri | undefined> {
+  let currentPath = startUri;
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    try {
+      const gitPath = vscode.Uri.joinPath(currentPath, ".git");
+
+      // Check if .git exists
+      await vscode.workspace.fs.stat(gitPath);
+
+      // If we reach here, .git exists, so return the current path
+      return currentPath;
+    } catch (error) {
+      // .git doesn't exist, move up to the parent directory
+      const parentPath = vscode.Uri.joinPath(currentPath, "..");
+
+      // Check if we've reached the root
+      if (parentPath.toString() === currentPath.toString()) {
+        // We've reached the root without finding a .git folder
+        return undefined;
+      }
+
+      currentPath = parentPath;
+    }
+  }
+}
