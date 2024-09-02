@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-control-regex
-const ansiColorRegex = /\u001b\[(\d+;?)+m/gm;
+const ansiColorRegex = /\u001b\[(\d+;)*\d+m/gm;
 const groupMarker = "##[group]";
 
 import {Parser, IStyle} from "./parser";
