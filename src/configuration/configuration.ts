@@ -75,7 +75,7 @@ export function getGitHubApiUri(): string {
     return base;
   } 
 
-  if(base.includes(".ghe.com")){
+  if(base.endsWith(".ghe.com")){
     return `api.${base}`
   } else {
     return `${base}/api/v3`;
