@@ -71,7 +71,15 @@ export function useEnterprise(): boolean {
 export function getGitHubApiUri(): string {
   if (!useEnterprise()) return DEFAULT_GITHUB_API;
   const base = getConfiguration().get<string>("github-enterprise.uri", DEFAULT_GITHUB_API).replace(/\/$/, "");
-  return base === DEFAULT_GITHUB_API ? base : `${base}/api/v3`;
+  if (base === DEFAULT_GITHUB_API) {
+    return base;
+  }
+
+  if (base.endsWith(".ghe.com")) {
+    return `api.${base}`;
+  } else {
+    return `${base}/api/v3`;
+  }
 }
 
 async function updateLanguageServerApiUrl(context: vscode.ExtensionContext) {

@@ -147,20 +147,3 @@ jobs:
           pat: ${{ secrets.PUBLISHER_KEY }}
           registryUrl: https://marketplace.visualstudio.com
           extensionFile: ./vscode-github-actions-${{ needs.release.outputs.version }}.vsix
-          
-  open-vsx-publish:
-    name: Publish to Open VSX Registry
-    needs: release
-    environment: publish-open-vsx
-    runs-on: ubuntu-latest
-    env:
-      OPEN_VSX_TOKEN: ${{ secrets.OPEN_VSX_TOKEN }}
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: vscode-github-actions-${{ needs.release.outputs.version }}.vsix
-
-      - name: Publish to Registry
-        run: |
-          npx ovsx publish -p $OPEN_VSX_TOKEN *.vsix
