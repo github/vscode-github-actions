@@ -127,11 +127,25 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
           }
 
           if (event_type) {
+            const client_payload = await vscode.window.showInputBox({
+              prompt: "Enter client_payload as JSON (optional)",
+              value: "{}"
+            });
+
+            let parsedClientPayload = {};
+            if (client_payload) {
+              try {
+                parsedClientPayload = JSON.parse(client_payload);
+              } catch (error) {
+                return vscode.window.showErrorMessage(`Invalid JSON for client_payload: ${(error as Error)?.message}`);
+              }
+            }
+
             await gitHubRepoContext.client.repos.createDispatchEvent({
               owner: gitHubRepoContext.owner,
               repo: gitHubRepoContext.name,
               event_type,
-              client_payload: {}
+              client_payload: parsedClientPayload
             });
 
             vscode.window.setStatusBarMessage(`GitHub Actions: Repository event '${event_type}' dispatched`, 2000);
