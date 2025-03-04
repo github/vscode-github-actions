@@ -568,7 +568,7 @@
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
     "dayjs": "^1.11.7",
-    "elliptic": "6.6.0",
+    "elliptic": "6.6.1",
     "libsodium-wrappers": "^0.7.10",
     "path-browserify": "^1.0.1",
     "ssh-config": "^3.0.0",
@@ -581,10 +581,10 @@
   },
   "overrides": {
     "browserify-sign": {
-      "elliptic": "6.6.0"
+      "elliptic": "6.6.1"
     },
     "create-ecdh": {
-      "elliptic": "6.6.0"
+      "elliptic": "6.6.1"
     }
   }
 }
