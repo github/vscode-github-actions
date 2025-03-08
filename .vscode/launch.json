@@ -12,6 +12,16 @@
       "resolveSourceMapLocations": []
     },
     {
+      "name": "Launch Extension - Isolated Profile",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}","--profile=debug-gha"],
+      "preLaunchTask": "npm: watch",
+      "smartStep": true,
+      "sourceMaps": true,
+      "resolveSourceMapLocations": []
+    },
+    {
       "type": "node",
       "request": "attach",
       "name": "Attach to Language-Server",
