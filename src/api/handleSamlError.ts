@@ -1,13 +1,12 @@
-import {Octokit} from "@octokit/rest";
 import {AuthenticationSession} from "vscode";
 
 import {newSession} from "../auth/auth";
 import {logDebug} from "../log";
-import {getClient} from "./api";
+import {getClient, GhaOctokit} from "./api";
 
 export async function handleSamlError<T>(
   session: AuthenticationSession,
-  request: (client: Octokit) => Promise<T>
+  request: (client: GhaOctokit) => Promise<T>
 ): Promise<T> {
   try {
     const client = getClient(session.accessToken);

@@ -21,7 +21,8 @@ export class EnvironmentSecretsNode extends vscode.TreeItem {
       secrets = await this.gitHubRepoContext.client.paginate(
         this.gitHubRepoContext.client.actions.listEnvironmentSecrets,
         {
-          repository_id: this.gitHubRepoContext.id,
+          owner: this.gitHubRepoContext.owner,
+          repo: this.gitHubRepoContext.name,
           environment_name: this.environment.name,
           per_page: 100
         },
