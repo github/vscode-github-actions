@@ -25,7 +25,8 @@ export class EnvironmentSecretsNode extends vscode.TreeItem {
         // @ts-expect-error FIXME: Newer Typescript catches a problem that previous didn't. This will be fixed in Octokit bump.
         this.gitHubRepoContext.client.actions.listEnvironmentSecrets,
         {
-          repository_id: this.gitHubRepoContext.id,
+          owner: this.gitHubRepoContext.owner,
+          repo: this.gitHubRepoContext.name,
           environment_name: this.environment.name,
           per_page: 100
         },

@@ -563,7 +563,9 @@
   "dependencies": {
     "@actions/languageserver": "*",
     "@actions/workflow-parser": "*",
-    "@octokit/rest": "^19.0.7",
+    "@octokit/plugin-retry": "^7.1.4",
+    "@octokit/plugin-throttling": "^9.4.0",
+    "@octokit/rest": "^21.1.1",
     "@vscode/vsce": "^2.19.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
