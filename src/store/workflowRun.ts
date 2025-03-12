@@ -81,6 +81,7 @@ export class WorkflowRun extends WorkflowRunBase {
 
     try {
       jobs = await this._gitHubRepoContext.client.paginate(
+        // @ts-expect-error FIXME: Newer Typescript catches a problem that previous didn't. This will be fixed in Octokit bump.
         this._gitHubRepoContext.client.actions.listJobsForWorkflowRun,
         {
           owner: this._gitHubRepoContext.owner,
@@ -152,6 +153,7 @@ export class WorkflowRunAttempt extends WorkflowRunBase {
 
     try {
       jobs = await this._gitHubRepoContext.client.paginate(
+        // @ts-expect-error FIXME: Newer Typescript catches a problem that previous didn't. This will be fixed in Octokit bump.
         this._gitHubRepoContext.client.actions.listJobsForWorkflowRunAttempt,
         {
           owner: this._gitHubRepoContext.owner,
