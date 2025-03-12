@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import {GitHubRepoContext} from "../../git/repository";
 import {WorkflowJob} from "../../store/WorkflowJob";
-import {getIconForWorkflowRun} from "../icons";
+import {getIconForWorkflowNode} from "../icons";
 import {WorkflowStepNode} from "../workflows/workflowStepNode";
 
 export class WorkflowJobNode extends vscode.TreeItem {
@@ -18,7 +18,8 @@ export class WorkflowJobNode extends vscode.TreeItem {
     if (this.job.job.status === "completed") {
       this.contextValue += " completed";
     }
-    this.iconPath = getIconForWorkflowRun(this.job.job);
+
+    this.iconPath = getIconForWorkflowNode(this.job.job);
   }
 
   hasSteps(): boolean {

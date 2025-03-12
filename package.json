@@ -100,19 +100,13 @@
         "command": "github-actions.explorer.refresh",
         "category": "GitHub Actions",
         "title": "Refresh",
-        "icon": {
-          "dark": "resources/icons/dark/refresh.svg",
-          "light": "resources/icons/light/refresh.svg"
-        }
+        "icon": "$(refresh)"
       },
       {
         "command": "github-actions.explorer.current-branch.refresh",
         "category": "GitHub Actions",
         "title": "Refresh current branch",
-        "icon": {
-          "dark": "resources/icons/dark/refresh.svg",
-          "light": "resources/icons/light/refresh.svg"
-        }
+        "icon": "$(refresh)"
       },
       {
         "command": "github-actions.explorer.openRun",
@@ -131,10 +125,7 @@
         "category": "GitHub Actions",
         "title": "Trigger workflow",
         "when": "viewItem =~ /workflow/ && viewItem =~ /dispatch/",
-        "icon": {
-          "dark": "resources/icons/dark/run.svg",
-          "light": "resources/icons/light/run.svg"
-        }
+        "icon": "$(play)"
       },
       {
         "command": "github-actions.workflow.run.open",
@@ -148,10 +139,7 @@
         "category": "GitHub Actions",
         "title": "View job logs",
         "when": "viewItem =~ /job/",
-        "icon": {
-          "dark": "resources/icons/dark/logs.svg",
-          "light": "resources/icons/light/logs.svg"
-        }
+        "icon": "$(output)"
       },
       {
         "command": "github-actions.step.logs",
@@ -182,10 +170,7 @@
         "command": "github-actions.settings.secret.add",
         "category": "GitHub Actions",
         "title": "Add new secret",
-        "icon": {
-          "dark": "resources/icons/dark/add.svg",
-          "light": "resources/icons/light/add.svg"
-        }
+        "icon": "$(add)"
       },
       {
         "command": "github-actions.settings.secret.copy",
@@ -196,46 +181,31 @@
         "command": "github-actions.settings.secret.update",
         "category": "GitHub Actions",
         "title": "Update secret",
-        "icon": {
-          "dark": "resources/icons/dark/edit.svg",
-          "light": "resources/icons/light/edit.svg"
-        }
+        "icon": "$(edit)"
       },
       {
         "command": "github-actions.settings.secret.delete",
         "category": "GitHub Actions",
         "title": "Delete secret",
-        "icon": {
-          "dark": "resources/icons/dark/remove.svg",
-          "light": "resources/icons/light/remove.svg"
-        }
+        "icon": "$(remove)"
       },
       {
         "command": "github-actions.settings.variable.add",
         "category": "GitHub Actions",
         "title": "Add new variable",
-        "icon": {
-          "dark": "resources/icons/dark/add.svg",
-          "light": "resources/icons/light/add.svg"
-        }
+        "icon": "$(add)"
       },
       {
         "command": "github-actions.settings.variable.update",
         "category": "GitHub Actions",
         "title": "Update variable",
-        "icon": {
-          "dark": "resources/icons/dark/edit.svg",
-          "light": "resources/icons/light/edit.svg"
-        }
+        "icon": "$(edit)"
       },
       {
         "command": "github-actions.settings.variable.delete",
         "category": "GitHub Actions",
         "title": "Delete variable",
-        "icon": {
-          "dark": "resources/icons/dark/remove.svg",
-          "light": "resources/icons/light/remove.svg"
-        }
+        "icon": "$(remove)"
       },
       {
         "command": "github-actions.settings.variable.copy-name",
