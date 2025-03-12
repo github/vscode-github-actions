@@ -7,7 +7,10 @@ import {VariableNode} from "./variableNode";
 export type EnvironmentVariablesCommandArgs = Pick<EnvironmentVariablesNode, "gitHubRepoContext" | "environment">;
 
 export class EnvironmentVariablesNode extends vscode.TreeItem {
-  constructor(public readonly gitHubRepoContext: GitHubRepoContext, public readonly environment: Environment) {
+  constructor(
+    public readonly gitHubRepoContext: GitHubRepoContext,
+    public readonly environment: Environment
+  ) {
     super("Variables", vscode.TreeItemCollapsibleState.Collapsed);
 
     this.iconPath = new vscode.ThemeIcon("symbol-text");
@@ -19,12 +22,14 @@ export class EnvironmentVariablesNode extends vscode.TreeItem {
     let variables: VariableNode[] = [];
     try {
       variables = await this.gitHubRepoContext.client.paginate(
+        // @ts-expect-error FIXME: Newer Typescript catches a problem that previous didn't. This will be fixed in Octokit bump.
         this.gitHubRepoContext.client.actions.listEnvironmentVariables,
         {
           repository_id: this.gitHubRepoContext.id,
           environment_name: this.environment.name,
           per_page: 100
         },
+        // @ts-expect-error FIXME: Newer Typescript catches a problem that previous didn't. This will be fixed in Octokit bump.
         response => response.data.map(v => new VariableNode(this.gitHubRepoContext, v, this.environment))
       );
     } catch (e) {

@@ -106,6 +106,7 @@ async function updatePinnedWorkflows() {
 
     // Get all workflows to resolve names. We could do this locally, but for now, let's make the API call.
     const workflows = await gitHubRepoContext.client.paginate(
+      // @ts-expect-error FIXME: Newer Typescript catches a problem that previous didn't. This will be fixed in Octokit bump.
       gitHubRepoContext.client.actions.listRepoWorkflows,
       {
         owner: gitHubRepoContext.owner,
@@ -116,6 +117,7 @@ async function updatePinnedWorkflows() {
     );
 
     const workflowByPath: {[id: string]: Workflow} = {};
+    // @ts-expect-error FIXME: Newer Typescript catches a problem that previous didn't. This will be fixed in Octokit bump.
     workflows.forEach(w => (workflowByPath[w.path] = w));
 
     for (const pinnedWorkflow of workflowsByWorkspace.get(workspaceName) || []) {
