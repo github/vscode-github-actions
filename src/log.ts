@@ -1,35 +1,21 @@
 import * as vscode from "vscode";
 
-enum LogLevel {
-  Debug = 0,
-  Info = 1
-}
-
-let logger: vscode.OutputChannel;
-const level: LogLevel = PRODUCTION ? LogLevel.Info : LogLevel.Debug;
+let logger: vscode.LogOutputChannel;
 
 export function init() {
-  logger = vscode.window.createOutputChannel("GitHub Actions");
+  logger = vscode.window.createOutputChannel("GitHub Actions", {log: true});
 }
 
 export function log(...values: unknown[]) {
-  logger.appendLine(values.join(" "));
+  logger.info(values.join(" "));
 }
 
 export function logDebug(...values: unknown[]) {
-  if (level > LogLevel.Debug) {
-    return;
-  }
-
-  logger.appendLine(values.join(" "));
+  logger.debug(values.join(" "));
 }
 
 export function logError(e: Error, ...values: unknown[]) {
-  logger.appendLine(values.join(" "));
-  logger.appendLine(e.message);
-  if (e.stack) {
-    logger.appendLine(e.stack);
-  }
+  logger.error(e, values);
 }
 
 export function revealLog() {
