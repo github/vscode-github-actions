@@ -68,6 +68,16 @@ export function useEnterprise(): boolean {
   return getConfiguration().get<boolean>(getSettingsKey("use-enterprise"), false);
 }
 
+export function getGithubUri(): string {
+  const apiUri = getGitHubApiUri();
+
+  if (apiUri === DEFAULT_GITHUB_API || apiUri.endsWith(".ghe.com")) {
+    return apiUri.replace(/^(https?):\/\/api\./, "$1://");
+  }
+
+  return apiUri.replace(/\/api\/v3$/, "");
+}
+
 export function getGitHubApiUri(): string {
   if (!useEnterprise()) return DEFAULT_GITHUB_API;
   const base = getConfiguration().get<string>("github-enterprise.uri", DEFAULT_GITHUB_API).replace(/\/$/, "");
@@ -76,7 +86,7 @@ export function getGitHubApiUri(): string {
   }
 
   if (base.endsWith(".ghe.com")) {
-    return `api.${base}`;
+    return base.replace(/^(https?):\/\//, "$1://api.");
   } else {
     return `${base}/api/v3`;
   }
