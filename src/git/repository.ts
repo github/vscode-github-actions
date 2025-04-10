@@ -4,7 +4,7 @@ import {Octokit} from "@octokit/rest";
 import {canReachGitHubAPI} from "../api/canReachGitHubAPI";
 import {handleSamlError} from "../api/handleSamlError";
 import {getSession} from "../auth/auth";
-import {getGithubUri, getRemoteName, useEnterprise} from "../configuration/configuration";
+import {getGitHubApiUri, getRemoteName, useEnterprise} from "../configuration/configuration";
 import {Protocol} from "../external/protocol";
 import {logDebug, logError} from "../log";
 import {API, GitExtension, RefType, RepositoryState} from "../typings/git";
@@ -77,7 +77,8 @@ export async function getGitHubUrls(): Promise<GitHubUrls[] | null> {
         if (
           remote.length > 0 &&
           (remote[0].pushUrl?.indexOf("github.com") !== -1 ||
-            (useEnterprise() && remote[0].pushUrl?.indexOf(new URL(getGithubUri()).host) !== -1))
+            (useEnterprise() && remote[0].pushUrl?.indexOf(new URL(getGitHubApiUri()).host) !== -1) ||
+            remote[0].pushUrl?.indexOf(".ghe.com") !== -1)
         ) {
           const url = remote[0].pushUrl;
 
