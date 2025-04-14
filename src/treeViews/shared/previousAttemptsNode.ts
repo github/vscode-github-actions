@@ -4,7 +4,10 @@ import {WorkflowRun} from "../../store/workflowRun";
 import {AttemptNode} from "./attemptNode";
 
 export class PreviousAttemptsNode extends vscode.TreeItem {
-  constructor(private gitHubRepoContext: GitHubRepoContext, private run: WorkflowRun) {
+  constructor(
+    private gitHubRepoContext: GitHubRepoContext,
+    private run: WorkflowRun
+  ) {
     super("Previous attempts", vscode.TreeItemCollapsibleState.Collapsed);
   }
 

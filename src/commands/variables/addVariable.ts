@@ -31,7 +31,8 @@ export function registerAddVariable(context: vscode.ExtensionContext) {
       try {
         if ("environment" in args) {
           await gitHubRepoContext.client.actions.createEnvironmentVariable({
-            repository_id: gitHubRepoContext.id,
+            owner: gitHubRepoContext.owner,
+            repo: gitHubRepoContext.name,
             environment_name: args.environment.name,
             name,
             value
