@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import {GitHubRepoContext} from "../../git/repository";
 import {WorkflowStep} from "../../model";
 import {WorkflowJob} from "../../store/WorkflowJob";
-import {getIconForWorkflowStep} from "../icons";
+import {getIconForWorkflowNode} from "../icons";
 
 export class WorkflowStepNode extends vscode.TreeItem {
   constructor(
@@ -17,6 +17,6 @@ export class WorkflowStepNode extends vscode.TreeItem {
       this.contextValue += " completed";
     }
 
-    this.iconPath = getIconForWorkflowStep(this.step);
+    this.iconPath = getIconForWorkflowNode(this.step);
   }
 }

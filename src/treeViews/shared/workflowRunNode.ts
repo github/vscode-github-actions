@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import {GitHubRepoContext} from "../../git/repository";
 import {RunStore} from "../../store/store";
 import {WorkflowRun} from "../../store/workflowRun";
-import {getIconForWorkflowRun} from "../icons";
+import {getIconForWorkflowNode} from "../icons";
 import {getEventString, getStatusString} from "./runTooltipHelper";
 import {NoWorkflowJobsNode} from "./noWorkflowJobsNode";
 import {PreviousAttemptsNode} from "./previousAttemptsNode";
@@ -29,7 +29,7 @@ export class WorkflowRunNode extends vscode.TreeItem {
 
     this.contextValue = this.run.contextValue(this.gitHubRepoContext.permissionLevel);
 
-    this.iconPath = getIconForWorkflowRun(this.run.run);
+    this.iconPath = getIconForWorkflowNode(this.run.run);
     this.tooltip = this.getTooltip();
   }
 
