@@ -7,7 +7,10 @@ import {EnvironmentVariablesNode} from "./environmentVariablesNode";
 import {SettingsExplorerNode} from "./types";
 
 export class EnvironmentNode extends vscode.TreeItem {
-  constructor(public readonly gitHubRepoContext: GitHubRepoContext, public readonly environment: Environment) {
+  constructor(
+    public readonly gitHubRepoContext: GitHubRepoContext,
+    public readonly environment: Environment
+  ) {
     const state = hasWritePermission(gitHubRepoContext.permissionLevel)
       ? vscode.TreeItemCollapsibleState.Collapsed
       : vscode.TreeItemCollapsibleState.None;

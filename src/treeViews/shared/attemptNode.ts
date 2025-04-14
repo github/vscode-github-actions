@@ -6,7 +6,10 @@ import {getEventString, getStatusString} from "./runTooltipHelper";
 import {WorkflowJobNode} from "./workflowJobNode";
 
 export class AttemptNode extends vscode.TreeItem {
-  constructor(private gitHubRepoContext: GitHubRepoContext, private attempt: WorkflowRunAttempt) {
+  constructor(
+    private gitHubRepoContext: GitHubRepoContext,
+    private attempt: WorkflowRunAttempt
+  ) {
     super(`Attempt #${attempt.attempt}`, vscode.TreeItemCollapsibleState.Collapsed);
 
     this.iconPath = getIconForWorkflowRun(this.attempt.run);

@@ -1,7 +1,14 @@
 {
-  "github-actions.workflows.pinned.workflows": [".github/workflows/build.yml"],
-  "editor.formatOnSave": true,
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "modificationsIfAvailable",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.fixAll.ts": "explicit",
+      "source.organizeImports.ts": "explicit",
+      "source.addMissingImports.ts": "explicit"
+    }
   }
 }
