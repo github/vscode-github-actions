@@ -106,6 +106,12 @@
           "include": "#string"
         },
         {
+          "include": "#op-comparison"
+        },
+        {
+          "include": "#op-logical"
+        },
+        {
           "include": "#number"
         },
         {
@@ -140,6 +146,14 @@
       "name": "string.quoted.single.github-actions-expression",
       "begin": "'",
       "end": "'"
+    },
+    "op-comparison": {
+      "name": "keyword.operator.comparison.github-actions-expression",
+      "match": "(==|!=)"
+    },
+    "op-logical": {
+      "name": "keyword.operator.logical.github-actions-expression",
+      "match": "(&&|\\|\\|)"
     },
     "number": {
       "name": "constant.numeric.github-actions-expression",
