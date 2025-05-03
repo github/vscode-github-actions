@@ -6,6 +6,9 @@
       "include": "#expression"
     },
     {
+      "include": "#block-if-expression"
+    },
+    {
       "include": "#if-expression"
     }
   ],
@@ -38,8 +41,71 @@
         }
       }
     },
+    "block-if-expression": {
+      "contentName": "meta.embedded.block.github-actions-expression",
+      "begin": "^\\s*\\b(if:) (?:(\\|)|(>))([1-9])?([-+])?(.*\\n?)",
+      "beginCaptures": {
+        "1": {
+          "patterns": [
+            {
+              "include": "source.github-actions-workflow"
+            }
+          ]
+        },
+        "2": {
+          "name": "keyword.control.flow.block-scalar.literal.yaml"
+        },
+        "3": {
+          "name": "keyword.control.flow.block-scalar.folded.yaml"
+        },
+        "4": {
+          "name": "constant.numeric.indentation-indicator.yaml"
+        },
+        "5": {
+          "name": "storage.modifier.chomping-indicator.yaml"
+        },
+        "6": {
+          "patterns": [
+            {
+              "include": "#comment"
+            },
+            {
+              "match": ".+",
+              "name": "invalid.illegal.expected-comment-or-newline.yaml"
+            }
+          ]
+        }
+      },
+      "end": "^(?=\\S)|(?!\\G)",
+      "patterns": [
+        {
+          "begin": "^([ ]+)(?! )",
+          "end": "^(?!\\1|\\s*$)",
+          "patterns": [
+            {
+              "include": "#function-call"
+            },
+            {
+              "include": "#context"
+            },
+            {
+              "include": "#string"
+            },
+            {
+              "include": "#number"
+            },
+            {
+              "include": "#boolean"
+            },
+            {
+              "include": "#null"
+            }
+          ]
+        }
+      ]
+    },
     "if-expression": {
-      "match": "\\b(if:) (.*?)$",
+      "match": "^\\s*\\b(if:) (.*?)$",
       "contentName": "meta.embedded.block.github-actions-expression",
       "captures": {
         "1": {
