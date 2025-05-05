@@ -78,7 +78,7 @@ export async function getGitHubUrls(): Promise<GitHubUrls[] | null> {
           remote.length > 0 &&
           (remote[0].pushUrl?.indexOf("github.com") !== -1 ||
             (useEnterprise() && remote[0].pushUrl?.indexOf(new URL(getGitHubApiUri()).host) !== -1) ||
-            remote[0].pushUrl?.indexOf(".ghe.com") !== -1)
+            (remote[0].pushUrl ? new URL(remote[0].pushUrl).host.endsWith(".ghe.com") : false))
         ) {
           const url = remote[0].pushUrl;
 
