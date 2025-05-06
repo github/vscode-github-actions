@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
-import {Octokit} from "@octokit/rest";
-
+import {type GhaOctokit} from "../api/api";
 import {canReachGitHubAPI} from "../api/canReachGitHubAPI";
 import {handleSamlError} from "../api/handleSamlError";
 import {getSession} from "../auth/auth";
@@ -131,7 +130,7 @@ export async function getGitHubUrls(): Promise<GitHubUrls[] | null> {
 }
 
 export interface GitHubRepoContext {
-  client: Octokit;
+  client: GhaOctokit;
   repositoryState: RepositoryState | undefined;
 
   workspaceUri: vscode.Uri;
@@ -186,7 +185,7 @@ export async function getGitHubContext(): Promise<GitHubContext | undefined> {
     }
     const username = session.account.label;
 
-    const repos = await handleSamlError(session, async (client: Octokit) => {
+    const repos = await handleSamlError(session, async (client: GhaOctokit) => {
       return await Promise.all(
         protocolInfos.map(async (protocolInfo): Promise<GitHubRepoContext> => {
           logDebug("Getting infos for repository", protocolInfo.url);

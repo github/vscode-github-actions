@@ -10,20 +10,14 @@ export interface StatusAndConclusion {
   conclusion: string | null;
 }
 
-export function getAbsoluteIconPath(relativeIconPath: string): {
-  light: string | vscode.Uri;
-  dark: string | vscode.Uri;
-} {
+export function getAbsoluteIconPath(relativeIconPath: string) {
   return {
     light: vscode.Uri.joinPath(_context.extensionUri, "resources", "icons", "light", relativeIconPath),
     dark: vscode.Uri.joinPath(_context.extensionUri, "resources", "icons", "dark", relativeIconPath)
   };
 }
 
-export function getIconForWorkflowRun({
-  status,
-  conclusion
-}: StatusAndConclusion): string | vscode.ThemeIcon | {light: string | vscode.Uri; dark: string | vscode.Uri} {
+export function getIconForWorkflowRun({status, conclusion}: StatusAndConclusion) {
   switch (status) {
     case "completed": {
       switch (conclusion) {
@@ -62,10 +56,7 @@ export function getIconForWorkflowRun({
   return "";
 }
 
-export function getIconForWorkflowStep({
-  status,
-  conclusion
-}: StatusAndConclusion): string | vscode.ThemeIcon | {light: string | vscode.Uri; dark: string | vscode.Uri} {
+export function getIconForWorkflowStep({status, conclusion}: StatusAndConclusion): vscode.IconPath | undefined {
   switch (status) {
     case "completed": {
       switch (conclusion) {
@@ -93,7 +84,7 @@ export function getIconForWorkflowStep({
       return getAbsoluteIconPath("steps/step_inprogress.svg");
   }
 
-  return "";
+  return undefined;
 }
 
 /** Get one of the built-in VS Code icons */

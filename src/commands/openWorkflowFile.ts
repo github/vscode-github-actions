@@ -22,7 +22,7 @@ export function registerOpenWorkflowFile(context: vscode.ExtensionContext) {
             const textDocument = await vscode.workspace.openTextDocument(fileUri);
             await vscode.window.showTextDocument(textDocument);
             return;
-          } catch (e) {
+          } catch {
             // Ignore error and show error message below
           }
         }

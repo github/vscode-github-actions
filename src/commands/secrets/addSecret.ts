@@ -66,12 +66,14 @@ export async function createOrUpdateEnvSecret(
   value: string
 ) {
   const keyResponse = await context.client.actions.getEnvironmentPublicKey({
-    repository_id: context.id,
+    owner: context.owner,
+    repo: context.name,
     environment_name: environment
   });
 
   await context.client.actions.createOrUpdateEnvironmentSecret({
-    repository_id: context.id,
+    owner: context.owner,
+    repo: context.name,
     environment_name: environment,
     secret_name: name,
     key_id: keyResponse.data.key_id,
