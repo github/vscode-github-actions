@@ -1,4 +1,8 @@
 import * as vscode from "vscode";
+import {match} from "ts-pattern";
+import {type vscodeTestingThemeColor} from "./shared/vscodeThemeColor";
+import {type vscodeTestingThemeIcon} from "./shared/vscodeThemeIcon";
+import {logDebug} from "../log";
 
 let _context: vscode.ExtensionContext;
 export function initResources(context: vscode.ExtensionContext) {
@@ -10,125 +14,41 @@ export interface StatusAndConclusion {
   conclusion: string | null;
 }
 
-export function getAbsoluteIconPath(relativeIconPath: string): {
-  light: string | vscode.Uri;
-  dark: string | vscode.Uri;
-} {
+export function getAbsoluteIconPath(relativeIconPath: string) {
   return {
     light: vscode.Uri.joinPath(_context.extensionUri, "resources", "icons", "light", relativeIconPath),
     dark: vscode.Uri.joinPath(_context.extensionUri, "resources", "icons", "dark", relativeIconPath)
   };
 }
 
-export function getIconForWorkflowRun({
-  status,
-  conclusion
-}: StatusAndConclusion): string | vscode.ThemeIcon | {light: string | vscode.Uri; dark: string | vscode.Uri} {
-  switch (status) {
-    case "completed": {
-      switch (conclusion) {
-        case "success":
-          return getAbsoluteIconPath("workflowruns/wr_success.svg");
+export function getIconForWorkflowNode(run: StatusAndConclusion): vscode.ThemeIcon {
+  const iconInfo = match(run)
+    .returnType<[vscodeTestingThemeIcon, vscodeTestingThemeColor]>()
+    .with({status: "completed", conclusion: "success"}, () => ["testing-passed-icon", "testing.iconPassed"])
+    .with({status: "completed", conclusion: "failure"}, () => ["testing-failed-icon", "testing.iconFailed"])
+    .with({status: "completed", conclusion: "skipped"}, () => ["testing-skipped-icon", "testing.iconSkipped"])
+    .with({status: "completed", conclusion: "cancelled"}, () => ["circle-slash", "testing.iconSkipped"])
+    .with({status: "completed", conclusion: "action_required"}, () => ["warning", "testing.iconQueued"])
+    .with({status: "completed", conclusion: "timed_out"}, () => ["warning", "testing.iconQueued"])
+    .with({status: "completed", conclusion: "neutral"}, () => ["testing-passed-icon", "testing.iconSkipped"])
+    .with({status: "queued"}, () => ["testing-queued-icon", "testing.iconQueued"])
+    .with({status: "waiting"}, () => ["testing-queued-icon", "testing.iconQueued"])
+    .with({status: "pending"}, () => ["testing-queued-icon", "testing.iconQueued"])
+    .with({conclusion: "pending"}, () => ["testing-queued-icon", "testing.iconQueued"])
+    .with({status: "in_progress"}, () => ["loading~spin", "testing.iconUnset"])
+    .with({status: "inprogress"}, () => ["loading~spin", "testing.iconUnset"])
+    .otherwise(() => {
+      logDebug("Unknown status/conclusion combination: ", run.status, run.conclusion);
+      return ["question", "testing.iconUnset"];
+    });
 
-        case "startup_failure":
-        case "failure":
-          return getAbsoluteIconPath("workflowruns/wr_failure.svg");
-
-        case "skipped":
-          return getAbsoluteIconPath("workflowruns/wr_skipped.svg");
-
-        case "cancelled":
-          return getAbsoluteIconPath("workflowruns/wr_cancelled.svg");
-      }
-
-      break;
-    }
-
-    case "pending":
-      return getAbsoluteIconPath("workflowruns/wr_pending.svg");
-
-    case "requested":
-    case "queued":
-      return getAbsoluteIconPath("workflowruns/wr_queued.svg");
-
-    case "waiting":
-      return getAbsoluteIconPath("workflowruns/wr_waiting.svg");
-
-    case "inprogress":
-    case "in_progress":
-      return getAbsoluteIconPath("workflowruns/wr_inprogress.svg");
-  }
-
-  return "";
+  return new vscode.ThemeIcon(iconInfo[0], new vscode.ThemeColor(iconInfo[1]));
 }
 
-export function getIconForWorkflowStep({
-  status,
-  conclusion
-}: StatusAndConclusion): string | vscode.ThemeIcon | {light: string | vscode.Uri; dark: string | vscode.Uri} {
-  switch (status) {
-    case "completed": {
-      switch (conclusion) {
-        case "success":
-          return getAbsoluteIconPath("steps/step_success.svg");
-
-        case "failure":
-          return getAbsoluteIconPath("steps/step_failure.svg");
-
-        case "skipped":
-          return getAbsoluteIconPath("steps/step_skipped.svg");
-
-        case "cancelled":
-          return getAbsoluteIconPath("steps/step_cancelled.svg");
-      }
-
-      break;
-    }
-
-    case "queued":
-      return getAbsoluteIconPath("steps/step_queued.svg");
-
-    case "inprogress":
-    case "in_progress":
-      return getAbsoluteIconPath("steps/step_inprogress.svg");
-  }
-
-  return "";
-}
-
-/** Get one of the built-in VS Code icons */
 export function getCodIconForWorkflowRun(runOrJob?: StatusAndConclusion): string {
   if (!runOrJob) {
     return "circle-outline";
   }
 
-  switch (runOrJob.status) {
-    case "completed": {
-      switch (runOrJob.conclusion) {
-        case "success":
-          return "pass";
-
-        case "failure":
-          return "error";
-
-        case "skipped":
-        case "cancelled":
-          return "circle-slash";
-      }
-      break;
-    }
-
-    case "queued":
-      return "primitive-dot";
-
-    case "waiting":
-      return "bell";
-
-    case "inprogress":
-    case "in_progress":
-      return "sync~spin";
-  }
-
-  // Default to circle if there is no match
-  return "circle";
+  return getIconForWorkflowNode(runOrJob).id;
 }

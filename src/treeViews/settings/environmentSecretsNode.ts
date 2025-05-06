@@ -7,7 +7,10 @@ import {SecretNode} from "./secretNode";
 export type EnvironmentSecretsCommandArgs = Pick<EnvironmentSecretsNode, "gitHubRepoContext" | "environment">;
 
 export class EnvironmentSecretsNode extends vscode.TreeItem {
-  constructor(public readonly gitHubRepoContext: GitHubRepoContext, public readonly environment: Environment) {
+  constructor(
+    public readonly gitHubRepoContext: GitHubRepoContext,
+    public readonly environment: Environment
+  ) {
     super("Secrets", vscode.TreeItemCollapsibleState.Collapsed);
 
     this.iconPath = new vscode.ThemeIcon("lock");
@@ -19,12 +22,14 @@ export class EnvironmentSecretsNode extends vscode.TreeItem {
     let secrets: SecretNode[] = [];
     try {
       secrets = await this.gitHubRepoContext.client.paginate(
+        // @ts-expect-error FIXME: Newer Typescript catches a problem that previous didn't. This will be fixed in Octokit bump.
         this.gitHubRepoContext.client.actions.listEnvironmentSecrets,
         {
           repository_id: this.gitHubRepoContext.id,
           environment_name: this.environment.name,
           per_page: 100
         },
+        // @ts-expect-error FIXME: Newer Typescript catches a problem that previous didn't. This will be fixed in Octokit bump.
         response => response.data.map(s => new SecretNode(this.gitHubRepoContext, s, this.environment))
       );
     } catch (e) {

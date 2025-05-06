@@ -1,15 +1,18 @@
 import * as vscode from "vscode";
 import {GitHubRepoContext} from "../../git/repository";
 import {WorkflowRunAttempt} from "../../store/workflowRun";
-import {getIconForWorkflowRun} from "../icons";
+import {getIconForWorkflowNode} from "../icons";
 import {getEventString, getStatusString} from "./runTooltipHelper";
 import {WorkflowJobNode} from "./workflowJobNode";
 
 export class AttemptNode extends vscode.TreeItem {
-  constructor(private gitHubRepoContext: GitHubRepoContext, private attempt: WorkflowRunAttempt) {
+  constructor(
+    private gitHubRepoContext: GitHubRepoContext,
+    private attempt: WorkflowRunAttempt
+  ) {
     super(`Attempt #${attempt.attempt}`, vscode.TreeItemCollapsibleState.Collapsed);
 
-    this.iconPath = getIconForWorkflowRun(this.attempt.run);
+    this.iconPath = getIconForWorkflowNode(this.attempt.run);
     this.tooltip = this.getTooltip();
   }
 
