@@ -42,7 +42,7 @@ export async function getContextStringForWorkflow(workflowUri: vscode.Uri): Prom
 
       return context.join("");
     }
-  } catch (e) {
+  } catch {
     // Ignore
   }
 

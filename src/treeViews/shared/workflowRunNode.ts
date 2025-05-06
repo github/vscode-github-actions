@@ -28,7 +28,6 @@ export class WorkflowRunNode extends vscode.TreeItem {
     this.label = WorkflowRunNode._getLabel(run, this.workflowName);
 
     this.contextValue = this.run.contextValue(this.gitHubRepoContext.permissionLevel);
-
     this.iconPath = getIconForWorkflowRun(this.run.run);
     this.tooltip = this.getTooltip();
   }

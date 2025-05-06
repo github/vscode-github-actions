@@ -16,12 +16,14 @@ export class RepoSecretsNode extends vscode.TreeItem {
     let secrets: SecretNode[] = [];
     try {
       secrets = await this.gitHubRepoContext.client.paginate(
+        // @ts-expect-error FIXME: Newer Typescript catches a problem that previous didn't. This will be fixed in Octokit bump.
         this.gitHubRepoContext.client.actions.listRepoSecrets,
         {
           owner: this.gitHubRepoContext.owner,
           repo: this.gitHubRepoContext.name,
           per_page: 100
         },
+        // @ts-expect-error FIXME: Newer Typescript catches a problem that previous didn't. This will be fixed in Octokit bump.
         response => response.data.map(s => new SecretNode(this.gitHubRepoContext, s))
       );
     } catch (e) {
