@@ -21,7 +21,8 @@ export class EnvironmentVariablesNode extends vscode.TreeItem {
       variables = await this.gitHubRepoContext.client.paginate(
         this.gitHubRepoContext.client.actions.listEnvironmentVariables,
         {
-          repository_id: this.gitHubRepoContext.id,
+          owner: this.gitHubRepoContext.owner,
+          repo: this.gitHubRepoContext.name,
           environment_name: this.environment.name,
           per_page: 100
         },

@@ -25,7 +25,7 @@ module.exports = (env, argv) => {
     resolve: {
       extensions: [".ts", ".js"],
       alias: {
-        "universal-user-agent$": "universal-user-agent/dist-node/index.js"
+        "universal-user-agent$": path.resolve(__dirname, "node_modules/universal-user-agent/index.js")
       },
       fallback: {
         buffer: require.resolve("buffer/"),
