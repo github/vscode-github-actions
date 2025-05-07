@@ -18,7 +18,8 @@ export function registerDeleteSecret(context: vscode.ExtensionContext) {
             if (answer === acceptText) {
               if (environment) {
                 await gitHubRepoContext.client.actions.deleteEnvironmentSecret({
-                  repository_id: gitHubRepoContext.id,
+                  owner: gitHubRepoContext.owner,
+                  repo: gitHubRepoContext.name,
                   environment_name: environment.name,
                   secret_name: secret.name
                 });
