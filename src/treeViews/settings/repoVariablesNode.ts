@@ -16,12 +16,14 @@ export class RepoVariablesNode extends vscode.TreeItem {
     let variables: VariableNode[] = [];
     try {
       variables = await this.gitHubRepoContext.client.paginate(
+        // @ts-expect-error FIXME: Type error after newer rules available. This will be fixed in octokit bump
         this.gitHubRepoContext.client.actions.listRepoVariables,
         {
           owner: this.gitHubRepoContext.owner,
           repo: this.gitHubRepoContext.name,
           per_page: 100
         },
+        // @ts-expect-error FIXME: Type error after newer rules available. This will be fixed in octokit bump
         response => response.data.map(s => new VariableNode(this.gitHubRepoContext, s))
       );
     } catch (e) {

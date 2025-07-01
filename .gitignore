@@ -5,3 +5,4 @@ dist
 .DS_Store
 runners
 .yalc
+.vscode-test-web
