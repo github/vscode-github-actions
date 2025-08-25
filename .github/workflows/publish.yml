@@ -25,7 +25,7 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Check if version has changed
         id: check-version
         uses: actions/github-script@v7
@@ -67,7 +67,7 @@ jobs:
       version: ${{ env.EXT_VERSION }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v4
         with:
