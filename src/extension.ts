@@ -9,16 +9,12 @@ import {registerOpenWorkflowStepLogs} from "./commands/openWorkflowStepLogs";
 import {registerOpenWorkflowRun} from "./commands/openWorkflowRun";
 import {registerPinWorkflow} from "./commands/pinWorkflow";
 import {registerReRunWorkflowRun} from "./commands/rerunWorkflowRun";
-import {registerAddSecret} from "./commands/secrets/addSecret";
-import {registerCopySecret} from "./commands/secrets/copySecret";
-import {registerDeleteSecret} from "./commands/secrets/deleteSecret";
-import {registerUpdateSecret} from "./commands/secrets/updateSecret";
+import {registerAddSetting} from "./commands/settings/add";
+import {registerCopySetting} from "./commands/settings/copy";
+import {registerDeleteSetting} from "./commands/settings/delete";
+import {registerUpdateSetting} from "./commands/settings/update";
 import {registerTriggerWorkflowRun} from "./commands/triggerWorkflowRun";
 import {registerUnPinWorkflow} from "./commands/unpinWorkflow";
-import {registerAddVariable} from "./commands/variables/addVariable";
-import {registerCopyVariable} from "./commands/variables/copyVariable";
-import {registerDeleteVariable} from "./commands/variables/deleteVariable";
-import {registerUpdateVariable} from "./commands/variables/updateVariable";
 import {initConfiguration} from "./configuration/configuration";
 import {getGitHubContext} from "./git/repository";
 import {init as initLogger, log, revealLog} from "./log";
@@ -77,15 +73,16 @@ export async function activate(context: vscode.ExtensionContext) {
   registerReRunWorkflowRun(context);
   registerCancelWorkflowRun(context);
 
-  registerAddSecret(context);
-  registerDeleteSecret(context);
-  registerCopySecret(context);
-  registerUpdateSecret(context);
+  registerAddSetting(context, "secret");
+  registerDeleteSetting(context, "secret");
+  registerCopySetting(context, "secret");
+  registerUpdateSetting(context, "secret");
 
-  registerAddVariable(context);
-  registerUpdateVariable(context);
-  registerDeleteVariable(context);
-  registerCopyVariable(context);
+  registerAddSetting(context, "variable");
+  registerUpdateSetting(context, "variable");
+  registerDeleteSetting(context, "variable");
+  registerCopySetting(context, "variable", "name");
+  registerCopySetting(context, "variable", "value");
 
   registerPinWorkflow(context);
   registerUnPinWorkflow(context);
