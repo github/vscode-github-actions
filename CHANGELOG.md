@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.28.0]
+- Support image_version event
+- Support 'snapshot' keyword
+
 ## [0.26.2]
 - Bump word-wrap from 1.2.3 to 1.2.4 
 - @muzimuzhi - Update github context properties
