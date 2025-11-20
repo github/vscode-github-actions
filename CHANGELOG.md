@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.28.1]
+- Support `artifact-metadata` permission
+
 ## [0.28.0]
 - Support image_version event
 - Support 'snapshot' keyword
