@@ -2,8 +2,9 @@ import * as vscode from "vscode";
 
 import {canReachGitHubAPI} from "../api/canReachGitHubAPI";
 import {getGitHubContext} from "../git/repository";
-import {logDebug, logError} from "../log";
+import {logError} from "../log";
 import {RunStore} from "../store/store";
+import {AutoRefreshManager} from "./combinedWorkflows/autoRefreshManager";
 import {CombinedWorkflowRunNode} from "./combinedWorkflows/combinedWorkflowRunNode";
 import {AttemptNode} from "./shared/attemptNode";
 import {AuthenticationNode} from "./shared/authenticationNode";
@@ -30,9 +31,33 @@ export class CombinedWorkflowsTreeProvider
 {
   private _onDidChangeTreeData = new vscode.EventEmitter<CombinedWorkflowsTreeNode | null>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
+  private autoRefreshManager: AutoRefreshManager;
+  private treeView?: vscode.TreeView<CombinedWorkflowsTreeNode>;
 
   constructor(store: RunStore) {
     super(store);
+    this.autoRefreshManager = new AutoRefreshManager(
+      () => this.refresh(),
+      (description: string) => this.updateViewDescription(description)
+    );
+  }
+
+  setTreeView(treeView: vscode.TreeView<CombinedWorkflowsTreeNode>): void {
+    this.treeView = treeView;
+    this.updateViewDescription(this.autoRefreshManager.getDescription());
+    this.updateAutoRefreshContext();
+  }
+
+  private updateViewDescription(description: string): void {
+    if (this.treeView) {
+      this.treeView.description = description;
+    }
+    this.updateAutoRefreshContext();
+  }
+
+  private updateAutoRefreshContext(): void {
+    const isActive = this.autoRefreshManager.isActive();
+    void vscode.commands.executeCommand("setContext", "github-actions.combined-workflows.auto-refresh-active", isActive);
   }
 
   protected _updateNode(node: WorkflowRunNode): void {
@@ -47,18 +72,31 @@ export class CombinedWorkflowsTreeProvider
     }
   }
 
+  setVisible(visible: boolean): void {
+    this.autoRefreshManager.setVisible(visible);
+  }
+
+  onPush(): void {
+    this.autoRefreshManager.onPush();
+  }
+
+  getAutoRefreshManager(): AutoRefreshManager {
+    return this.autoRefreshManager;
+  }
+
+  dispose(): void {
+    this.autoRefreshManager.dispose();
+  }
+
   getTreeItem(element: CombinedWorkflowsTreeNode): vscode.TreeItem | Thenable<vscode.TreeItem> {
     return element;
   }
 
   async getChildren(element?: CombinedWorkflowsTreeNode | undefined): Promise<CombinedWorkflowsTreeNode[]> {
     if (!element) {
-      logDebug("Getting combined workflow runs from all repos");
-
       try {
         const gitHubContext = await getGitHubContext();
         if (!gitHubContext) {
-          logDebug("could not get github context for combined workflows");
           return [new GitHubAPIUnreachableNode()];
         }
 
@@ -101,7 +139,7 @@ export class CombinedWorkflowsTreeProvider
 
         return allRuns;
       } catch (e) {
-        logError(e as Error, "Failed to get GitHub context");
+        logError(e as Error, (e as Error).message);
 
         if ((e as Error).message.startsWith("Could not get token from the GitHub authentication provider.")) {
           return [new AuthenticationNode()];

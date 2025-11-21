@@ -81,6 +81,30 @@
           "default": 30,
           "scope": "window"
         },
+        "github-actions.combined-workflows.auto-refresh.enabled": {
+          "type": "boolean",
+          "description": "Auto-refresh combined workflows view. Note: this uses polling and counts against your GitHub API rate limit",
+          "default": false,
+          "scope": "window"
+        },
+        "github-actions.combined-workflows.auto-refresh.interval": {
+          "type": "number",
+          "description": "Time to wait between calls to update combined workflows in seconds",
+          "default": 60,
+          "scope": "window"
+        },
+        "github-actions.combined-workflows.auto-refresh.duration": {
+          "type": "number",
+          "description": "Duration in minutes to continue auto-refreshing after a git push before stopping automatically",
+          "default": 15,
+          "scope": "window"
+        },
+        "github-actions.combined-workflows.auto-refresh.on-push-only": {
+          "type": "boolean",
+          "description": "Only enable auto-refresh after detecting a git push. If false, auto-refresh starts when the extension loads",
+          "default": true,
+          "scope": "window"
+        },
         "github-actions.remote-name": {
           "type": "string",
           "description": "The name of the repository's git remote that points to GitHub",
@@ -113,6 +137,23 @@
           "dark": "resources/icons/dark/refresh.svg",
           "light": "resources/icons/light/refresh.svg"
         }
+      },
+      {
+        "command": "github-actions.combined-workflows.toggle-auto-refresh",
+        "category": "GitHub Actions",
+        "title": "Toggle Auto-Refresh"
+      },
+      {
+        "command": "github-actions.combined-workflows.toggle-auto-refresh-on",
+        "category": "GitHub Actions",
+        "title": "Auto-Refresh: ON",
+        "icon": "$(sync~spin)"
+      },
+      {
+        "command": "github-actions.combined-workflows.toggle-auto-refresh-off",
+        "category": "GitHub Actions",
+        "title": "Auto-Refresh: OFF",
+        "icon": "$(sync-ignored)"
       },
       {
         "command": "github-actions.explorer.openRun",
@@ -278,7 +319,7 @@
         },
         {
           "id": "github-actions.combined-workflows",
-          "name": "Combined Workflows",
+          "name": "Chrono",
           "when": "github-actions.internet-access && github-actions.signed-in && github-actions.has-repos"
         },
         {
@@ -330,6 +371,16 @@
           "command": "github-actions.explorer.current-branch.refresh",
           "group": "navigation",
           "when": "view == github-actions.current-branch"
+        },
+        {
+          "command": "github-actions.combined-workflows.toggle-auto-refresh-on",
+          "group": "navigation",
+          "when": "view == github-actions.combined-workflows && github-actions.combined-workflows.auto-refresh-active"
+        },
+        {
+          "command": "github-actions.combined-workflows.toggle-auto-refresh-off",
+          "group": "navigation",
+          "when": "view == github-actions.combined-workflows && !github-actions.combined-workflows.auto-refresh-active"
         }
       ],
       "editor/title": [

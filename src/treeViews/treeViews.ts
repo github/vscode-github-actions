@@ -15,7 +15,17 @@ export async function initTreeViews(context: vscode.ExtensionContext, store: Run
   context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.workflows", workflowTreeProvider));
 
   const combinedWorkflowsTreeProvider = new CombinedWorkflowsTreeProvider(store);
-  context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.combined-workflows", combinedWorkflowsTreeProvider));
+  const combinedWorkflowsTreeView = vscode.window.createTreeView("github-actions.combined-workflows", {
+    treeDataProvider: combinedWorkflowsTreeProvider,
+    showCollapseAll: true
+  });
+  combinedWorkflowsTreeProvider.setTreeView(combinedWorkflowsTreeView);
+  context.subscriptions.push(combinedWorkflowsTreeView);
+  context.subscriptions.push(combinedWorkflowsTreeProvider);
+
+  combinedWorkflowsTreeView.onDidChangeVisibility(e => {
+    combinedWorkflowsTreeProvider.setVisible(e.visible);
+  });
 
   const settingsTreeProvider = new SettingsTreeProvider();
   context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.settings", settingsTreeProvider));
@@ -49,6 +59,20 @@ export async function initTreeViews(context: vscode.ExtensionContext, store: Run
     })
   );
 
+  const toggleAutoRefresh = () => {
+    combinedWorkflowsTreeProvider.getAutoRefreshManager().toggleAutoRefresh();
+  };
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("github-actions.combined-workflows.toggle-auto-refresh", toggleAutoRefresh)
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("github-actions.combined-workflows.toggle-auto-refresh-on", toggleAutoRefresh)
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("github-actions.combined-workflows.toggle-auto-refresh-off", toggleAutoRefresh)
+  );
+
   const gitHubContext = await getGitHubContext();
   if (!gitHubContext) {
     logDebug("Could not register branch change event handler");
@@ -60,19 +84,34 @@ export async function initTreeViews(context: vscode.ExtensionContext, store: Run
       continue;
     }
 
-    let currentAhead = repo.repositoryState.HEAD?.ahead;
     let currentHeadName = repo.repositoryState.HEAD?.name;
+    logDebug(`Initial state for ${repo.owner}/${repo.name}: branch=${currentHeadName}`);
+
     repo.repositoryState.onDidChange(async () => {
-      // When the current head/branch changes, or the number of commits ahead changes (which indicates
-      // a push), refresh the current-branch view
-      if (
-        repo.repositoryState?.HEAD?.name !== currentHeadName ||
-        (repo.repositoryState?.HEAD?.ahead || 0) < (currentAhead || 0)
-      ) {
-        currentHeadName = repo.repositoryState?.HEAD?.name;
-        currentAhead = repo.repositoryState?.HEAD?.ahead;
+      const newHeadName = repo.repositoryState?.HEAD?.name;
+
+      if (newHeadName !== currentHeadName) {
+        logDebug(`Branch changed for ${repo.owner}/${repo.name}: ${currentHeadName} -> ${newHeadName}`);
+        currentHeadName = newHeadName;
         await currentBranchTreeProvider.refresh();
       }
     });
+
+    const pushWatcherPattern = new vscode.RelativePattern(repo.workspaceUri, ".git/refs/remotes/**");
+    const pushWatcher = vscode.workspace.createFileSystemWatcher(pushWatcherPattern);
+
+    pushWatcher.onDidChange(async (uri: vscode.Uri) => {
+      logDebug(`Git push detected via ref change for ${repo.owner}/${repo.name} at ${uri.path}`);
+      await currentBranchTreeProvider.refresh();
+      combinedWorkflowsTreeProvider.onPush();
+    });
+
+    pushWatcher.onDidCreate(async (uri: vscode.Uri) => {
+      logDebug(`Git push detected via ref creation for ${repo.owner}/${repo.name} at ${uri.path}`);
+      await currentBranchTreeProvider.refresh();
+      combinedWorkflowsTreeProvider.onPush();
+    });
+
+    context.subscriptions.push(pushWatcher);
   }
 }

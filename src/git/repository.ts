@@ -16,7 +16,7 @@ interface GitHubUrls {
   protocol: Protocol;
 }
 
-async function getGitExtension(): Promise<API | undefined> {
+export async function getGitExtension(): Promise<API | undefined> {
   const gitExtension = vscode.extensions.getExtension<GitExtension>("vscode.git");
   if (gitExtension) {
     if (!gitExtension.isActive) {
@@ -25,7 +25,6 @@ async function getGitExtension(): Promise<API | undefined> {
     const git = gitExtension.exports.getAPI(1);
 
     if (git.state !== "initialized") {
-      // Wait for the plugin to be initialized
       await new Promise<void>(resolve => {
         if (git.state === "initialized") {
           resolve();
