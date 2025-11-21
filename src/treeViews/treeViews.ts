@@ -5,6 +5,7 @@ import {executeCacheClearCommand} from "../workflow/languageServer";
 import {getGitHubContext} from "../git/repository";
 import {logDebug} from "../log";
 import {RunStore} from "../store/store";
+import {CombinedWorkflowsTreeProvider} from "./combinedWorkflows";
 import {CurrentBranchTreeProvider} from "./currentBranch";
 import {SettingsTreeProvider} from "./settings";
 import {WorkflowsTreeProvider} from "./workflows";
@@ -12,6 +13,9 @@ import {WorkflowsTreeProvider} from "./workflows";
 export async function initTreeViews(context: vscode.ExtensionContext, store: RunStore): Promise<void> {
   const workflowTreeProvider = new WorkflowsTreeProvider(store);
   context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.workflows", workflowTreeProvider));
+
+  const combinedWorkflowsTreeProvider = new CombinedWorkflowsTreeProvider(store);
+  context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.combined-workflows", combinedWorkflowsTreeProvider));
 
   const settingsTreeProvider = new SettingsTreeProvider();
   context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.settings", settingsTreeProvider));
@@ -32,6 +36,7 @@ export async function initTreeViews(context: vscode.ExtensionContext, store: Run
 
       if (canReachAPI && hasGitHubRepos) {
         await workflowTreeProvider.refresh();
+        await combinedWorkflowsTreeProvider.refresh();
         await settingsTreeProvider.refresh();
       }
       await executeCacheClearCommand();

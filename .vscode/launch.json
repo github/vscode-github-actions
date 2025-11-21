@@ -5,7 +5,7 @@
       "name": "Watch & Launch extension",
       "type": "extensionHost",
       "request": "launch",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}", "${env:HOME}/theapp"],
       "preLaunchTask": "npm: watch",
       "smartStep": true,
       "sourceMaps": true,

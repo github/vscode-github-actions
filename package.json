@@ -277,6 +277,11 @@
           "when": "github-actions.internet-access && github-actions.signed-in && github-actions.has-repos"
         },
         {
+          "id": "github-actions.combined-workflows",
+          "name": "Combined Workflows",
+          "when": "github-actions.internet-access && github-actions.signed-in && github-actions.has-repos"
+        },
+        {
           "id": "github-actions.settings",
           "name": "Settings",
           "when": "github-actions.internet-access && github-actions.signed-in && github-actions.has-repos"
