@@ -4,6 +4,7 @@ import {canReachGitHubAPI} from "../api/canReachGitHubAPI";
 import {getGitHubContext} from "../git/repository";
 import {logDebug, logError} from "../log";
 import {RunStore} from "../store/store";
+import {CombinedWorkflowRunNode} from "./combinedWorkflows/combinedWorkflowRunNode";
 import {AttemptNode} from "./shared/attemptNode";
 import {AuthenticationNode} from "./shared/authenticationNode";
 import {ErrorNode} from "./shared/errorNode";
@@ -65,7 +66,7 @@ export class CombinedWorkflowsTreeProvider
           return [];
         }
 
-        const allRuns: WorkflowRunNode[] = [];
+        const allRuns: CombinedWorkflowRunNode[] = [];
 
         for (const repo of gitHubContext.repos) {
           try {
@@ -75,7 +76,17 @@ export class CombinedWorkflowsTreeProvider
               per_page: 20
             });
 
-            const runs = this.runNodes(repo, result.data.workflow_runs, true);
+            const runs = result.data.workflow_runs.map(runData => {
+              const workflowRun = this.store.addRun(repo, runData);
+              const node = new CombinedWorkflowRunNode(
+                this.store,
+                repo,
+                workflowRun,
+                workflowRun.run.name || undefined
+              );
+              this._runNodes.set(runData.id, node);
+              return node;
+            });
             allRuns.push(...runs);
           } catch (e) {
             logError(e as Error, `Failed to fetch runs for ${repo.owner}/${repo.name}`);
