@@ -2,7 +2,7 @@ import * as path from "path";
 import * as vscode from "vscode";
 
 import {Commands} from "@actions/languageserver/commands";
-import {InitializationOptions, LogLevel} from "@actions/languageserver/initializationOptions";
+import {InitializationOptions, LogLevel, SecretsValidationMode} from "@actions/languageserver/initializationOptions";
 import {ReadFileRequest, Requests} from "@actions/languageserver/request";
 import {BaseLanguageClient, LanguageClientOptions} from "vscode-languageclient";
 import {LanguageClient as BrowserLanguageClient} from "vscode-languageclient/browser";
@@ -20,6 +20,10 @@ function isNode(): boolean {
   return typeof process !== "undefined" && process.versions?.node != null;
 }
 
+function getSecretsValidationMode(): SecretsValidationMode {
+  return vscode.workspace.getConfiguration("github-actions").get<SecretsValidationMode>("validation.secrets", "auto");
+}
+
 export async function initLanguageServer(context: vscode.ExtensionContext) {
   const session = await getSession();
 
@@ -35,7 +39,8 @@ export async function initLanguageServer(context: vscode.ExtensionContext) {
       workspaceUri: repo.workspaceUri.toString(),
       organizationOwned: repo.organizationOwned
     })),
-    logLevel: PRODUCTION ? LogLevel.Warn : LogLevel.Debug
+    logLevel: PRODUCTION ? LogLevel.Warn : LogLevel.Debug,
+    secretsValidation: getSecretsValidationMode()
   };
 
   const clientOptions: LanguageClientOptions = {
