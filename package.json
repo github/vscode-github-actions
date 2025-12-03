@@ -97,7 +97,7 @@
           "type": "string",
           "enum": ["auto", "always", "never"],
           "enumDescriptions": [
-            "Suppresses warnings when repository context is unavailable (e.g., timing issues during initialization) (recommended)",
+            "Suppresses warnings when repository context is unavailable (e.g., timing issues during initialization) - recommended",
             "Always show warnings",
             "Never validate secrets/variables access"
           ],
