@@ -15,9 +15,11 @@ export function initConfiguration(context: vscode.ExtensionContext) {
         (useEnterprise() &&
           (e.affectsConfiguration("github-enterprise.uri") || e.affectsConfiguration(getSettingsKey("remote-name"))))
       ) {
-        await updateLanguageServerApiUrl(context);
+        await restartLanguageServer(context);
         resetGitHubContext();
         await vscode.commands.executeCommand("github-actions.explorer.refresh");
+      } else if (e.affectsConfiguration(getSettingsKey("validation.secrets"))) {
+        await restartLanguageServer(context);
       }
     })
   );
@@ -82,8 +84,7 @@ export function getGitHubApiUri(): string {
   }
 }
 
-async function updateLanguageServerApiUrl(context: vscode.ExtensionContext) {
+async function restartLanguageServer(context: vscode.ExtensionContext) {
   await deactivateLanguageServer();
-
   await initLanguageServer(context);
 }
