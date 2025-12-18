@@ -25,12 +25,12 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
 
   setFocused(focused: boolean) {
     this._isFocused = focused;
-    logDebug(`[Store]: Focus state changed to ${focused}`);
+    logDebug(`[Store]: Focus state changed to ${String(focused)}`);
   }
 
   setViewVisible(visible: boolean) {
     this._isViewVisible = visible;
-    logDebug(`[Store]: View visibility changed to ${visible}`);
+    logDebug(`[Store]: View visibility changed to ${String(visible)}`);
   }
 
   getRun(runId: number): WorkflowRun | undefined {
@@ -100,17 +100,10 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
     });
 
     const run = result.data;
-    log(`Polled run: ${run.id} Status: ${run.status} Conclusion: ${run.conclusion}`);
+    log(`Polled run: ${run.id} Status: ${run.status || "null"} Conclusion: ${run.conclusion || "null"}`);
     this.addRun(updater.repoContext, run);
 
-    if (
-      run.status === "completed" ||
-      run.status === "cancelled" ||
-      run.status === "failure" ||
-      run.status === "success" ||
-      run.status === "skipped" ||
-      run.status === "timed_out"
-    ) {
+    if (run.status === "completed") {
       if (updater.handle) {
         clearInterval(updater.handle);
       }
