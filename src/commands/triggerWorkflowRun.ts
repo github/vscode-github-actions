@@ -43,6 +43,22 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
           return;
         }
 
+        const relativeWorkflowPath = vscode.workspace.asRelativePath(workflowUri, false);
+        let latestRunId: number | undefined;
+        try {
+          const result = await gitHubRepoContext.client.actions.listWorkflowRuns({
+            owner: gitHubRepoContext.owner,
+            repo: gitHubRepoContext.name,
+            workflow_id: relativeWorkflowPath,
+            per_page: 1
+          });
+          latestRunId = result.data.workflow_runs[0]?.id;
+        } catch (e) {
+          // Ignore error
+        }
+
+        let dispatched = false;
+
         let selectedEvent: string | undefined;
         if (workflow.events.workflow_dispatch !== undefined && workflow.events.repository_dispatch !== undefined) {
           selectedEvent = await vscode.window.showQuickPick(["repository_dispatch", "workflow_dispatch"], {
@@ -85,8 +101,6 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
             }
 
             try {
-              const relativeWorkflowPath = vscode.workspace.asRelativePath(workflowUri, false);
-
               await gitHubRepoContext.client.actions.createWorkflowDispatch({
                 owner: gitHubRepoContext.owner,
                 repo: gitHubRepoContext.name,
@@ -95,6 +109,7 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
                 inputs
               });
 
+              dispatched = true;
               vscode.window.setStatusBarMessage(`GitHub Actions: Workflow event dispatched`, 2000);
             } catch (error) {
               return vscode.window.showErrorMessage(`Could not create workflow dispatch: ${(error as Error)?.message}`);
@@ -134,8 +149,35 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
               client_payload: {}
             });
 
+            dispatched = true;
             vscode.window.setStatusBarMessage(`GitHub Actions: Repository event '${event_type}' dispatched`, 2000);
           }
+        }
+
+        if (dispatched) {
+          vscode.window.withProgress({
+            location: vscode.ProgressLocation.Window,
+            title: "Waiting for workflow run to start..."
+          }, async () => {
+            for (let i = 0; i < 20; i++) {
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              try {
+                const result = await gitHubRepoContext.client.actions.listWorkflowRuns({
+                  owner: gitHubRepoContext.owner,
+                  repo: gitHubRepoContext.name,
+                  workflow_id: relativeWorkflowPath,
+                  per_page: 1
+                });
+                const newLatestRunId = result.data.workflow_runs[0]?.id;
+                if (newLatestRunId && newLatestRunId !== latestRunId) {
+                  await vscode.commands.executeCommand("github-actions.explorer.refresh");
+                  break;
+                }
+              } catch (e) {
+                // Ignore
+              }
+            }
+          });
         }
 
         return vscode.commands.executeCommand("github-actions.explorer.refresh");
