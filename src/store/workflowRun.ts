@@ -35,11 +35,9 @@ abstract class WorkflowRunBase {
   }
 
   updateRun(run: model.WorkflowRun) {
-    if (this._run.status !== "completed" || this._run.updated_at !== run.updated_at) {
-      // Refresh jobs if the run is not completed or it was updated (i.e. re-run)
-      // For in-progress runs, we can't rely on updated at to change when jobs change
-      this._jobs = undefined;
-    }
+    // Always clear jobs cache when updating run to ensure we get latest job status
+    // This is critical for polling to work correctly for in-progress runs
+    this._jobs = undefined;
 
     this._run = run;
   }

@@ -83,6 +83,7 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
     });
 
     const run = result.data;
+    logDebug("Polled run:", run.id, "Status:", run.status, "Conclusion:", run.conclusion);
     this.addRun(updater.repoContext, run);
 
     if (run.status === "completed" || run.status === "cancelled" || run.status === "failure" || run.status === "success" || run.status === "skipped" || run.status === "timed_out") {
