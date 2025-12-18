@@ -21,10 +21,16 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
   private runs = new Map<number, WorkflowRun>();
   private updaters = new Map<number, Updater>();
   private _isFocused = true;
+  private _isViewVisible = true;
 
   setFocused(focused: boolean) {
     this._isFocused = focused;
     logDebug(`[Store]: Focus state changed to ${focused}`);
+  }
+
+  setViewVisible(visible: boolean) {
+    this._isViewVisible = visible;
+    logDebug(`[Store]: View visibility changed to ${visible}`);
   }
 
   getRun(runId: number): WorkflowRun | undefined {
@@ -72,7 +78,7 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
   }
 
   private async fetchRun(updater: Updater) {
-    if (!this._isFocused) {
+    if (!this._isFocused || !this._isViewVisible) {
       return;
     }
 
