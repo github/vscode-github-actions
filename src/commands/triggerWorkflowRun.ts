@@ -175,16 +175,20 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext, sto
               title: "Waiting for workflow run to start..."
             },
             async () => {
+              log("Starting loop to check for new workflow run...");
               for (let i = 0; i < 20; i++) {
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 try {
+                  log(`Checking for new run (attempt ${i + 1}/20)...`);
                   const result = await gitHubRepoContext.client.actions.listWorkflowRuns({
                     owner: gitHubRepoContext.owner,
                     repo: gitHubRepoContext.name,
-                  workflow_id: workflowIdForApi!,
+                    workflow_id: workflowIdForApi!,
                     per_page: 1
                   });
                   const newLatestRunId = result.data.workflow_runs[0]?.id;
+                  log(`Latest run ID found: ${newLatestRunId} (Previous: ${latestRunId})`);
+
                   if (newLatestRunId && newLatestRunId !== latestRunId) {
                     log(`Found new workflow run: ${newLatestRunId}. Triggering refresh and polling.`);
                     await vscode.commands.executeCommand("github-actions.explorer.refresh");
