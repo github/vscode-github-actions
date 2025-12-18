@@ -4,13 +4,14 @@ import {getGitHead, getGitHubContextForWorkspaceUri, GitHubRepoContext} from "..
 import {getWorkflowUri, parseWorkflowFile} from "../workflow/workflow";
 
 import {Workflow} from "../model";
+import {RunStore} from "../store/store";
 
 interface TriggerRunCommandOptions {
   wf?: Workflow;
   gitHubRepoContext: GitHubRepoContext;
 }
 
-export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
+export function registerTriggerWorkflowRun(context: vscode.ExtensionContext, store: RunStore) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "github-actions.explorer.triggerRun",
@@ -171,6 +172,7 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
                 const newLatestRunId = result.data.workflow_runs[0]?.id;
                 if (newLatestRunId && newLatestRunId !== latestRunId) {
                   await vscode.commands.executeCommand("github-actions.explorer.refresh");
+                  store.pollRun(newLatestRunId, gitHubRepoContext, 1000, 20);
                   break;
                 }
               } catch (e) {

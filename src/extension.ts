@@ -73,7 +73,7 @@ export async function activate(context: vscode.ExtensionContext) {
   registerOpenWorkflowFile(context);
   registerOpenWorkflowJobLogs(context);
   registerOpenWorkflowStepLogs(context);
-  registerTriggerWorkflowRun(context);
+  registerTriggerWorkflowRun(context, store);
   registerReRunWorkflowRun(context);
   registerCancelWorkflowRun(context);
 
