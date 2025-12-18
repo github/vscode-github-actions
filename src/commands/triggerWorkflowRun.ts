@@ -6,6 +6,8 @@ import {getWorkflowUri, parseWorkflowFile} from "../workflow/workflow";
 import {Workflow} from "../model";
 import {RunStore} from "../store/store";
 
+import {log} from "../log";
+
 interface TriggerRunCommandOptions {
   wf?: Workflow;
   gitHubRepoContext: GitHubRepoContext;
@@ -171,13 +173,14 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext, sto
                 });
                 const newLatestRunId = result.data.workflow_runs[0]?.id;
                 if (newLatestRunId && newLatestRunId !== latestRunId) {
+                  log(`Found new workflow run: ${newLatestRunId}. Triggering refresh and polling.`);
                   await vscode.commands.executeCommand("github-actions.explorer.refresh");
                   // Poll for 15 minutes (225 * 4s)
                   store.pollRun(newLatestRunId, gitHubRepoContext, 4000, 225);
                   break;
                 }
               } catch (e) {
-                // Ignore
+                log(`Error checking for new run: ${(e as Error).message}`);
               }
             }
           });

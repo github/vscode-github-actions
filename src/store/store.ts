@@ -1,7 +1,7 @@
 import {setInterval} from "timers";
 import {EventEmitter} from "vscode";
 import {GitHubRepoContext} from "../git/repository";
-import {logDebug} from "../log";
+import {log, logDebug} from "../log";
 import * as model from "../model";
 import {WorkflowRun} from "./workflowRun";
 
@@ -46,6 +46,7 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
    * Start polling for updates for the given run
    */
   pollRun(runId: number, repoContext: GitHubRepoContext, intervalMs: number, attempts = 10) {
+    log(`Starting polling for run ${runId} every ${intervalMs}ms for ${attempts} attempts`);
     const existingUpdater: Updater | undefined = this.updaters.get(runId);
     if (existingUpdater && existingUpdater.handle) {
       clearInterval(existingUpdater.handle);
@@ -65,7 +66,7 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
   }
 
   private async fetchRun(updater: Updater) {
-    logDebug("Updating run: ", updater.runId);
+    log(`Fetching run update: ${updater.runId}. Remaining attempts: ${updater.remainingAttempts}`);
 
     updater.remainingAttempts--;
     if (updater.remainingAttempts === 0) {
@@ -83,7 +84,7 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
     });
 
     const run = result.data;
-    logDebug("Polled run:", run.id, "Status:", run.status, "Conclusion:", run.conclusion);
+    log(`Polled run: ${run.id} Status: ${run.status} Conclusion: ${run.conclusion}`);
     this.addRun(updater.repoContext, run);
 
     if (run.status === "completed" || run.status === "cancelled" || run.status === "failure" || run.status === "success" || run.status === "skipped" || run.status === "timed_out") {
