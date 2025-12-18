@@ -20,6 +20,12 @@ type Updater = {
 export class RunStore extends EventEmitter<RunStoreEvent> {
   private runs = new Map<number, WorkflowRun>();
   private updaters = new Map<number, Updater>();
+  private _isFocused = true;
+
+  setFocused(focused: boolean) {
+    this._isFocused = focused;
+    logDebug(`[Store]: Focus state changed to ${focused}`);
+  }
 
   getRun(runId: number): WorkflowRun | undefined {
     return this.runs.get(runId);
@@ -66,6 +72,10 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
   }
 
   private async fetchRun(updater: Updater) {
+    if (!this._isFocused) {
+      return;
+    }
+
     log(`Fetching run update: ${updater.runId}. Remaining attempts: ${updater.remainingAttempts}`);
 
     updater.remainingAttempts--;
@@ -87,7 +97,14 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
     log(`Polled run: ${run.id} Status: ${run.status} Conclusion: ${run.conclusion}`);
     this.addRun(updater.repoContext, run);
 
-    if (run.status === "completed" || run.status === "cancelled" || run.status === "failure" || run.status === "success" || run.status === "skipped" || run.status === "timed_out") {
+    if (
+      run.status === "completed" ||
+      run.status === "cancelled" ||
+      run.status === "failure" ||
+      run.status === "success" ||
+      run.status === "skipped" ||
+      run.status === "timed_out"
+    ) {
       if (updater.handle) {
         clearInterval(updater.handle);
       }
