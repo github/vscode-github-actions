@@ -84,5 +84,12 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
 
     const run = result.data;
     this.addRun(updater.repoContext, run);
+
+    if (run.status === "completed" || run.status === "cancelled" || run.status === "failure" || run.status === "success" || run.status === "skipped" || run.status === "timed_out") {
+      if (updater.handle) {
+        clearInterval(updater.handle);
+      }
+      this.updaters.delete(updater.runId);
+    }
   }
 }
