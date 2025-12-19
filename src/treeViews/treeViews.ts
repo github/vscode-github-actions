@@ -17,9 +17,11 @@ export async function initTreeViews(context: vscode.ExtensionContext, store: Run
   context.subscriptions.push(workflowTreeView);
 
   store.setViewVisible(workflowTreeView.visible);
-  workflowTreeView.onDidChangeVisibility(e => {
-    store.setViewVisible(e.visible);
-  });
+  context.subscriptions.push(
+    workflowTreeView.onDidChangeVisibility(e => {
+      store.setViewVisible(e.visible);
+    })
+  );
 
   const settingsTreeProvider = new SettingsTreeProvider();
   context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.settings", settingsTreeProvider));
