@@ -169,7 +169,7 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext, sto
         }
 
         if (dispatched) {
-          vscode.window.withProgress(
+          await vscode.window.withProgress(
             {
               location: vscode.ProgressLocation.Window,
               title: "Waiting for workflow run to start..."
@@ -183,11 +183,11 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext, sto
                   const result = await gitHubRepoContext.client.actions.listWorkflowRuns({
                     owner: gitHubRepoContext.owner,
                     repo: gitHubRepoContext.name,
-                    workflow_id: workflowIdForApi!,
+                    workflow_id: workflowIdForApi as string | number,
                     per_page: 1
                   });
                   const newLatestRunId = result.data.workflow_runs[0]?.id;
-                  log(`Latest run ID found: ${newLatestRunId} (Previous: ${latestRunId})`);
+                  log(`Latest run ID found: ${newLatestRunId} (Previous: ${latestRunId ?? 'none'})`);
 
                   if (newLatestRunId && newLatestRunId !== latestRunId) {
                     log(`Found new workflow run: ${newLatestRunId}. Triggering refresh and polling.`);
