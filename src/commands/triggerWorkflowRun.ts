@@ -187,7 +187,7 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext, sto
                     per_page: 1
                   });
                   const newLatestRunId = result.data.workflow_runs[0]?.id;
-                  log(`Latest run ID found: ${newLatestRunId} (Previous: ${latestRunId ?? 'none'})`);
+                  log(`Latest run ID found: ${newLatestRunId} (Previous: ${latestRunId ?? "none"})`);
 
                   if (newLatestRunId && newLatestRunId !== latestRunId) {
                     log(`Found new workflow run: ${newLatestRunId}. Triggering refresh and polling.`);
