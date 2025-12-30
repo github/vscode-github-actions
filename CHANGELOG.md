@@ -1,11 +1,60 @@
 # Changelog
 
+## [0.28.3]
+- Bump `@actions/languageserver` and `@actions/workflow-parser` to 0.3.30
+  - Cron schedule descriptions now appear as inlay hints instead of info diagnostics
+  - Add runs-on label completions for mapping syntax
+  - Fix autocomplete showing mapping keys for empty values
+  - Use detail field for one-of qualifiers instead of label
+  - Add escape hatch completions to switch structural forms
+  - Remove invalid autocomplete options for committed structural types
+  - Add warning for short SHA refs in `uses`
+  - Expand one-of keys to multiple completion items
+  - Support for `job.check_run_id` context
+  - Add language server executable
+  - Add `ubuntu-slim` and updated runner labels
+  - ESM migration: Add .js extensions for node16 moduleResolution
+  - Fix one-of property completions to insert value on next line
+  - Add missing activity types for `pull_request` and `pull_request_target`
+  - Support YAML anchors and aliases
+  - Always provide strategy and matrix contexts with defaults
+  - Suppress warnings for step output property access
+  - Add concurrency deadlock detection validation
+  - Fix expression completion in multi-line if block scalars
+  - Add missing runner context properties (environment, debug, workspace)
+  - Allow empty strings in `workflow_dispatch` choice options
+  - Skip validation for dynamic environments
+  - Skip secrets/vars validation when context is incomplete
+  - Optimize JSON data files to reduce bundle size by 90%
+  - Improve cron schedule warning message
+  - Add validation for literal text in if conditions
+  - Add `uses` syntax validation for step and job-level workflows
+  - Fix misleading error for malformed local workflow paths
+  - Improve cron schedule validation and diagnostics
+
+## [0.28.2]
+- Internal release (no user-facing changes)
+
 ## [0.28.1]
-- Support `artifact-metadata` permission
+- Bump `@actions/languageserver` and `@actions/workflow-parser` to 0.3.19
+  - Support `artifact-metadata` permission
 
 ## [0.28.0]
-- Support image_version event
-- Support 'snapshot' keyword
+- Bump `@actions/languageserver` and `@actions/workflow-parser` to 0.3.18
+  - Support `image_version` event
+  - Support `snapshot` keyword
+
+## [0.27.2]
+- Bump `@actions/languageserver` and `@actions/workflow-parser` to 0.3.17
+  - Update `models` permission support
+- Fix ghe.com compatibility
+- Update secret and variable parameters
+
+## [0.27.1]
+- Internal release (security updates)
+
+## [0.27.0]
+- Handle legitimate GHES cases
 
 ## [0.26.2]
 - Bump word-wrap from 1.2.3 to 1.2.4 
