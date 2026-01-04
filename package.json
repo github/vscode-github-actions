@@ -1,5 +1,5 @@
 {
-  "name": "@github/vscode-github-actions",
+  "name": "vscode-github-actions",
   "displayName": "GitHub Actions",
   "publisher": "github",
   "icon": "resources/logo.png",
@@ -8,7 +8,7 @@
     "url": "https://github.com/github/vscode-github-actions"
   },
   "description": "GitHub Actions workflows and runs for github.com hosted repositories in VS Code",
-  "version": "0.28.4",
+  "version": "0.29.0",
   "engines": {
     "vscode": "^1.72.0",
     "node": ">= 16"

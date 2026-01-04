@@ -10,7 +10,7 @@ import {LanguageClient as NodeLanguageClient, ServerOptions, TransportKind} from
 import {userAgent} from "../api/api";
 import {getSession} from "../auth/auth";
 import {getGitHubContext} from "../git/repository";
-import {WorkflowSelector} from "./documentSelector";
+import {WorkflowSelector, ActionSelector} from "./documentSelector";
 import {getGitHubApiUri, useEnterprise} from "../configuration/configuration";
 
 let client: BaseLanguageClient;
@@ -39,7 +39,7 @@ export async function initLanguageServer(context: vscode.ExtensionContext) {
   };
 
   const clientOptions: LanguageClientOptions = {
-    documentSelector: [WorkflowSelector],
+    documentSelector: [WorkflowSelector, ActionSelector],
     initializationOptions: initializationOptions,
     progressOnInitialization: true
   };
