@@ -8,7 +8,7 @@
     "url": "https://github.com/github/vscode-github-actions"
   },
   "description": "GitHub Actions workflows and runs for github.com hosted repositories in VS Code",
-  "version": "0.28.4",
+  "version": "0.29.0",
   "engines": {
     "vscode": "^1.72.0",
     "node": ">= 16"
@@ -25,7 +25,9 @@
   "activationEvents": [
     "onView:workflows",
     "onView:settings",
-    "workspaceContains:**/.github/workflows/**"
+    "workspaceContains:**/.github/workflows/**",
+    "workspaceContains:**/action.yml",
+    "workspaceContains:**/action.yaml"
   ],
   "main": "./dist/extension-node.js",
   "browser": "./dist/extension-web.js",

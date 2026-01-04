@@ -1,7 +1,9 @@
 # Changelog
 
-## [0.28.3]
-- Bump `@actions/languageserver` and `@actions/workflow-parser` to 0.3.30
+## [0.29.0]
+- Add language server support for `action.yml` and `action.yaml` files
+- Bump `@actions/languageserver` and `@actions/languageservice` to 0.3.33
+  - Fix escape hatch completions using `additionalTextEdits`
   - Cron schedule descriptions now appear as inlay hints instead of info diagnostics
   - Add runs-on label completions for mapping syntax
   - Fix autocomplete showing mapping keys for empty values
