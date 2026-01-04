@@ -1,5 +1,5 @@
 {
-  "name": "vscode-github-actions",
+  "name": "@github/vscode-github-actions",
   "displayName": "GitHub Actions",
   "publisher": "github",
   "icon": "resources/logo.png",
@@ -25,7 +25,9 @@
   "activationEvents": [
     "onView:workflows",
     "onView:settings",
-    "workspaceContains:**/.github/workflows/**"
+    "workspaceContains:**/.github/workflows/**",
+    "workspaceContains:**/action.yml",
+    "workspaceContains:**/action.yaml"
   ],
   "main": "./dist/extension-node.js",
   "browser": "./dist/extension-web.js",
