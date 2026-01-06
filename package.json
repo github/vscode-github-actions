@@ -542,7 +542,7 @@
   "devDependencies": {
     "@types/jest": "^29.0.3",
     "@types/libsodium-wrappers": "^0.7.10",
-    "@types/uuid": "^3.4.6",
+    "@types/uuid": "^10.0.0",
     "@types/vscode": "^1.72.0",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
@@ -578,7 +578,7 @@
     "timers-browserify": "^2.0.12",
     "tunnel": "0.0.6",
     "util": "^0.12.1",
-    "uuid": "^3.3.3",
+    "uuid": "^10.0.0",
     "vscode-languageclient": "^8.0.2"
   },
   "overrides": {
