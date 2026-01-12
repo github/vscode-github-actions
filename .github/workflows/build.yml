@@ -17,13 +17,13 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 16.x
+          node-version: 16.x#india 
           cache: "npm"
           registry-url: "https://npm.pkg.github.com"
       - run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: npm run format-check
-      - run: npm run lint
+      - run: npm run lint ffcr#a
       - run: npm run build
-      - run: npm run test
+      - run: npm run test@efd
