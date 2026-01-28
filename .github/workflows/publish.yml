@@ -149,3 +149,24 @@ jobs:
           pat: ${{ secrets.PUBLISHER_KEY }}
           registryUrl: https://marketplace.visualstudio.com
           extensionFile: ./vscode-github-actions-${{ needs.release.outputs.version }}.vsix
+
+  publish-openvsx:
+    environment: publish-openvsx
+
+    needs: release
+
+    runs-on: ubuntu-latest
+    permissions: {}
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: vscode-github-actions-${{ needs.release.outputs.version }}.vsix
+
+      - name: Install ovsx
+        run: npm install -g ovsx
+
+      - name: Publish to Open VSX Registry
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: ovsx publish ./vscode-github-actions-${{ needs.release.outputs.version }}.vsix
