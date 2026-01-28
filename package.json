@@ -577,7 +577,7 @@
     "stream-browserify": "^3.0.0",
     "timers-browserify": "^2.0.12",
     "tunnel": "0.0.6",
-    "util": "^0.12.1",
+    "util": "^0.12.5",
     "uuid": "^3.3.3",
     "vscode-languageclient": "^8.0.2"
   },
