@@ -1,26 +1,34 @@
+import {basename} from "path";
 import * as vscode from "vscode";
 
 import {getGitHead, getGitHubContextForWorkspaceUri, GitHubRepoContext} from "../git/repository";
 import {getWorkflowUri, parseWorkflowFile} from "../workflow/workflow";
 
 import {Workflow} from "../model";
+import {RunStore} from "../store/store";
+
+import {log} from "../log";
 
 interface TriggerRunCommandOptions {
   wf?: Workflow;
   gitHubRepoContext: GitHubRepoContext;
 }
 
-export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
+export function registerTriggerWorkflowRun(context: vscode.ExtensionContext, store: RunStore) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "github-actions.explorer.triggerRun",
       async (args: TriggerRunCommandOptions | vscode.Uri) => {
         let workflowUri: vscode.Uri | null = null;
+        let workflowIdForApi: number | string | undefined;
+
         if (args instanceof vscode.Uri) {
           workflowUri = args;
+          workflowIdForApi = basename(workflowUri.fsPath);
         } else if (args.wf) {
           const wf: Workflow = args.wf;
           workflowUri = getWorkflowUri(args.gitHubRepoContext, wf.path);
+          workflowIdForApi = wf.id;
         }
 
         if (!workflowUri) {
@@ -42,6 +50,28 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
         if (!workflow) {
           return;
         }
+
+        const relativeWorkflowPath = vscode.workspace.asRelativePath(workflowUri, false);
+        if (!workflowIdForApi) {
+          workflowIdForApi = basename(workflowUri.fsPath);
+        }
+
+        let latestRunId: number | undefined;
+        try {
+          log(`Fetching latest run for workflow: ${workflowIdForApi}`);
+          const result = await gitHubRepoContext.client.actions.listWorkflowRuns({
+            owner: gitHubRepoContext.owner,
+            repo: gitHubRepoContext.name,
+            workflow_id: workflowIdForApi,
+            per_page: 1
+          });
+          latestRunId = result.data.workflow_runs[0]?.id;
+          log(`Latest run ID before trigger: ${latestRunId}`);
+        } catch (e) {
+          log(`Error fetching latest run: ${(e as Error).message}`);
+        }
+
+        let dispatched = false;
 
         let selectedEvent: string | undefined;
         if (workflow.events.workflow_dispatch !== undefined && workflow.events.repository_dispatch !== undefined) {
@@ -85,8 +115,6 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
             }
 
             try {
-              const relativeWorkflowPath = vscode.workspace.asRelativePath(workflowUri, false);
-
               await gitHubRepoContext.client.actions.createWorkflowDispatch({
                 owner: gitHubRepoContext.owner,
                 repo: gitHubRepoContext.name,
@@ -95,6 +123,7 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
                 inputs
               });
 
+              dispatched = true;
               vscode.window.setStatusBarMessage(`GitHub Actions: Workflow event dispatched`, 2000);
             } catch (error) {
               return vscode.window.showErrorMessage(`Could not create workflow dispatch: ${(error as Error)?.message}`);
@@ -134,8 +163,47 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
               client_payload: {}
             });
 
+            dispatched = true;
             vscode.window.setStatusBarMessage(`GitHub Actions: Repository event '${event_type}' dispatched`, 2000);
           }
+        }
+
+        if (dispatched) {
+          await vscode.window.withProgress(
+            {
+              location: vscode.ProgressLocation.Window,
+              title: "Waiting for workflow run to start..."
+            },
+            async () => {
+              log("Starting loop to check for new workflow run...");
+              for (let i = 0; i < 20; i++) {
+                if (i > 0) {
+                  await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+                try {
+                  log(`Checking for new run (attempt ${i + 1}/20)...`);
+                  const result = await gitHubRepoContext.client.actions.listWorkflowRuns({
+                    owner: gitHubRepoContext.owner,
+                    repo: gitHubRepoContext.name,
+                    workflow_id: workflowIdForApi as string | number,
+                    per_page: 1
+                  });
+                  const newLatestRunId = result.data.workflow_runs[0]?.id;
+                  log(`Latest run ID found: ${newLatestRunId} (Previous: ${latestRunId ?? "none"})`);
+
+                  if (newLatestRunId && newLatestRunId !== latestRunId) {
+                    log(`Found new workflow run: ${newLatestRunId}. Triggering refresh and polling.`);
+                    await vscode.commands.executeCommand("github-actions.explorer.refresh");
+                    // Poll for 15 minutes (225 * 4s)
+                    store.pollRun(newLatestRunId, gitHubRepoContext, 4000, 225);
+                    break;
+                  }
+                } catch (e) {
+                  log(`Error checking for new run: ${(e as Error).message}`);
+                }
+              }
+            }
+          );
         }
 
         return vscode.commands.executeCommand("github-actions.explorer.refresh");

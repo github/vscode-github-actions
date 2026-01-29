@@ -18,9 +18,10 @@ import {WorkflowNode} from "./workflows/workflowNode";
 import {getWorkflowNodes, WorkflowsRepoNode} from "./workflows/workflowsRepoNode";
 import {WorkflowStepNode} from "./workflows/workflowStepNode";
 
-type WorkflowsTreeNode =
+export type WorkflowsTreeNode =
   | AuthenticationNode
   | NoGitHubRepositoryNode
+  | WorkflowsRepoNode
   | WorkflowNode
   | WorkflowRunNode
   | PreviousAttemptsNode

@@ -11,7 +11,17 @@ import {WorkflowsTreeProvider} from "./workflows";
 
 export async function initTreeViews(context: vscode.ExtensionContext, store: RunStore): Promise<void> {
   const workflowTreeProvider = new WorkflowsTreeProvider(store);
-  context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.workflows", workflowTreeProvider));
+  const workflowTreeView = vscode.window.createTreeView("github-actions.workflows", {
+    treeDataProvider: workflowTreeProvider
+  });
+  context.subscriptions.push(workflowTreeView);
+
+  store.setViewVisible(workflowTreeView.visible);
+  context.subscriptions.push(
+    workflowTreeView.onDidChangeVisibility(e => {
+      store.setViewVisible(e.visible);
+    })
+  );
 
   const settingsTreeProvider = new SettingsTreeProvider();
   context.subscriptions.push(vscode.window.registerTreeDataProvider("github-actions.settings", settingsTreeProvider));
