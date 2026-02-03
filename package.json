@@ -25,6 +25,7 @@
   "activationEvents": [
     "onView:workflows",
     "onView:settings",
+    "onView:github-actions.workflow-debug",
     "workspaceContains:**/.github/workflows/**",
     "workspaceContains:**/action.yml",
     "workspaceContains:**/action.yaml"
@@ -61,6 +62,21 @@
         "injectTo": [
           "source.github-actions-workflow"
         ]
+      }
+    ],
+    "breakpoints": [
+      {
+        "language": "github-actions-workflow"
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "github-actions",
+        "label": "GitHub Actions",
+        "languages": [
+          "github-actions-workflow"
+        ],
+        "initialConfigurations": []
       }
     ],
     "configuration": {
@@ -154,6 +170,20 @@
           "dark": "resources/icons/dark/logs.svg",
           "light": "resources/icons/light/logs.svg"
         }
+      },
+      {
+        "command": "github-actions.workflow.job.attachDebugger",
+        "category": "GitHub Actions",
+        "title": "Attach debugger to job",
+        "when": "viewItem =~ /job/ && viewItem =~ /running/",
+        "icon": "$(debug)"
+      },
+      {
+        "command": "github-actions.workflow.job.rerunDebug",
+        "category": "GitHub Actions",
+        "title": "Re-run and debug job",
+        "when": "viewItem =~ /job/ && viewItem =~ /failed/",
+        "icon": "$(debug)"
       },
       {
         "command": "github-actions.step.logs",
@@ -267,6 +297,13 @@
       }
     ],
     "views": {
+      "debug": [
+        {
+          "id": "github-actions.workflow-debug",
+          "name": "Actions Remote File System",
+          "when": "github-actions.debugging"
+        }
+      ],
       "github-actions": [
         {
           "id": "github-actions.current-branch",
@@ -374,6 +411,16 @@
           "group": "inline"
         },
         {
+          "command": "github-actions.workflow.job.attachDebugger",
+          "group": "inline@0",
+          "when": "viewItem =~ /job/ && viewItem =~ /running/"
+        },
+        {
+          "command": "github-actions.workflow.job.rerunDebug",
+          "group": "inline@1",
+          "when": "viewItem =~ /job/ && viewItem =~ /failed/"
+        },
+        {
           "command": "github-actions.workflow.logs",
           "group": "inline",
           "when": "viewItem =~ /job/ && viewItem =~ /completed/"
@@ -456,6 +503,14 @@
         },
         {
           "command": "github-actions.workflow.logs",
+          "when": "false"
+        },
+        {
+          "command": "github-actions.workflow.job.attachDebugger",
+          "when": "false"
+        },
+        {
+          "command": "github-actions.workflow.job.rerunDebug",
           "when": "false"
         },
         {
@@ -566,6 +621,7 @@
     "@actions/languageserver": "^0.3.46",
     "@actions/workflow-parser": "^0.3.46",
     "@octokit/rest": "^21.1.1",
+    "@vscode/debugprotocol": "^1.68.0",
     "@vscode/vsce": "^2.19.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
