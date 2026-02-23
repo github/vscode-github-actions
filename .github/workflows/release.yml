@@ -3,6 +3,8 @@ name: 🚀 Release
 on:
   release:
     types: [published]
+permissions:
+  id-token: write # Needed for Azure login with federated token
 jobs:
   publish:
     name: 🚀 Publish to VS Code Marketplace
@@ -14,6 +16,9 @@ jobs:
         shell: pwsh
         run: |
           $token = $env:ACTIONS_ID_TOKEN_REQUEST_TOKEN
+          if (-not $token) {
+            throw "ID token not found in environment variables. Did you set permissions: id-token: write in the workflow?"
+          }
           $uri = $env:ACTIONS_ID_TOKEN_REQUEST_URL
           $irmParams = @{
             Uri = $uri
