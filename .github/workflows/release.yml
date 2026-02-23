@@ -8,7 +8,9 @@ permissions:
 jobs:
   publish:
     name: 🚀 Publish to VS Code Marketplace
-    environment: VS Code Marketplace
+    environment:
+      name: VS Code Marketplace
+      url: https://marketplace.visualstudio.com/items?itemName=justin-grote.github-actions-enhanced
     runs-on: ubuntu-latest
     steps:
       - name: 🤖 Azure Login - Federated Token
