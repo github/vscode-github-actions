@@ -3,8 +3,6 @@ name: 🚀 Release
 on:
   release:
     types: [published]
-permissions:
-  contents: write
 jobs:
   publish:
     name: 🚀 Publish to VS Code Marketplace
