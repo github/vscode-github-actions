@@ -68,7 +68,7 @@ jobs:
         shell: pwsh
         run: |
           $tag = "${{ github.ref_name }}"
-          if ($tag -notmatch '^v\d{4}\.\d{2}\.') {
+          if ($tag -notmatch '^v\d{4}\.\d{1,2}\.') {
             throw "Tag '$tag' does not match CalVer format (e.g. v2026.02.1)"
           }
 
