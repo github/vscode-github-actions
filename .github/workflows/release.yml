@@ -4,8 +4,7 @@ on:
   release:
     types: [published]
 permissions:
-  contents: read
-  packages: write
+  contents: write
 jobs:
   publish:
     name: 🚀 Publish to VS Code Marketplace
