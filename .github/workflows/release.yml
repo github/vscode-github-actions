@@ -34,6 +34,7 @@ jobs:
 
           $azLoginParams = @(
             '--service-principal',
+            '--allow-no-subscriptions',
             '-u', '${{ secrets.AZURE_CLIENT_ID }}',
             '-t', '${{ secrets.AZURE_TENANT_ID }}',
             '--federated-token', $fedToken
