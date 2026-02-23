@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Build
 
 on:
@@ -5,7 +6,8 @@ on:
   pull_request:
     branches:
       - main
-
+  tags:
+    - 'v*'
 permissions:
   contents: read
   packages: read
@@ -46,3 +48,40 @@ jobs:
         with:
           name: github-actions-enhanced-vsix
           path: github-actions-enhanced-*.vsix
+  # publish:
+  #   name: 🚀 Publish to VSCode Marketplace
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   if: startsWith(github.ref, 'refs/tags/v')
+  #   steps:
+  #     - name: 🤖 Azure Login - Federated Token
+  #       if: github.event_name != 'pull_request'
+  #       shell: pwsh
+  #       run: |
+  #         $token = $env:ACTIONS_ID_TOKEN_REQUEST_TOKEN
+  #         $uri = $env:ACTIONS_ID_TOKEN_REQUEST_URL
+  #         $irmParams = @{
+  #           Uri = $uri
+  #           Authentication = 'Bearer'
+  #           Token = (ConvertTo-SecureString -AsPlainText $token)
+  #           Body = @{audience = 'api://AzureADTokenExchange' }
+  #         }
+  #         $jwtResponse = Invoke-Restmethod @irmParams
+  #         $fedToken = $jwtResponse.value
+  #         if (-not $fedToken) {
+  #           throw "Federated token not found in response: $($jwtResponse | ConvertTo-Json -Depth 10)"
+  #         }
+
+  #         $azLoginParams = @(
+  #           '--service-principal',
+  #           '-u', '${{ secrets.AZURE_CLIENT_ID }}',
+  #           '-t', '${{ secrets.AZURE_TENANT_ID }}',
+  #           '--federated-token', $fedToken
+  #         )
+  #         & az login @azLoginParams
+  #     - name: ⬇️ Download Build Artifact
+  #       uses: actions/download-artifact@v6
+  #       with:
+  #         name: github-actions-enhanced-vsix
+  #     - name: 🚀 Publish to VSCode Marketplace
+  #       run: npx vsce publish --azure-credential --packagePath github-actions-enhanced-*.vsix

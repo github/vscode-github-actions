@@ -33,7 +33,7 @@
     "build": "pnpm clean && pnpm lint && pnpm format-check && pnpm rd --environment PRODUCTION:true",
     "watch": "pnpm rd --watch",
     "clean": "git clean -fdX -- ./dist ./out",
-    "package": "pnpm vsce package --no-dependencies",
+    "package": "pnpm vsce package --no-dependencies --no-git-tag-version --no-update-package-json",
     "vscode:prepublish": "pnpm build",
     "test": "node --import tsx --test \"src/**/*.test.ts\"",
     "lint": "tsgo --noEmit && oxlint",
