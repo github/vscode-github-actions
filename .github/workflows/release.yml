@@ -1,0 +1,47 @@
+# All releases are done from published GitHub releases to support immutable releases
+name: 🚀 Release
+on:
+  release:
+    types: [published]
+permissions:
+  contents: read
+  packages: write
+jobs:
+  publish:
+    name: 🚀 Publish to VS Code Marketplace
+    environment: VS Code Marketplace
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🤖 Azure Login - Federated Token
+        if: github.event_name != 'pull_request'
+        shell: pwsh
+        run: |
+          $token = $env:ACTIONS_ID_TOKEN_REQUEST_TOKEN
+          $uri = $env:ACTIONS_ID_TOKEN_REQUEST_URL
+          $irmParams = @{
+            Uri = $uri
+            Authentication = 'Bearer'
+            Token = (ConvertTo-SecureString -AsPlainText $token)
+            Body = @{audience = 'api://AzureADTokenExchange' }
+          }
+          $jwtResponse = Invoke-Restmethod @irmParams
+          $fedToken = $jwtResponse.value
+          if (-not $fedToken) {
+            throw "Federated token not found in response: $($jwtResponse | ConvertTo-Json -Depth 10)"
+          }
+
+          $azLoginParams = @(
+            '--service-principal',
+            '-u', '${{ secrets.AZURE_CLIENT_ID }}',
+            '-t', '${{ secrets.AZURE_TENANT_ID }}',
+            '--federated-token', $fedToken
+          )
+          & az login @azLoginParams
+      - name: 📥 Get VSIX Release Asset
+        uses: dsaltares/fetch-gh-release-asset@1.1.2
+        with:
+          version: ${{ github.event.release.tag_name }}
+          file: ^github-actions-enhanced-.*\.vsix$
+          regex: true
+      - name: 🚀 Publish to VS Code Marketplace
+        run: npx vsce publish --azure-identity github-actions-enhanced-*.vsix
