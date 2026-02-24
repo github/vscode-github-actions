@@ -48,6 +48,8 @@ jobs:
           )
           & az login @azLoginParams
       - name: 📥 Get VSIX Release Asset
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           VERSION_TAG="${{ inputs.version || github.ref_name }}"
           gh release download "$VERSION_TAG" --pattern "*.vsix" --repo "${{ github.repository }}"
