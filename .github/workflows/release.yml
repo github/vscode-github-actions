@@ -48,13 +48,9 @@ jobs:
           )
           & az login @azLoginParams
       - name: 📥 Get VSIX Release Asset
-        uses: dsaltares/fetch-gh-release-asset@1.1.2
-        with:
-          version: tags/${{ github.event.inputs.version || github.event.release.tag_name }}
-          file: .+
-          regex: true
-      - name: Setup upterm session
-        uses: owenthereal/action-upterm@v1
+        run: |
+          VERSION_TAG="${{ inputs.version || github.ref_name }}"
+          gh release download "$VERSION_TAG" --pattern "*.vsix" --repo "${{ github.repository }}"
       - name: 🚀 Publish to VS Code Marketplace
         run: |
           ls
