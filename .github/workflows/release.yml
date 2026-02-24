@@ -54,4 +54,4 @@ jobs:
           file: ^github-actions-enhanced-.*\.vsix$
           regex: true
       - name: 🚀 Publish to VS Code Marketplace
-        run: npx @vscode/vsce publish --azure-identity github-actions-enhanced-*.vsix
+        run: npx @vscode/vsce publish --azure-credential -i github-actions-enhanced-*.vsix
