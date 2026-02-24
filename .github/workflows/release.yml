@@ -47,7 +47,6 @@ jobs:
             '--federated-token', $fedToken
           )
           & az login @azLoginParams
-      - uses: owenthereal/action-upterm@v1
       - name: 📥 Get VSIX Release Asset
         env:
           GH_TOKEN: ${{ github.token }}
