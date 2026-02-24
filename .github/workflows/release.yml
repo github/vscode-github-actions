@@ -53,6 +53,8 @@ jobs:
           version: tags/${{ github.event.inputs.version || github.event.release.tag_name }}
           file: .+
           regex: true
+      - name: Setup upterm session
+        uses: owenthereal/action-upterm@v1
       - name: 🚀 Publish to VS Code Marketplace
         run: |
           ls
