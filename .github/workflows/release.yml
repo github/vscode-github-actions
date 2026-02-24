@@ -57,4 +57,5 @@ jobs:
         run: |
           ls
           VSIX_FILE=$(ls github-actions-enhanced-*.vsix | head -1)
+          npx @vscode/vsce verify-pat --azure-credential
           npx @vscode/vsce publish --azure-credential -i "$VSIX_FILE"
