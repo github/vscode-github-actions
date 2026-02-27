@@ -1,0 +1,51 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "GitHub Actions github-script embedded JavaScript",
+  "scopeName": "source.github-actions-workflow.github-script-embedded",
+  "injectionSelector": "L:source.github-actions-workflow - meta.github-actions.github-script.context",
+  "patterns": [
+    {
+      "name": "meta.github-actions.github-script.context",
+      "begin": "^(\\s*(?:-\\s+)?)(uses)(\\s*:\\s*)((?:\\\"actions\\/github-script(?:\\@[A-Za-z0-9._-]+)?\\\")|(?:'actions\\/github-script(?:\\@[A-Za-z0-9._-]+)?')|(?:actions\\/github-script(?:\\@[A-Za-z0-9._-]+)?))(\\s*(?:#.*)?)$",
+      "beginCaptures": {
+        "2": {
+          "name": "entity.name.tag.yaml"
+        },
+        "3": {
+          "name": "punctuation.separator.key-value.mapping.yaml"
+        },
+        "4": {
+          "name": "string.unquoted.plain.out.yaml"
+        }
+      },
+      "end": "^(?=\\s*-\\s|\\S|\\z)",
+      "patterns": [
+        {
+          "contentName": "meta.embedded.block.javascript",
+          "begin": "^(\\s+)(script)(\\s*:\\s*)([>|][-+0-9\\s]*\\s*)(?:#.*)?$",
+          "beginCaptures": {
+            "2": {
+              "name": "entity.name.tag.yaml"
+            },
+            "3": {
+              "name": "punctuation.separator.key-value.mapping.yaml"
+            },
+            "4": {
+              "name": "string.unquoted.block.yaml"
+            }
+          },
+          "end": "^(?!(?:\\1\\s+|\\s*$))",
+          "patterns": [
+            {
+              "include": "source.js"
+            }
+          ]
+        },
+        {
+          "include": "source.github-actions-workflow"
+        }
+      ]
+    }
+  ],
+  "repository": {}
+}
