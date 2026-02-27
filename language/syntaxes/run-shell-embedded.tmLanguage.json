@@ -1,0 +1,187 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "GitHub Actions run+shell embedded syntax",
+  "scopeName": "source.github-actions-workflow.run-shell-embedded",
+  "injectionSelector": "L:source.github-actions-workflow - meta.github-actions.run-shell.context",
+  "patterns": [
+    {
+      "include": "#shell-bash"
+    },
+    {
+      "include": "#shell-powershell"
+    },
+    {
+      "include": "#shell-cmd"
+    },
+    {
+      "include": "#shell-python"
+    },
+    {
+      "include": "#shell-node"
+    }
+  ],
+  "repository": {
+    "base-fallback": {
+      "patterns": [
+        {
+          "include": "source.github-actions-workflow"
+        }
+      ]
+    },
+    "shell-bash": {
+      "name": "meta.github-actions.run-shell.context",
+      "begin": "^(?=\\s*(?:-\\s+)?shell\\s*:\\s*(?:['\\\"])?(?:bash|sh)(?:['\\\"])?\\s*(?:#.*)?$)",
+      "end": "^(?=\\s*-\\s|\\S|\\z)",
+      "patterns": [
+        {
+          "contentName": "meta.embedded.block.shellscript",
+          "begin": "^(\\s+)(run)(\\s*:\\s*)([>|][-+0-9\\s]*\\s*)(?:#.*)?$",
+          "beginCaptures": {
+            "2": {
+              "name": "entity.name.tag.yaml"
+            },
+            "3": {
+              "name": "punctuation.separator.key-value.mapping.yaml"
+            },
+            "4": {
+              "name": "string.unquoted.block.yaml"
+            }
+          },
+          "end": "^(?!(?:\\1\\s+|\\s*$))",
+          "patterns": [
+            {
+              "include": "source.shell"
+            }
+          ]
+        },
+        {
+          "include": "#base-fallback"
+        }
+      ]
+    },
+    "shell-powershell": {
+      "name": "meta.github-actions.run-shell.context",
+      "begin": "^(?=\\s*(?:-\\s+)?shell\\s*:\\s*(?:['\\\"])?(?:pwsh|powershell)(?:['\\\"])?\\s*(?:#.*)?$)",
+      "end": "^(?=\\s*-\\s|\\S|\\z)",
+      "patterns": [
+        {
+          "contentName": "meta.embedded.block.powershell",
+          "begin": "^(\\s+)(run)(\\s*:\\s*)([>|][-+0-9\\s]*\\s*)(?:#.*)?$",
+          "beginCaptures": {
+            "2": {
+              "name": "entity.name.tag.yaml"
+            },
+            "3": {
+              "name": "punctuation.separator.key-value.mapping.yaml"
+            },
+            "4": {
+              "name": "string.unquoted.block.yaml"
+            }
+          },
+          "end": "^(?!(?:\\1\\s+|\\s*$))",
+          "patterns": [
+            {
+              "include": "source.powershell"
+            }
+          ]
+        },
+        {
+          "include": "#base-fallback"
+        }
+      ]
+    },
+    "shell-cmd": {
+      "name": "meta.github-actions.run-shell.context",
+      "begin": "^(?=\\s*(?:-\\s+)?shell\\s*:\\s*(?:['\\\"])?cmd(?:['\\\"])?\\s*(?:#.*)?$)",
+      "end": "^(?=\\s*-\\s|\\S|\\z)",
+      "patterns": [
+        {
+          "contentName": "meta.embedded.block.bat",
+          "begin": "^(\\s+)(run)(\\s*:\\s*)([>|][-+0-9\\s]*\\s*)(?:#.*)?$",
+          "beginCaptures": {
+            "2": {
+              "name": "entity.name.tag.yaml"
+            },
+            "3": {
+              "name": "punctuation.separator.key-value.mapping.yaml"
+            },
+            "4": {
+              "name": "string.unquoted.block.yaml"
+            }
+          },
+          "end": "^(?!(?:\\1\\s+|\\s*$))",
+          "patterns": [
+            {
+              "include": "source.batchfile"
+            }
+          ]
+        },
+        {
+          "include": "#base-fallback"
+        }
+      ]
+    },
+    "shell-python": {
+      "name": "meta.github-actions.run-shell.context",
+      "begin": "^(?=\\s*(?:-\\s+)?shell\\s*:\\s*(?:['\\\"])?python(?:['\\\"])?\\s*(?:#.*)?$)",
+      "end": "^(?=\\s*-\\s|\\S|\\z)",
+      "patterns": [
+        {
+          "contentName": "meta.embedded.block.python",
+          "begin": "^(\\s+)(run)(\\s*:\\s*)([>|][-+0-9\\s]*\\s*)(?:#.*)?$",
+          "beginCaptures": {
+            "2": {
+              "name": "entity.name.tag.yaml"
+            },
+            "3": {
+              "name": "punctuation.separator.key-value.mapping.yaml"
+            },
+            "4": {
+              "name": "string.unquoted.block.yaml"
+            }
+          },
+          "end": "^(?!(?:\\1\\s+|\\s*$))",
+          "patterns": [
+            {
+              "include": "source.python"
+            }
+          ]
+        },
+        {
+          "include": "#base-fallback"
+        }
+      ]
+    },
+    "shell-node": {
+      "name": "meta.github-actions.run-shell.context",
+      "begin": "^(?=\\s*(?:-\\s+)?shell\\s*:\\s*(?:['\\\"])?node(?:['\\\"])?\\s*(?:#.*)?$)",
+      "end": "^(?=\\s*-\\s|\\S|\\z)",
+      "patterns": [
+        {
+          "contentName": "meta.embedded.block.javascript",
+          "begin": "^(\\s+)(run)(\\s*:\\s*)([>|][-+0-9\\s]*\\s*)(?:#.*)?$",
+          "beginCaptures": {
+            "2": {
+              "name": "entity.name.tag.yaml"
+            },
+            "3": {
+              "name": "punctuation.separator.key-value.mapping.yaml"
+            },
+            "4": {
+              "name": "string.unquoted.block.yaml"
+            }
+          },
+          "end": "^(?!(?:\\1\\s+|\\s*$))",
+          "patterns": [
+            {
+              "include": "source.js"
+            }
+          ]
+        },
+        {
+          "include": "#base-fallback"
+        }
+      ]
+    }
+  }
+}

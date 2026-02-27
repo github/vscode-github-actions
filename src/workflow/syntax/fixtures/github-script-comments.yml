@@ -1,0 +1,16 @@
+name: test
+
+on: workflow_dispatch
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v8 # unquoted uses comment
+        with:
+          script: | # comment on script header (unquoted uses)
+            const unquoted = true;
+      - uses: "actions/github-script@v8" # quoted uses comment
+        with:
+          script: | # comment on script header (quoted uses)
+            const quoted = true;
