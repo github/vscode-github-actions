@@ -55,11 +55,16 @@ describe("workflow syntax embedding grammars", () => {
   it("supports comments on github-script uses/script headers for quoted and unquoted uses", () => {
     const grammar = readJson<{patterns: [GrammarRule]}>("language/syntaxes/github-script-embedded.tmLanguage.json");
     const fixture = readFixture("src/workflow/syntax/fixtures/github-script-comments.yml");
+    const outerBegin = new RegExp(grammar.patterns[0].begin);
 
     const result = analyzeSingleOuterEmbeddedBlockFixture(fixture, grammar, "meta.embedded.block.javascript", line =>
       /uses\s*:\s*["']?actions\/github-script\b/.test(line)
     );
     const lines = fixture.split(/\r?\n/);
+    const unquotedUsesLine = lines.find(line => line.includes("uses: actions/github-script@v8"));
+    const quotedUsesLine = lines.find(line => line.includes('uses: "actions/github-script@v8"'));
+    const unquotedUsesMatch = unquotedUsesLine ? outerBegin.exec(unquotedUsesLine) : null;
+    const quotedUsesMatch = quotedUsesLine ? outerBegin.exec(quotedUsesLine) : null;
 
     expect(result.outerStartLines).toHaveLength(2);
     expect(result.embeddedHeaderLines).toHaveLength(2);
@@ -67,6 +72,12 @@ describe("workflow syntax embedding grammars", () => {
     expect(lines[result.outerStartLines[0] - 1]).toContain("# unquoted uses comment");
     expect(lines[result.outerStartLines[1] - 1]).toContain('uses: "actions/github-script@v8"');
     expect(lines[result.outerStartLines[1] - 1]).toContain("# quoted uses comment");
+    expect(unquotedUsesLine).toBeDefined();
+    expect(quotedUsesLine).toBeDefined();
+    expect(unquotedUsesMatch).not.toBeNull();
+    expect(quotedUsesMatch).not.toBeNull();
+    expect(unquotedUsesMatch![0]).toBe("      - uses: actions/github-script@v8");
+    expect(quotedUsesMatch![0]).toBe('      - uses: "actions/github-script@v8"');
     expect(lines[result.embeddedHeaderLines[0] - 1]).toContain("# comment on script header (unquoted uses)");
     expect(lines[result.embeddedHeaderLines[1] - 1]).toContain("# comment on script header (quoted uses)");
 

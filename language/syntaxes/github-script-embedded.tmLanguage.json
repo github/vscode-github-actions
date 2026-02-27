@@ -6,7 +6,7 @@
   "patterns": [
     {
       "name": "meta.github-actions.github-script.context",
-      "begin": "^(\\s*(?:-\\s+)?)(uses)(\\s*:\\s*)((?:\\\"actions\\/github-script(?:\\@[A-Za-z0-9._-]+)?\\\")|(?:'actions\\/github-script(?:\\@[A-Za-z0-9._-]+)?')|(?:actions\\/github-script(?:\\@[A-Za-z0-9._-]+)?))(\\s*(?:#.*)?)$",
+      "begin": "^(\\s*(?:-\\s+)?)(uses)(\\s*:\\s*)((?:\\\"actions\\/github-script(?:\\@[A-Za-z0-9._-]+)?\\\")|(?:'actions\\/github-script(?:\\@[A-Za-z0-9._-]+)?')|(?:actions\\/github-script(?:\\@[A-Za-z0-9._-]+)?))(?=\\s*(?:#.*)?$)",
       "beginCaptures": {
         "2": {
           "name": "entity.name.tag.yaml"
