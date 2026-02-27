@@ -1,0 +1,10 @@
+name: test
+
+# Regression fixture for https://github.com/github/vscode-github-actions/issues/223
+on: workflow_dispatch
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJSON(format('{{"linting":["{0}"]}}', 'ubuntu-latest')).linting }}
