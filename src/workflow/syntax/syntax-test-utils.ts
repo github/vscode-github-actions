@@ -143,6 +143,9 @@ export function analyzeTopLevelInjectionContexts(
   const contexts: RunShellContext[] = grammar.patterns.map(pattern => {
     const repoKey = pattern.include.replace(/^#/, "");
     const rule = grammar.repository[repoKey];
+    if (!rule) {
+      throw new Error(`Repository rule not found for ${repoKey}`);
+    }
     const embeddedRule = rule.patterns.find(p => p.contentName?.startsWith("meta.embedded.block."));
     if (!embeddedRule?.begin || !embeddedRule.end || !embeddedRule.contentName) {
       throw new Error(`Embedded run rule not found for ${repoKey}`);
