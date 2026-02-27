@@ -100,14 +100,14 @@ Suggested test plan:
 
 1. Add a fixture with lines like:
 
-```yaml
-jobs:
-  test:
-    if: matrix.os != 'macos-latest' # Cache causes errors on macOS
-```
+    ```yaml
+    jobs:
+      test:
+        if: matrix.os != 'macos-latest' # Cache causes errors on macOS
+    ```
 
-1. Add a focused test for the `if-expression` rule behavior in `expressions.tmGrammar.json`
-2. Verify the expression matcher does not swallow the trailing comment, while preserving `#` inside quoted strings
+2. Add a focused test for the `if-expression` rule behavior in `expressions.tmGrammar.json`
+3. Verify the expression matcher does not swallow the trailing comment, while preserving `#` inside quoted strings
 
 Note:
 
