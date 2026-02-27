@@ -6,18 +6,7 @@
   "patterns": [
     {
       "name": "meta.github-actions.github-script.context",
-      "begin": "^(\\s*(?:-\\s+)?)(uses)(\\s*:\\s*)((?:\\\"actions\\/github-script(?:\\@[A-Za-z0-9._-]+)?\\\")|(?:'actions\\/github-script(?:\\@[A-Za-z0-9._-]+)?')|(?:actions\\/github-script(?:\\@[A-Za-z0-9._-]+)?))(?=\\s*(?:#.*)?$)",
-      "beginCaptures": {
-        "2": {
-          "name": "entity.name.tag.yaml"
-        },
-        "3": {
-          "name": "punctuation.separator.key-value.mapping.yaml"
-        },
-        "4": {
-          "name": "string.unquoted.plain.out.yaml"
-        }
-      },
+      "begin": "(?=^\\s*(?:-\\s+)?uses\\s*:\\s*(?:\\\"actions\\/github-script(?:\\@[A-Za-z0-9._-]+)?\\\"|'actions\\/github-script(?:\\@[A-Za-z0-9._-]+)?'|actions\\/github-script(?:\\@[A-Za-z0-9._-]+)?)(?:\\s+#.*)?$)",
       "end": "^(?=\\s*-\\s|\\S|\\z)",
       "patterns": [
         {

@@ -76,8 +76,8 @@ describe("workflow syntax embedding grammars", () => {
     expect(quotedUsesLine).toBeDefined();
     expect(unquotedUsesMatch).not.toBeNull();
     expect(quotedUsesMatch).not.toBeNull();
-    expect(unquotedUsesMatch![0]).toBe("      - uses: actions/github-script@v8");
-    expect(quotedUsesMatch![0]).toBe('      - uses: "actions/github-script@v8"');
+    expect(unquotedUsesMatch![0]).toBe("");
+    expect(quotedUsesMatch![0]).toBe("");
     expect(lines[result.embeddedHeaderLines[0] - 1]).toContain("# comment on script header (unquoted uses)");
     expect(lines[result.embeddedHeaderLines[1] - 1]).toContain("# comment on script header (quoted uses)");
 
