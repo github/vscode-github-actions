@@ -25,7 +25,7 @@
     },
     "block-if-expression": {
       "contentName": "meta.embedded.block.github-actions-expression",
-      "begin": "^\\s*\\b(if:) (?:(\\|)|(>))([1-9])?([-+])?(.*\\n?)",
+      "begin": "^\\s*\\b(if:)\\s+(?:(\\|)|(>))([1-9])?([-+])?(.*\\n?)",
       "beginCaptures": {
         "1": {
           "patterns": [
