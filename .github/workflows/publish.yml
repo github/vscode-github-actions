@@ -92,7 +92,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: vscode-github-actions-${{ env.EXT_VERSION }}.vsix
+          name: @github/vscode-github-actions-${{ env.EXT_VERSION }}.vsix
           path: ./vscode-github-actions-${{ env.EXT_VERSION }}.vsix
 
       - name: restore old package.json
