@@ -41,6 +41,13 @@ Be more confident when authoring and modifying workflows. Find errors before com
 1. Open a GitHub repository.
 1. You will be able to utilize the syntax features in Workflow files, and you can find the GitHub Actions icon on the left navigation to manage your Workflows.
 
+### Cloning the Repository
+
+To clone the repository using the `gh` CLI, run the following command:
+
+```sh
+gh repo clone github/vscode-github-actions
+```
 
 ## Supported Features
 
