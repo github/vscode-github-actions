@@ -1,0 +1,41 @@
+name: Build Debugger Extension
+
+on:
+  push:
+    branches:
+      - debugger
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16.x
+          cache: "npm"
+          registry-url: "https://npm.pkg.github.com"
+
+      - run: npm --no-git-tag-version version 0.0.${{ github.run_number }}
+
+      - run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create a package.json without scoped name
+        run: |
+          cp package.json package.json.real
+          sed --regexp-extended '/"name"\s*:/ s#@[a-zA-Z\\-]+/##' package.json.real > package.json
+
+      - run: npm run package
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vscode-github-actions-debugger
+          path: ./vscode-github-actions-0.0.${{ github.run_number }}.vsix
