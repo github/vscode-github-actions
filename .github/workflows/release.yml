@@ -37,7 +37,7 @@ jobs:
 
       - uses: actions/setup-node@v5
         with:
-          node-version: "16"
+          node-version: "20"
 
       - name: Bump version and push
         run: |
