@@ -25,6 +25,8 @@
   "activationEvents": [
     "onView:workflows",
     "onView:settings",
+    "onDebugResolve:github-actions-job",
+    "onCommand:github-actions.debugger.connect",
     "workspaceContains:**/.github/workflows/**",
     "workspaceContains:**/action.yml",
     "workspaceContains:**/action.yaml"
@@ -97,7 +99,19 @@
         }
       }
     },
+    "debuggers": [
+      {
+        "type": "github-actions-job",
+        "label": "GitHub Actions Job Debugger",
+        "languages": []
+      }
+    ],
     "commands": [
+      {
+        "command": "github-actions.debugger.connect",
+        "category": "GitHub Actions",
+        "title": "Debug Running Job…"
+      },
       {
         "command": "github-actions.explorer.refresh",
         "category": "GitHub Actions",
@@ -544,6 +558,7 @@
     "@types/libsodium-wrappers": "^0.7.10",
     "@types/uuid": "^3.4.6",
     "@types/vscode": "^1.72.0",
+    "@types/ws": "^8.18.1",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
     "@vscode/test-web": "^0.0.69",
@@ -579,7 +594,8 @@
     "tunnel": "0.0.6",
     "util": "^0.12.1",
     "uuid": "^3.3.3",
-    "vscode-languageclient": "^8.0.2"
+    "vscode-languageclient": "^8.0.2",
+    "ws": "^8.20.0"
   },
   "overrides": {
     "browserify-sign": {

@@ -1,6 +1,8 @@
 # GitHub Actions for VS Code
 
 > **🐛 Actions Job Debugger (Preview):** To try the latest debugger build, download the `.vsix` artifact from the most recent [Build Debugger Extension](https://github.com/github/vscode-github-actions/actions/workflows/debugger-build.yml) workflow run. On the workflow run page, scroll to **Artifacts** and download **vscode-github-actions-debugger**. Then install it in VS Code by running `code --install-extension <path-to-downloaded.vsix>` or via the Extensions view → `⋯` menu → **Install from VSIX…**.
+>
+> Once installed, open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and run **GitHub Actions: Connect to Actions Job Debugger…**. Paste the `wss://` tunnel URL from a debug-mode job and the extension will open a full debug session using your current GitHub credentials.
 
 The GitHub Actions extension lets you manage your workflows, view the workflow run history, and helps with authoring workflows.
 

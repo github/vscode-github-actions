@@ -34,6 +34,7 @@ import {initResources} from "./treeViews/icons";
 import {initTreeViews} from "./treeViews/treeViews";
 import {deactivateLanguageServer, initLanguageServer} from "./workflow/languageServer";
 import {registerSignIn} from "./commands/signIn";
+import {registerDebugger} from "./debugger/debugger";
 
 export async function activate(context: vscode.ExtensionContext) {
   initLogger();
@@ -91,6 +92,11 @@ export async function activate(context: vscode.ExtensionContext) {
   registerUnPinWorkflow(context);
 
   registerSignIn(context);
+
+  // Debugger — only available in Desktop VS Code (requires Node.js for WebSocket)
+  if (vscode.env.uiKind === vscode.UIKind.Desktop) {
+    registerDebugger(context);
+  }
 
   // Log providers
   context.subscriptions.push(
