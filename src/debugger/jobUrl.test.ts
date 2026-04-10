@@ -30,26 +30,17 @@ describe("parseJobUrl", () => {
   });
 
   it("accepts a valid URL with trailing slash", () => {
-    const result = parseJobUrl(
-      "https://github.com/owner/repo/actions/runs/111/job/222/",
-      GITHUB_API_URI
-    );
+    const result = parseJobUrl("https://github.com/owner/repo/actions/runs/111/job/222/", GITHUB_API_URI);
     expect(result).toEqual({valid: true, owner: "owner", repo: "repo", jobId: "222"});
   });
 
   it("ignores query string and hash", () => {
-    const result = parseJobUrl(
-      "https://github.com/owner/repo/actions/runs/111/job/222?pr=1#step:2:3",
-      GITHUB_API_URI
-    );
+    const result = parseJobUrl("https://github.com/owner/repo/actions/runs/111/job/222?pr=1#step:2:3", GITHUB_API_URI);
     expect(result).toEqual({valid: true, owner: "owner", repo: "repo", jobId: "222"});
   });
 
   it("rejects wrong host", () => {
-    const result = parseJobUrl(
-      "https://gitlab.com/owner/repo/actions/runs/111/job/222",
-      GITHUB_API_URI
-    );
+    const result = parseJobUrl("https://gitlab.com/owner/repo/actions/runs/111/job/222", GITHUB_API_URI);
     expect(result.valid).toBe(false);
     if (!result.valid) {
       expect(result.reason).toContain("gitlab.com");
@@ -57,10 +48,7 @@ describe("parseJobUrl", () => {
   });
 
   it("rejects http:// scheme", () => {
-    const result = parseJobUrl(
-      "http://github.com/owner/repo/actions/runs/111/job/222",
-      GITHUB_API_URI
-    );
+    const result = parseJobUrl("http://github.com/owner/repo/actions/runs/111/job/222", GITHUB_API_URI);
     expect(result.valid).toBe(false);
     if (!result.valid) {
       expect(result.reason).toContain("https://");
@@ -97,10 +85,7 @@ describe("parseJobUrl", () => {
   });
 
   it("rejects URL with credentials", () => {
-    const result = parseJobUrl(
-      "https://user:pass@github.com/owner/repo/actions/runs/111/job/222",
-      GITHUB_API_URI
-    );
+    const result = parseJobUrl("https://user:pass@github.com/owner/repo/actions/runs/111/job/222", GITHUB_API_URI);
     expect(result.valid).toBe(false);
     if (!result.valid) {
       expect(result.reason).toContain("Credentials");
@@ -108,18 +93,12 @@ describe("parseJobUrl", () => {
   });
 
   it("accepts non-numeric job ID", () => {
-    const result = parseJobUrl(
-      "https://github.com/owner/repo/actions/runs/111/job/abc-123",
-      GITHUB_API_URI
-    );
+    const result = parseJobUrl("https://github.com/owner/repo/actions/runs/111/job/abc-123", GITHUB_API_URI);
     expect(result).toEqual({valid: true, owner: "owner", repo: "repo", jobId: "abc-123"});
   });
 
   it("accepts plural /jobs/ path variant", () => {
-    const result = parseJobUrl(
-      "https://github.com/owner/repo/actions/runs/111/jobs/222",
-      GITHUB_API_URI
-    );
+    const result = parseJobUrl("https://github.com/owner/repo/actions/runs/111/jobs/222", GITHUB_API_URI);
     expect(result).toEqual({valid: true, owner: "owner", repo: "repo", jobId: "222"});
   });
 

@@ -35,10 +35,7 @@ export class WebSocketDapAdapter implements vscode.DebugAdapter {
   private _configurationDone = false;
   private _pendingStoppedEvents: vscode.DebugProtocolMessage[] = [];
 
-  constructor(
-    private readonly _tunnelUrl: string,
-    private readonly _token: string
-  ) {}
+  constructor(private readonly _tunnelUrl: string, private readonly _token: string) {}
 
   async connect(): Promise<void> {
     log(`Connecting to debugger tunnel: ${this._tunnelUrl}`);
