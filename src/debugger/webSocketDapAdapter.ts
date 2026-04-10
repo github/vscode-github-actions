@@ -25,6 +25,8 @@ export class WebSocketDapAdapter implements vscode.DebugAdapter {
 
   private _ws: WebSocket | undefined;
   private _pingTimer: ReturnType<typeof setInterval> | undefined;
+  private _replayTimer: ReturnType<typeof setTimeout> | undefined;
+  private _terminatedFired = false;
   private _disposed = false;
 
   /**
@@ -143,6 +145,10 @@ export class WebSocketDapAdapter implements vscode.DebugAdapter {
     }
     this._disposed = true;
     this._stopPingLoop();
+    if (this._replayTimer) {
+      clearTimeout(this._replayTimer);
+      this._replayTimer = undefined;
+    }
     if (this._ws) {
       try {
         this._ws.close(1000, "debug session ended");
@@ -202,7 +208,9 @@ export class WebSocketDapAdapter implements vscode.DebugAdapter {
           const events = this._pendingStoppedEvents;
           this._pendingStoppedEvents = [];
           logDebug(`Replaying ${events.length} buffered stopped event(s)`);
-          setTimeout(() => {
+          this._replayTimer = setTimeout(() => {
+            this._replayTimer = undefined;
+            if (this._disposed) return;
             for (const evt of events) {
               this._onDidSendMessage.fire(evt);
             }
@@ -219,6 +227,7 @@ export class WebSocketDapAdapter implements vscode.DebugAdapter {
       log(`Debugger tunnel closed: ${reasonStr}`);
       this._stopPingLoop();
       this._fireTerminated();
+      this.dispose();
     });
 
     ws.on("error", (err: Error) => {
@@ -252,6 +261,8 @@ export class WebSocketDapAdapter implements vscode.DebugAdapter {
 
   /** Notify VS Code that the debug session is over. */
   private _fireTerminated(): void {
+    if (this._terminatedFired) return;
+    this._terminatedFired = true;
     this._onDidSendMessage.fire({
       type: "event",
       event: "terminated",

@@ -61,6 +61,22 @@ describe("validateTunnelUrl", () => {
     }
   });
 
+  it("rejects URL with username", () => {
+    const result = validateTunnelUrl("wss://user@abcdef-4711.uks1.devtunnels.ms/");
+    expect(result.valid).toBe(false);
+    if (!result.valid) {
+      expect(result.reason).toContain("Credentials in tunnel URL are not allowed");
+    }
+  });
+
+  it("rejects URL with username and password", () => {
+    const result = validateTunnelUrl("wss://user:pass@abcdef-4711.uks1.devtunnels.ms/");
+    expect(result.valid).toBe(false);
+    if (!result.valid) {
+      expect(result.reason).toContain("Credentials in tunnel URL are not allowed");
+    }
+  });
+
   it("rejects URL with just a scheme", () => {
     const result = validateTunnelUrl("wss://");
     expect(result.valid).toBe(false);

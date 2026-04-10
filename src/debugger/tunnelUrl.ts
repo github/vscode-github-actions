@@ -31,5 +31,9 @@ export function validateTunnelUrl(raw: string): {valid: true; url: string} | {va
     return {valid: false, reason: `Host "${parsed.hostname}" is not an allowed tunnel domain`};
   }
 
+  if (parsed.username || parsed.password) {
+    return {valid: false, reason: "Credentials in tunnel URL are not allowed"};
+  }
+
   return {valid: true, url: parsed.toString()};
 }
