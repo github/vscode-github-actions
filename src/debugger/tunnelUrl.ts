@@ -4,13 +4,6 @@
  */
 const ALLOWED_TUNNEL_HOST_PATTERN = /\.devtunnels\.ms$/;
 
-/**
- * Validates a Dev Tunnel websocket URL for the Actions job debugger.
- *
- * Requirements:
- *   - Must use wss:// (cleartext ws:// is rejected to protect the auth token)
- *   - Host must match an allowed tunnel domain (*.devtunnels.ms)
- */
 export function validateTunnelUrl(raw: string): {valid: true; url: string} | {valid: false; reason: string} {
   let parsed: URL;
   try {

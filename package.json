@@ -110,7 +110,7 @@
       {
         "command": "github-actions.debugger.connect",
         "category": "GitHub Actions",
-        "title": "Connect to Actions Job Debugger..."
+        "title": "Debug Running Job…"
       },
       {
         "command": "github-actions.explorer.refresh",

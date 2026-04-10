@@ -1,73 +1,61 @@
 import * as crypto from "crypto";
 import * as vscode from "vscode";
+import {getClient} from "../api/api";
 import {getSession, newSession} from "../auth/auth";
+import {getGitHubApiUri} from "../configuration/configuration";
 import {log, logDebug, logError} from "../log";
+import {parseJobUrl} from "./jobUrl";
 import {validateTunnelUrl} from "./tunnelUrl";
 import {WebSocketDapAdapter} from "./webSocketDapAdapter";
 
-/** The custom debug type registered in package.json contributes.debuggers. */
 export const DEBUG_TYPE = "github-actions-job";
 
 /**
- * Extension-private store for auth tokens, keyed by a one-time session
- * nonce. Tokens are never placed in DebugConfiguration (which is readable
- * by other extensions via vscode.debug.activeDebugSession.configuration).
+ * Extension-private token store keyed by one-time nonce. Tokens are never
+ * placed in DebugConfiguration (readable by other extensions).
  */
 const pendingTokens = new Map<string, string>();
 
-/**
- * Registers the Actions Job Debugger command and debug adapter factory.
- *
- * Contributes:
- * - A command-palette command that prompts for a tunnel URL and starts a debug session.
- * - A DebugAdapterDescriptorFactory that returns an inline DAP-over-WS adapter.
- */
 export function registerDebugger(context: vscode.ExtensionContext): void {
-  // Register the inline adapter factory for our debug type.
   context.subscriptions.push(
     vscode.debug.registerDebugAdapterDescriptorFactory(DEBUG_TYPE, new ActionsDebugAdapterFactory())
   );
 
-  // Register a tracker to log all DAP traffic for diagnostics.
   context.subscriptions.push(
     vscode.debug.registerDebugAdapterTrackerFactory(DEBUG_TYPE, new ActionsDebugTrackerFactory())
   );
 
-  // Register the connect command.
   context.subscriptions.push(
     vscode.commands.registerCommand("github-actions.debugger.connect", () => connectToDebugger())
   );
 }
 
 async function connectToDebugger(): Promise<void> {
-  // 1. Prompt for the tunnel URL.
   const rawUrl = await vscode.window.showInputBox({
     title: "Connect to Actions Job Debugger",
-    prompt: "Enter the debugger tunnel URL (wss://…)",
-    placeHolder: "wss://xxxx-4711.region.devtunnels.ms/",
+    prompt: "Paste the URL of the Actions job to debug",
+    placeHolder: "https://github.com/owner/repo/actions/runs/123/job/456",
     ignoreFocusOut: true,
     validateInput: input => {
       if (!input) {
-        return "A tunnel URL is required";
+        return "A job URL is required";
       }
-      const result = validateTunnelUrl(input);
+      const result = parseJobUrl(input, getGitHubApiUri());
       return result.valid ? null : result.reason;
     }
   });
 
   if (!rawUrl) {
-    return; // user cancelled
-  }
-
-  const validation = validateTunnelUrl(rawUrl);
-  if (!validation.valid) {
-    void vscode.window.showErrorMessage(`Invalid tunnel URL: ${validation.reason}`);
     return;
   }
 
-  // 2. Acquire a GitHub auth session. The token is used as a Bearer token
-  //    against the Dev Tunnel relay, which accepts VS Code's GitHub app tokens.
-  //    Try silently first; fall back to prompting for sign-in if needed.
+  const parsed = parseJobUrl(rawUrl, getGitHubApiUri());
+  if (!parsed.valid) {
+    void vscode.window.showErrorMessage(`Invalid job URL: ${parsed.reason}`);
+    return;
+  }
+
+  // Try silently first; fall back to prompting for sign-in if needed.
   let session = await getSession();
   if (!session) {
     try {
@@ -80,10 +68,48 @@ async function connectToDebugger(): Promise<void> {
     }
   }
 
-  // 3. Launch the debug session. The token is stored in extension-private
-  //    memory (not in the configuration) to avoid exposing it to other extensions.
+  const token = session.accessToken;
+  let debuggerUrl: string;
+  try {
+    debuggerUrl = await vscode.window.withProgress(
+      {location: vscode.ProgressLocation.Notification, title: "Connecting to Actions job debugger…"},
+      async () => {
+        const octokit = getClient(token);
+        const response = await octokit.request("GET /repos/{owner}/{repo}/actions/jobs/{job_id}/debugger", {
+          owner: parsed.owner,
+          repo: parsed.repo,
+          job_id: parsed.jobId
+        });
+        return (response.data as {debugger_url: string}).debugger_url;
+      }
+    );
+  } catch (e) {
+    const status = (e as {status?: number}).status;
+    if (status === 404) {
+      void vscode.window.showErrorMessage(
+        "Debugger is not available for this job. Make sure the job is running with debugging enabled."
+      );
+    } else if (status === 403) {
+      void vscode.window.showErrorMessage(
+        "Permission denied. You may need to re-authenticate or check your access to this repository."
+      );
+    } else {
+      const msg = (e as Error).message || "Unknown error";
+      void vscode.window.showErrorMessage(`Failed to fetch debugger URL: ${msg}`);
+    }
+    return;
+  }
+
+  const validation = validateTunnelUrl(debuggerUrl);
+  if (!validation.valid) {
+    void vscode.window.showErrorMessage(`Invalid debugger URL returned by API: ${validation.reason}`);
+    return;
+  }
+
+  // Store token in extension-private memory (not in the config) to avoid
+  // exposing it to other extensions.
   const nonce = crypto.randomBytes(16).toString("hex");
-  pendingTokens.set(nonce, session.accessToken);
+  pendingTokens.set(nonce, token);
 
   const config: vscode.DebugConfiguration = {
     type: DEBUG_TYPE,
@@ -114,7 +140,7 @@ class ActionsDebugAdapterFactory implements vscode.DebugAdapterDescriptorFactory
     const nonce = session.configuration.__tokenNonce as string | undefined;
     const token = nonce ? pendingTokens.get(nonce) : undefined;
 
-    // Consume the token immediately so it cannot be replayed.
+    // Consume immediately so it cannot be replayed.
     if (nonce) {
       pendingTokens.delete(nonce);
     }
@@ -125,7 +151,6 @@ class ActionsDebugAdapterFactory implements vscode.DebugAdapterDescriptorFactory
       );
     }
 
-    // Re-validate the tunnel URL as defense-in-depth
     const revalidation = validateTunnelUrl(tunnelUrl);
     if (!revalidation.valid) {
       throw new Error(`Invalid debugger tunnel URL: ${revalidation.reason}`);

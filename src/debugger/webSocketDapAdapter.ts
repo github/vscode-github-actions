@@ -8,16 +8,12 @@ import {log, logDebug, logError} from "../log";
  */
 const PING_INTERVAL_MS = 25_000;
 
-/** Maximum time to wait for the websocket handshake to complete. */
 const CONNECT_TIMEOUT_MS = 30_000;
 
 /**
- * A VS Code inline debug adapter that speaks DAP over a websocket connection
- * to the Actions runner's Dev Tunnel endpoint.
- *
- * DAP JSON payloads are sent as individual text websocket messages — no
- * Content-Length framing is used on the wire. This matches the runner's
- * WebSocketDapBridge and the gh-actions-debugger CLI bridge.
+ * Inline debug adapter that speaks DAP over a websocket. DAP JSON payloads
+ * are sent as individual text messages — no Content-Length framing. This
+ * matches the runner's WebSocketDapBridge and the gh-actions-debugger CLI.
  */
 export class WebSocketDapAdapter implements vscode.DebugAdapter {
   private readonly _onDidSendMessage = new vscode.EventEmitter<vscode.DebugProtocolMessage>();
@@ -39,14 +35,11 @@ export class WebSocketDapAdapter implements vscode.DebugAdapter {
   private _configurationDone = false;
   private _pendingStoppedEvents: vscode.DebugProtocolMessage[] = [];
 
-  constructor(private readonly _tunnelUrl: string, private readonly _token: string) {}
+  constructor(
+    private readonly _tunnelUrl: string,
+    private readonly _token: string
+  ) {}
 
-  /**
-   * Opens the websocket connection to the tunnel. Must be called before the
-   * debug session can exchange messages.
-   *
-   * @throws if the connection fails or times out.
-   */
   async connect(): Promise<void> {
     log(`Connecting to debugger tunnel: ${this._tunnelUrl}`);
 
@@ -117,10 +110,6 @@ export class WebSocketDapAdapter implements vscode.DebugAdapter {
     });
   }
 
-  /**
-   * Called by VS Code to send a DAP message (request or response) to the
-   * remote debug adapter.
-   */
   handleMessage(message: vscode.DebugProtocolMessage): void {
     if (!this._ws || this._ws.readyState !== WebSocket.OPEN) {
       logError(new Error("Cannot send — websocket not open"), "Debugger tunnel send failed");
@@ -259,7 +248,6 @@ export class WebSocketDapAdapter implements vscode.DebugAdapter {
     }
   }
 
-  /** Notify VS Code that the debug session is over. */
   private _fireTerminated(): void {
     if (this._terminatedFired) return;
     this._terminatedFired = true;
@@ -271,7 +259,6 @@ export class WebSocketDapAdapter implements vscode.DebugAdapter {
   }
 }
 
-/** Build a short human-readable label for a DAP message for trace logging. */
 function describeDapMessage(msg: vscode.DebugProtocolMessage): string {
   const m = msg as Record<string, unknown>;
   const type = (m.type as string) ?? "unknown";
