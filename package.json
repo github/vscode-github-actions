@@ -563,8 +563,8 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
-    "@actions/languageserver": "^0.3.46",
-    "@actions/workflow-parser": "^0.3.46",
+    "@actions/languageserver": "^0.3.52",
+    "@actions/workflow-parser": "^0.3.52",
     "@octokit/rest": "^21.1.1",
     "@vscode/vsce": "^2.19.0",
     "buffer": "^6.0.3",
