@@ -34,6 +34,9 @@ import {initResources} from "./treeViews/icons";
 import {initTreeViews} from "./treeViews/treeViews";
 import {deactivateLanguageServer, initLanguageServer} from "./workflow/languageServer";
 import {registerSignIn} from "./commands/signIn";
+import {ActionVersionHoverProvider} from "./hover/actionVersionHoverProvider";
+import {ActionVersionCodeActionProvider} from "./hover/actionVersionCodeActionProvider";
+import {WorkflowSelector, ActionSelector} from "./workflow/documentSelector";
 
 export async function activate(context: vscode.ExtensionContext) {
   initLogger();
@@ -112,6 +115,17 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // Editing features
   await initLanguageServer(context);
+
+  // Action version hover and code actions
+  const documentSelectors = [WorkflowSelector, ActionSelector];
+  context.subscriptions.push(
+    vscode.languages.registerHoverProvider(documentSelectors, new ActionVersionHoverProvider())
+  );
+  context.subscriptions.push(
+    vscode.languages.registerCodeActionsProvider(documentSelectors, new ActionVersionCodeActionProvider(), {
+      providedCodeActionKinds: ActionVersionCodeActionProvider.providedCodeActionKinds
+    })
+  );
 
   log("...initialized");
 
