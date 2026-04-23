@@ -16,6 +16,24 @@ interface GitHubUrls {
   protocol: Protocol;
 }
 
+const gitRemotePattern =
+  /^(?:(?:(?:git|ssh|rsync|https?):\/\/)?(?:(?:git|\w+)@)?(?<host>[\w.]+))(?:[\w.@:/\-~]+)(?:\.git)\/?$/;
+
+function isGithubEnterpriseCloudWithDataResidencyRemote(pushUrl?: string): boolean {
+  if (!pushUrl) {
+    return false;
+  }
+
+  try {
+    const url = new URL(pushUrl);
+    return url.host.endsWith(".ghe.com");
+  } catch (_error) {
+    const match = gitRemotePattern.exec(pushUrl);
+
+    return Boolean(match?.groups?.host?.endsWith(".ghe.com"));
+  }
+}
+
 async function getGitExtension(): Promise<API | undefined> {
   const gitExtension = vscode.extensions.getExtension<GitExtension>("vscode.git");
   if (gitExtension) {
@@ -77,8 +95,9 @@ export async function getGitHubUrls(): Promise<GitHubUrls[] | null> {
         if (
           remote.length > 0 &&
           (remote[0].pushUrl?.indexOf("github.com") !== -1 ||
-            (useEnterprise() && remote[0].pushUrl?.indexOf(new URL(getGitHubApiUri()).host) !== -1) ||
-            (remote[0].pushUrl ? new URL(remote[0].pushUrl).host.endsWith(".ghe.com") : false))
+            (useEnterprise() &&
+              (remote[0].pushUrl?.indexOf(new URL(getGitHubApiUri()).host) !== -1 ||
+                isGithubEnterpriseCloudWithDataResidencyRemote(remote[0].pushUrl))))
         ) {
           const url = remote[0].pushUrl;
 
