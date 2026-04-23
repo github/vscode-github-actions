@@ -61,6 +61,30 @@
         "injectTo": [
           "source.github-actions-workflow"
         ]
+      },
+      {
+        "scopeName": "source.github-actions-workflow.github-script-embedded",
+        "path": "./language/syntaxes/github-script-embedded.tmLanguage.json",
+        "injectTo": [
+          "source.github-actions-workflow"
+        ],
+        "embeddedLanguages": {
+          "meta.embedded.block.javascript": "javascript"
+        }
+      },
+      {
+        "scopeName": "source.github-actions-workflow.run-shell-embedded",
+        "path": "./language/syntaxes/run-shell-embedded.tmLanguage.json",
+        "injectTo": [
+          "source.github-actions-workflow"
+        ],
+        "embeddedLanguages": {
+          "meta.embedded.block.shellscript": "shellscript",
+          "meta.embedded.block.powershell": "powershell",
+          "meta.embedded.block.bat": "bat",
+          "meta.embedded.block.python": "python",
+          "meta.embedded.block.javascript": "javascript"
+        }
       }
     ],
     "configuration": {
