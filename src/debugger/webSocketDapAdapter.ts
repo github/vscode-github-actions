@@ -1,3 +1,4 @@
+import type {IncomingMessage} from "http";
 import * as vscode from "vscode";
 import WebSocket from "ws";
 import {log, logDebug, logError} from "../log";
@@ -49,6 +50,56 @@ export class WebSocketDapAdapter implements vscode.DebugAdapter {
         }
       });
 
+      // Diagnostic: the tunnel server may reject the WS upgrade with an HTTP
+      // response (e.g. 401/403). The plain `error` event only surfaces
+      // "Unexpected server response: 403" — grab the full response here so
+      // we can log status text and diagnostic headers (which token auth the
+      // tunnel checked, rejection reason, etc.).
+      let unexpectedResponse: {status: number; statusMessage: string; headers: string} | undefined;
+      const onUnexpectedResponse = (_req: unknown, res: IncomingMessage) => {
+        const interestingHeaders = [
+          "www-authenticate",
+          "x-tunnel-authorization",
+          "x-tunnel-service-version",
+          "x-powered-by",
+          "server",
+          "date",
+          "content-type",
+          "content-length",
+          "x-request-id",
+          "x-correlation-id",
+          "x-ms-request-id",
+          "x-ms-error-code"
+        ];
+        const headerLines = interestingHeaders
+          .map(h => {
+            const v = res.headers[h];
+            return v ? `${h}=${Array.isArray(v) ? v.join(",") : v}` : undefined;
+          })
+          .filter(Boolean)
+          .join(" ");
+        unexpectedResponse = {
+          status: res.statusCode ?? 0,
+          statusMessage: res.statusMessage ?? "",
+          headers: headerLines
+        };
+        log(
+          `[debugger] Tunnel rejected WS upgrade: ${unexpectedResponse.status} ` +
+            `${unexpectedResponse.statusMessage} | ${headerLines}`
+        );
+        // Drain the body so the socket can close cleanly, and capture any
+        // error text the tunnel included (e.g. a JSON {message: "..."}).
+        const chunks: Buffer[] = [];
+        res.on("data", (c: Buffer) => chunks.push(c));
+        res.on("end", () => {
+          if (chunks.length > 0) {
+            const body = Buffer.concat(chunks).toString("utf8").slice(0, 500);
+            log(`[debugger] Tunnel rejection body: ${body}`);
+          }
+        });
+      };
+      ws.on("unexpected-response", onUnexpectedResponse);
+
       const connectTimer = setTimeout(() => {
         if (!settled) {
           settled = true;
@@ -99,6 +150,7 @@ export class WebSocketDapAdapter implements vscode.DebugAdapter {
         ws.removeListener("open", onOpen);
         ws.removeListener("error", onError);
         ws.removeListener("close", onClose);
+        ws.removeListener("unexpected-response", onUnexpectedResponse);
       };
 
       ws.on("open", onOpen);

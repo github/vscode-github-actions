@@ -69,6 +69,36 @@ async function connectToDebugger(): Promise<void> {
   }
 
   const token = session.accessToken;
+
+  // Diagnostic: log token shape (prefix + length) and session scopes to help
+  // diagnose devtunnel 403 errors. `ghu_` = VS Code GitHub App user-to-server
+  // token (accepted by devtunnels); `gho_`/`ghp_` = OAuth/PAT (may be rejected).
+  // The full token is never logged.
+  log(
+    `[debugger] Using session: tokenPrefix=${token.slice(0, 4)} tokenLen=${token.length} ` +
+      `scopes=[${session.scopes.join(",")}] account=${session.account.label}`
+  );
+
+  // Diagnostic probe: silently check if a scope-less GitHub session exists.
+  // Dev Tunnels only trusts VS Code GitHub App tokens (`ghu_`). A scope-less
+  // session is always backed by the App, so if its prefix differs from the
+  // one above we know the requested scopes forced VS Code onto the OAuth
+  // app path (which returns `gho_` and gets rejected by the tunnel).
+  try {
+    const appSession = await vscode.authentication.getSession("github", [], {createIfNone: false, silent: true});
+    if (appSession) {
+      log(
+        `[debugger] App-backed session probe: tokenPrefix=${appSession.accessToken.slice(0, 4)} ` +
+          `tokenLen=${appSession.accessToken.length} scopes=[${appSession.scopes.join(",")}] ` +
+          `sameAsAbove=${appSession.accessToken === token}`
+      );
+    } else {
+      log(`[debugger] App-backed session probe: no scope-less session cached`);
+    }
+  } catch (e) {
+    log(`[debugger] App-backed session probe failed: ${(e as Error).message}`);
+  }
+
   let debuggerUrl: string;
   try {
     debuggerUrl = await vscode.window.withProgress(
@@ -80,6 +110,13 @@ async function connectToDebugger(): Promise<void> {
           repo: parsed.repo,
           job_id: parsed.jobId
         });
+        // Diagnostic: log top-level fields in the API response. If the API
+        // returns a tunnel-specific access token (separate from the GitHub
+        // token), we'd see it here and can switch the WS to use it.
+        if (response.data && typeof response.data === "object") {
+          const keys = Object.keys(response.data as object);
+          log(`[debugger] /debugger API response fields: [${keys.join(", ")}]`);
+        }
         return (response.data as {debugger_url: string}).debugger_url;
       }
     );
