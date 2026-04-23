@@ -53,49 +53,65 @@ export class WebSocketDapAdapter implements vscode.DebugAdapter {
       // Diagnostic: the tunnel server may reject the WS upgrade with an HTTP
       // response (e.g. 401/403). The plain `error` event only surfaces
       // "Unexpected server response: 403" — grab the full response here so
-      // we can log status text and diagnostic headers (which token auth the
-      // tunnel checked, rejection reason, etc.).
-      let unexpectedResponse: {status: number; statusMessage: string; headers: string} | undefined;
+      // we can log status, all headers, and the response body. This is what
+      // we hand to the Dev Tunnels team when filing a report.
       const onUnexpectedResponse = (_req: unknown, res: IncomingMessage) => {
-        const interestingHeaders = [
-          "www-authenticate",
-          "x-tunnel-authorization",
-          "x-tunnel-service-version",
-          "x-powered-by",
-          "server",
-          "date",
-          "content-type",
-          "content-length",
-          "x-request-id",
-          "x-correlation-id",
-          "x-ms-request-id",
-          "x-ms-error-code"
-        ];
-        const headerLines = interestingHeaders
-          .map(h => {
-            const v = res.headers[h];
-            return v ? `${h}=${Array.isArray(v) ? v.join(",") : v}` : undefined;
-          })
-          .filter(Boolean)
-          .join(" ");
-        unexpectedResponse = {
-          status: res.statusCode ?? 0,
-          statusMessage: res.statusMessage ?? "",
-          headers: headerLines
-        };
+        // Parse target URL for correlation without exposing credentials.
+        let target = "";
+        try {
+          const u = new URL(this._tunnelUrl);
+          target = `${u.host}${u.pathname}`;
+        } catch {
+          target = "<unparseable>";
+        }
+
         log(
-          `[debugger] Tunnel rejected WS upgrade: ${unexpectedResponse.status} ` +
-            `${unexpectedResponse.statusMessage} | ${headerLines}`
+          `[debugger] Tunnel rejected WS upgrade: ${res.statusCode ?? 0} ` +
+            `${res.statusMessage ?? ""} (target=${target}, httpVersion=${res.httpVersion})`
         );
-        // Drain the body so the socket can close cleanly, and capture any
-        // error text the tunnel included (e.g. a JSON {message: "..."}).
-        const chunks: Buffer[] = [];
-        res.on("data", (c: Buffer) => chunks.push(c));
-        res.on("end", () => {
-          if (chunks.length > 0) {
-            const body = Buffer.concat(chunks).toString("utf8").slice(0, 500);
-            log(`[debugger] Tunnel rejection body: ${body}`);
+
+        // Log every response header. These are server-emitted on a rejection
+        // response and don't contain our credentials. Dev Tunnels typically
+        // includes correlation IDs (x-request-id / x-ms-request-id) and a
+        // rejection reason (www-authenticate / x-tunnel-*) that pinpoint
+        // why the upgrade was denied.
+        const headerEntries = Object.entries(res.headers);
+        if (headerEntries.length === 0) {
+          log(`[debugger] Tunnel response headers: <none>`);
+        } else {
+          log(`[debugger] Tunnel response headers (${headerEntries.length}):`);
+          for (const [name, value] of headerEntries) {
+            const rendered = Array.isArray(value) ? value.join(", ") : String(value ?? "");
+            log(`[debugger]   ${name}: ${rendered}`);
           }
+        }
+
+        // Drain the body so the socket can close cleanly, and capture the
+        // full error text the tunnel included (e.g. a JSON {message: "..."}).
+        const chunks: Buffer[] = [];
+        let totalLen = 0;
+        const BODY_CAP = 8 * 1024; // 8KiB is plenty for a tunnel error payload
+        res.on("data", (c: Buffer) => {
+          totalLen += c.length;
+          if (Buffer.concat(chunks).length < BODY_CAP) {
+            chunks.push(c);
+          }
+        });
+        res.on("end", () => {
+          if (totalLen === 0) {
+            log(`[debugger] Tunnel rejection body: <empty>`);
+            return;
+          }
+          const buf = Buffer.concat(chunks);
+          const truncated = totalLen > BODY_CAP;
+          const body = buf.slice(0, BODY_CAP).toString("utf8");
+          log(
+            `[debugger] Tunnel rejection body (${totalLen} bytes` +
+              `${truncated ? `, showing first ${BODY_CAP}` : ""}):\n${body}`
+          );
+        });
+        res.on("error", (err: Error) => {
+          log(`[debugger] Error draining tunnel rejection body: ${err.message}`);
         });
       };
       ws.on("unexpected-response", onUnexpectedResponse);
