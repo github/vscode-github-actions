@@ -59,7 +59,7 @@ We currently do not have the capability to support Operating System (OS) certifi
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). A description of the architecture of the extension can be found [here](./docs/project-architecture.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md). A description of the architecture of the extension can be found [here](./docs/project-architecture.md). If you are working on unreleased GitHub Actions language service changes, see the [development guide](./docs/development.md#working-with-local-languageservices-changes) for local setup steps.
 
 ## License
 

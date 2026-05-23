@@ -44,6 +44,39 @@ get working packages.
 1. Start and debug extension with the `Watch & Launch Extension` configuration from the "Run and Debug" side panel menu
 1. Open a workspace in the remote extension host that contains workflow files in the `.github/workflows` directory
 
+### Working with local languageservices changes
+
+The extension consumes the GitHub Actions language stack from [actions/languageservices](https://github.com/actions/languageservices):
+
+- `@actions/expressions`
+- `@actions/workflow-parser`
+- `@actions/languageservice`
+- `@actions/languageserver`
+
+When you run `script/bootstrap`, the workspace links those packages into this repository's `node_modules/@actions` directory. That means local extension builds can pick up unreleased language service changes before the packages are published.
+
+For example, from a local workspace where `vscode-github-actions` and `actions/languageservices` are sibling repositories:
+
+```shell
+cd ~/vscode/actions/languageservices
+npm -w @actions/workflow-parser run build
+npm -w @actions/languageservice run build
+npm -w @actions/languageserver run build
+
+cd ~/vscode/vscode-github-actions
+npm run build
+```
+
+You can verify the local links with:
+
+```shell
+ls -la node_modules/@actions
+```
+
+The `@actions/*` packages should point back to the sibling `actions/languageservices` checkout. If they point to registry-installed packages instead, rerun `script/bootstrap` and reinstall from the workspace root before rebuilding.
+
+After rebuilding, reload or restart the Extension Development Host so it starts the newly bundled language server from `dist/server-node.js`.
+
 ### Updating dependencies
 
 Once you're happy with your changes, publish the changes to the respective packages. You might have to adjust package versions, so if you made a change to `actions-workflow-parser` and increase the version there, you will have to consume the updated package in `actions-languageservice`.
