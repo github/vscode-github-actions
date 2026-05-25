@@ -1,14 +1,49 @@
 import * as vscode from "vscode";
 
-import {getGitHead, getGitHubContextForWorkspaceUri, GitHubRepoContext} from "../git/repository";
+import {getGitHead, getGitHubContextForWorkspaceUri, GitHubRepoContext, getGitExtension} from "../git/repository";
 import {getRepositoryRootForDocumentUri} from "../git/submoduleHelper";
 import {getWorkflowUri, parseWorkflowFile} from "../workflow/workflow";
+import {Protocol} from "../external/protocol";
 
 import {Workflow} from "../model";
 
 interface TriggerRunCommandOptions {
   wf?: Workflow;
   gitHubRepoContext: GitHubRepoContext;
+}
+
+async function getGitHubContextForRepository(repositoryUri: vscode.Uri): Promise<GitHubRepoContext | undefined> {
+  let context = await getGitHubContextForWorkspaceUri(repositoryUri);
+  if (context) {
+    return context;
+  }
+
+  const git = await getGitExtension();
+  if (!git) {
+    return undefined;
+  }
+
+  for (const repository of git.repositories) {
+    if (repository.rootUri.fsPath === repositoryUri.fsPath) {
+      await repository.status();
+      const remote = repository.state.remotes.find(r => r.name === "origin") || repository.state.remotes[0];
+
+      if (remote?.pushUrl) {
+        try {
+          const protocol = new Protocol(remote.pushUrl);
+          return {
+            owner: protocol.owner,
+            name: protocol.repositoryName,
+            client: undefined as any
+          } as GitHubRepoContext;
+        } catch {
+          return undefined;
+        }
+      }
+    }
+  }
+
+  return undefined;
 }
 
 export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
@@ -39,7 +74,7 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
           repositoryUri = workspaceFolder.uri;
         }
 
-        const gitHubRepoContext = await getGitHubContextForWorkspaceUri(repositoryUri);
+        const gitHubRepoContext = await getGitHubContextForRepository(repositoryUri);
         if (!gitHubRepoContext) {
           return;
         }
@@ -93,7 +128,7 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
             try {
               const workflowPath = workflowUri.fsPath;
               const repositoryPath = repositoryUri.fsPath;
-              const relativeWorkflowPath = workflowPath.substring(repositoryPath.length + 1);
+              const relativeWorkflowPath = require("path").relative(repositoryPath, workflowPath).replace(/\\/g, "/");
 
               await gitHubRepoContext.client.actions.createWorkflowDispatch({
                 owner: gitHubRepoContext.owner,
