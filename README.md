@@ -10,7 +10,7 @@
 > }
 > ```
 >
-> This opt-in is currently settings.json-only, so VS Code may show it as an unknown setting. After saving the change, reload VS Code. Once the window reloads, open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and run **GitHub Actions: Debug Running Job…**. Paste the Actions job URL from a debug-mode job and the extension will open a full debug session using your current GitHub credentials.
+> This opt-in is currently settings.json-only, so VS Code may show it as an unknown setting. After saving the change, reload VS Code. If you enable it in an empty or no-folder window, reload manually because the extension cannot prompt until it activates. Once the window reloads, open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and run **GitHub Actions: Debug Running Job…**. Paste the Actions job URL from a debug-mode job and the extension will open a full debug session using your current GitHub credentials.
 
 The GitHub Actions extension lets you manage your workflows, view the workflow run history, and helps with authoring workflows.
 
