@@ -36,8 +36,6 @@ import {deactivateLanguageServer, initLanguageServer} from "./workflow/languageS
 import {registerSignIn} from "./commands/signIn";
 import {registerDebugger, registerDebuggerAvailabilityGuard} from "./debugger/debugger";
 
-const debuggerEnabledContextKey = "github-actions.debugger.enabled";
-
 export async function activate(context: vscode.ExtensionContext) {
   initLogger();
 
@@ -54,8 +52,7 @@ export async function activate(context: vscode.ExtensionContext) {
   await Promise.all([
     vscode.commands.executeCommand("setContext", "github-actions.signed-in", hasSession),
     vscode.commands.executeCommand("setContext", "github-actions.internet-access", canReachAPI),
-    vscode.commands.executeCommand("setContext", "github-actions.has-repos", hasGitHubRepos),
-    vscode.commands.executeCommand("setContext", debuggerEnabledContextKey, debuggerEnabled)
+    vscode.commands.executeCommand("setContext", "github-actions.has-repos", hasGitHubRepos)
   ]);
 
   initResources(context);
