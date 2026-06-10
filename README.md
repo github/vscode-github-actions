@@ -1,17 +1,5 @@
 # GitHub Actions for VS Code
 
-> **🐛 Actions Job Debugger (Preview):** The debugger preview is intentionally off by default. To try the latest debugger build, download the `.vsix` artifact from the most recent [Build Debugger Extension](https://github.com/github/vscode-github-actions/actions/workflows/debugger-build.yml) workflow run. On the workflow run page, scroll to **Artifacts** and download **vscode-github-actions-debugger**. Then install it in VS Code by running `code --install-extension <path-to-downloaded.vsix>` or via the Extensions view → `⋯` menu → **Install from VSIX…**.
->
-> Next, manually enable the preview in `settings.json`:
->
-> ```json
-> {
->   "github-actions.debugger.enabled": true
-> }
-> ```
->
-> This opt-in is currently settings.json-only, so VS Code may show it as an unknown setting. After saving the change, reload VS Code. If you enable it in an empty or no-folder window, reload manually because the extension cannot prompt until it activates. Once the window reloads, open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and run **GitHub Actions: Debug Running Job…**. Paste the Actions job URL from a debug-mode job and the extension will open a full debug session using your current GitHub credentials.
-
 The GitHub Actions extension lets you manage your workflows, view the workflow run history, and helps with authoring workflows.
 
 ![](./media/header.png)
