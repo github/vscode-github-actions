@@ -19,7 +19,7 @@ import {registerAddVariable} from "./commands/variables/addVariable";
 import {registerCopyVariable} from "./commands/variables/copyVariable";
 import {registerDeleteVariable} from "./commands/variables/deleteVariable";
 import {registerUpdateVariable} from "./commands/variables/updateVariable";
-import {initConfiguration} from "./configuration/configuration";
+import {initConfiguration, isDebuggerEnabled} from "./configuration/configuration";
 import {getGitHubContext} from "./git/repository";
 import {init as initLogger, log, revealLog} from "./log";
 import {LogScheme} from "./logs/constants";
@@ -34,6 +34,7 @@ import {initResources} from "./treeViews/icons";
 import {initTreeViews} from "./treeViews/treeViews";
 import {deactivateLanguageServer, initLanguageServer} from "./workflow/languageServer";
 import {registerSignIn} from "./commands/signIn";
+import {registerDebugger, registerDebuggerAvailabilityGuard} from "./debugger/debugger";
 
 export async function activate(context: vscode.ExtensionContext) {
   initLogger();
@@ -46,6 +47,7 @@ export async function activate(context: vscode.ExtensionContext) {
   // Prefetch git repository origin url
   const ghContext = hasSession && (await getGitHubContext());
   const hasGitHubRepos = ghContext && ghContext.repos.length > 0;
+  const debuggerEnabled = vscode.env.uiKind === vscode.UIKind.Desktop && isDebuggerEnabled();
 
   await Promise.all([
     vscode.commands.executeCommand("setContext", "github-actions.signed-in", hasSession),
@@ -91,6 +93,12 @@ export async function activate(context: vscode.ExtensionContext) {
   registerUnPinWorkflow(context);
 
   registerSignIn(context);
+  registerDebuggerAvailabilityGuard(context);
+
+  // Debugger — only available in Desktop VS Code (requires Node.js for WebSocket)
+  if (debuggerEnabled) {
+    registerDebugger(context);
+  }
 
   // Log providers
   context.subscriptions.push(
