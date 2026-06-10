@@ -22,7 +22,9 @@ let debuggerRegistered = false;
 const pendingTokens = new Map<string, string>();
 
 export function registerDebuggerAvailabilityGuard(context: vscode.ExtensionContext): void {
-  context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider(DEBUG_TYPE, new ActionsDebugConfigurationProvider()));
+  context.subscriptions.push(
+    vscode.debug.registerDebugConfigurationProvider(DEBUG_TYPE, new ActionsDebugConfigurationProvider())
+  );
 }
 
 export function registerDebugger(context: vscode.ExtensionContext): void {
