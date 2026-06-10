@@ -535,6 +535,10 @@
         {
           "command": "github-actions.sign-in",
           "when": "false"
+        },
+        {
+          "command": "github-actions.debugger.connect",
+          "when": "config.github-actions.debugger.enabled && !isWeb"
         }
       ]
     }

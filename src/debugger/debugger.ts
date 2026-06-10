@@ -2,13 +2,18 @@ import * as crypto from "crypto";
 import * as vscode from "vscode";
 import {getClient} from "../api/api";
 import {getSession, newSession} from "../auth/auth";
-import {getGitHubApiUri} from "../configuration/configuration";
+import {getGitHubApiUri, isDebuggerEnabled} from "../configuration/configuration";
 import {log, logDebug, logError} from "../log";
 import {parseJobUrl} from "./jobUrl";
 import {validateTunnelUrl} from "./tunnelUrl";
 import {WebSocketDapAdapter} from "./webSocketDapAdapter";
 
 export const DEBUG_TYPE = "github-actions-job";
+const debuggerEnabledSettingSnippet = `"github-actions.debugger.enabled": true`;
+const emptyWindowManualReloadMessage =
+  "If you enable it in an empty window, reload VS Code manually because the extension cannot prompt until it activates.";
+
+let debuggerRegistered = false;
 
 /**
  * Extension-private token store keyed by one-time nonce. Tokens are never
@@ -16,7 +21,15 @@ export const DEBUG_TYPE = "github-actions-job";
  */
 const pendingTokens = new Map<string, string>();
 
+export function registerDebuggerAvailabilityGuard(context: vscode.ExtensionContext): void {
+  context.subscriptions.push(
+    vscode.debug.registerDebugConfigurationProvider(DEBUG_TYPE, new ActionsDebugConfigurationProvider())
+  );
+}
+
 export function registerDebugger(context: vscode.ExtensionContext): void {
+  debuggerRegistered = true;
+
   context.subscriptions.push(
     vscode.debug.registerDebugAdapterDescriptorFactory(DEBUG_TYPE, new ActionsDebugAdapterFactory())
   );
@@ -28,6 +41,34 @@ export function registerDebugger(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.commands.registerCommand("github-actions.debugger.connect", () => connectToDebugger())
   );
+}
+
+class ActionsDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
+  resolveDebugConfiguration(
+    _folder: vscode.WorkspaceFolder | undefined,
+    debugConfiguration: vscode.DebugConfiguration
+  ): vscode.DebugConfiguration | null {
+    if (vscode.env.uiKind !== vscode.UIKind.Desktop) {
+      void vscode.window.showInformationMessage("GitHub Actions job debugging is only available in desktop VS Code.");
+      return null;
+    }
+
+    if (!isDebuggerEnabled()) {
+      void vscode.window.showInformationMessage(
+        `GitHub Actions job debugging is currently disabled. Add ${debuggerEnabledSettingSnippet} to settings.json and reload VS Code to enable it. ${emptyWindowManualReloadMessage}`
+      );
+      return null;
+    }
+
+    if (!debuggerRegistered) {
+      void vscode.window.showInformationMessage(
+        `GitHub Actions job debugging was enabled, but VS Code must be reloaded before the debugger can be used. ${emptyWindowManualReloadMessage}`
+      );
+      return null;
+    }
+
+    return debugConfiguration;
+  }
 }
 
 async function connectToDebugger(): Promise<void> {
