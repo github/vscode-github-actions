@@ -103,6 +103,10 @@ async function updateLanguageServerApiUrl(context: vscode.ExtensionContext) {
 }
 
 async function promptToReloadForDebuggerSettingChange() {
+  if (vscode.env.uiKind !== vscode.UIKind.Desktop) {
+    return;
+  }
+
   if (debuggerSettingReloadPromptVisible) {
     return;
   }
