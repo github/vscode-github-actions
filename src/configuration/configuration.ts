@@ -4,13 +4,19 @@ import {resetGitHubContext} from "../git/repository";
 
 const settingsKey = "github-actions";
 const DEFAULT_GITHUB_API = "https://api.github.com";
+const reloadWindowAction = "Reload Window";
+const debuggerEnabledSettingsKey = getSettingsKey("debugger.enabled");
+
+let debuggerSettingReloadPromptVisible = false;
 
 export function initConfiguration(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration(async e => {
       if (e.affectsConfiguration(getSettingsKey("workflows.pinned"))) {
         pinnedWorkflowsChangeHandlers.forEach(h => h());
-      } else if (
+      }
+
+      if (
         e.affectsConfiguration(getSettingsKey("use-enterprise")) ||
         (useEnterprise() &&
           (e.affectsConfiguration("github-enterprise.uri") || e.affectsConfiguration(getSettingsKey("remote-name"))))
@@ -18,6 +24,10 @@ export function initConfiguration(context: vscode.ExtensionContext) {
         await updateLanguageServerApiUrl(context);
         resetGitHubContext();
         await vscode.commands.executeCommand("github-actions.explorer.refresh");
+      }
+
+      if (e.affectsConfiguration(debuggerEnabledSettingsKey)) {
+        await promptToReloadForDebuggerSettingChange();
       }
     })
   );
@@ -64,6 +74,10 @@ export function getRemoteName(): string {
   return getConfiguration().get<string>(getSettingsKey("remote-name"), "origin");
 }
 
+export function isDebuggerEnabled(): boolean {
+  return getConfiguration().get<boolean>(debuggerEnabledSettingsKey, false);
+}
+
 export function useEnterprise(): boolean {
   return getConfiguration().get<boolean>(getSettingsKey("use-enterprise"), false);
 }
@@ -86,4 +100,25 @@ async function updateLanguageServerApiUrl(context: vscode.ExtensionContext) {
   await deactivateLanguageServer();
 
   await initLanguageServer(context);
+}
+
+async function promptToReloadForDebuggerSettingChange() {
+  if (debuggerSettingReloadPromptVisible) {
+    return;
+  }
+
+  debuggerSettingReloadPromptVisible = true;
+
+  try {
+    const selection = await vscode.window.showInformationMessage(
+      "Reload VS Code to apply the GitHub Actions debugger preview setting change.",
+      reloadWindowAction
+    );
+
+    if (selection === reloadWindowAction) {
+      await vscode.commands.executeCommand("workbench.action.reloadWindow");
+    }
+  } finally {
+    debuggerSettingReloadPromptVisible = false;
+  }
 }

@@ -26,7 +26,6 @@
     "onView:workflows",
     "onView:settings",
     "onDebugResolve:github-actions-job",
-    "onCommand:github-actions.debugger.connect",
     "workspaceContains:**/.github/workflows/**",
     "workspaceContains:**/action.yml",
     "workspaceContains:**/action.yaml"
@@ -535,6 +534,10 @@
         {
           "command": "github-actions.sign-in",
           "when": "false"
+        },
+        {
+          "command": "github-actions.debugger.connect",
+          "when": "github-actions.debugger.enabled"
         }
       ]
     }
