@@ -27,7 +27,7 @@ export function initConfiguration(context: vscode.ExtensionContext) {
       }
 
       if (e.affectsConfiguration(debuggerEnabledSettingsKey)) {
-        await promptToReloadForDebuggerSettingChange();
+        await promptToReloadForDebuggerSettingChange(context);
       }
     })
   );
@@ -102,7 +102,7 @@ async function updateLanguageServerApiUrl(context: vscode.ExtensionContext) {
   await initLanguageServer(context);
 }
 
-async function promptToReloadForDebuggerSettingChange() {
+async function promptToReloadForDebuggerSettingChange(context: vscode.ExtensionContext) {
   if (vscode.env.uiKind !== vscode.UIKind.Desktop) {
     return;
   }
@@ -114,6 +114,13 @@ async function promptToReloadForDebuggerSettingChange() {
   debuggerSettingReloadPromptVisible = true;
 
   try {
+    if (context.extensionMode !== vscode.ExtensionMode.Production) {
+      await vscode.window.showInformationMessage(
+        "Reload VS Code manually to apply the GitHub Actions debugger preview setting change. Automatic reload is disabled in the Extension Development Host."
+      );
+      return;
+    }
+
     const selection = await vscode.window.showInformationMessage(
       "Reload VS Code to apply the GitHub Actions debugger preview setting change.",
       reloadWindowAction

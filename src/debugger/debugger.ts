@@ -10,6 +10,8 @@ import {WebSocketDapAdapter} from "./webSocketDapAdapter";
 
 export const DEBUG_TYPE = "github-actions-job";
 const debuggerEnabledSettingSnippet = `"github-actions.debugger.enabled": true`;
+const emptyWindowManualReloadMessage =
+  "If you enable it in an empty window, reload VS Code manually because the extension cannot prompt until it activates.";
 
 let debuggerRegistered = false;
 
@@ -51,14 +53,14 @@ class ActionsDebugConfigurationProvider implements vscode.DebugConfigurationProv
 
     if (!isDebuggerEnabled()) {
       void vscode.window.showInformationMessage(
-        `GitHub Actions job debugging is currently disabled. Add ${debuggerEnabledSettingSnippet} to settings.json and reload VS Code to enable it.`
+        `GitHub Actions job debugging is currently disabled. Add ${debuggerEnabledSettingSnippet} to settings.json and reload VS Code to enable it. ${emptyWindowManualReloadMessage}`
       );
       return null;
     }
 
     if (!debuggerRegistered) {
       void vscode.window.showInformationMessage(
-        "GitHub Actions job debugging was enabled, but VS Code must be reloaded before the debugger can be used."
+        `GitHub Actions job debugging was enabled, but VS Code must be reloaded before the debugger can be used. ${emptyWindowManualReloadMessage}`
       );
       return null;
     }
