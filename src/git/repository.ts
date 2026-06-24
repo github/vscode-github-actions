@@ -1,3 +1,6 @@
+import * as fs from "fs";
+import * as path from "path";
+
 import * as vscode from "vscode";
 import {Octokit} from "@octokit/rest";
 
@@ -8,6 +11,7 @@ import {getGitHubApiUri, getRemoteName, useEnterprise} from "../configuration/co
 import {Protocol} from "../external/protocol";
 import {logDebug, logError} from "../log";
 import {API, GitExtension, RefType, RepositoryState} from "../typings/git";
+import {parseGitRemoteUrl} from "./parseGitRemoteUrl";
 import {RepositoryPermission, getRepositoryPermission} from "./repository-permissions";
 
 interface GitHubUrls {
@@ -20,7 +24,14 @@ async function getGitExtension(): Promise<API | undefined> {
   const gitExtension = vscode.extensions.getExtension<GitExtension>("vscode.git");
   if (gitExtension) {
     if (!gitExtension.isActive) {
-      await gitExtension.activate();
+      try {
+        await gitExtension.activate();
+      } catch (e) {
+        // In VS Code forks (Kiro, Cursor, etc.), activating built-in extensions
+        // may be restricted. Fall back gracefully.
+        logDebug("Unable to activate vscode.git extension, falling back to manual git detection");
+        return undefined;
+      }
     }
     const git = gitExtension.exports.getAPI(1);
 
@@ -127,7 +138,66 @@ export async function getGitHubUrls(): Promise<GitHubUrls[] | null> {
     }
   }
 
+  // Fallback: When vscode.git is unavailable (e.g., in VS Code forks),
+  // try to discover GitHub repositories by reading .git/config directly
+  if (vscode.workspace.workspaceFolders) {
+    const fallbackUrls = getGitHubUrlsFromGitConfig();
+    if (fallbackUrls && fallbackUrls.length > 0) {
+      return fallbackUrls;
+    }
+  }
+
   return null;
+}
+
+/**
+ * Fallback method to discover GitHub repository URLs by reading .git/config directly.
+ * Used when the vscode.git extension cannot be activated (e.g., in VS Code forks).
+ */
+function getGitHubUrlsFromGitConfig(): GitHubUrls[] | null {
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (!workspaceFolders) {
+    return null;
+  }
+
+  const results: GitHubUrls[] = [];
+  const remoteName = getRemoteName();
+
+  for (const folder of workspaceFolders) {
+    if (folder.uri.scheme !== "file") {
+      continue;
+    }
+
+    try {
+      const gitConfigPath = path.join(folder.uri.fsPath, ".git", "config");
+      const gitConfig = fs.readFileSync(gitConfigPath, "utf8");
+
+      // Parse remotes from git config
+      const url = parseGitRemoteUrl(gitConfig, remoteName);
+      if (!url) {
+        continue;
+      }
+
+      const host = useEnterprise() ? new URL(getGitHubApiUri()).host : "github.com";
+
+      if (
+        url.indexOf("github.com") !== -1 ||
+        (useEnterprise() && url.indexOf(host) !== -1) ||
+        url.indexOf(".ghe.com") !== -1
+      ) {
+        results.push({
+          workspaceUri: folder.uri,
+          url,
+          protocol: new Protocol(url)
+        });
+      }
+    } catch {
+      // .git/config doesn't exist or can't be read — skip this folder
+      logDebug(`Could not read .git/config for workspace folder: ${folder.uri.fsPath}`);
+    }
+  }
+
+  return results.length > 0 ? results : null;
 }
 
 export interface GitHubRepoContext {
