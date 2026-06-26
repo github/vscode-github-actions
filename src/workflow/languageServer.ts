@@ -37,7 +37,8 @@ export async function initLanguageServer(context: vscode.ExtensionContext) {
     })),
     logLevel: PRODUCTION ? LogLevel.Warn : LogLevel.Debug,
     experimentalFeatures: {
-      allowCaseFunction: true
+      allowCaseFunction: true,
+      allowBackgroundSteps: true
     }
   };
 
