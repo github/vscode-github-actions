@@ -1,0 +1,20 @@
+name: test
+
+# Regression-style fixture for block if-expression syntax
+on: workflow_dispatch
+
+jobs:
+  literal:
+    runs-on: ubuntu-latest
+    if: | # literal condition
+      github.ref == 'refs/heads/main' &&
+      github.event_name != 'pull_request'
+    steps:
+      - run: echo "ok"
+  folded:
+    runs-on: ubuntu-latest
+    if: > # folded condition
+      github.ref == 'refs/heads/main' &&
+      github.event_name != 'pull_request'
+    steps:
+      - run: echo "ok"

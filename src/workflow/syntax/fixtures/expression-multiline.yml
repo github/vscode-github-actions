@@ -1,0 +1,14 @@
+name: test
+
+# Regression-style fixture for multi-line inline expressions
+on: workflow_dispatch
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    env:
+      CACHE_KEY: ${{ format(
+        '{0}-{1}',
+        github.ref,
+        github.sha
+      ) }}

@@ -1,0 +1,12 @@
+name: test
+
+on: workflow_dispatch
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    if: contains(github.ref, '#main') # trailing comment
+    steps:
+      - name: escaped quote
+        if: github.ref == 'it''s-main' # escaped quote case
+        run: echo "ok"

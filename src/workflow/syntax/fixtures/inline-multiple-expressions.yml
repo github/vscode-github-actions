@@ -1,0 +1,9 @@
+name: test
+
+on: workflow_dispatch
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    env:
+      COMBINED: ${{ github.ref }}-${{ github.sha }}
