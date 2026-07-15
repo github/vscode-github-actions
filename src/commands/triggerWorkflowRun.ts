@@ -1,6 +1,13 @@
 import * as vscode from "vscode";
 
-import {getGitHead, getGitHubContextForWorkspaceUri, GitHubRepoContext} from "../git/repository";
+import * as path from "path";
+
+import {
+  getGitHead,
+  getGitHubContextForWorkspaceUri,
+  getGitRepositoryFolderUri,
+  GitHubRepoContext
+} from "../git/repository";
 import {getWorkflowUri, parseWorkflowFile} from "../workflow/workflow";
 
 import {Workflow} from "../model";
@@ -29,11 +36,14 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
 
         // Parse
         const workspaceFolder = vscode.workspace.getWorkspaceFolder(workflowUri);
-        if (!workspaceFolder) {
+
+        // support git sub directory
+        const gitRepoFolderUri = workspaceFolder ? workspaceFolder?.uri : await getGitRepositoryFolderUri(workflowUri);
+        if (!gitRepoFolderUri) {
           return;
         }
 
-        const gitHubRepoContext = await getGitHubContextForWorkspaceUri(workspaceFolder.uri);
+        const gitHubRepoContext = await getGitHubContextForWorkspaceUri(gitRepoFolderUri);
         if (!gitHubRepoContext) {
           return;
         }
@@ -85,8 +95,10 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext) {
             }
 
             try {
-              const relativeWorkflowPath = vscode.workspace.asRelativePath(workflowUri, false);
-
+              // support git sub directory
+              const relativeWorkflowPath = workspaceFolder
+                ? vscode.workspace.asRelativePath(workflowUri, false)
+                : path.relative(gitRepoFolderUri.path, workflowUri.path);
               await gitHubRepoContext.client.actions.createWorkflowDispatch({
                 owner: gitHubRepoContext.owner,
                 repo: gitHubRepoContext.name,
