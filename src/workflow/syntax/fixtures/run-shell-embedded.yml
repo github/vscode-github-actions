@@ -1,0 +1,33 @@
+name: test
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: pwsh example
+        shell: pwsh
+        env:
+          FOO: bar
+        run: |
+          Write-Host "hello"
+
+      - name: bash example
+        shell: bash
+        working-directory: tools
+        run: >
+          echo hi
+
+      - name: shell after run (documented non-match)
+        run: |
+          echo "no dynamic shell highlighting"
+        shell: python
+
+      - name: quoted node shell
+        shell: "node"
+        run: |
+          console.log("hi")
+
+      - name: unknown shell
+        shell: ruby
+        run: |
+          puts "hi"

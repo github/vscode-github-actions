@@ -1,0 +1,16 @@
+name: test
+
+on: workflow_dispatch
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: quoted shell with comment
+        shell: "pwsh" # explicit shell
+        run: |
+          Write-Host "hi"
+
+      - name: non-block run should not embed
+        shell: bash
+        run: echo "hi"

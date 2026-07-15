@@ -1,3 +1,4 @@
+import {describe, expect, it} from "@jest/globals";
 import libsodium from "libsodium-wrappers";
 import {encodeSecret} from "./index";
 
