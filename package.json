@@ -42,7 +42,9 @@
         ],
         "filenamePatterns": [
           "**/.github/workflows/**/*.yml",
-          "**/.github/workflows/**/*.yaml"
+          "**/.github/workflows/**/*.yaml",
+          "**/action.yml",
+          "**/action.yaml"
         ],
         "configuration": "./language/language-configuration.json",
         "icon": {
