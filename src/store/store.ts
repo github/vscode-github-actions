@@ -1,7 +1,7 @@
 import {setInterval} from "timers";
 import {EventEmitter} from "vscode";
 import {GitHubRepoContext} from "../git/repository";
-import {logDebug} from "../log";
+import {log, logDebug} from "../log";
 import * as model from "../model";
 import {WorkflowRun} from "./workflowRun";
 
@@ -20,6 +20,18 @@ type Updater = {
 export class RunStore extends EventEmitter<RunStoreEvent> {
   private runs = new Map<number, WorkflowRun>();
   private updaters = new Map<number, Updater>();
+  private _isFocused = true;
+  private _isViewVisible = true;
+
+  setFocused(focused: boolean) {
+    this._isFocused = focused;
+    logDebug(`[Store]: Focus state changed to ${String(focused)}`);
+  }
+
+  setViewVisible(visible: boolean) {
+    this._isViewVisible = visible;
+    logDebug(`[Store]: View visibility changed to ${String(visible)}`);
+  }
 
   getRun(runId: number): WorkflowRun | undefined {
     return this.runs.get(runId);
@@ -46,6 +58,7 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
    * Start polling for updates for the given run
    */
   pollRun(runId: number, repoContext: GitHubRepoContext, intervalMs: number, attempts = 10) {
+    log(`Starting polling for run ${runId} every ${intervalMs}ms for ${attempts} attempts`);
     const existingUpdater: Updater | undefined = this.updaters.get(runId);
     if (existingUpdater && existingUpdater.handle) {
       clearInterval(existingUpdater.handle);
@@ -65,7 +78,11 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
   }
 
   private async fetchRun(updater: Updater) {
-    logDebug("Updating run: ", updater.runId);
+    if (!this._isFocused || !this._isViewVisible) {
+      return;
+    }
+
+    log(`Fetching run update: ${updater.runId}. Remaining attempts: ${updater.remainingAttempts}`);
 
     updater.remainingAttempts--;
     if (updater.remainingAttempts === 0) {
@@ -83,6 +100,14 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
     });
 
     const run = result.data;
+    log(`Polled run: ${run.id} Status: ${run.status || "null"} Conclusion: ${run.conclusion || "null"}`);
     this.addRun(updater.repoContext, run);
+
+    if (run.status === "completed") {
+      if (updater.handle) {
+        clearInterval(updater.handle);
+      }
+      this.updaters.delete(updater.runId);
+    }
   }
 }

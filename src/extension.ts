@@ -64,6 +64,13 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const store = new RunStore();
 
+  // Handle focus changes to pause/resume polling
+  context.subscriptions.push(
+    vscode.window.onDidChangeWindowState(e => {
+      store.setFocused(e.focused);
+    })
+  );
+
   // Pinned workflows
   await initPinnedWorkflows(store);
 
@@ -75,7 +82,7 @@ export async function activate(context: vscode.ExtensionContext) {
   registerOpenWorkflowFile(context);
   registerOpenWorkflowJobLogs(context);
   registerOpenWorkflowStepLogs(context);
-  registerTriggerWorkflowRun(context);
+  registerTriggerWorkflowRun(context, store);
   registerReRunWorkflowRun(context);
   registerCancelWorkflowRun(context);
 
