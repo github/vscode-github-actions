@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import {GitHubRepoContext} from "../../git/repository";
 import {EnvironmentNode} from "./environmentNode";
+import {Environment} from "../../model";
 
 export class EnvironmentsNode extends vscode.TreeItem {
   constructor(public readonly gitHubRepoContext: GitHubRepoContext) {
@@ -10,12 +11,16 @@ export class EnvironmentsNode extends vscode.TreeItem {
   }
 
   async getEnvironments(): Promise<EnvironmentNode[]> {
-    const result = await this.gitHubRepoContext.client.repos.getAllEnvironments({
+    const opts = this.gitHubRepoContext.client.repos.getAllEnvironments.endpoint.merge({
       owner: this.gitHubRepoContext.owner,
-      repo: this.gitHubRepoContext.name
+      repo: this.gitHubRepoContext.name,
+      per_page: 100
     });
 
-    const data = result.data.environments || [];
+    // retrieve all environments
+    const result = await this.gitHubRepoContext.client.paginate<Environment>(opts);
+
+    const data = result || [];
     return data.map(e => new EnvironmentNode(this.gitHubRepoContext, e));
   }
 }
