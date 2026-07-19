@@ -13,11 +13,10 @@ on:
           - "major"
           - "minor"
           - "patch"
-      update-language-server: 
+      update-language-server:
         required: true
         description: "Update the language server to the latest version?"
         type: boolean
-
 
 jobs:
   create-release-pr:
@@ -37,6 +36,7 @@ jobs:
           node-version: "16"
 
       - name: Bump version and push
+        id: bump_version
         run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
@@ -51,8 +51,8 @@ jobs:
 
           git push --set-upstream origin release/$NEW_VERSION
 
-          echo "new_version=$NEW_VERSION" >> $GITHUB_ENV
-      
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
       - name: Update language server
         if: ${{ inputs.update-language-server }}
         run: |
@@ -61,18 +61,18 @@ jobs:
           npm i
 
       - uses: stefanzweifel/git-auto-commit-action@3ea6ae190baf489ba007f7c92608f33ce20ef04a
-        with: 
-          branch: release/${{ env.new_version }}
+        with:
+          branch: release/${{ steps.bump_version.outputs.new_version }}
         if: ${{ inputs.update-language-server }}
 
       - name: Create PR
         run: |
           LAST_PR=$(gh pr list --repo ${{ github.repository }} --limit 1 --state merged --search "Release version" --json number | jq -r '.[0].number')
-          ./script/workflows/generate-release-notes.sh $LAST_PR ${{ env.new_version }}
+          ./script/workflows/generate-release-notes.sh $LAST_PR ${{ steps.bump_version.outputs.new_version }}
           gh pr create \
-            --title "Release version ${{ env.new_version }}" \
+            --title "Release version ${{ steps.bump_version.outputs.new_version }}" \
             --body-file releasenotes.md \
             --base main \
-            --head release/${{ env.new_version }}
+            --head release/${{ steps.bump_version.outputs.new_version }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
