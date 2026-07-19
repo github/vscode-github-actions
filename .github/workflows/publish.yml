@@ -146,6 +146,6 @@ jobs:
         # https://github.com/HaaLeo/publish-vscode-extension/releases/tag/v1.2.0
         uses: HaaLeo/publish-vscode-extension@c1a0486c5a3eed24e8c21d4e37889a7c4c60c443
         with:
-          pat: ${{ secrets.PUBLISHER_KEY }}
+          pat: ${{ secrets.VSCE_PAT || secrets.PUBLISHER_KEY }}
           registryUrl: https://marketplace.visualstudio.com
           extensionFile: ./vscode-github-actions-${{ needs.release.outputs.version }}.vsix
