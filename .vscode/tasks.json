@@ -8,7 +8,7 @@
       "script": "watch",
       "group": "build",
       "isBackground": true,
-      "problemMatcher": ["$ts-webpack-watch"]
+      "problemMatcher": "$tsc-watch"
     },
     {
       "label": "delay",
