@@ -1,0 +1,19 @@
+# SYNTAX TEST "source.github-actions-workflow" "the shell from one step does not affect the next test"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    steps:
+      - shell: pwsh
+        run: |
+          Write-Host "Hello"
+          exit 1
+
+      - name: Next step is unaffected by the previous step's shell
+        run: |
+          Write-Host "Hello"
+          exit 1

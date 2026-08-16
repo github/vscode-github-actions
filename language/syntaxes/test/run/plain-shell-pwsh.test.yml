@@ -1,0 +1,13 @@
+# SYNTAX TEST "source.github-actions-workflow" "plain string using `pwsh` shell"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    steps:
+      - name: Test
+        shell: pwsh
+        run: Write-Host "Hello"

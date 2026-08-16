@@ -1,0 +1,18 @@
+# SYNTAX TEST "source.github-actions-workflow" "other properties are defined between the `shell` and `run` properties"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    steps:
+      - name: Test
+        shell: python
+        env:
+          FOO: 1
+          BAR: 2
+        run: |
+          print("Hello")
+          exit(1)

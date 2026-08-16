@@ -1,0 +1,23 @@
+# SYNTAX TEST "source.github-actions-workflow" "comment after the `script` input"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Step 1
+        uses: actions/github-script@v9
+        with:
+          script: |
+            console.log("Hello");
+            process.exit(1);
+
+      # The next step.
+      - name: Step 2
+        uses: actions/checkout@v7
+

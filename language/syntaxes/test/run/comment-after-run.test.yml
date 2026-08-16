@@ -1,0 +1,15 @@
+# SYNTAX TEST "source.github-actions-workflow" "comment after a block scalar `run` property"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    steps:
+      - name: Test
+        shell: bash
+        run: |
+          echo "Hello"
+        # Comment after run.

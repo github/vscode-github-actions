@@ -1,0 +1,13 @@
+# SYNTAX TEST "source.github-actions-workflow" "plain string using `bash` shell"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    steps:
+      - name: Test
+        shell: bash
+        run: echo "Hello"

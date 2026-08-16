@@ -1,0 +1,14 @@
+# SYNTAX TEST "source.github-actions-workflow" "${{ expression }} in `if` property"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Step
+        if: ${{ !startsWith('test/', github.ref_name) }}
+        uses: foo/bar@main

@@ -1,0 +1,13 @@
+# SYNTAX TEST "source.github-actions-workflow" "boolean in an expression"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ${{ true == false }}
+        uses: foo/bar@main

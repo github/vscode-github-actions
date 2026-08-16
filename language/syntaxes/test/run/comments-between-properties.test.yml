@@ -1,0 +1,45 @@
+# SYNTAX TEST "source.github-actions-workflow" "comments between properties"
+
+name: Test
+
+on:
+  workflow_dispatch:
+# workflow defaults.
+defaults:
+  # action.
+  run:
+    # shell type.
+    shell: pwsh
+# jobs are next.
+jobs:
+  # first job.
+  a:
+    # job defaults
+    defaults:
+      # action.
+      run:
+        # shell type.
+        shell: python
+    # the steps.
+    steps:
+      # first step.
+      - name: First
+        # set the shell.
+        shell: cmd
+        # run a script.
+        run: |
+          echo "Hello"
+      # second step.
+      - name: Second
+        # use job default shell.
+        run: |
+          print("Hello") 
+# second job.
+  b:
+    # the steps.
+    steps:
+      # first step.
+      - name: First
+        # use workflow default.
+        run: |
+          Write-Host "Hello"

@@ -1,0 +1,25 @@
+# SYNTAX TEST "source.github-actions-workflow" "expression used in the `run` script"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    steps:
+      - shell: bash
+        run: |
+          echo "${{ github.event_name }}"
+
+      - shell: cmd
+        run: |
+          echo "${{ github.event_name }}"
+
+      - shell: pwsh
+        run: |
+          Write-Host "${{ github.event_name }}"
+
+      - shell: python
+        run: |
+          print("${{ github.event_name }}")

@@ -12,5 +12,8 @@ module.exports = {
       }
     ]
   },
-  moduleFileExtensions: ["ts", "js"]
+  moduleFileExtensions: ["ts", "js"],
+  // Exclude the language tests so that Jest doesn't think
+  // that the snapshot files belong to Jest and are obsolete.
+  testPathIgnorePatterns: ["^<rootDir>/language/"]
 };

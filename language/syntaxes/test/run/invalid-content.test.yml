@@ -1,0 +1,32 @@
+# SYNTAX TEST "source.github-actions-workflow" "invalid content at the end of lines"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+defaults: invalid
+  run: invalid
+    shell: pwsh invalid
+
+jobs: invalid
+  a: invalid
+    defaults: invalid
+      run: invalid
+        shell: python invalid
+
+    steps:
+      - name: First
+        shell: cmd invalid
+        run: | invalid
+          echo "Hello"
+
+      - name: Second
+        run: | invalid
+          print("Hello") 
+
+  b: invalid
+    steps: invalid
+      - name: First
+        run: | invalid
+          Write-Host "Hello"

@@ -1,0 +1,14 @@
+# SYNTAX TEST "source.github-actions-workflow" "string in `if` property"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Step
+        if: 'foo bar' == 'bar foo'
+        uses: foo/bar@main

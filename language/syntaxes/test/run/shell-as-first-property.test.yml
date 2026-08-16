@@ -1,0 +1,14 @@
+# SYNTAX TEST "source.github-actions-workflow" "`shell` is the first property of the step"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    steps:
+      - shell: pwsh
+        run: |
+          Write-Host "Hello"
+          exit 1

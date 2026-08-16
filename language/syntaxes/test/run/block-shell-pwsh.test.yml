@@ -1,0 +1,15 @@
+# SYNTAX TEST "source.github-actions-workflow" "block scalar using `pwsh` shell"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    steps:
+      - name: Test
+        shell: pwsh
+        run: |
+          Write-Host "Hello"
+          exit 1

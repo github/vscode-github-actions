@@ -1,0 +1,20 @@
+# SYNTAX TEST "source.github-actions-workflow" "another step follows the `actions/github-script` step"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Step 1
+        uses: actions/github-script@v9 
+        with:
+          script: |
+            console.log("Hello");
+
+      - name: Step 2
+        uses: actions/checkout@v7

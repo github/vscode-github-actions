@@ -1,0 +1,19 @@
+# SYNTAX TEST "source.github-actions-workflow" "a `shell` property after a `run` property does not affect the `run` script"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    steps:
+      - name: Test
+        run: |
+          echo "Hello"
+          exit 1
+        shell: bash
+
+      - name: Test
+        run: |
+          echo "The `shell` after `run` in the previous step does not affect this step"

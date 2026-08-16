@@ -1,0 +1,20 @@
+# SYNTAX TEST "source.github-actions-workflow" "a `run` property exists, but it is an input to an action rather than a property of a step"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    defaults:
+      run:
+        shell: python
+
+    steps:
+      - name: Test
+        uses: foo/bar@main
+        with:
+          run: |
+            print("Hello")
+            exit(1)

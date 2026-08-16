@@ -1,0 +1,22 @@
+# SYNTAX TEST "source.github-actions-workflow" "parallel steps using `actions/github-script`"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - parallel:
+          - name: One
+            uses: actions/github-script@main
+            with:
+              script: console.log("One")
+
+          - name: Two
+            uses: actions/github-script@main
+            with:
+              script: console.log("Two")

@@ -1,0 +1,39 @@
+# SYNTAX TEST "source.github-actions-workflow" "parallel steps using `actions/github-script`"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  workflow-default:
+    runs-on: ubuntu-latest
+
+    steps:
+      - parallel:
+          - name: One
+            run: echo "Workflow default"
+
+          - name: Two
+            shell: pwsh
+            run: Write-Host "Step override"
+
+  job-default:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: python
+
+    steps:
+      - parallel:
+          - name: One
+            run: print("Job default")
+
+          - name: Two
+            shell: pwsh
+            run: Write-Host "Step override"

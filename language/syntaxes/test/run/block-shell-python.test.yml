@@ -1,0 +1,15 @@
+# SYNTAX TEST "source.github-actions-workflow" "block scalar using `python` shell"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    steps:
+      - name: Test
+        shell: python
+        run: |
+          print("Hello")
+          exit(1)

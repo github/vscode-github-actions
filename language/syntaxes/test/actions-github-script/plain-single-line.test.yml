@@ -1,0 +1,16 @@
+# SYNTAX TEST "source.github-actions-workflow" "plain flow scalar script on a single line"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Step
+        uses: actions/github-script@v9
+        with:
+          script: console.log("Hello");

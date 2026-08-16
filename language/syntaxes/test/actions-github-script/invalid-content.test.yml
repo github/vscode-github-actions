@@ -1,0 +1,16 @@
+# SYNTAX TEST "source.github-actions-workflow" "invalid content at the end of lines"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/github-script@v9 test
+        with: test
+          script: | test
+            console.log("Hello");

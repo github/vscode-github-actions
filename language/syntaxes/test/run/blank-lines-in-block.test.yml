@@ -1,0 +1,18 @@
+# SYNTAX TEST "source.github-actions-workflow" "blank lines in block"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    steps:
+      - name: Test
+        shell: bash
+        run: |
+          one=1
+          two=2
+          three=2
+
+          echo "${one} + ${two} = ${three}"

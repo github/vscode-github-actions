@@ -1,0 +1,16 @@
+# SYNTAX TEST "source.github-actions-workflow" "a shell is never defined"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  a:
+    steps:
+      - name: Block
+        run: |
+          print("Block")
+
+      - name: Inline
+        run: print("inline")

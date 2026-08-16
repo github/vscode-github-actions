@@ -1,0 +1,13 @@
+# SYNTAX TEST "source.github-actions-workflow" "`run` used in a composite action"
+
+name: Test
+
+description: Test
+
+runs:
+  using: composite
+  steps:
+    - name: Step
+      shell: pwsh
+      run: |
+        Write-Host "Hello"

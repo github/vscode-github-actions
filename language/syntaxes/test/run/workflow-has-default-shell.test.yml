@@ -1,0 +1,35 @@
+# SYNTAX TEST "source.github-actions-workflow" "workflow defines a default shell"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: python
+
+jobs:
+  a:
+    steps:
+      - name: Use Workflow Default
+        run: |
+          print("Using the workflow's default shell")
+
+      - run: | # Use Workflow Default
+          print("Using the workflow's default shell")
+
+      - name: Override Workflow Default
+        shell: cmd
+        run: |
+          echo "Hello"
+
+      - shell: cmd # Override Workflow Default
+        run: |
+          echo "Hello"
+
+  b:
+    steps:
+      - name: Workflow Default Applies To All Jobs
+        run: |
+          print("Using the workflow's default shell")

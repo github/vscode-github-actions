@@ -6,3 +6,4 @@ dist
 runners
 .yalc
 *.md
+language/syntaxes/test/**/*

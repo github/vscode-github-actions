@@ -1,0 +1,15 @@
+# SYNTAX TEST "source.github-actions-workflow" "`actions/github-script` used in a composite action"
+
+name: Test
+
+description: Test
+
+runs:
+  using: composite
+  steps:
+    - name: Step
+      uses: actions/github-script@v9
+      with:
+        script: |
+          console.log("Hello");
+          process.exit(1);

@@ -1,0 +1,45 @@
+# SYNTAX TEST "source.github-actions-workflow" "blank lines between properties"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+defaults:
+
+  run:
+
+    shell: pwsh
+
+jobs:
+
+  a:
+
+    defaults:
+
+      run:
+
+        shell: python
+
+    steps:
+
+      - name: First
+
+        shell: cmd
+
+        run: |
+          echo "Hello"
+
+      - name: Second
+
+        run: |
+          print("Hello") 
+
+  b:
+
+    steps:
+
+      - name: First
+
+        run: |
+          Write-Host "Hello"

@@ -1,0 +1,29 @@
+# SYNTAX TEST "source.github-actions-workflow" "job defines a `defaults` property, but does not set a default shell"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  a:
+    defaults:
+      run:
+        working-directory: here
+
+    steps:
+      - name: Use Job Default
+        run: |
+          print("No default shell")
+
+      - run: | # Use Job Default
+          print("No default shell")
+
+      - name: Set Shell
+        shell: bash
+        run: |
+          echo "Hello"
+
+      - shell: bash # Set Shell
+        run: |
+          echo "Hello"

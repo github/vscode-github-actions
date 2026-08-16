@@ -11,7 +11,7 @@
   "version": "0.32.3",
   "engines": {
     "vscode": "^1.72.0",
-    "node": ">= 16"
+    "node": ">= 22"
   },
   "extensionKind": [
     "workspace"
@@ -63,6 +63,29 @@
         "injectTo": [
           "source.github-actions-workflow"
         ]
+      },
+      {
+        "scopeName": "source.github-actions-workflow.actions-github-script",
+        "path": "./language/syntaxes/actions-github-script.tmGrammar.json",
+        "injectTo": [
+          "source.github-actions-workflow"
+        ],
+        "embeddedLanguages": {
+          "source.js": "javascript"
+        }
+      },
+      {
+        "scopeName": "source.github-actions-workflow.run",
+        "path": "./language/syntaxes/run.tmGrammar.json",
+        "injectTo": [
+          "source.github-actions-workflow"
+        ],
+        "embeddedLanguages": {
+          "source.batchfile": "bat",
+          "source.powershell": "powershell",
+          "source.python": "python",
+          "source.shell": "shellscript"
+        }
       }
     ],
     "configuration": {
@@ -555,7 +578,10 @@
     "format": "prettier --write \"**/*.ts\"",
     "format-check": "prettier --check \"**/*.ts\"",
     "test": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" jest",
-    "test-watch": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --watch"
+    "test-watch": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --watch",
+    "grammars-generate": "node ./script/grammars/generate.mjs",
+    "grammars-test": "textmate-grammar-snap -s source.github-actions-workflow -g \"language/syntaxes/test/injected-grammars/*.tmLanguage.json\" \"language/syntaxes/test/**/*.test.yml\"",
+    "grammars-test-update": "npm run grammars-test -- -u"
   },
   "devDependencies": {
     "@types/jest": "^29.0.3",
@@ -575,6 +601,7 @@
     "prettier": "^2.8.3",
     "rimraf": "^3.0.1",
     "source-map-loader": "^4.0.1",
+    "textmate-grammar-test": "^0.7.0",
     "ts-jest": "^29.0.3",
     "ts-loader": "^9.4.1",
     "typescript": "^4.9.4",

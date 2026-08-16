@@ -1,0 +1,18 @@
+# SYNTAX TEST "source.github-actions-workflow" "block scalar script"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Step
+        uses: actions/github-script@v9
+        with:
+          script: |
+            console.log("Hello");
+            process.exit(1);

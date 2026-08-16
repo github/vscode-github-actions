@@ -1,0 +1,13 @@
+# SYNTAX TEST "source.github-actions-workflow" "all values types in expression"
+
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ${{ success() || 'foo bar' == github.ref_name || 42 != true || null }}
+        uses: foo/bar@main

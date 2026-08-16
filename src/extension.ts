@@ -35,6 +35,7 @@ import {initTreeViews} from "./treeViews/treeViews";
 import {deactivateLanguageServer, initLanguageServer} from "./workflow/languageServer";
 import {registerSignIn} from "./commands/signIn";
 import {registerDebugger, registerDebuggerAvailabilityGuard} from "./debugger/debugger";
+import {registerShellDiagnostics} from "./shell";
 
 export async function activate(context: vscode.ExtensionContext) {
   initLogger();
@@ -94,6 +95,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
   registerSignIn(context);
   registerDebuggerAvailabilityGuard(context);
+
+  registerShellDiagnostics(context);
 
   // Debugger — only available in Desktop VS Code (requires Node.js for WebSocket)
   if (debuggerEnabled) {
