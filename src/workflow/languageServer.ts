@@ -12,6 +12,7 @@ import {getSession} from "../auth/auth";
 import {getGitHubContext} from "../git/repository";
 import {WorkflowSelector, ActionSelector} from "./documentSelector";
 import {getGitHubApiUri, useEnterprise} from "../configuration/configuration";
+import {isYamlComment} from "./yamlComment";
 
 let client: BaseLanguageClient;
 
@@ -45,7 +46,16 @@ export async function initLanguageServer(context: vscode.ExtensionContext) {
   const clientOptions: LanguageClientOptions = {
     documentSelector: [WorkflowSelector, ActionSelector],
     initializationOptions: initializationOptions,
-    progressOnInitialization: true
+    progressOnInitialization: true,
+    middleware: {
+      provideCompletionItem: (document, position, context, token, next) => {
+        const line = document.lineAt(position).text;
+        if (isYamlComment(line, position.character)) {
+          return [];
+        }
+        return next(document, position, context, token);
+      }
+    }
   };
 
   // Create the language client and start the client.
