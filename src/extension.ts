@@ -35,6 +35,7 @@ import {initTreeViews} from "./treeViews/treeViews";
 import {deactivateLanguageServer, initLanguageServer} from "./workflow/languageServer";
 import {registerSignIn} from "./commands/signIn";
 import {registerDebugger, registerDebuggerAvailabilityGuard} from "./debugger/debugger";
+import {registerImportWorkflowRunAnnotations} from "./commands/importWorkflowRunAnnotations";
 
 export async function activate(context: vscode.ExtensionContext) {
   initLogger();
@@ -78,6 +79,7 @@ export async function activate(context: vscode.ExtensionContext) {
   registerTriggerWorkflowRun(context);
   registerReRunWorkflowRun(context);
   registerCancelWorkflowRun(context);
+  registerImportWorkflowRunAnnotations(context);
 
   registerAddSecret(context);
   registerDeleteSecret(context);

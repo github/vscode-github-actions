@@ -160,6 +160,12 @@
         "icon": "$(globe)"
       },
       {
+        "command": "github-actions.workflow.run.importAnnotations",
+        "category": "GitHub Actions",
+        "title": "Import workflow run annotations",
+        "when": "viewItem =~ /run/"
+      },
+      {
         "command": "github-actions.workflow.logs",
         "category": "GitHub Actions",
         "title": "View job logs",
