@@ -1,9 +1,10 @@
 import * as vscode from "vscode";
 import {GitHubRepoContext} from "../git/repository";
-import {RepositoryPermission, hasWritePermission} from "../git/repository-permissions";
+import {RepositoryPermission} from "../git/repository-permissions";
 import {log, logDebug} from "../log";
 import * as model from "../model";
 import {WorkflowJob} from "./WorkflowJob";
+import {getWorkflowRunContextValue} from "./workflowRunContext";
 
 abstract class WorkflowRunBase {
   protected _gitHubRepoContext: GitHubRepoContext;
@@ -53,15 +54,7 @@ abstract class WorkflowRunBase {
   }
 
   contextValue(permission: RepositoryPermission): string {
-    const contextValues = ["run"];
-    const completed = this._run.status === "completed";
-    if (hasWritePermission(permission)) {
-      contextValues.push(completed ? "rerunnable" : "cancelable");
-    }
-    if (completed) {
-      contextValues.push("completed");
-    }
-    return contextValues.join(" ");
+    return getWorkflowRunContextValue(this._run.status, permission);
   }
 
   protected abstract fetchJobs(): Promise<WorkflowJob[]>;

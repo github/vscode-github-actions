@@ -189,6 +189,13 @@
         "when": "viewItem =~ /run/ && viewItem =~ /cancelable/"
       },
       {
+        "command": "github-actions.workflow.run.delete",
+        "category": "GitHub Actions",
+        "title": "Delete workflow run",
+        "when": "viewItem =~ /run/ && viewItem =~ /deletable/",
+        "icon": "$(trash)"
+      },
+      {
         "command": "github-actions.settings.secrets.manage",
         "category": "GitHub Actions",
         "title": "Add new secret",
@@ -406,6 +413,11 @@
           "when": "viewItem =~ /run/ && viewItem =~ /rerunnable/"
         },
         {
+          "command": "github-actions.workflow.run.delete",
+          "when": "viewItem =~ /run/ && viewItem =~ /deletable/",
+          "group": "inline@3"
+        },
+        {
           "command": "github-actions.settings.secret.add",
           "group": "inline",
           "when": "viewItem == 'secrets' || viewItem == 'environment-secrets'"
@@ -482,6 +494,10 @@
         },
         {
           "command": "github-actions.workflow.run.cancel",
+          "when": "false"
+        },
+        {
+          "command": "github-actions.workflow.run.delete",
           "when": "false"
         },
         {
