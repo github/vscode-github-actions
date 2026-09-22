@@ -7,6 +7,7 @@ import {getSession} from "../auth/auth";
 import {getGitHubApiUri, getRemoteName, useEnterprise} from "../configuration/configuration";
 import {Protocol} from "../external/protocol";
 import {logDebug, logError} from "../log";
+import {isGitHubRemoteUrl} from "./remoteUrl";
 import {API, GitExtension, RefType, RepositoryState} from "../typings/git";
 import {RepositoryPermission, getRepositoryPermission} from "./repository-permissions";
 
@@ -54,6 +55,17 @@ export async function getGitHead(): Promise<string | undefined> {
   }
 }
 
+function isGitHubRemote(pushUrl: string | undefined): boolean {
+  if (!pushUrl) {
+    return false;
+  }
+
+  // Remotes for other hosts (e.g. a Bitbucket repo in a multi-root workspace) may use the
+  // scp-style `git@host:owner/repo.git` form, which `new URL()` rejects. The host is parsed
+  // defensively so one such remote does not abort activation for the whole workspace.
+  return isGitHubRemoteUrl(pushUrl, useEnterprise() ? new URL(getGitHubApiUri()).hostname : undefined);
+}
+
 export async function getGitHubUrls(): Promise<GitHubUrls[] | null> {
   const git = await getGitExtension();
   if (git && git.repositories.length > 0) {
@@ -74,12 +86,7 @@ export async function getGitHubUrls(): Promise<GitHubUrls[] | null> {
           remote = [r.state.remotes[0]];
         }
 
-        if (
-          remote.length > 0 &&
-          (remote[0].pushUrl?.indexOf("github.com") !== -1 ||
-            (useEnterprise() && remote[0].pushUrl?.indexOf(new URL(getGitHubApiUri()).host) !== -1) ||
-            (remote[0].pushUrl ? new URL(remote[0].pushUrl).host.endsWith(".ghe.com") : false))
-        ) {
+        if (remote.length > 0 && isGitHubRemote(remote[0].pushUrl)) {
           const url = remote[0].pushUrl;
 
           return {
