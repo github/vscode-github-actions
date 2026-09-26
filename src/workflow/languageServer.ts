@@ -43,7 +43,7 @@ export async function initLanguageServer(context: vscode.ExtensionContext) {
   };
 
   const clientOptions: LanguageClientOptions = {
-    documentSelector: [WorkflowSelector, ActionSelector],
+    documentSelector: [...WorkflowSelector, ...ActionSelector],
     initializationOptions: initializationOptions,
     progressOnInitialization: true
   };
