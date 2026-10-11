@@ -149,6 +149,14 @@ module.exports = (env, argv) => {
       fallback: {
         buffer: require.resolve("buffer/"),
         path: require.resolve("path-browserify")
+      },
+      alias: {
+        // fix(#593): Replace the action-metadata module bundled from @actions/languageserver
+        // with a patched version that falls back to raw.githubusercontent.com when the
+        // GitHub Contents API fails for a full commit-SHA ref. Both the node and web server
+        // bundles pick this up via this single alias.
+        [path.resolve(__dirname, "node_modules/@actions/languageserver/dist/utils/action-metadata.js")]:
+          path.resolve(__dirname, "src/vendor/action-metadata.js")
       }
     }
   };
