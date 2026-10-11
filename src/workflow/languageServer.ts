@@ -11,7 +11,7 @@ import {userAgent} from "../api/api";
 import {getSession} from "../auth/auth";
 import {getGitHubContext} from "../git/repository";
 import {WorkflowSelector, ActionSelector} from "./documentSelector";
-import {getGitHubApiUri, useEnterprise} from "../configuration/configuration";
+import {getGitHubApiUri, getGitHubBaseUri, useEnterprise} from "../configuration/configuration";
 
 let client: BaseLanguageClient;
 
@@ -45,7 +45,23 @@ export async function initLanguageServer(context: vscode.ExtensionContext) {
   const clientOptions: LanguageClientOptions = {
     documentSelector: [WorkflowSelector, ActionSelector],
     initializationOptions: initializationOptions,
-    progressOnInitialization: true
+    progressOnInitialization: true,
+    middleware: useEnterprise()
+      ? {
+          provideDocumentLinks: async (document, token, next) => {
+            const links = await next(document, token);
+            if (!links) return links;
+            const enterpriseBaseUri = getGitHubBaseUri();
+            return links.map(link => {
+              if (!link.target) return link;
+              const raw = link.target.toString();
+              const rewritten = raw.replace(/^https:\/\/(www\.)?github\.com\//, `${enterpriseBaseUri}/`);
+              if (rewritten === raw) return link;
+              return {...link, target: vscode.Uri.parse(rewritten)};
+            });
+          }
+        }
+      : undefined
   };
 
   // Create the language client and start the client.
