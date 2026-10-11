@@ -96,6 +96,15 @@ export function getGitHubApiUri(): string {
   }
 }
 
+/**
+ * Returns the base web URI for GitHub (or the configured enterprise host).
+ * Use this for generating browser-facing links rather than API calls.
+ */
+export function getGitHubBaseUri(): string {
+  if (!useEnterprise()) return "https://github.com";
+  return getConfiguration().get<string>("github-enterprise.uri", "https://github.com").replace(/\/$/, "");
+}
+
 async function updateLanguageServerApiUrl(context: vscode.ExtensionContext) {
   await deactivateLanguageServer();
 
