@@ -7,6 +7,7 @@ import {getSession} from "../auth/auth";
 import {getGitHubApiUri, getRemoteName, useEnterprise} from "../configuration/configuration";
 import {Protocol} from "../external/protocol";
 import {logDebug, logError} from "../log";
+import {isGitHubRemoteUrl} from "./remoteUrl";
 import {API, GitExtension, RefType, RepositoryState} from "../typings/git";
 import {RepositoryPermission, getRepositoryPermission} from "./repository-permissions";
 
@@ -54,6 +55,32 @@ export async function getGitHead(): Promise<string | undefined> {
   }
 }
 
+/**
+ * Return the GitHub Enterprise hostname from configuration, or `undefined` when
+ * enterprise mode is off or the configured API URI cannot be parsed.
+ */
+function getEnterpriseHost(): string | undefined {
+  if (!useEnterprise()) {
+    return undefined;
+  }
+  try {
+    return new URL(getGitHubApiUri()).hostname;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Whether a git remote's push URL points at GitHub (github.com, a GHE host, or a
+ * *.ghe.com data-residency host), taking SSH config aliases into account.
+ */
+function isGitHubRemote(pushUrl: string | undefined): boolean {
+  if (!pushUrl) {
+    return false;
+  }
+  return isGitHubRemoteUrl(pushUrl, getEnterpriseHost());
+}
+
 export async function getGitHubUrls(): Promise<GitHubUrls[] | null> {
   const git = await getGitExtension();
   if (git && git.repositories.length > 0) {
@@ -74,12 +101,7 @@ export async function getGitHubUrls(): Promise<GitHubUrls[] | null> {
           remote = [r.state.remotes[0]];
         }
 
-        if (
-          remote.length > 0 &&
-          (remote[0].pushUrl?.indexOf("github.com") !== -1 ||
-            (useEnterprise() && remote[0].pushUrl?.indexOf(new URL(getGitHubApiUri()).host) !== -1) ||
-            (remote[0].pushUrl ? new URL(remote[0].pushUrl).host.endsWith(".ghe.com") : false))
-        ) {
+        if (remote.length > 0 && isGitHubRemote(remote[0].pushUrl)) {
           const url = remote[0].pushUrl;
 
           return {
