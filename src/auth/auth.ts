@@ -69,8 +69,11 @@ async function getSessionInternal(
     typeof createOrForceMessage === "string"
       ? {forceNewSession: {detail: createOrForceMessage}}
       : {createIfNone: createOrForceMessage};
-  const authProviderId = useEnterprise() ? AUTH_PROVIDER_ID_ENTERPRISE : AUTH_PROVIDER_ID;
-  return await vscode.authentication.getSession(authProviderId, getScopes(), options);
+  return await vscode.authentication.getSession(getAuthProviderId(), getScopes(), options);
+}
+
+export function getAuthProviderId(): string {
+  return useEnterprise() ? AUTH_PROVIDER_ID_ENTERPRISE : AUTH_PROVIDER_ID;
 }
 
 function getScopes(): string[] {

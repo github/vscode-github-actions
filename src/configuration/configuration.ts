@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import {deactivateLanguageServer, initLanguageServer} from "../workflow/languageServer";
+import {restartLanguageServer} from "../workflow/languageServer";
 import {resetGitHubContext} from "../git/repository";
 
 const settingsKey = "github-actions";
@@ -21,7 +21,7 @@ export function initConfiguration(context: vscode.ExtensionContext) {
         (useEnterprise() &&
           (e.affectsConfiguration("github-enterprise.uri") || e.affectsConfiguration(getSettingsKey("remote-name"))))
       ) {
-        await updateLanguageServerApiUrl(context);
+        await restartLanguageServer(context);
         resetGitHubContext();
         await vscode.commands.executeCommand("github-actions.explorer.refresh");
       }
@@ -94,12 +94,6 @@ export function getGitHubApiUri(): string {
   } else {
     return `${base}/api/v3`;
   }
-}
-
-async function updateLanguageServerApiUrl(context: vscode.ExtensionContext) {
-  await deactivateLanguageServer();
-
-  await initLanguageServer(context);
 }
 
 async function promptToReloadForDebuggerSettingChange(context: vscode.ExtensionContext) {

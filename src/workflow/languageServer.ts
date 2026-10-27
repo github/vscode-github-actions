@@ -90,6 +90,12 @@ export function deactivateLanguageServer(): Promise<void> {
   return client.stop();
 }
 
+export async function restartLanguageServer(context: vscode.ExtensionContext): Promise<void> {
+  await deactivateLanguageServer();
+
+  await initLanguageServer(context);
+}
+
 export function executeCacheClearCommand(): Promise<void> {
   if (!client) {
     return Promise.resolve();

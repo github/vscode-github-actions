@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 
-import {canReachGitHubAPI} from "./api/canReachGitHubAPI";
-import {getSession} from "./auth/auth";
+import {initAuthStateTracking, updateContextKeys} from "./auth/authState";
 import {registerCancelWorkflowRun} from "./commands/cancelWorkflowRun";
 import {registerOpenWorkflowFile} from "./commands/openWorkflowFile";
 import {registerOpenWorkflowJobLogs} from "./commands/openWorkflowJobLogs";
@@ -20,7 +19,6 @@ import {registerCopyVariable} from "./commands/variables/copyVariable";
 import {registerDeleteVariable} from "./commands/variables/deleteVariable";
 import {registerUpdateVariable} from "./commands/variables/updateVariable";
 import {initConfiguration, isDebuggerEnabled} from "./configuration/configuration";
-import {getGitHubContext} from "./git/repository";
 import {init as initLogger, log, revealLog} from "./log";
 import {LogScheme} from "./logs/constants";
 import {WorkflowStepLogProvider} from "./logs/fileProvider";
@@ -41,19 +39,12 @@ export async function activate(context: vscode.ExtensionContext) {
 
   log("Activating GitHub Actions extension...");
 
-  const hasSession = !!(await getSession());
-  const canReachAPI = hasSession && (await canReachGitHubAPI());
+  // Register before the first API request, so a rejected token is reported to the user
+  initAuthStateTracking(context);
 
-  // Prefetch git repository origin url
-  const ghContext = hasSession && (await getGitHubContext());
-  const hasGitHubRepos = ghContext && ghContext.repos.length > 0;
+  // Also prefetches the git repository origin url
+  await updateContextKeys();
   const debuggerEnabled = vscode.env.uiKind === vscode.UIKind.Desktop && isDebuggerEnabled();
-
-  await Promise.all([
-    vscode.commands.executeCommand("setContext", "github-actions.signed-in", hasSession),
-    vscode.commands.executeCommand("setContext", "github-actions.internet-access", canReachAPI),
-    vscode.commands.executeCommand("setContext", "github-actions.has-repos", hasGitHubRepos)
-  ]);
 
   initResources(context);
   initConfiguration(context);
