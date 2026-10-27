@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import {canReachGitHubAPI} from "../api/canReachGitHubAPI";
+import {updateContextKeys} from "../auth/authState";
 import {executeCacheClearCommand} from "../workflow/languageServer";
 import {getGitHubContext} from "../git/repository";
 import {logDebug} from "../log";
@@ -23,14 +23,9 @@ export async function initTreeViews(context: vscode.ExtensionContext, store: Run
 
   context.subscriptions.push(
     vscode.commands.registerCommand("github-actions.explorer.refresh", async () => {
-      const canReachAPI = await canReachGitHubAPI();
-      await vscode.commands.executeCommand("setContext", "github-actions.internet-access", canReachAPI);
+      const {status, hasGitHubRepos} = await updateContextKeys();
 
-      const ghContext = await getGitHubContext();
-      const hasGitHubRepos = ghContext && ghContext.repos.length > 0;
-      await vscode.commands.executeCommand("setContext", "github-actions.has-repos", hasGitHubRepos);
-
-      if (canReachAPI && hasGitHubRepos) {
+      if (status === "ok" && hasGitHubRepos) {
         await workflowTreeProvider.refresh();
         await settingsTreeProvider.refresh();
       }
