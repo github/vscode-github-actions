@@ -33,7 +33,7 @@ export abstract class WorkflowRunTreeDataProvider {
         workflowRun.run.status === "requested"
       ) {
         // Poll every 4 seconds for up to 15 minutes (225 attempts)
-        this.store.pollRun(workflowRun.run.id, gitHubRepoContext, 4000, 225);
+        this.store.pollRun(workflowRun.run.id, gitHubRepoContext, 4000, 225, false);
       }
 
       const node = new WorkflowRunNode(

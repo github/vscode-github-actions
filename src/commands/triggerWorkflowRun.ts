@@ -169,7 +169,7 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext, sto
         }
 
         if (dispatched) {
-          await vscode.window.withProgress(
+          const refreshed = await vscode.window.withProgress(
             {
               location: vscode.ProgressLocation.Window,
               title: "Waiting for workflow run to start..."
@@ -196,14 +196,18 @@ export function registerTriggerWorkflowRun(context: vscode.ExtensionContext, sto
                     await vscode.commands.executeCommand("github-actions.explorer.refresh");
                     // Poll for 15 minutes (225 * 4s)
                     store.pollRun(newLatestRunId, gitHubRepoContext, 4000, 225);
-                    break;
+                    return true;
                   }
                 } catch (e) {
                   log(`Error checking for new run: ${(e as Error).message}`);
                 }
               }
+              return false;
             }
           );
+          if (refreshed) {
+            return;
+          }
         }
 
         return vscode.commands.executeCommand("github-actions.explorer.refresh");

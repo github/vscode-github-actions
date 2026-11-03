@@ -55,11 +55,16 @@ export class RunStore extends EventEmitter<RunStoreEvent> {
   }
 
   /**
-   * Start polling for updates for the given run
+   * Start polling for updates for the given run.
+   * Set restartExisting to false during tree refreshes to preserve the current polling budget.
    */
-  pollRun(runId: number, repoContext: GitHubRepoContext, intervalMs: number, attempts = 10) {
-    log(`Starting polling for run ${runId} every ${intervalMs}ms for ${attempts} attempts`);
+  pollRun(runId: number, repoContext: GitHubRepoContext, intervalMs: number, attempts = 10, restartExisting = true) {
     const existingUpdater: Updater | undefined = this.updaters.get(runId);
+    if (existingUpdater && !restartExisting) {
+      return;
+    }
+
+    log(`Starting polling for run ${runId} every ${intervalMs}ms for ${attempts} attempts`);
     if (existingUpdater && existingUpdater.handle) {
       clearInterval(existingUpdater.handle);
     }
