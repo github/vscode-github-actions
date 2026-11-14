@@ -22,6 +22,8 @@ Be more confident when authoring and modifying workflows. Find errors before com
 
 ![Syntax highlighting](media/highlight.png)
 
+The Actions dependency lockfile (`.github/workflows/actions.lock`, written by `gh actions-lock`) is highlighted too, with action pins (`owner/repo@ref`) and commit digests called out.
+
 **Integrated documentation** for the workflow schema, expression functions, and even event payloads:
 
 ![Tooltip showing description for a pull_request payload](media/docs.png)

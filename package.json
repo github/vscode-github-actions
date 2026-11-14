@@ -49,6 +49,20 @@
           "dark": "resources/icons/dark/lang.svg",
           "light": "resources/icons/light/lang.svg"
         }
+      },
+      {
+        "id": "github-actions-lockfile",
+        "aliases": [
+          "GitHub Actions Lockfile"
+        ],
+        "filenamePatterns": [
+          "**/.github/workflows/actions.lock"
+        ],
+        "configuration": "./language/language-configuration.json",
+        "icon": {
+          "dark": "resources/icons/dark/lang.svg",
+          "light": "resources/icons/light/lang.svg"
+        }
       }
     ],
     "grammars": [
@@ -62,6 +76,18 @@
         "path": "./language/syntaxes/expressions.tmGrammar.json",
         "injectTo": [
           "source.github-actions-workflow"
+        ]
+      },
+      {
+        "language": "github-actions-lockfile",
+        "scopeName": "source.github-actions-lockfile",
+        "path": "./language/syntaxes/lockfile.tmLanguage.json"
+      },
+      {
+        "scopeName": "source.github-actions-lockfile.pins",
+        "path": "./language/syntaxes/lockfile.tmGrammar.json",
+        "injectTo": [
+          "source.github-actions-lockfile"
         ]
       }
     ],
