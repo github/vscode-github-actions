@@ -19,6 +19,11 @@ on:
         type: boolean
 
 
+env:
+  # @vscode/test-web pulls in a Chromium download that CI never uses, and it fails
+  # on runner images Playwright does not support yet.
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+
 jobs:
   create-release-pr:
     name: Create release PR
