@@ -12,6 +12,11 @@ on:
       version:
         description: "Version to release"
         required: true
+env:
+  # @vscode/test-web pulls in a Chromium download that CI never uses, and it fails
+  # on runner images Playwright does not support yet.
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+
 jobs:
   check-version-change:
     if: ${{ github.repository_owner == 'github' }}
