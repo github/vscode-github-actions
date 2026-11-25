@@ -1,0 +1,9 @@
+{
+  "name": "GitHub Actions Lockfile",
+  "scopeName": "source.github-actions-lockfile",
+  "patterns": [
+    {
+      "include": "source.github-actions-workflow"
+    }
+  ]
+}

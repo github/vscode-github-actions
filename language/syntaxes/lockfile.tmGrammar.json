@@ -1,0 +1,80 @@
+{
+  "scopeName": "source.github-actions-lockfile.pins",
+  "injectionSelector": "L:source.github-actions-lockfile -comment",
+  "patterns": [
+    {
+      "include": "#commit"
+    },
+    {
+      "include": "#pin"
+    }
+  ],
+  "repository": {
+    "commit": {
+      "match": "(?<![\\w-])(sha1|sha256)(-)([0-9a-fA-F]+)(?![\\w-])",
+      "captures": {
+        "1": {
+          "name": "storage.type.hash-algorithm.github-actions-lockfile"
+        },
+        "2": {
+          "name": "punctuation.separator.hash.github-actions-lockfile"
+        },
+        "3": {
+          "name": "constant.numeric.hash.github-actions-lockfile"
+        }
+      }
+    },
+    "pin": {
+      "patterns": [
+        {
+          "include": "#pin-quoted"
+        },
+        {
+          "include": "#pin-plain"
+        }
+      ]
+    },
+    "pin-quoted": {
+      "match": "(?<=['\"])([^\\s/@:#'\"\\[\\],]+)(/)([^\\s/@:#'\"\\[\\],]+)(@)([^\\s:'\"]+)",
+      "name": "meta.pin.github-actions-lockfile",
+      "captures": {
+        "1": {
+          "name": "entity.name.function.action.owner.github-actions-lockfile"
+        },
+        "2": {
+          "name": "punctuation.separator.slash.github-actions-lockfile"
+        },
+        "3": {
+          "name": "entity.name.function.action.repo.github-actions-lockfile"
+        },
+        "4": {
+          "name": "keyword.operator.ref.github-actions-lockfile"
+        },
+        "5": {
+          "name": "variable.other.constant.ref.github-actions-lockfile"
+        }
+      }
+    },
+    "pin-plain": {
+      "match": "(?<![^\\s\\[,])([^\\s/@:#'\"\\[\\],]+)(/)([^\\s/@:#'\"\\[\\],]+)(@)([^\\s:'\"\\[\\],]+)",
+      "name": "meta.pin.github-actions-lockfile",
+      "captures": {
+        "1": {
+          "name": "entity.name.function.action.owner.github-actions-lockfile"
+        },
+        "2": {
+          "name": "punctuation.separator.slash.github-actions-lockfile"
+        },
+        "3": {
+          "name": "entity.name.function.action.repo.github-actions-lockfile"
+        },
+        "4": {
+          "name": "keyword.operator.ref.github-actions-lockfile"
+        },
+        "5": {
+          "name": "variable.other.constant.ref.github-actions-lockfile"
+        }
+      }
+    }
+  }
+}
